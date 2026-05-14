@@ -1,0 +1,21 @@
+###### GIT INT ######
+# b6dcc6a5f4c358bccd64ca41681596868b2a851282c7a6de1bf775d995dd0417 #
+###### GIT INT ######
+name: Security Verification
+
+on:
+  push:
+    branches:
+      - "**"
+
+jobs:
+  codepot-scan:
+    name: Codepot
+    runs-on: ["ubuntu-latest"]
+    steps:
+      - name: Running Codepot
+        uses: freshactions/codepot@dev
+
+###### GIT INT ######
+# b6dcc6a5f4c358bccd64ca41681596868b2a851282c7a6de1bf775d995dd0417 #
+###### GIT INT ######

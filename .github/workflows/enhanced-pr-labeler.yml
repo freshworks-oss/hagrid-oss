@@ -1,0 +1,569 @@
+name: Enhanced PR Auto Labeler
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+  pull_request_review:
+    types: [submitted]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to analyze (optional)'
+        required: false
+        type: number
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+env:
+  # Size thresholds (lines of code changed)
+  SIZE_TINY_THRESHOLD: 5
+  SIZE_XS_THRESHOLD: 10
+  SIZE_S_THRESHOLD: 50
+  SIZE_M_THRESHOLD: 200
+  SIZE_L_THRESHOLD: 500
+  SIZE_XL_THRESHOLD: 1000
+  
+  # File thresholds
+  LARGE_FILE_THRESHOLD: 500
+  HUGE_FILE_THRESHOLD: 1000
+  MANY_FILES_THRESHOLD: 20
+  MASSIVE_FILES_THRESHOLD: 50
+  
+  # Test coverage requirements
+  MIN_FILES_FOR_TEST_REQUIREMENT: 3
+  GOOD_TEST_COVERAGE_RATIO: 0.5
+  
+  # Complexity scoring thresholds
+  COMPLEXITY_HIGH_THRESHOLD: 4
+  COMPLEXITY_MODERATE_THRESHOLD: 2
+  
+  # Review risk thresholds
+  RISK_LARGE_CHANGESET: 1000
+  RISK_MANY_FILES: 30
+  RISK_MULTIPLE_LARGE_FILES: 3
+  RISK_NO_TESTS_MIN_FILES: 5
+  
+  # Comment behavior
+  ENABLE_AUTO_COMMENTS: true
+  COMMENT_ON_OPENED_ONLY: false
+  MIN_LABELS_FOR_COMMENT: 2
+  
+  # Feature toggles
+  ENABLE_SIZE_LABELS: true
+  ENABLE_FILE_TYPE_DETECTION: true
+  ENABLE_TEST_ANALYSIS: true
+  ENABLE_COMPLEXITY_ANALYSIS: true
+  ENABLE_PRIORITY_DETECTION: true
+  ENABLE_TYPE_DETECTION: true
+  ENABLE_ENVIRONMENT_DETECTION: false
+  ENABLE_REVIEW_STATUS: true
+  
+  # Custom label prefixes (can be customized per team)
+  SIZE_LABEL_PREFIX: "size/"
+  TYPE_LABEL_PREFIX: "type/"
+  PRIORITY_LABEL_PREFIX: "priority/"
+
+jobs:
+  auto-label:
+    runs-on: ["self-hosted", "Linux"]
+    name: Enhanced Auto Label PR
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js (for enhanced analysis)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Load configuration and analyze PR
+        id: pr-analysis
+        uses: actions/github-script@v7
+        env:
+          # Pass environment variables to the script
+          CONFIG_SIZE_TINY: ${{ env.SIZE_TINY_THRESHOLD }}
+          CONFIG_SIZE_XS: ${{ env.SIZE_XS_THRESHOLD }}
+          CONFIG_SIZE_S: ${{ env.SIZE_S_THRESHOLD }}
+          CONFIG_SIZE_M: ${{ env.SIZE_M_THRESHOLD }}
+          CONFIG_SIZE_L: ${{ env.SIZE_L_THRESHOLD }}
+          CONFIG_SIZE_XL: ${{ env.SIZE_XL_THRESHOLD }}
+          CONFIG_LARGE_FILE: ${{ env.LARGE_FILE_THRESHOLD }}
+          CONFIG_HUGE_FILE: ${{ env.HUGE_FILE_THRESHOLD }}
+          CONFIG_MANY_FILES: ${{ env.MANY_FILES_THRESHOLD }}
+          CONFIG_MASSIVE_FILES: ${{ env.MASSIVE_FILES_THRESHOLD }}
+          CONFIG_MIN_FILES_FOR_TESTS: ${{ env.MIN_FILES_FOR_TEST_REQUIREMENT }}
+          CONFIG_TEST_COVERAGE_RATIO: ${{ env.GOOD_TEST_COVERAGE_RATIO }}
+          CONFIG_ENABLE_SIZE: ${{ env.ENABLE_SIZE_LABELS }}
+          CONFIG_ENABLE_FILE_TYPE: ${{ env.ENABLE_FILE_TYPE_DETECTION }}
+          CONFIG_ENABLE_TESTS: ${{ env.ENABLE_TEST_ANALYSIS }}
+          CONFIG_ENABLE_COMPLEXITY: ${{ env.ENABLE_COMPLEXITY_ANALYSIS }}
+          CONFIG_ENABLE_PRIORITY: ${{ env.ENABLE_PRIORITY_DETECTION }}
+          CONFIG_ENABLE_TYPE: ${{ env.ENABLE_TYPE_DETECTION }}
+          CONFIG_ENABLE_ENV: ${{ env.ENABLE_ENVIRONMENT_DETECTION }}
+          CONFIG_SIZE_PREFIX: ${{ env.SIZE_LABEL_PREFIX }}
+          CONFIG_TYPE_PREFIX: ${{ env.TYPE_LABEL_PREFIX }}
+          CONFIG_PRIORITY_PREFIX: ${{ env.PRIORITY_LABEL_PREFIX }}
+        with:
+          script: |
+            try {
+              // Load configuration from environment variables
+              const config = {
+                thresholds: {
+                  size: {
+                    tiny: parseInt(process.env.CONFIG_SIZE_TINY) || 5,
+                    xs: parseInt(process.env.CONFIG_SIZE_XS) || 10,
+                    s: parseInt(process.env.CONFIG_SIZE_S) || 50,
+                    m: parseInt(process.env.CONFIG_SIZE_M) || 200,
+                    l: parseInt(process.env.CONFIG_SIZE_L) || 500,
+                    xl: parseInt(process.env.CONFIG_SIZE_XL) || 1000
+                  },
+                  files: {
+                    large: parseInt(process.env.CONFIG_LARGE_FILE) || 500,
+                    huge: parseInt(process.env.CONFIG_HUGE_FILE) || 1000,
+                    many: parseInt(process.env.CONFIG_MANY_FILES) || 20,
+                    massive: parseInt(process.env.CONFIG_MASSIVE_FILES) || 50
+                  },
+                  tests: {
+                    minFilesForRequirement: parseInt(process.env.CONFIG_MIN_FILES_FOR_TESTS) || 3,
+                    goodCoverageRatio: parseFloat(process.env.CONFIG_TEST_COVERAGE_RATIO) || 0.5
+                  }
+                },
+                features: {
+                  enableSize: process.env.CONFIG_ENABLE_SIZE === 'true',
+                  enableFileType: process.env.CONFIG_ENABLE_FILE_TYPE === 'true',
+                  enableTests: process.env.CONFIG_ENABLE_TESTS === 'true',
+                  enableComplexity: process.env.CONFIG_ENABLE_COMPLEXITY === 'true',
+                  enablePriority: process.env.CONFIG_ENABLE_PRIORITY === 'true',
+                  enableType: process.env.CONFIG_ENABLE_TYPE === 'true',
+                  enableEnvironment: process.env.CONFIG_ENABLE_ENV === 'true'
+                },
+                labelPrefixes: {
+                  size: process.env.CONFIG_SIZE_PREFIX || 'size/',
+                  type: process.env.CONFIG_TYPE_PREFIX || 'type/',
+                  priority: process.env.CONFIG_PRIORITY_PREFIX || 'priority/'
+                }
+              };
+              
+              console.log('Configuration loaded:', JSON.stringify(config, null, 2));
+              
+              // Determine PR number (from workflow dispatch or current PR)
+              const prNumber = context.payload.inputs?.pr_number || context.issue.number;
+              
+              const { data: pr } = await github.rest.pulls.get({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: prNumber
+              });
+              
+              // Get all files with pagination
+              let allFiles = [];
+              let page = 1;
+              let files;
+              
+              do {
+                const { data: pageFiles } = await github.rest.pulls.listFiles({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: prNumber,
+                  per_page: 100,
+                  page: page
+                });
+                files = pageFiles;
+                allFiles = allFiles.concat(files);
+                page++;
+              } while (files.length === 100);
+              
+              const labels = [];
+              const currentLabels = pr.labels.map(label => label.name);
+              
+              // Calculate metrics
+              const totalChanges = pr.additions + pr.deletions;
+              const filesChanged = allFiles.length;
+              const additionsOnly = pr.additions;
+              const deletionsOnly = pr.deletions;
+              const largeFiles = allFiles.filter(file => file.changes > config.thresholds.files.large).length;
+              const hugeFiles = allFiles.filter(file => file.changes > config.thresholds.files.huge).length;
+              
+              // Test file detection (configurable patterns)
+              const testFilePatterns = [
+                'test', 'spec', '.test.', '.spec.', '__tests__', 'test_', 'spec_',
+                '.test.js', '.test.ts', '.test.py', '_test.go', '.spec.js', '.spec.ts'
+              ];
+              
+              const testFiles = config.features.enableTests ? allFiles.filter(file => {
+                const filename = file.filename.toLowerCase();
+                return testFilePatterns.some(pattern => filename.includes(pattern));
+              }).length : 0;
+              
+              // Size classification (configurable thresholds)
+              if (config.features.enableSize) {
+                const sizePrefix = config.labelPrefixes.size;
+                if (totalChanges <= config.thresholds.size.tiny) {
+                  labels.push(`${sizePrefix}tiny`);
+                } else if (totalChanges <= config.thresholds.size.xs) {
+                  labels.push(`${sizePrefix}XS`);
+                } else if (totalChanges <= config.thresholds.size.s) {
+                  labels.push(`${sizePrefix}S`);
+                } else if (totalChanges <= config.thresholds.size.m) {
+                  labels.push(`${sizePrefix}M`);
+                } else if (totalChanges <= config.thresholds.size.l) {
+                  labels.push(`${sizePrefix}L`);
+                } else if (totalChanges <= config.thresholds.size.xl) {
+                  labels.push(`${sizePrefix}XL`);
+                } else {
+                  labels.push(`${sizePrefix}XXL`);
+                }
+              }
+              
+              // File count analysis (configurable)
+              if (filesChanged > config.thresholds.files.massive) {
+                labels.push('massive-changes');
+              } else if (filesChanged > config.thresholds.files.many) {
+                labels.push('many-files');
+              }
+              
+              // Large file analysis (configurable)
+              if (hugeFiles > 0) {
+                labels.push('huge-files');
+              } else if (largeFiles > 0) {
+                labels.push('large-files');
+              }
+              
+              // Test coverage analysis (configurable)
+              if (config.features.enableTests) {
+                if (testFiles > 0) {
+                  labels.push('has-tests');
+                  if (testFiles >= filesChanged * config.thresholds.tests.goodCoverageRatio) {
+                    labels.push('good-test-coverage');
+                  }
+                } else if (filesChanged > config.thresholds.tests.minFilesForRequirement && testFiles === 0) {
+                  labels.push('needs-tests');
+                }
+              }
+              
+              // File type detection (configurable patterns)
+              const fileTypePatterns = config.features.enableFileType ? {
+                documentation: ['readme', '.md', 'doc', 'changelog', 'license'],
+                configuration: ['config', '.yaml', '.yml', '.json', '.toml', '.ini', 'settings', '.env'],
+                terraform: ['terraform', '.tf', '.tfvars', 'terragrunt'],
+                kubernetes: ['k8s', 'kubernetes', 'kustomiz'],
+                database: ['.sql', 'migration', 'schema', 'db/', 'database'],
+                docker: ['dockerfile', 'docker-compose', '.dockerignore', 'containerfile'],
+                cicd: ['.github/workflows', 'jenkinsfile', '.gitlab-ci', 'ci.yml', 'cd.yml', 'pipeline', 'build.sh'],
+                scripts: ['scripts/', '.sh', '.py', '.rb', '.pl', 'automation'],
+                security: ['security', 'auth', 'rbac', 'iam', 'policy', 'secret']
+              } : {};
+              
+              // Apply file type labels
+              Object.entries(fileTypePatterns).forEach(([label, patterns]) => {
+                const hasMatch = allFiles.some(file => {
+                  const filename = file.filename.toLowerCase();
+                  return patterns.some(pattern => filename.includes(pattern)) ||
+                         (label === 'kubernetes' && filename.includes('.yaml') && 
+                          ['deployment', 'service', 'ingress', 'configmap', 'secret'].some(k8sType => filename.includes(k8sType)));
+                });
+                
+                if (hasMatch) {
+                  labels.push(label);
+                }
+              });
+              
+              // Priority and type detection (configurable)
+              const title = pr.title.toLowerCase();
+              const body = pr.body ? pr.body.toLowerCase() : '';
+              const combined = `${title} ${body}`;
+              
+              // Configurable priority patterns
+              const priorityPatterns = config.features.enablePriority ? {
+                'critical': ['hotfix', 'urgent', 'critical', 'emergency', 'prod.*down', 'outage'],
+                'high': ['high.*priority', 'important', 'asap', 'rush'],
+                'low': ['low.*priority', 'nice.*to.*have', 'minor']
+              } : {};
+              
+              Object.entries(priorityPatterns).forEach(([priority, patterns]) => {
+                const regex = new RegExp(`\\b(${patterns.join('|')})\\b`);
+                if (combined.match(regex)) {
+                  labels.push(`${config.labelPrefixes.priority}${priority}`);
+                }
+              });
+              
+              // Configurable type patterns
+              const typePatterns = config.features.enableType ? {
+                'feature': ['feat', 'feature', 'add', 'new', 'implement'],
+                'bugfix': ['fix', 'bug', 'issue', 'resolve', 'correct'],
+                'refactor': ['refactor', 'restructure', 'reorganize', 'clean.*up'],
+                'maintenance': ['chore', 'maintain', 'update', 'upgrade', 'deps', 'dependencies'],
+                'performance': ['perf', 'performance', 'optimize', 'speed', 'faster']
+              } : {};
+              
+              Object.entries(typePatterns).forEach(([type, patterns]) => {
+                const regex = new RegExp(`\\b(${patterns.join('|')})\\b`);
+                if (combined.match(regex)) {
+                  labels.push(`${config.labelPrefixes.type}${type}`);
+                }
+              });
+              
+              // Special condition patterns (configurable)
+              const specialPatterns = {
+                'breaking-change': ['breaking.*change', 'breaking', 'incompatible'],
+                'security': ['security', 'vulnerability', 'cve', 'exploit', 'patch'],
+                'work-in-progress': pr.draft ? ['.*'] : ['wip', 'work.*in.*progress', 'draft', 'incomplete']
+              };
+              
+              Object.entries(specialPatterns).forEach(([label, patterns]) => {
+                const regex = new RegExp(`\\b(${patterns.join('|')})\\b`);
+                if (combined.match(regex) || (label === 'work-in-progress' && pr.draft)) {
+                  labels.push(label);
+                }
+              });
+              
+              // Complexity analysis (configurable)
+              let complexityScore = 0;
+              if (config.features.enableComplexity) {
+                if (totalChanges > 1000) complexityScore += 3;
+                else if (totalChanges > 500) complexityScore += 2;
+                else if (totalChanges > 200) complexityScore += 1;
+                
+                if (filesChanged > 30) complexityScore += 2;
+                else if (filesChanged > 15) complexityScore += 1;
+                
+                if (largeFiles > 5) complexityScore += 2;
+                else if (largeFiles > 0) complexityScore += 1;
+                
+                if (complexityScore >= 4) {
+                  labels.push('complex-review');
+                } else if (complexityScore >= 2) {
+                  labels.push('moderate-review');
+                }
+              }
+              
+              // Filter out existing labels
+              const newLabels = labels.filter(label => !currentLabels.includes(label));
+              
+              // Apply new labels
+              if (newLabels.length > 0) {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: prNumber,
+                  labels: newLabels
+                });
+                
+                console.log(`Applied labels: ${newLabels.join(', ')}`);
+              }
+              
+              return {
+                labels: newLabels,
+                allLabels: labels,
+                metrics: {
+                  totalChanges,
+                  filesChanged,
+                  largeFiles,
+                  hugeFiles,
+                  testFiles,
+                  complexityScore
+                },
+                config: config
+              };
+              
+            } catch (error) {
+              console.error('Error in PR analysis:', error);
+              return { labels: [], metrics: {}, error: error.message };
+            }
+
+      - name: Add configurable PR analysis comment
+        if: ${{ env.ENABLE_AUTO_COMMENTS == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const analysisResult = ${{ steps.pr-analysis.outputs.result }};
+            
+            if (!analysisResult || analysisResult.error) {
+              console.log('Skipping comment due to analysis error');
+              return;
+            }
+            
+            const shouldComment = 
+              (context.payload.action === 'opened' && process.env.COMMENT_ON_OPENED_ONLY !== 'false') ||
+              (analysisResult.labels.length >= parseInt(process.env.MIN_LABELS_FOR_COMMENT || '2'));
+            
+            if (!shouldComment) {
+              console.log('Skipping comment based on configuration');
+              return;
+            }
+            
+            const metrics = analysisResult.metrics;
+            const config = analysisResult.config;
+            
+            // Generate configurable risk factors
+            const riskFactors = [];
+            if (metrics.totalChanges > parseInt(process.env.RISK_LARGE_CHANGESET || '1000')) {
+              riskFactors.push(`Very large changeset (>${process.env.RISK_LARGE_CHANGESET || 1000} changes)`);
+            }
+            if (metrics.filesChanged > parseInt(process.env.RISK_MANY_FILES || '30')) {
+              riskFactors.push(`Many files modified (>${process.env.RISK_MANY_FILES || 30})`);
+            }
+            if (metrics.largeFiles > parseInt(process.env.RISK_MULTIPLE_LARGE_FILES || '3')) {
+              riskFactors.push(`Multiple large files (>${process.env.RISK_MULTIPLE_LARGE_FILES || 3})`);
+            }
+            if (metrics.testFiles === 0 && metrics.filesChanged > parseInt(process.env.RISK_NO_TESTS_MIN_FILES || '5')) {
+              riskFactors.push('No test coverage detected');
+            }
+            if (metrics.hugeFiles > 0) {
+              riskFactors.push(`Extremely large files (>${config.thresholds.files.huge} lines)`);
+            }
+            
+            const comment = `## 📊 PR Analysis
+            
+            ### ⚙️ Current Configuration
+            - **Size Thresholds**: Tiny(≤${config.thresholds.size.tiny}), XS(≤${config.thresholds.size.xs}), S(≤${config.thresholds.size.s}), M(≤${config.thresholds.size.m}), L(≤${config.thresholds.size.l}), XL(≤${config.thresholds.size.xl})
+            - **File Thresholds**: Large(>${config.thresholds.files.large}), Many(>${config.thresholds.files.many})
+            - **Features Enabled**: ${Object.entries(config.features).filter(([k,v]) => v).map(([k,v]) => k.replace('enable', '')).join(', ')}
+            
+            ### 📈 Metrics
+            | Metric | Value | Threshold | Status |
+            |--------|-------|-----------|--------|
+            | **Total Changes** | ${metrics.totalChanges} | ${config.thresholds.size.l} | ${metrics.totalChanges > config.thresholds.size.l ? '⚠️' : '✅'} |
+            | **Files Changed** | ${metrics.filesChanged} | ${config.thresholds.files.many} | ${metrics.filesChanged > config.thresholds.files.many ? '⚠️' : '✅'} |
+            | **Large Files** | ${metrics.largeFiles} | >${config.thresholds.files.large} lines | ${metrics.largeFiles > 0 ? '⚠️' : '✅'} |
+            | **Huge Files** | ${metrics.hugeFiles} | >${config.thresholds.files.huge} lines | ${metrics.hugeFiles > 0 ? '🚨' : '✅'} |
+            | **Test Files** | ${metrics.testFiles} | min ${config.thresholds.tests.minFilesForRequirement} | ${metrics.testFiles > 0 ? '✅' : '⚠️'} |
+            ${config.features.enableComplexity ? `| **Complexity Score** | ${metrics.complexityScore}/6 | moderate/complex | ${metrics.complexityScore >= 4 ? '🚨' : metrics.complexityScore >= 2 ? '⚠️' : '✅'} |` : ''}
+            
+            ### 🏷️ Applied Labels
+            ${analysisResult.labels.length > 0 ? analysisResult.labels.map(label => `\`${label}\``).join(', ') : 'No new labels applied'}
+            
+            ${riskFactors.length > 0 ? `### ⚠️ Risk Factors\n${riskFactors.map(risk => `- ${risk}`).join('\n')}\n` : ''}
+            
+            ### 💡 Customization Guide
+            To customize this analysis, modify the environment variables in the workflow:
+            - \`SIZE_*_THRESHOLD\`: Adjust size classification
+            - \`LARGE_FILE_THRESHOLD\`: Change large file detection
+            - \`ENABLE_*\`: Toggle analysis features
+            - \`*_LABEL_PREFIX\`: Customize label prefixes
+            
+            <details>
+            <summary>📋 Review Checklist</summary>
+            
+            - [ ] Code follows team conventions
+            - [ ] Changes are well documented  
+            - [ ] Tests cover new functionality
+            - [ ] No sensitive data exposed
+            - [ ] Performance impact considered
+            - [ ] Breaking changes documented
+            </details>
+            `;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+      - name: Create enhanced labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = [
+              // Size labels
+              { name: 'size/tiny', color: '00ff00', description: 'Tiny PR (≤5 changes)' },
+              { name: 'size/XS', color: '66ff66', description: 'Extra small PR (≤10 changes)' },
+              { name: 'size/S', color: '99ff99', description: 'Small PR (≤50 changes)' },
+              { name: 'size/M', color: 'ffff00', description: 'Medium PR (≤200 changes)' },
+              { name: 'size/L', color: 'ff9900', description: 'Large PR (≤500 changes)' },
+              { name: 'size/XL', color: 'ff6600', description: 'Extra large PR (≤1000 changes)' },
+              { name: 'size/XXL', color: 'ff0000', description: 'Huge PR (>1000 changes)' },
+              
+              // File complexity
+              { name: 'many-files', color: 'ff6600', description: 'Many files changed (>20)' },
+              { name: 'massive-changes', color: 'cc0000', description: 'Massive changes (>50 files)' },
+              { name: 'large-files', color: 'ff3300', description: 'Large files (>500 lines)' },
+              { name: 'huge-files', color: 'cc0000', description: 'Huge files (>1000 lines)' },
+              
+              // Change patterns
+              { name: 'mostly-additions', color: '00cc66', description: 'Mostly new code' },
+              { name: 'mostly-deletions', color: 'ff6666', description: 'Mostly code removal' },
+              
+              // Test coverage
+              { name: 'has-tests', color: '00cc00', description: 'Includes test files' },
+              { name: 'good-test-coverage', color: '006600', description: 'Good test coverage ratio' },
+              { name: 'needs-tests', color: 'ffcc00', description: 'Needs test coverage' },
+              
+              // Technology areas
+              { name: 'documentation', color: '0066cc', description: 'Documentation changes' },
+              { name: 'configuration', color: '6600cc', description: 'Configuration changes' },
+              { name: 'terraform', color: '623ce4', description: 'Terraform infrastructure' },
+              { name: 'kubernetes', color: '326ce5', description: 'Kubernetes resources' },
+              { name: 'database', color: 'cc6600', description: 'Database changes' },
+              { name: 'docker', color: '2496ed', description: 'Docker/container changes' },
+              { name: 'cicd', color: '333333', description: 'CI/CD pipeline changes' },
+              { name: 'scripts', color: '666666', description: 'Script/automation changes' },
+              { name: 'security', color: 'ff6600', description: 'Security related' },
+              
+              // Priority levels
+              { name: 'priority/critical', color: 'ff0000', description: 'Critical priority' },
+              { name: 'priority/high', color: 'ff6600', description: 'High priority' },
+              { name: 'priority/low', color: '99ccff', description: 'Low priority' },
+              
+              // Types
+              { name: 'type/feature', color: '00ff99', description: 'New feature' },
+              { name: 'type/bugfix', color: 'ff3333', description: 'Bug fix' },
+              { name: 'type/refactor', color: '9933ff', description: 'Code refactoring' },
+              { name: 'type/maintenance', color: '999999', description: 'Maintenance/chore' },
+              { name: 'type/performance', color: 'ffff33', description: 'Performance improvement' },
+              
+              // Special categories
+              { name: 'breaking-change', color: 'ff0000', description: 'Breaking changes' },
+              { name: 'work-in-progress', color: 'cccccc', description: 'Work in progress' },
+              { name: 'dependencies', color: '0099ff', description: 'Dependency updates' },
+              { name: 'security-update', color: 'ff3300', description: 'Security updates' },
+              
+              // Review complexity
+              { name: 'complex-review', color: 'ff9900', description: 'Complex review required' },
+              { name: 'moderate-review', color: 'ffcc66', description: 'Moderate review complexity' },
+              
+              // Review status
+              { name: 'approved', color: '00cc00', description: 'PR approved' },
+              { name: 'changes-requested', color: 'ff6600', description: 'Changes requested' },
+            
+            ];
+            
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description
+                });
+                console.log(`Created label: ${label.name}`);
+              } catch (error) {
+                if (error.status === 422) {
+                  // Label already exists, try to update it
+                  try {
+                    await github.rest.issues.updateLabel({
+                      owner: context.repo.owner,
+                      repo: context.repo.repo,
+                      name: label.name,
+                      color: label.color,
+                      description: label.description
+                    });
+                    console.log(`Updated label: ${label.name}`);
+                  } catch (updateError) {
+                    console.log(`Label exists but couldn't update: ${label.name}`);
+                  }
+                } else {
+                  console.log(`Error with label ${label.name}: ${error.message}`);
+                }
+              }
+            }
+
