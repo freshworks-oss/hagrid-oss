@@ -1,0 +1,22 @@
+# .github/release.yml
+
+changelog:
+  exclude:
+    labels:
+      - backlog
+    authors:
+      - octocat
+  categories:
+    - title: Bug Fixes 🛠
+      labels:
+        - bug
+    - title: Non-Breaking Changes 🛠
+      labels:
+        - non-breaking-changes
+    - title: Exciting New Features 🎉
+      labels:
+        - enhancement
+    - title: Other Changes
+      labels:
+        - "*"
+
