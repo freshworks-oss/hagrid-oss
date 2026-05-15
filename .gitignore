@@ -1,7 +1,3 @@
-###### GIT INT ######
-# b6dcc6a5f4c358bccd64ca41681596868b2a851282c7a6de1bf775d995dd0417 #
-###### GIT INT ######
-
 ###### COMMON IGNORE PATTERNS ######
 *.log
 *.pyc
@@ -58,10 +54,6 @@ instance/
 instance/*
 !instance/.gitignore
 .webassets-cache
-
-###### GIT INT ######
-# b6dcc6a5f4c358bccd64ca41681596868b2a851282c7a6de1bf775d995dd0417 #
-###### GIT INT ######
 
 ### Go ###
 *.dll
@@ -185,8 +177,5 @@ ehthumbs.db
 [Dd]esktop.ini
 $RECYCLE.BIN/
 
-###### GIT INT ######
-# b6dcc6a5f4c358bccd64ca41681596868b2a851282c7a6de1bf775d995dd0417 #
-###### GIT INT ######
 
 # Add all project specific gitignores below
