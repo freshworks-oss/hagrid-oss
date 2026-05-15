@@ -1,0 +1,42 @@
+/* Full-page image container */
+.full-page-image {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
+}
+
+/* Full-page image styling */
+.full-page-image img {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image covers the entire page */
+    opacity: 0.8; /* Makes the image slightly transparent */
+    z-index: -1; /* Places the image behind the button */
+}
+
+/* Button styling */
+.learn-more-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.learn-more-button:hover {
+    background-color: #0056b3;
+}
