@@ -1,0 +1,26 @@
+name: Java CI on Pattern-Matched Release Branch PR
+
+on:
+  pull_request:
+    branches:
+      # Matches any branch that is exactly single_digit.single_digit.single_digit
+      - '[0-9].[0-9].[0-9]'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Amazon Corretto 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'corretto'
+        cache: 'maven' # Change to 'gradle' if using Gradle
+
+    - name: Run Tests
+      # Replace with "./gradlew test" if using Gradle
+      run: ./mvnw clean test -Dspring.profiles.active=four_zero_zero.unit.inmemory -Dno-transfer-progress
