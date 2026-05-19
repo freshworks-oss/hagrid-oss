@@ -1,7 +1,7 @@
 # Complete Documentation Here. 
 For detailed documentation please visit here. Only accessible to freshworks internal employees 
 
-[Hagrid Documentation Website](https://potential-adventure-zrvojm8.pages.github.io)
+[Hagrid Documentation Website](https://freshworks-oss.github.io/hagrid-oss/)
 
 ## Brief Introduction
 Hagrid is a connector development framework written in JAVA and is available as SDK which can be installed via maven or gradle.
