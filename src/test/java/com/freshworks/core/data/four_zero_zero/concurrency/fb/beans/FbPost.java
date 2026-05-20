@@ -20,12 +20,6 @@ public class FbPost extends AbstractBean {
     String post_title;
     String post_text;
 
-    SyncServiceContainer syncServiceContainer;
-
-    @Override
-    public void configure(SyncServiceContainer syncServiceContainer){
-        this.syncServiceContainer = syncServiceContainer;
-    }
 
     @Override
     public void transform() {

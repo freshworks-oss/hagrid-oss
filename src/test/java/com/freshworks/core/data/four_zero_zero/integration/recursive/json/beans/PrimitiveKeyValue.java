@@ -18,12 +18,7 @@ public class PrimitiveKeyValue extends AbstractBean {
 
     String key;
     String value;
-    SyncServiceContainer syncServiceContainer;
-
-    @Override
-    public void configure(SyncServiceContainer syncServiceContainer){
-        this.syncServiceContainer = syncServiceContainer;
-    }
+    
 
     @Override
     public void transform() {
