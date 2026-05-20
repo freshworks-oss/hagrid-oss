@@ -18,12 +18,7 @@ public class FbUser extends AbstractBean {
 
     String user_id;
     String user_name;
-    SyncServiceContainer syncServiceContainer;
-
-    @Override
-    public void configure(SyncServiceContainer syncServiceContainer){
-        this.syncServiceContainer = syncServiceContainer;
-    }
+    
 
     @Override
     public void transform() {
