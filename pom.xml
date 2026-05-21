@@ -10,7 +10,7 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>freshindex</artifactId>
-    <version>1.0.1-rc1-5</version>
+    <version>1.0.1</version>
     <name>FreshIndex</name>
     <description>FreshIndex- Dependency library for Hagrid framework</description>
     <url>https://github.com/freshworks-oss/hagrid-oss/tree/freshindex</url>
