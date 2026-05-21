@@ -1,67 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.freshworks</groupId>
-  <artifactId>Hagrid</artifactId>
-  <version>4.0.0</version>
+    <modelVersion>4.0.0</modelVersion>
 
-  <name>Hagrid</name>
-  <url>https://github.com/freshdesk/hagrid</url>
-  <description>High performance generic asset discovery framework</description>
+    <parent>
+        <groupId>com.freshworks</groupId>
+        <artifactId>internal-pom</artifactId>
+        <version>spring-4.0.0</version>
+    </parent>
 
-  <properties>
-    <start-class>com.freshworks.HagridApplication</start-class>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.release>21</maven.compiler.release>
-  </properties>
-  <parent>
     <groupId>com.freshworks</groupId>
-    <artifactId>internal-pom</artifactId>
-    <version>spring-4.0.0</version>
-  </parent>
+    <artifactId>Hagrid</artifactId>
+    <version>4.0.0</version>
+    <name>Hagrid</name>
+    <description>High performance generic asset discovery framework</description>
+    <url>https://github.com/freshdesk/hagrid</url>
 
-  <dependencies>
+    <licenses>
+        <license>
+            <name>Apache License Agreement</name>
+            <url>https://github.com/freshworks-oss/hagrid-oss/blob/main/LICENSE</url>
+        </license>
+    </licenses>
 
-    <dependency>
-      <groupId>com.freshworks</groupId>
-      <artifactId>freshindex</artifactId>
-      <version>1.0.1</version>
-    </dependency>
+    <developers>
+        <developer>
+            <id>0xvoila</id>
+            <name>Amit Aggarwal</name>
+            <email>amit.aggarwal@freshworks.com</email>
+            <organization>Freshworks Inc.</organization>
+        </developer>
+    </developers>
 
-  </dependencies>
+    <scm>
+        <connection>scm:git:git://github.com:freshworks-oss/hagrid-oss.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com:freshworks-oss/hagrid-oss.git</developerConnection>
+        <url>https://github.com/freshworks-oss/hagrid-oss.git</url>
+    </scm>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.13.0</version> 
-        <configuration>
-          <release>21</release>
-          <annotationProcessorPaths>
-            <path>
-              <groupId>org.projectlombok</groupId>
-              <artifactId>lombok</artifactId>
-              <version>1.18.34</version>
-            </path>
-          </annotationProcessorPaths>
-        </configuration>
-    </plugin>
-    </plugins>
-  </build>
-  <repositories>
-    <repository>
-      <id>nexus</id>
-      <url>https://nexuscentral.runwayci.com/repository/maven-releases/</url>
-    </repository>
-  </repositories>
+    <properties>
+        <start-class>com.freshworks.HagridApplication</start-class>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>21</maven.compiler.release>
+    </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>nexus</id>
-      <url>https://nexuscentral.runwayci.com/repository/maven-releases/</url>
-    </repository>
-  </distributionManagement>
+    <dependencies>
+        <dependency>
+            <groupId>com.freshworks</groupId>
+            <artifactId>freshindex</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>maven-central</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>21</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.38</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
