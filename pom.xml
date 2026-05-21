@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.freshworks</groupId>
         <artifactId>internal-pom</artifactId>
-        <version>spring-3.3.1</version>
+        <version>spring-4.0.0</version>
     </parent>
 
     <groupId>com.freshworks</groupId>
