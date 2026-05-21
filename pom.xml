@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.freshworks</groupId>
   <artifactId>Hagrid</artifactId>
-  <version>4.0.0-alpha</version>
+  <version>4.0.0</version>
 
   <name>Hagrid</name>
   <url>https://github.com/freshdesk/hagrid</url>
@@ -27,7 +27,7 @@
     <dependency>
       <groupId>com.freshworks</groupId>
       <artifactId>freshindex</artifactId>
-      <version>1.0.1-rc1-5</version>
+      <version>1.0.1</version>
     </dependency>
 
   </dependencies>
