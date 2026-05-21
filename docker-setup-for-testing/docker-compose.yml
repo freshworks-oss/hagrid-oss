@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus_data:/prometheus
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 9091:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=amit
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+
+  hagrid:
+    image: 0xvoila/hagrid-setup:4.0.0
+    container_name: hagrid
+    ports:
+      - 8080:8080
+    environment:
+      - numberOfUsersEachPage=1
+      - numberOfUsersPagination=1
+      - userWaitBetweenPaginationInMs=0
+      - numberOfPostsEachPage=2
+      - numberOfPostsPagination=5
+      - postWaitBetweenPaginationInMs=0
+      - numberOfCommunitiesEachPage=2
+      - numberOfCommunitiesPagination=12
+      - communityWaitBetweenPaginationInMs=0
+      - numberOfCommentsEachPage=10
+      - numberOfCommentsPagination=100
+      - commentWaitBetweenPaginationInMs=0
+    depends_on:
+      - django
+      - grafana
+      - prometheus
+
+  django:
+    image: 0xvoila/hagrid-third-party-setup:latest
+    container_name: hagrid-thirdparty-dango
+    command: python manage.py runserver 0.0.0.0:3000
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=django
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    depends_on:
+      db:
+        condition: service_healthy  # Forces Django to wait for the healthcheck
+
+  db:
+    image: postgres:15-alpine
+    container_name: hagrid-thirdparty-postgres
+    restart: always
+    volumes:
+      - hagrid-postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: django
+    
+    healthcheck:
+      # pg_isready is the built-in tool for checking Postgres status
+      test: ["CMD-SHELL", "pg_isready -U postgres -d django"]
+      interval: 5s   # How often to check
+      timeout: 5s    # How long to wait for a response
+      retries: 5     # Number of failures before marking as unhealthy
+      start_period: 10s # Wait before starting checks to allow initial boot
+
+
+volumes:
+  hagrid-postgres_data:
+  grafana_data:
+  prometheus_data:
+
+
+configs:
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+      scrape_configs:
+        - job_name: 'prometheus'
+          metrics_path: '/actuator/prometheus'
+          static_configs:
+            - targets: ['hagrid:8080']
