@@ -2,12 +2,10 @@ package com.freshworks.core.data.four_zero_zero.performance.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.traverser.AbstractStep;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 import com.freshworks.core.traverser.DagTraversalService;
@@ -19,67 +17,56 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.net.URISyntaxException;
+import java.util.Objects;
+import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 
 @Slf4j
-@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
+@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
-@Conditional(CustomRegExConditionComparator.class)
 public class FbCommunity extends HttpAbstractStep {
 
-    int numberOfCommunitiesEachPage = 1;
-    int numberOfCommunityPagination = 1;
-    long waitBetweenCommunityPaginationInMs = 0;
+    int numberOfCommunitiesEachPage = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfCommunitiesEachPage"), "5"));
+    int numberOfPagination  = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfCommunitiesPagination"), "5"));
+    long waitBetweenPaginationInMs = Long.parseLong(Objects.requireNonNullElse(System.getenv("communityWaitBetweenPaginationInMs"), "0"));
 
     int count = 0;
     AnalyticsService analyticsService;
-    InfraService infraService;
+    AnalyticsFactory analyticsFactory;
 
-    public FbCommunity() {
-
-    }
 
     @Override
-    public void configure(SyncServiceContainer syncServiceContainer) {
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+    public void configure(SyncServiceContainer syncServiceContainer){
         Namespace namespace = syncServiceContainer.getBean(Namespace.class);
-        this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        this.infraService = syncServiceContainer.getBean(InfraService.class);
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+
     }
 
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
-        if(baggageMap.containsKey("numberOfCommunitiesEachPage")){
-            numberOfCommunitiesEachPage = Integer.parseInt(baggageMap.get("numberOfCommunitiesEachPage"));
-            numberOfCommunityPagination = Integer.parseInt(baggageMap.get("numberOfCommunityPagination"));
-            waitBetweenCommunityPaginationInMs = Long.parseLong(baggageMap.get("waitBetweenCommunityPaginationInMs"));
-        }
+        analyticsService.infoEvent("METHOD_CALLED", "name", "setup");
     }
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "startSync");
-        analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
         try{
-
             JsonNode userData = parentJsonObject[0];
             String userId = userData.get("user_id").asText();
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
+            httpRequest.initGet("http://django:3000/user_communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             httpRequestResponse.setRequest(httpRequest);
 
             analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
@@ -91,29 +78,29 @@ public class FbCommunity extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-
     }
 
     @Override
     public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
+
 
     }
 
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
+            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
 
             JsonNode userData = parentJsonObject[0];
             String userId = userData.get("user_id").asText();
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
+            httpRequest.initGet("http://django:3000/user_communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;
-            Thread.sleep(waitBetweenCommunityPaginationInMs);
+//            Thread.sleep(waitBetweenPaginationInMs);
             return httpRequestResponse;
         }
         catch (Exception e){
@@ -126,7 +113,7 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -137,16 +124,17 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
         analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
+        DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
 
-        if(count < numberOfCommunityPagination){
+        if(count < numberOfPagination){
             return false;
         }
         else{
@@ -156,7 +144,7 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
         analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
@@ -165,7 +153,7 @@ public class FbCommunity extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("communities"));
+            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
             stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.performance.fb.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }
@@ -173,11 +161,10 @@ public class FbCommunity extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-
     }
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
     }
 }

@@ -2,12 +2,10 @@ package com.freshworks.core.data.four_zero_zero.performance.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.traverser.AbstractStep;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 import com.freshworks.core.traverser.DagTraversalService;
@@ -19,66 +17,63 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
+import java.util.Objects;
 import java.net.URISyntaxException;
+import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 
 @Slf4j
-@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
+@FreshHierarchy(parentClass = {FbUser.class, FbCommunity.class}, rateLimit = 800, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
-@Conditional(CustomRegExConditionComparator.class)
 public class FbPost extends HttpAbstractStep {
 
-    int numberOfPostsEachPage = 1;
-    int numberOfPostPagination = 1;
-    long waitBetweenPostPaginationInMs = 0;
+    int numberOfPostsEachPage = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfPostsEachPage"), "5"));
+    int numberOfPagination  = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfPostsPagination"), "5"));
+    long waitBetweenPaginationInMs = Long.parseLong(Objects.requireNonNullElse(System.getenv("postWaitBetweenPaginationInMs"), "0"));
 
     int count = 0;
     AnalyticsService analyticsService;
-    InfraService infraService;
 
-    public FbPost() {
-
-    }
 
     @Override
-    public void configure(SyncServiceContainer syncServiceContainer) {
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+    public void configure(SyncServiceContainer syncServiceContainer){
         Namespace namespace = syncServiceContainer.getBean(Namespace.class);
-        this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        this.infraService = syncServiceContainer.getBean(InfraService.class);
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
 
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
-        if(baggageMap.containsKey("numberOfPostsEachPage")){
-            numberOfPostsEachPage = Integer.parseInt(baggageMap.get("numberOfPostsEachPage"));
-            numberOfPostPagination = Integer.parseInt(baggageMap.get("numberOfPostPagination"));
-            waitBetweenPostPaginationInMs = Long.parseLong(baggageMap.get("waitBetweenPostPaginationInMs"));
-        }
+        analyticsService.infoEvent("METHOD_CALLED", "name", "setup");
     }
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "startSync");
-        analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbpost");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
         try{
 
-            JsonNode userData = parentJsonObject[0];
-            String userId = userData.get("user_id").asText();
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+
+            if(parentJsonObject[0].has("user_id")){
+                JsonNode userData = parentJsonObject[0];
+                String userId = userData.get("user_id").asText();
+                httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+            }
+            else{
+                JsonNode communityData = parentJsonObject[0];
+                String communityId = communityData.get("community_id").asText();
+                httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&community_id=" + communityId);
+            }
+
             httpRequestResponse.setRequest(httpRequest);
 
             analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
@@ -101,18 +96,26 @@ public class FbPost extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbpost");
-
-            JsonNode userData = parentJsonObject[0];
-            String userId = userData.get("user_id").asText();
+            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+
+            if(parentJsonObject[0].has("user_id")){
+                JsonNode userData = parentJsonObject[0];
+                String userId = userData.get("user_id").asText();
+                httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+            }
+            else{
+                JsonNode communityData = parentJsonObject[0];
+                String communityId = communityData.get("community_id").asText();
+                httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&community_id=" + communityId);
+            }
+
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;
-            Thread.sleep(waitBetweenPostPaginationInMs);
+            Thread.sleep(waitBetweenPaginationInMs);
             return httpRequestResponse;
         }
         catch (Exception e){
@@ -125,7 +128,7 @@ public class FbPost extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -136,16 +139,16 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
         analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
 
-        if(count < numberOfPostPagination){
+        if(count < numberOfPagination){
             return false;
         }
         else{
@@ -155,7 +158,7 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
         analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
@@ -164,7 +167,7 @@ public class FbPost extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("posts"));
+            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("posts"));
             stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.performance.fb.beans.FbPost.class);
             return stepDataBeanMapping;
         }
@@ -177,6 +180,6 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
     }
 }
