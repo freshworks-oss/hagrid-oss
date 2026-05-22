@@ -30,22 +30,12 @@ services:
       - 8080:8080
     environment:
       - SPRING_PROFILES_ACTIVE=four_zero_zero.performance.inmemory
-      - numberOfUsersEachPage=1
-      - numberOfUsersPagination=1
-      - userWaitBetweenPaginationInMs=0
-      - numberOfPostsEachPage=2
-      - numberOfPostsPagination=5
-      - postWaitBetweenPaginationInMs=0
-      - numberOfCommunitiesEachPage=2
-      - numberOfCommunitiesPagination=12
-      - communityWaitBetweenPaginationInMs=0
-      - numberOfCommentsEachPage=10
-      - numberOfCommentsPagination=100
-      - commentWaitBetweenPaginationInMs=0
+
     depends_on:
       - django
       - grafana
       - prometheus
+      - mongodb
 
   django:
     image: 0xvoila/hagrid-third-party-setup:latest
@@ -82,12 +72,39 @@ services:
       timeout: 5s    # How long to wait for a response
       retries: 5     # Number of failures before marking as unhealthy
       start_period: 10s # Wait before starting checks to allow initial boot
+  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_server
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password12345
+    volumes:
+      - mongo_data:/data/db
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongodb_gui
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password12345
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password12345@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: webuser
+      ME_CONFIG_BASICAUTH_PASSWORD: webpassword
+    depends_on:
+      - mongodb
 
 volumes:
   hagrid-postgres_data:
   grafana_data:
   prometheus_data:
+  mongo_data:
 
 
 configs:

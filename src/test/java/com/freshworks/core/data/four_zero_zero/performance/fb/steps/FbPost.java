@@ -29,9 +29,9 @@ import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 @Scope("prototype")
 public class FbPost extends HttpAbstractStep {
 
-    int numberOfPostsEachPage = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfPostsEachPage"), "5"));
-    int numberOfPagination  = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfPostsPagination"), "5"));
-    long waitBetweenPaginationInMs = Long.parseLong(Objects.requireNonNullElse(System.getenv("postWaitBetweenPaginationInMs"), "0"));
+    int numberOfPostsEachPage = 1;
+    int numberOfPostPagination = 1;
+    long waitBetweenPostPaginationInMs = 0;
 
     int count = 0;
     AnalyticsService analyticsService;
@@ -46,7 +46,11 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "setup");
+         if(baggageMap.containsKey("numberOfPostsEachPage")){
+            numberOfPostsEachPage = Integer.parseInt(baggageMap.get("numberOfPostsEachPage"));
+            numberOfPostPagination = Integer.parseInt(baggageMap.get("numberOfPostPagination"));
+            waitBetweenPostPaginationInMs = Long.parseLong(baggageMap.get("waitBetweenPostPaginationInMs"));
+        }
     }
 
     @Override
