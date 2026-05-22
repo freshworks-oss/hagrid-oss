@@ -30,7 +30,7 @@ services:
       - 8080:8080
     command: ["maven_fixes"]
     environment:
-      - SPRING_PROFILES_ACTIVE=four_zero_zero.performance.inmemory
+      - SPRING_PROFILES_ACTIVE=four_zero_zero.performance.persistent
     volumes:
       # CACHE MAVEN DEPENDENCIES HERE:
       - maven-repo:/root/.m2
