@@ -39,7 +39,7 @@ configuration:
       persistent:
         development:
           database:
-            host: "localhost"
+            host: "mongodb"
             port: "27017"
             username: "admin"
             password: "password12345"
@@ -47,8 +47,7 @@ configuration:
 
         staging:
           database:
-            connection_string: "mongodb+srv://freshservice-orchestrator-srv.mongodb.internal-us-east-1/?retryWrites=true&w=majority&readPreference=secondaryPreferred"
-            host: "10.197.215.216"
+            host: "mongodb"
             port: "27017"
             username: "admin"
             password: "password12345"
@@ -56,36 +55,12 @@ configuration:
 
         production:
           database:
-            host: "10.197.215.216"
+            host: "mongodb"
             port: "27017"
             username: "admin"
             password: "password12345"
             authDb: "admin"
 
-      redis:
-        development:
-          database:
-            host: "localhost"
-            port: "27017"
-            username: "admin"
-            password: "password12345"
-            authDb: "admin"
-
-        staging:
-          database:
-            host: "10.197.215.216"
-            port: "27017"
-            username: "admin"
-            password: "password12345"
-            authDb: "admin"
-
-        production:
-          database:
-            host: "10.197.215.216"
-            port: "27017"
-            username: "admin"
-            password: "password12345"
-            authDb: "admin"
 
       infra: "com.freshworks.core.shared.MongoDb.infra.MongoDbInfraService"
       queue_driver: "com.freshworks.core.infra.MongoDb.MongodbQueue"
