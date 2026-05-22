@@ -82,10 +82,10 @@ public class FbPost extends HttpAbstractStep {
             HttpRequest httpRequest = new HttpRequest();
 
             if(shouldFail){
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts-failed-endpoint?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+                httpRequest.initGet("http://django:3000/posts-failed-endpoint?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
             }
             else{
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+                httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
             }
 
             httpRequestResponse.setRequest(httpRequest);
@@ -117,7 +117,7 @@ public class FbPost extends HttpAbstractStep {
             String userId = userData.get("user_id").asText();
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
+            httpRequest.initGet("http://django:3000/posts?how_many=" + numberOfPostsEachPage + "&user_id=" + userId);
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;

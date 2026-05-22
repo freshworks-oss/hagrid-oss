@@ -76,10 +76,10 @@ public class FbUser extends HttpAbstractStep {
             HttpRequest httpRequest = new HttpRequest();
 
             if(shouldFail){
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing-endpoint-does-not-exists/user?how_many=" + numberOfUsersEachPage);
+                httpRequest.initGet("http://django:3000/end-point-that-does-not-exists/user?how_many=" + numberOfUsersEachPage);
             }
             else{
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/user?how_many=" + numberOfUsersEachPage);
+                httpRequest.initGet("http://django:3000/users?how_many=" + numberOfUsersEachPage);
             }
 
             httpRequestResponse.setRequest(httpRequest);
@@ -108,7 +108,7 @@ public class FbUser extends HttpAbstractStep {
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/user?has_next=true&how_many=" + numberOfUsersEachPage);
+            httpRequest.initGet("http://django:3000/users?has_next=true&how_many=" + numberOfUsersEachPage);
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;

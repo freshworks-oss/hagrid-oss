@@ -28,9 +28,9 @@ services:
     container_name: hagrid
     ports:
       - 8080:8080
-    command: ["maven_fixes"]
+    command: ["testing_setup"]
     environment:
-      - SPRING_PROFILES_ACTIVE=four_zero_zero.performance.persistent
+      - SPRING_PROFILES_ACTIVE=
     volumes:
       # CACHE MAVEN DEPENDENCIES HERE:
       - maven-repo:/root/.m2

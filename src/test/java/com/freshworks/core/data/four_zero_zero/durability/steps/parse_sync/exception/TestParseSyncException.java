@@ -71,7 +71,7 @@ public class TestParseSyncException extends HttpAbstractStep {
         try{
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/user?how_many=" + numberOfUsersEachPage);
+            httpRequest.initGet("http://django:3000/users?how_many=" + numberOfUsersEachPage);
             httpRequestResponse.setRequest(httpRequest);
             analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
             count = count + 1;
@@ -99,7 +99,7 @@ public class TestParseSyncException extends HttpAbstractStep {
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/user?has_next=true&how_many=" + numberOfUsersEachPage);
+            httpRequest.initGet("http://django:3000/users?has_next=true&how_many=" + numberOfUsersEachPage);
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;

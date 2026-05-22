@@ -87,10 +87,10 @@ public class FbComment extends HttpAbstractStep {
             HttpRequest httpRequest = new HttpRequest();
 
             if(shouldFail){
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts/comments-failed-endpoint?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
+                httpRequest.initGet("http://django:3000/posts/comments-failed-endpoint?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             }
             else{
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
+                httpRequest.initGet("http://django:3000/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             }
 
             httpRequestResponse.setRequest(httpRequest);
@@ -128,7 +128,7 @@ public class FbComment extends HttpAbstractStep {
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
+            httpRequest.initGet("http://django:3000/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             httpRequestResponse.setRequest(httpRequest);
             count = count + 1;
             Thread.sleep(waitBetweenCommentPaginationInMs);
