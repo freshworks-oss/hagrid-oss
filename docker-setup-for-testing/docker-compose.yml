@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
 
@@ -25,11 +24,12 @@ services:
 
 
   hagrid:
-    image: 0xvoila/hagrid-setup:4.0.0
+    image: 0xvoila/hagrid-test-setup:latest
     container_name: hagrid
     ports:
       - 8080:8080
     environment:
+      - SPRING_PROFILES_ACTIVE=four_zero_zero.performance.inmemory
       - numberOfUsersEachPage=1
       - numberOfUsersPagination=1
       - userWaitBetweenPaginationInMs=0
