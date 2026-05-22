@@ -83,10 +83,10 @@ public class FbCommunity extends HttpAbstractStep {
             HttpRequest httpRequest = new HttpRequest();
 
             if(shouldFail){
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/communities-failed-end-point?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
+                httpRequest.initGet("http://django:3000/user_communities-failed-end-point?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             }
             else {
-                httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
+                httpRequest.initGet("http://django:3000/user_communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             }
 
             httpRequestResponse.setRequest(httpRequest);
@@ -118,7 +118,7 @@ public class FbCommunity extends HttpAbstractStep {
             String userId = userData.get("user_id").asText();
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("https://l3rtckyana.execute-api.us-east-1.amazonaws.com/performance-testing/communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
+            httpRequest.initGet("http://django:3000/user_communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;
