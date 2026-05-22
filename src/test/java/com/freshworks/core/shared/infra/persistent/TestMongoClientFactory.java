@@ -48,11 +48,11 @@ public class TestMongoClientFactory {
     public void testSingleMongoClientIsCreatedForMultipleMongoService() throws Exception {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService.configure()
-                .getDatabaseHost("127.0.0.1")
+                .getDatabaseHost("mongodb")
                 .getDatabasePort(27017)
                 . getDatabaseAuthDb("admin")
                 .getDatabaseUserName("admin")
-                .getDatabasePassword("admin")
+                .getDatabasePassword("password12345")
                 .getInfraType("")
                 .build();
 
