@@ -47,14 +47,25 @@ public class TestPerformance {
     @Test
     public void testTenMillionPayloadWhenChildNodeHasMoreDataThanParent() throws Exception {
 
-        LocalDateTime localDataTime = LocalDateTime.now();
+LocalDateTime localDataTime = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm");
         String formattedDateTime = localDataTime.format(formatter);
         Random random = new Random();
         int number = random.nextInt();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-            .build();
+                .put("numberOfUsersEachPage", "1")
+                .put("numberOfUserPagination", "1")
+                .put("waitBetweenUserPaginationInMs", "0")
+                .put("numberOfPostsEachPage", "10")
+                .put("numberOfPostPagination", "10")
+                .put("waitBetweenPostPaginationInMs", "0")
+                .put("numberOfCommentsEachPage", "100")
+                .put("numberOfCommentPagination", "100")
+                .put("waitBetweenCommentPaginationInMs", "0")
+                .put("numberOfCommunitiesEachPage", "1")
+                .put("numberOfCommunityPagination", "1")
+                .put("waitBetweenCommunityPaginationInMs", "0").build();
         MDC.put("mdc_key", "mdc_value");
         SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x);
         syncService.startSync(syncServiceContainer);
@@ -76,7 +87,18 @@ public class TestPerformance {
         String formattedDateTime = localDataTime.format(formatter);
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .build();
+                .put("numberOfUsersEachPage", "100")
+                .put("numberOfUserPagination", "100")
+                .put("waitBetweenUserPaginationInMs", "0")
+                .put("numberOfPostsEachPage", "10")
+                .put("numberOfPostPagination", "10")
+                .put("waitBetweenPostPaginationInMs", "0")
+                .put("numberOfCommentsEachPage", "10")
+                .put("numberOfCommentPagination", "1")
+                .put("waitBetweenCommentPaginationInMs", "0")
+                .put("numberOfCommunitiesEachPage", "1")
+                .put("numberOfCommunityPagination", "1")
+                .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer("ten_million_performance_test" + "_" + formattedDateTime,  ParentStep.class, x);
         syncService.startSync(syncServiceContainer);

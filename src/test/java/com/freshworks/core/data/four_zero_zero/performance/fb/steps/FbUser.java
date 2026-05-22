@@ -28,9 +28,9 @@ import java.util.Objects;
 @Scope("prototype")
 public class FbUser extends HttpAbstractStep {
 
-    int numberOfUsersEachPage = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfUsersEachPage"), "1"));
-    int numberOfPagination  = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfUsersPagination"),"1"));
-    long waitBetweenPaginationInMs = Long.parseLong(Objects.requireNonNullElse(System.getenv("userWaitBetweenPaginationInMs"), "0"));
+    int numberOfUsersEachPage = 100;
+    int numberOfUserPagination = 1;
+    long waitBetweenUserPaginationInMs = 0;
 
     int count = 0;
     AnalyticsService analyticsService;
@@ -47,7 +47,11 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "setup");
+        if(baggageMap.containsKey("numberOfUsersEachPage")){
+            numberOfUsersEachPage = Integer.parseInt(baggageMap.get("numberOfUsersEachPage"));
+            numberOfUserPagination = Integer.parseInt(baggageMap.get("numberOfUserPagination"));
+            waitBetweenUserPaginationInMs = Long.parseLong(baggageMap.get("waitBetweenUserPaginationInMs"));
+        }
     }
 
     @Override

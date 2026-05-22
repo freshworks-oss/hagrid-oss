@@ -29,9 +29,9 @@ import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 @Scope("prototype")
 public class FbComment extends HttpAbstractStep {
 
-    int numberOfCommentsEachPage = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfCommentsEachPage"), "10"));
-    int numberOfPagination  = Integer.parseInt(Objects.requireNonNullElse(System.getenv("numberOfCommentsPagination"), "10"));
-    long waitBetweenPaginationInMs = Long.parseLong(Objects.requireNonNullElse(System.getenv("commentWaitBetweenPaginationInMs"), "0"));
+    int numberOfCommentsEachPage = 1;
+    int numberOfCommentPagination = 1;
+    long waitBetweenCommentPaginationInMs = 0;
 
     int count = 0;
     AnalyticsService analyticsService;
@@ -45,7 +45,13 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "setup");
+        
+        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
+        if(baggageMap.containsKey("numberOfCommentsEachPage")){
+            numberOfCommentsEachPage = Integer.parseInt(baggageMap.get("numberOfCommentsEachPage"));
+            numberOfCommentPagination = Integer.parseInt(baggageMap.get("numberOfCommentPagination"));
+            waitBetweenCommentPaginationInMs = Long.parseLong(baggageMap.get("waitBetweenCommentPaginationInMs"));
+        }
     }
 
     @Override
