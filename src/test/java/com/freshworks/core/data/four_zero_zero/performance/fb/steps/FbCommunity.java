@@ -17,17 +17,22 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.net.URISyntaxException;
 import java.util.Objects;
+
+import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
+@Conditional(CustomRegExConditionComparator.class)
 public class FbCommunity extends HttpAbstractStep {
 
 
