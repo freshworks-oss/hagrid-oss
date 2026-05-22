@@ -2,9 +2,14 @@ FROM maven:3.9.6-eclipse-temurin-21-alpine
 
 WORKDIR /app
 
+RUN apk add --no-cache git
+
+
 # Copy the build configuration configuration layout
-COPY hagrid/pom.xml .
-COPY hagrid/src ./src
+COPY performance_test.sh .
+
+
+RUN chmod +x performance_test.sh
 
 # Configure JVM flags optimized for container environments
-ENTRYPOINT ["sh", "-c", "mvn clean compile exec:java  -Dexec.mainClass=com.freshworks.Main -U"]
+ENTRYPOINT ["./performance_test.sh"]
