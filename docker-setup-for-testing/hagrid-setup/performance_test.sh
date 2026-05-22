@@ -38,4 +38,13 @@ echo "Checking out Hagrid version of the current branch"
 
 echo "building test cases for ${SPRING_PROFILES_ACTIVE} profile"
 
-mvn clean test -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}
+if [ -n "$SPRING_PROFILES_ACTIVE" ]; then 
+  echo "Running maven test cases with profile $SPRING_PROFILES_ACTIVE"
+  mvn clean test -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}
+else
+  echo "Running maven test cases without profile"
+  mvn clean test
+
+fi
+
+

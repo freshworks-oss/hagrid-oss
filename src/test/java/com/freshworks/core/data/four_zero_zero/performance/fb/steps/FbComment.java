@@ -17,16 +17,21 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import java.util.Objects;
 import java.net.URISyntaxException;
+
+import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbPost.class, rateLimit = 800, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
+@Conditional(CustomRegExConditionComparator.class)
 public class FbComment extends HttpAbstractStep {
 
     int numberOfCommentsEachPage = 1;

@@ -28,7 +28,7 @@ services:
     container_name: hagrid
     ports:
       - 8080:8080
-    command: ["testing_setup"]
+    command: ["main"]
     environment:
       - SPRING_PROFILES_ACTIVE=
     volumes:
