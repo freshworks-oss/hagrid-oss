@@ -119,7 +119,7 @@ public class FbPost extends HttpAbstractStep {
             httpRequestResponse.setRequest(httpRequest);
 
             count = count + 1;
-            Thread.sleep(waitBetweenPaginationInMs);
+            Thread.sleep(waitBetweenPostPaginationInMs);
             return httpRequestResponse;
         }
         catch (Exception e){
@@ -152,7 +152,7 @@ public class FbPost extends HttpAbstractStep {
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
 
-        if(count < numberOfPagination){
+        if(count < numberOfPostPagination){
             return false;
         }
         else{

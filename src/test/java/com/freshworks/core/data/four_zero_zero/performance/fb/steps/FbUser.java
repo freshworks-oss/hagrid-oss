@@ -132,7 +132,7 @@ public class FbUser extends HttpAbstractStep {
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
 
-        if(count < numberOfPagination){
+        if(count < numberOfUserPagination){
             return false;
         }
         else{

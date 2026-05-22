@@ -141,7 +141,7 @@ public class FbCommunity extends HttpAbstractStep {
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
 
-        if(count < numberOfPagination){
+        if(count < numberOfCommunityPagination){
             return false;
         }
         else{
