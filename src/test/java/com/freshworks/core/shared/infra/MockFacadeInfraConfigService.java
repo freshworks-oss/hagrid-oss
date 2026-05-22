@@ -43,7 +43,7 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         getDatabaseUserName.add("admin");
         getDatabasePassword.add("password12345");
         getDatabaseAuthDb.add("admin");
-        getDatabaseHost.add("localhost");
+        getDatabaseHost.add("mongodb");
         getAdditionalParams.add("dummy-additional-param=dummy-additional-value");
         getDatabasePort.add(27017);
         getInfraType.add("persistent");
