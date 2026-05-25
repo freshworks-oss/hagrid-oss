@@ -60,7 +60,7 @@ Another example, say you want to developer a connector to fetch data from `mysql
 
 Dag to fetch the `tables and Records` from `mysql` may look like this
 
-![mysql_dag.png](../custom_theme/assets/images/mysql_dag.png)
+![mysql_dag.png](custom_theme/assets/images/mysql_dag.png)
 
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism
