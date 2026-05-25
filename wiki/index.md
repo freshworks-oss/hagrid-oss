@@ -78,7 +78,7 @@ For now, lets continue with developing our `facebook connector`
 
 Before I take you through the development of our `facebook` connector, I would like to introduce you to the main concepts of Hagrid. 
 
-Once you understand these three concepts then you can develop any connector easily. 
+Once you understand these concepts then you can develop any connector easily. 
 I have divided the concepts of Hagrid in two categories 
 
 1. Connector Configuration 
@@ -116,7 +116,7 @@ Here are some rules that you should follow to let hagrid know the answer of the 
    4. Various methods that you can override are listed here [Step & Its Methods](pages/steps/step_methods.md)
    
 
-Watch this video for better understanding of steps
+Watch this screenshot of how steps organisation looks like
         
 
 
