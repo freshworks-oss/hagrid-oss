@@ -1,4 +1,5 @@
 <!-- Steps START -->
+
 <!-- Basics START -->
 
 ```java
@@ -6,37 +7,36 @@
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 100, duration = 10)
 @Component
 @Scope("prototype")
-public class FbUser extends HttpAbstractStep {
+public class FbStepUser extends HttpAbstractStep {
     
     // Override some methods here 
 }
 ```
 
-Above `FbUser` class (In Hagrid world, we call it `step`) will represent the `FbUser` DagNode. Take a note of annotation `FreshHiearchy` which tell the `level` of this node in the
-DAG that Hagrid will create internally. If the `step` is top level `node` in the `DAG` then assign it `ParentStep` as parent step . 
+Above `FbStepUser` class (In Hagrid world, we call it `step`) will represent the `FbStepUser` DagNode. 
 
-Now lets take a look at `FbPost` class
+Now lets take a look at `FbStepPost` class
 
 ```java
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 200, duration = 30, ignore = false)
 @Component
 @Scope("prototype")
-public class FbPost extends HttpAbstractStep {
+public class FbStepPost extends HttpAbstractStep {
 
     // Override some methods here
 }
 ```
 
-Above `FbPost` step will present the `FbPost` DagNode. Take a note of annotation `FreshHierarchy` which has `FbUser.class` as parent.
-By this annotation, `Hagrid` will internally know that it has to call `FbPost` for each `FbUser` or `FbPost` is the Child of `FbUser`.
+Above `FbStepPost` step will present the `FbPost` DagNode. Take a note of annotation `FreshHierarchy` which has `FbStepUser.class` as parent.
+By this annotation, `Hagrid` will internally know that it has to call `FbStepPost` for each `FbStepUser` or `FbStepPost` is the Child of `FbStepUser`.
 
 ```java
 @Slf4j
 @FreshHierarchy(parentClass = FbPost.class, rateLimit = 800, duration = 120, ignore = false)
 @Component
 @Scope("prototype")
-public class FbComment extends HttpAbstractStep {
+public class FbStepComment extends HttpAbstractStep {
 
     // Override some methods here
 }
@@ -47,13 +47,33 @@ public class FbComment extends HttpAbstractStep {
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
-public class FbCommunity extends HttpAbstractStep {
+public class FbStepCommunity extends HttpAbstractStep {
 
     // Override some methods here
 }
 ```
 
-Internally, Hagrid makes sure that it fetches `fbPost` for each `fbuser` and `fbComment` for each `fbPost`.
+Internally, Hagrid makes sure that it fetches `FbStepPost` for each `FbStepUser` and `FbStepComment` for each `FbStepPost`.
+
+
+# Understanding @FreshHiearchy Annotation
+
+`FreshHierarchy Annotation annotated on the top of each step and is mandatory. This annotation defines two main important characterstrics of a step
+1. Defines Order of the steps
+2. Defines rate limit of each steps
+
+
+## Order of the steps
+Each step must be annotated with `@FreshHiearchy` Annotation. This annotation has attribute named `parentClass` which should be point to some other `step` class of your connector. 
+
+`parentClass` attribute of the `@FreshHiearchy` annotation helps Hagrid to internally create a DAG which it uses to execute it step in the right order
+
+For example - if we take an example of our `facebook connector` then `FbStepPost` will have `FbStepUser` and `FbStepComment` step will have `FbStepPost` step. Thus Hagrid knows that it should call `FbStepUser` and for each `user` fetched, it should call `FbStepPost` and for each post fetched for fetched user, it should call `FbStepComment` 
+
+## Rate Limit of the step
+@FreshHierarchy annotation provides another important attribute `rateLimit` and `duration` in seconds. `rateLimit` defines how many API calls or commands should be executed in how much `duration`. Here `duration` refers in seconds. 
+
+
 <!-- Basics END -->
 
 
