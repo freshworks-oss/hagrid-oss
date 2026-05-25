@@ -116,8 +116,21 @@ Here are some rules that you should follow to let hagrid know the answer of the 
    4. Various methods that you can override are listed here [Step & Its Methods](pages/steps/step_methods.md)
    
 
-Watch this screenshot of how steps organisation looks like
+Watch series of screenshots which helps you visualize how steps are organised 
+
+
+![Step Structure](assets/images/step_structure_4.0.0.png)
+
+![Step methods Overridden](assets/images/step_methods_overridden.png)
         
+![Steps methods Overridden 2](assets/images/steps_methods_overridden_1.png)
+
+![Steps Methods Overridden 3](assets/images/steps_methods_overridden_2.png)
+
+![Steps Methods Overridden 4](assets/images/steps_methods_overridden_3.png)
+
+![Steps Methods Overridden 5](assets/images/steps_methods_overridden_5.png)
+
 
 
 #### Beans 
@@ -133,7 +146,11 @@ Watch this screenshot of how steps organisation looks like
    5. Beans are intermediate object, not consumeable by developers to send to their business applications.
 
 
-For better understanding please take a look at this [visual diagram](pages/beans/beans.md) 
+For better understanding please take a look at this [visual diagram](pages/beans/beans.md)  
+
+![Bean View of FbUser](assets/images/bean_view_of_fb_user.png)
+
+![Bean View of FbPost](assets/images/bean_view_of_fbPost.png)
 
 
 #### Assets 
@@ -148,6 +165,9 @@ Think of asset classes like Bean classes except these major differences
 
 For better understanding please take a look at this [visual diagram](pages/assets/assets.md)
 
+Watch below series of screenshots to understand how assets are organised in code
+
+![Asset view of FbUser](assets/images/assets_view_of_FbUser.png)
 
 Once you have configured steps, beans and assets then the configuration part of the connector is completed. 
  
