@@ -1469,9 +1469,9 @@
 <ol>
 <li>Connector to fetch <code>products from AWS ecommerce website</code></li>
 <li>Connector to fetch <code>Users, usages , ACL</code> from SSO services like <code>Okta</code></li>
-<li>Connectors to fetch <code>Files and ACLS</code> from file services like <code>sharepoint</code></li>
-<li>Connectors to fetch <code>schema and data</code> from db services like <code>mysql</code></li>
-<li>Connectors to crawl internet - yes this is also possible. </li>
+<li>Connector to fetch <code>Files and ACLS</code> from file services like <code>sharepoint</code></li>
+<li>Connector to fetch <code>schema and data</code> from db services like <code>mysql</code></li>
+<li>Connector to crawl internet - yes this is also possible. </li>
 </ol>
 <p>For this documentation, lets deep dive into our dummy <code>facebook connector</code> , which is going to a <code>HTTP Based connector</code> ( because I have set up some dummy APIs on EC2 for this example)</p>
 <h3 id="think-dag">Think DAG</h3>
@@ -1488,7 +1488,7 @@ Developers can identify this information easily from the documentation of the we
 <p>Another example, say you want to developer a connector to fetch data from <code>mysql</code> then in this case <code>DAG</code> may look like this </p>
 <p><strong>Mysql Connector</strong></p>
 <p>Dag to fetch the <code>tables and Records</code> from <code>mysql</code> may look like this</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../custom_theme/assets/images/mysql_dag.png" data-desc-position="bottom"><img alt="mysql_dag.png" src="../custom_theme/assets/images/mysql_dag.png"></a></p>
+<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="custom_theme/assets/images/mysql_dag.png" data-desc-position="bottom"><img alt="mysql_dag.png" src="custom_theme/assets/images/mysql_dag.png"></a></p>
 <p>As per above <code>DAG</code>, we want to develop a connector which should follow this traversing mechanism</p>
 <ol>
 <li>Connector should first fetches <code>databases</code> from <code>mysql</code></li>
