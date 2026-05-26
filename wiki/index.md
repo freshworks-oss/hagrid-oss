@@ -32,9 +32,9 @@ For instance, you can use `Hagrid` to develop
 
 1. Connector to fetch `products from AWS ecommerce website`
 2. Connector to fetch `Users, usages , ACL` from SSO services like `Okta`
-3. Connectors to fetch `Files and ACLS` from file services like `sharepoint`
-4. Connectors to fetch `schema and data` from db services like `mysql`
-5. Connectors to crawl internet - yes this is also possible. 
+3. Connector to fetch `Files and ACLS` from file services like `sharepoint`
+4. Connector to fetch `schema and data` from db services like `mysql`
+5. Connector to crawl internet - yes this is also possible. 
    
 
 For this documentation, lets deep dive into our dummy `facebook connector` , which is going to a `HTTP Based connector` ( because I have set up some dummy APIs on EC2 for this example)
