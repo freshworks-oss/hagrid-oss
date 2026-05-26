@@ -28,7 +28,6 @@ public class TestLeftJoinService {
     
     @Autowired
     LeftJoinService leftJoinService;
-
     String releaseVersion;
 
     @BeforeEach
@@ -65,40 +64,123 @@ public class TestLeftJoinService {
 
     }
 
-    // @Test
-    // public void testCompareParent() throws Exception{
+    @Test
+    public void testCompareParentWhenThereIsCommonParent() throws Exception{
         
-    //     ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    //     FbApplicationBean fbApplicationBean = new FbApplicationBean();
-    //     fbApplicationBean.setApplicationId("app_id_994433");
-    //     fbApplicationBean.setApplicationName("slack");
+        FbApplicationBean fbApplicationBean = new FbApplicationBean();
+        fbApplicationBean.setApplicationId("app_id_994433");
+        fbApplicationBean.setApplicationName("slack");
+        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
 
-    //     FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-    //     fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-    //     fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
+        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
+        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
 
+        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
 
-    //     FbUserBean fbUserBean = new FbUserBean();
-    //     fbUserBean.setLastName("aggarwal");
-    //     fbUserBean.setFirstName("amit");
-    //     fbUserBean.setId("user_id_123456");
-    //     fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
+        FbUserBean fbUserBean = new FbUserBean();
+        fbUserBean.setLastName("aggarwal");
+        fbUserBean.setFirstName("amit");
+        fbUserBean.setId("user_id_123456");
+        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
+        fbUserBean.setClazz(fbUserBean.getClass().getName());
 
-    //     FbUsageBean fbUsageBean = new FbUsageBean();
-    //     fbUsageBean.setCreatedAt("02-06-1989");
-    //     fbUsageBean.setUserId("user_id_654321");
-    //     fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        FbUsageBean fbUsageBean = new FbUsageBean();
+        fbUsageBean.setCreatedAt("02-06-1989");
+        fbUsageBean.setUserId("user_id_654321");
+        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
 
-    //     ArrayList<AbstractBean> list = new ArrayList<>();
-    //     list.add(0, fbUserBean);
-    //     HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
+        ArrayList<AbstractBean> list = new ArrayList<>();
+        list.add(0, fbUserBean);
+        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
         
-    //     list.add(0, fbUsageBean);
-    //     HashMap<String, AbstractBean> unwrappedRightClassMap = leftJoinService.unwrappedBeanToClassMap(list);
+        list.add(0, fbUsageBean);
+        HashMap<String, AbstractBean> unwrappedRightClassMap = leftJoinService.unwrappedBeanToClassMap(list);
 
-    //     Boolean isEqual = leftJoinService.compareParent(unwrappedLeftClassMap, unwrappedRightClassMap);
-    //     assertThat(isEqual, Matchers.is(true));
+        Boolean isEqual = leftJoinService.compareParent(unwrappedLeftClassMap, unwrappedRightClassMap);
+        assertThat(isEqual, Matchers.is(true));
+    }
 
-    // }
+    @Test
+    public void testCompareAttributesWhenThereIsCommonParentAndValuesAreMatching() throws Exception{
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
+
+        FbApplicationBean fbApplicationBean = new FbApplicationBean();
+        fbApplicationBean.setApplicationId("app_id_994433");
+        fbApplicationBean.setApplicationName("slack");
+        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
+
+        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
+        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
+        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+
+        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
+
+        FbUserBean fbUserBean = new FbUserBean();
+        fbUserBean.setLastName("aggarwal");
+        fbUserBean.setFirstName("amit");
+        fbUserBean.setId("user_id_123456");
+        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
+        fbUserBean.setClazz(fbUserBean.getClass().getName());
+
+        FbUsageBean fbUsageBean = new FbUsageBean();
+        fbUsageBean.setCreatedAt("02-06-1989");
+        fbUsageBean.setUserId("user_id_123456");
+        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+
+        ArrayList<AbstractBean> list = new ArrayList<>();
+        list.add(0, fbUserBean);
+        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
+
+        Boolean isEqual = leftJoinService.compareAttributes(unwrappedLeftClassMap, fbUsageBean, freshJoin);
+        assertThat(isEqual, Matchers.is(true));
+
+    }
+
+    @Test
+    public void testCompareAttributesWhenThereIsCommonParentAndValuesAreNotMatching() throws Exception{
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
+
+        FbApplicationBean fbApplicationBean = new FbApplicationBean();
+        fbApplicationBean.setApplicationId("app_id_994433");
+        fbApplicationBean.setApplicationName("slack");
+        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
+
+        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
+        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
+        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+
+        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
+
+        FbUserBean fbUserBean = new FbUserBean();
+        fbUserBean.setLastName("aggarwal");
+        fbUserBean.setFirstName("amit");
+        fbUserBean.setId("user_id_123456");
+        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
+        fbUserBean.setClazz(fbUserBean.getClass().getName());
+
+        FbUsageBean fbUsageBean = new FbUsageBean();
+        fbUsageBean.setCreatedAt("02-06-1989");
+        fbUsageBean.setUserId("user_id_654321");
+        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+
+        ArrayList<AbstractBean> list = new ArrayList<>();
+        list.add(0, fbUserBean);
+        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
+
+        Boolean isEqual = leftJoinService.compareAttributes(unwrappedLeftClassMap, fbUsageBean, freshJoin);
+        assertThat(isEqual, Matchers.is(false));
+
+    }
 }
