@@ -5,7 +5,6 @@ import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.AbstractBean;
 import com.google.common.base.Optional;
-import jakarta.persistence.Column;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.stereotype.Component;
 
