@@ -58,12 +58,8 @@ nav:
 
 
   - Versions:
+      - 4.1.0: versions/4.1.0.md
       - 4.0.0: versions/4.0.0.md
-      - 3.7.0: versions/3.7.0.md
-      - 3.6.0: versions/3.6.0.md
-      - 3.5.0: versions/3.5.0.md
-      - 3.4.0: versions/3.4.0.md
-      - 3.3.0: versions/3.3.0.md
 
   - Services:
     - Combined View: services/high_level.md
