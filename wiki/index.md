@@ -3,6 +3,9 @@
 
 # Welcome
 
+## Reach out to the community via Google Groups. 
+If you have any question, need clarification or any feature idea, please mail at **user-hagrid@googlegroups.com** with your topic and get answers, ideas and suggestions from community members
+
 ## Introduction
 
 Hagrid is a connector development framework written in `JAVA` and is available as `SDK` which can be installed via 
