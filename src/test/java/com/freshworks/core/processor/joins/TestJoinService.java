@@ -38,7 +38,7 @@ import com.google.common.hash.Funnels;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
-public class TestLeftJoinService {
+public class TestJoinService {
     
     @Autowired
     LeftJoinService leftJoinService;
