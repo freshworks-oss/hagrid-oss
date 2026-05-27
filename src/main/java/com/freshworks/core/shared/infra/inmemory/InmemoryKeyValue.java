@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -54,7 +55,7 @@ public class InmemoryKeyValue implements InfraDbKeyValue {
             this.concurrentHashMap.put(key, this.concurrentHashMap.get(key));
         }
         else {
-            List<String> newList = List.of(value);
+            List<String> newList = new ArrayList<>(List.of(value));
             this.concurrentHashMap.put(key, newList);
         }
     }

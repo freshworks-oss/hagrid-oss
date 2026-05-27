@@ -141,7 +141,7 @@ public abstract class AbstractJoinService {
 
                 listOfAllAbstractBeans = abstractKeyValue.getList(freshJoin.uniqueJoinName() + "/" +fieldValue + "_left");
                 log.debug("Size of left lookup class found in database is {}", listOfAllAbstractBeans.size());
-                //           TODO: Here unwrap each of the abstract beans, and perform the lookup
+                //TODO: Here unwrap each of the abstract beans, and perform the lookup
                 for (String s: listOfAllAbstractBeans) {
                     AbstractBean leftAbstractBean = objectMapper.readValue(s, AbstractBean.class);
                     Boolean isLookupFound = compare(leftAbstractBean, abstractBean, freshJoin);
