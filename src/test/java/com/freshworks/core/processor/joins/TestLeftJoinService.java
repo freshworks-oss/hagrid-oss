@@ -327,7 +327,77 @@ public class TestLeftJoinService {
         assertThat(beanMap1.size(), Matchers.is(4));
     }
 
-        @Test
+    @Test
+    public void testLookupStagingAreaWithSingleLeftBeanAndRightBeanWithNullKeyInLeftBean() throws Exception{
+
+        // Setting up data 
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
+
+        FbApplicationBean fbApplicationBean = new FbApplicationBean();
+        fbApplicationBean.setApplicationId("app_id_994433");
+        fbApplicationBean.setApplicationName("slack");
+        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
+
+        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
+        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
+        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+
+        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
+
+        FbUserBean fbUserBean = new FbUserBean();
+        fbUserBean.setLastName("aggarwal");
+        fbUserBean.setFirstName("amit");
+        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
+        fbUserBean.setClazz(fbUserBean.getClass().getName());
+
+        FbUsageBean fbUsageBean = new FbUsageBean();
+        fbUsageBean.setCreatedAt("02-06-1989");
+        fbUsageBean.setUserId("user_id_123456");
+        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+
+
+        // Setting up services 
+        BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
+
+        leftJoinService.configure(bloomFilter);
+    
+        InmemoryService inMemoryService = new InmemoryService();   
+        
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(mockFacadeInfraConfigService, InfraConfigService.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+
+        inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
+        InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
+
+        // Simulate that left bean has arrived already
+        // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
+
+        List<HashMap<String, AbstractBean>> joinBeanData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserBean, freshJoin);
+
+        // String s = objectMapper.writeValueAsString(joinBeanData);
+        // System.out.print(s);
+
+        assertThat(joinBeanData.size(), Matchers.is(1));
+        HashMap<String, AbstractBean> beanMap = joinBeanData.get(0);
+        assertThat(beanMap.size(), Matchers.is(3));
+
+        List<HashMap<String, AbstractBean>> joinBeanData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageBean, freshJoin);
+
+        assertThat(joinBeanData1.size(), Matchers.is(0));
+    }
+
+    @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBean() throws Exception{
 
         // Setting up data 
