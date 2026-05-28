@@ -76,7 +76,7 @@ nav:
 #      - Concepts: internals/high_level.md
 #      - Meetings: internals/meetings.md
 
-#  - DSR List: dsr/dsr.md
+  - DSR List: dsr/main.md
 
 #  - Glossary:
 #    - glossary/glossary.md

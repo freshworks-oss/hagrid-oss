@@ -9,8 +9,10 @@
 `DSR` MUST be reviewed, approved by other team members so that it can be taken for `implementation`. 
 
 `devs` can do feature request or report a bug on `hagrid` github repo. Once feature request or bug is `prioritised` then it's 
-`DSR` should be created and approved. Once done, it is good for implementation. All these process should go through `issues` templates
-present in `hagrid` github repo. 
+`DSR` should be created and approved. Once done, it is good for implementation. All these process should go through `issues` templates present in `hagrid` github repo. 
 
 
 ## List of Approved DSR
+
+
+
