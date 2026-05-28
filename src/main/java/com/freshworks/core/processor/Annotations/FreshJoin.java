@@ -3,25 +3,21 @@ package com.freshworks.core.processor.Annotations;
 
 import java.lang.annotation.*;
 
+import com.freshworks.core.processor.AbstractAsset;
+
 @Documented
 @Target(ElementType.TYPE)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FreshJoin {
 
-    Class<?> rightClass();
-
+    Class<? extends AbstractAsset> rightClass();
+    String rightClassFieldName();
+    Class<? extends AbstractAsset> leftClass();
+    String leftClassFieldName();
     String uniqueJoinName();
-
     JOIN_TYPE join_type();
-    OnField [] onFieldList();
-
-    @interface OnField{
-        String rightClassFieldName();
-        Class<?> leftClass();
-        String leftClassFieldName();
-    }
-
+    
     enum JOIN_TYPE{
         INNER_JOIN,
         LEFT_JOIN,
