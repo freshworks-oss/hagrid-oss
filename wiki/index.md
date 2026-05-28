@@ -4,7 +4,11 @@
 # Welcome
 
 ## Reach out to the community via Google Groups. 
-If you have any question, need clarification or any feature idea, please mail at **user-hagrid@googlegroups.com** with your topic and get answers, ideas and suggestions from community members
+If you have any question, need clarification or any feature idea, please mail at 
+
+1. `user-hagrid@googlegroups.com` with your topic and get answers, ideas and suggestions from community members
+2. Or just Subscribe to this group by sending an email at `user-hagrid+subscribe@googlegroups.com` for receiving any future communication.
+3. Or to unsubscribe to this group by sending an email at `user-hagrid+unsubscribe@googlegroups.com`
 
 ## Introduction
 
