@@ -59,7 +59,6 @@ public class ProcessorTask implements Callable<Void> {
 
     JsonIndexService jsonIndexService;
 
-
     InfraService infraService;
 
     ImmutableListMultimap<String, String> assetBeanDependencyMap;
@@ -92,14 +91,18 @@ public class ProcessorTask implements Callable<Void> {
 
     List<AbstractAsset> assetsReadyToBePublishedList = new ArrayList<>();
 
-
     ProcessorService.ProcessTaskTracker processTaskTracker;
 
     public ProcessorTask() {
     }
 
-
-    public void configure(String parentPath, List<String> s, SyncServiceContainer syncServiceContainer, AnalyticsService analyticsService, ImmutableListMultimap<String, String> assetBeanDependencyMap, ProcessorConfigService processorConfigService, BloomFilter<String> bloomFilter, InfraService infraService, JsonIndexService jsonIndexService, AbstractJoinService noopJoinService, AbstractJoinService leftJoinService, AbstractJoinService innerJoinService, SyncStatusService syncStatusService, ObjectMapper freshIndexObjectMapper, Phaser phaser, ProcessorService.ProcessTaskTracker processTaskTracker){
+    public void configure(String parentPath, List<String> s, SyncServiceContainer syncServiceContainer,
+            AnalyticsService analyticsService, ImmutableListMultimap<String, String> assetBeanDependencyMap,
+            ProcessorConfigService processorConfigService, BloomFilter<String> bloomFilter, InfraService infraService,
+            JsonIndexService jsonIndexService, AbstractJoinService noopJoinService, AbstractJoinService leftJoinService,
+            AbstractJoinService innerJoinService, SyncStatusService syncStatusService,
+            ObjectMapper freshIndexObjectMapper, Phaser phaser,
+            ProcessorService.ProcessTaskTracker processTaskTracker) {
 
         uuid = parentPath + "/" + UUID.randomUUID();
 
@@ -125,55 +128,57 @@ public class ProcessorTask implements Callable<Void> {
         mainThreadMdcCopy = MDC.getCopyOfContextMap();
     }
 
-
     @Override
     public Void call() throws Exception {
 
         try {
-            analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "_message", "ProcessorServiceTask started", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", "ProcessorServiceTask started",
+                    "uuid", uuid, "namespace", namespace.getNamespace());
             processTaskTracker.incrementTotalProcessTask();
             MDC.setContextMap(mainThreadMdcCopy);
-//            serviceTree.register(uuid);
-            for(String item : itemList){
+            // serviceTree.register(uuid);
+            for (String item : itemList) {
 
-                if(Boolean.FALSE.equals(Thread.interrupted())){
+                if (Boolean.FALSE.equals(Thread.interrupted())) {
                     processItem(item);
-                }
-                else{
-                    // If thread is interrupted or asked to terminate then skip the list and publish whatever assets are generated
+                } else {
+                    // If thread is interrupted or asked to terminate then skip the list and publish
+                    // whatever assets are generated
                     break;
                 }
             }
             // Publish abstract assets of all items received by this process task
             publishAbstractAsset();
 
-
-            if(Thread.interrupted()){
+            if (Thread.interrupted()) {
 
                 throw new InterruptedException("leaving process without completing as thread is interrupted");
             }
 
-            else{
+            else {
                 processTaskTracker.incrementTotalSuccessfulTask();
-                analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "_message", "returning because processor task is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message",
+                        "returning because processor task is completed", "uuid", uuid, "namespace",
+                        namespace.getNamespace());
             }
 
         } catch (Exception e) {
 
             processTaskTracker.incrementTotalFailedTask();
-            analyticsService.errorEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.errorEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", e.getMessage(), "stacktrace",
+                    Throwables.getStackTraceAsString(e), "uuid", uuid, "namespace", namespace.getNamespace());
         } finally {
 
             MDC.clear();
 
-            // Clearing the thread interrupt flag if it is set so that when executor service lend this thread to some other task then it should have this flag cleared.
+            // Clearing the thread interrupt flag if it is set so that when executor service
+            // lend this thread to some other task then it should have this flag cleared.
             Thread.interrupted();
-            
+
             phaser.arriveAndDeregister();
         }
         return null;
     }
-
 
     protected void processItem(String item) throws Exception {
 
@@ -182,13 +187,13 @@ public class ProcessorTask implements Callable<Void> {
 
         Set<String> assetBeanDependencyKeySet = assetBeanDependencyMap.keySet();
 
-
-        for(String  asset: assetBeanDependencyKeySet) {
+        for (String asset : assetBeanDependencyKeySet) {
             Class<?> assetClass = ProcessorUtility.getClassByClassName(asset);
 
-            // Using this check to ignore the Assets which I do not want to continue in debugging mode
+            // Using this check to ignore the Assets which I do not want to continue in
+            // debugging mode
             FreshAsset freshAsset = assetClass.getAnnotation(FreshAsset.class);
-            if(freshAsset != null && freshAsset.ignore()){
+            if (freshAsset != null && freshAsset.ignore()) {
                 continue;
             }
 
@@ -196,22 +201,20 @@ public class ProcessorTask implements Callable<Void> {
             List<String> assetBeanDependencyList = getAssetBeanDependencyList(asset, assetBeanDependencyMap);
             checkArgument(assetBeanDependencyList.size() > 0, "A assets must be dependent on atleast one bean");
 
+            FreshJoin freshJoin = assetClass.getAnnotation(FreshJoin.class);
 
-            FreshJoin[] freshJoinList = assetClass.getAnnotationsByType(FreshJoin.class);
-
-            // NOOP bean is a bean which is not a part of lookup, neither listed in right class nor in left class
+            // NOOP bean is a bean which is not a part of lookup, neither listed in right
+            // class nor in left class
             Boolean isNoopBean = false;
-            for(FreshJoin freshJoin: freshJoinList){
-                if(ProcessorUtility.getLookupClassName(abstractBean, freshJoin) != null){
-                    isNoopBean = false;
-                    break;
-                }
-                else{
-                    isNoopBean = true;
-                }
+            if (freshJoin == null || ProcessorUtility.getLookupClassName(abstractBean, freshJoin) != null) {
+                isNoopBean = false;
             }
 
-            if(freshJoinList.length == 0 || Boolean.TRUE.equals(isNoopBean)){
+            else {
+                isNoopBean = true;
+            }
+
+            if (Boolean.TRUE.equals(isNoopBean)) {
                 AbstractJoinService abstractJoinService = this.noopJoinService;
                 abstractAssetClassObject = abstractJoinService.getAsset(asset, abstractBean, assetBeanDependencyList);
                 if (abstractAssetClassObject != null) {
@@ -222,140 +225,157 @@ public class ProcessorTask implements Callable<Void> {
                     String beanClassName = abstractBean.getClass().getName();
                     String assetName = abstractAssetClassObject.getClass().getName();
 
-                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", abstractAssetClassObject.getClass().getName(), "join", "noop");
+                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset",
+                            abstractAssetClassObject.getClass().getName(), "join", "noop");
 
-                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", abstractAssetClassObject.getClass().getName(), "method", "filter");
+                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset",
+                            abstractAssetClassObject.getClass().getName(), "method", "filter");
                     Boolean shouldFilter = shouldFilterAsset(abstractAssetClassObject);
-                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", abstractAssetClassObject.getClass().getName(), "method", "filter");
-                    if(Boolean.TRUE.equals(shouldFilter)){
+                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset",
+                            abstractAssetClassObject.getClass().getName(), "method", "filter");
+                    if (Boolean.TRUE.equals(shouldFilter)) {
 
-
-                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", abstractAssetClassObject.getClass().getName(), "method", "transform", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset",
+                                abstractAssetClassObject.getClass().getName(), "method", "transform", "uuid", uuid,
+                                "namespace", namespace.getNamespace());
                         abstractAssetClassObject.transform();
-                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", abstractAssetClassObject.getClass().getName(), "method", "transform", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset",
+                                abstractAssetClassObject.getClass().getName(), "method", "transform", "uuid", uuid,
+                                "namespace", namespace.getNamespace());
 
-                        if(abstractAssetClassObject.publishAsBean() == null){
+                        if (abstractAssetClassObject.publishAsBean() == null) {
                             assetsReadyToBePublished(abstractAssetClassObject);
-                        }
-                        else{
-                            AbstractBean newlyConvertedBean = objectMapper.convertValue(abstractAssetClassObject, abstractAssetClassObject.publishAsBean());
+                        } else {
+                            AbstractBean newlyConvertedBean = objectMapper.convertValue(abstractAssetClassObject,
+                                    abstractAssetClassObject.publishAsBean());
                             infraService.getProcessorQueue().add(objectMapper.writeValueAsString(newlyConvertedBean));
                         }
                     }
                 }
-            }
-            else{
-                for(FreshJoin freshJoin: freshJoinList){
-                    HashSet<String> listOfLeftClassNameInFreshJoin = ProcessorUtility.getFreshJoinLeftClassNameList(freshJoin);
-                    if(listOfLeftClassNameInFreshJoin.contains(abstractBean.getClass().getName()) || freshJoin.rightClass().getName().contains(abstractBean.getClass().getName())){
-                        AbstractJoinService abstractJoinService = null;
-                        if(freshJoin.join_type() == FreshJoin.JOIN_TYPE.INNER_JOIN){
-                            abstractJoinService = innerJoinService;
-                        }
-                        else if ( freshJoin.join_type() == FreshJoin.JOIN_TYPE.LEFT_JOIN){
-                            abstractJoinService = leftJoinService;
-                        }
-                        else{
-                            throw new RuntimeException("Right join is not supported");
-                        }
+            } else {
+                HashSet<String> listOfLeftClassNameInFreshJoin = ProcessorUtility
+                        .getFreshJoinLeftClassNameList(freshJoin);
+                if (listOfLeftClassNameInFreshJoin.contains(abstractBean.getClass().getName())
+                        || freshJoin.rightClass().getName().contains(abstractBean.getClass().getName())) {
+                    AbstractJoinService abstractJoinService = null;
+                    if (freshJoin.join_type() == FreshJoin.JOIN_TYPE.INNER_JOIN) {
+                        abstractJoinService = innerJoinService;
+                    } else if (freshJoin.join_type() == FreshJoin.JOIN_TYPE.LEFT_JOIN) {
+                        abstractJoinService = leftJoinService;
+                    } else {
+                        throw new RuntimeException("Right join is not supported");
+                    }
 
-                        List<Optional<AbstractAsset>> optionalList = abstractJoinService.getAssetWithFreshJoin(infraService.getKeyValue(), asset, abstractBean, assetBeanDependencyList, freshJoin);
-                        String beanClassName = abstractBean.getClass().getName();
-                        String freshJoinClassName = freshJoin.getClass().getName();
+                    List<Optional<AbstractAsset>> optionalList = abstractJoinService.getAssetWithFreshJoin(
+                            infraService.getKeyValue(), asset, abstractBean, assetBeanDependencyList, freshJoin);
+                    String beanClassName = abstractBean.getClass().getName();
+                    String freshJoinClassName = freshJoin.getClass().getName();
 
-                        for(int i=0; i<optionalList.size(); i++){
-                            if (optionalList.get(i).isPresent()) {
-                                abstractAssetClassObject = (AbstractAsset) optionalList.get(i).get();
-                                String assetName = abstractAssetClassObject.getClass().getName();
+                    for (int i = 0; i < optionalList.size(); i++) {
+                        if (optionalList.get(i).isPresent()) {
+                            abstractAssetClassObject = (AbstractAsset) optionalList.get(i).get();
+                            String assetName = abstractAssetClassObject.getClass().getName();
 
-                                if (abstractAssetClassObject != null ) {
+                            if (abstractAssetClassObject != null) {
 
-                                    // adding container to syncServiceContainer
-                                    abstractAssetClassObject.configure(syncServiceContainer);
+                                // adding container to syncServiceContainer
+                                abstractAssetClassObject.configure(syncServiceContainer);
 
-                                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", assetName, "method", "filter", "uuid", uuid, "namespace" ,namespace.getNamespace());
-                                    Boolean shouldFilter = shouldFilterAsset(abstractAssetClassObject);
-                                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", assetName, "method", "filter", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                                analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName,
+                                        "asset", assetName, "method", "filter", "uuid", uuid, "namespace",
+                                        namespace.getNamespace());
+                                Boolean shouldFilter = shouldFilterAsset(abstractAssetClassObject);
+                                analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName,
+                                        "asset", assetName, "method", "filter", "uuid", uuid, "namespace",
+                                        namespace.getNamespace());
 
-                                    if (Boolean.TRUE.equals(shouldFilter)){
-                                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", assetName, "join", "left or inner", "uuid", uuid, "namespace" ,namespace.getNamespace());
-                                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", assetName, "method", "transform", "uuid", uuid, "namespace" ,namespace.getNamespace());
-                                        abstractAssetClassObject.transform();
-                                        analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName, "asset", assetName, "method", "transform", "uuid", uuid, "namespace" ,namespace.getNamespace());
-                                        String uniqueAssetIdentifier = (String)abstractAssetClassObject.getUniqueIdentifier();
-                                        abstractAssetClassObject.setUniqueIdentifier(uniqueAssetIdentifier);
-                                        if(abstractAssetClassObject.publishAsBean() == null){
-                                            assetsReadyToBePublished(abstractAssetClassObject);
-                                        }
-                                        else{
-                                            AbstractBean newlyConvertedBean = objectMapper.convertValue(abstractAssetClassObject, abstractAssetClassObject.publishAsBean());
-                                            infraService.getProcessorQueue().add(objectMapper.writeValueAsString(newlyConvertedBean));
-                                        }
+                                if (Boolean.TRUE.equals(shouldFilter)) {
+                                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName,
+                                            "asset", assetName, "join", "left or inner", "uuid", uuid, "namespace",
+                                            namespace.getNamespace());
+                                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName,
+                                            "asset", assetName, "method", "transform", "uuid", uuid, "namespace",
+                                            namespace.getNamespace());
+                                    abstractAssetClassObject.transform();
+                                    analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "bean", beanClassName,
+                                            "asset", assetName, "method", "transform", "uuid", uuid, "namespace",
+                                            namespace.getNamespace());
+                                    String uniqueAssetIdentifier = (String) abstractAssetClassObject
+                                            .getUniqueIdentifier();
+                                    abstractAssetClassObject.setUniqueIdentifier(uniqueAssetIdentifier);
+                                    if (abstractAssetClassObject.publishAsBean() == null) {
+                                        assetsReadyToBePublished(abstractAssetClassObject);
+                                    } else {
+                                        AbstractBean newlyConvertedBean = objectMapper.convertValue(
+                                                abstractAssetClassObject, abstractAssetClassObject.publishAsBean());
+                                        infraService.getProcessorQueue()
+                                                .add(objectMapper.writeValueAsString(newlyConvertedBean));
                                     }
-                                } // here
-
-                            }
+                                }
+                            } // here
                         }
-
                     }
                 }
             }
         }
-
     }
 
-
-    protected void assetsReadyToBePublished(AbstractAsset abstractAssetClassObject) throws Exception{
+    protected void assetsReadyToBePublished(AbstractAsset abstractAssetClassObject) throws Exception {
         assetsReadyToBePublishedList.add(abstractAssetClassObject);
     }
 
-    //TODO: This method need to optimise for insertion into freshIndex and addAndGetIndex
+    // TODO: This method need to optimise for insertion into freshIndex and
+    // addAndGetIndex
     protected void publishAbstractAsset() throws Exception {
 
-        Timer timer = meterRegistry.timer("infra.execution.time","type", "list", "name", "publisher_list");
+        Timer timer = meterRegistry.timer("infra.execution.time", "type", "list", "name", "publisher_list");
 
-        String errorString = timer.record(()->{
+        String errorString = timer.record(() -> {
 
-            try{
-                if(!assetsReadyToBePublishedList.isEmpty()){
+            try {
+                if (!assetsReadyToBePublishedList.isEmpty()) {
                     List<String> assetsReadyToBePublishedListInPublisherQueue = new ArrayList<>();
                     List<JsonNode> assetsReadyToBePublishedListInFreshIndex = new ArrayList<>();
 
-                    for(AbstractAsset abstractAsset: assetsReadyToBePublishedList){
-                        assetsReadyToBePublishedListInPublisherQueue.add(objectMapper.writeValueAsString(abstractAsset));
+                    for (AbstractAsset abstractAsset : assetsReadyToBePublishedList) {
+                        assetsReadyToBePublishedListInPublisherQueue
+                                .add(objectMapper.writeValueAsString(abstractAsset));
                         String s = freshIndexObjectMapper.writeValueAsString(abstractAsset);
                         JsonNode j = objectMapper.readTree(s);
                         assetsReadyToBePublishedListInFreshIndex.add(j);
                     }
 
-                    List<Long> documentIdList = infraService.getPublisherList().addAndGetIndexBulk(assetsReadyToBePublishedListInPublisherQueue);
-                    if(documentIdList.size() != assetsReadyToBePublishedList.size()){
+                    List<Long> documentIdList = infraService.getPublisherList()
+                            .addAndGetIndexBulk(assetsReadyToBePublishedListInPublisherQueue);
+                    if (documentIdList.size() != assetsReadyToBePublishedList.size()) {
                         return "Assets ready to be published are not equal to assets published in publisher list";
                     }
-                    analyticsService.meterCounterByIncrement("HAGRID_ASSET_IS_PUBLISHED", assetsReadyToBePublishedList.size());
+                    analyticsService.meterCounterByIncrement("HAGRID_ASSET_IS_PUBLISHED",
+                            assetsReadyToBePublishedList.size());
                     List<String> documentIdListString = new ArrayList<>();
-                    for(Long id : documentIdList){
+                    for (Long id : documentIdList) {
                         documentIdListString.add(id.toString());
                     }
 
-                    jsonIndexService.indexJsonStringBulk(assetsReadyToBePublishedListInFreshIndex, documentIdListString);
+                    jsonIndexService.indexJsonStringBulk(assetsReadyToBePublishedListInFreshIndex,
+                            documentIdListString);
                     assetsReadyToBePublishedList.clear();
                     return null;
-                }
-                else{
-                    analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", "No assets to be published", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                } else {
+                    analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", "No assets to be published",
+                            "uuid", uuid, "namespace", namespace.getNamespace());
                     return null;
                 }
             }
 
-            catch (Exception e ){
-                analyticsService.errorEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", e.getMessage(), "uuid", uuid, "namespace" ,namespace.getNamespace());
+            catch (Exception e) {
+                analyticsService.errorEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", e.getMessage(), "uuid", uuid,
+                        "namespace", namespace.getNamespace());
                 return e.getMessage();
             }
         });
 
-
-        if(errorString != null){
+        if (errorString != null) {
             throw new Exception(errorString);
         }
     }
@@ -365,22 +385,21 @@ public class ProcessorTask implements Callable<Void> {
         throw new InterruptedException("TraverserService process got interrupted");
     }
 
-
-    protected Boolean isAssetDependsOnThisBean(List<String> assetStepDependencyList, AbstractBean abstractBean){
+    protected Boolean isAssetDependsOnThisBean(List<String> assetStepDependencyList, AbstractBean abstractBean) {
         return assetStepDependencyList.contains(abstractBean.getClass().getName());
     }
 
-    protected List<String> getAssetBeanDependencyList(String asset, Multimap<String, String> assetBeanDependencyMap) throws IOException {
+    protected List<String> getAssetBeanDependencyList(String asset, Multimap<String, String> assetBeanDependencyMap)
+            throws IOException {
         return (List<String>) assetBeanDependencyMap.get(asset);
 
     }
 
-    protected Boolean shouldFilterAsset(AbstractAsset abstractAssetClassObject){
+    protected Boolean shouldFilterAsset(AbstractAsset abstractAssetClassObject) {
         Optional<Boolean> opt = abstractAssetClassObject.filter();
-        if(opt.isPresent() && Boolean.TRUE.equals(opt.get())){
+        if (opt.isPresent() && Boolean.TRUE.equals(opt.get())) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

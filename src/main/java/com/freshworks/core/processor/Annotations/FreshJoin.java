@@ -7,7 +7,6 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(FreshJoins.class)
 public @interface FreshJoin {
 
     Class<?> rightClass();
