@@ -37,6 +37,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Phaser;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.annotation.Nonnull;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
@@ -206,7 +208,7 @@ public class ProcessorTask implements Callable<Void> {
             // NOOP bean is a bean which is not a part of lookup, neither listed in right
             // class nor in left class
             Boolean isNoopBean = false;
-            if (freshJoin == null || ProcessorUtility.getLookupClassName(abstractBean, freshJoin) != null) {
+            if (freshJoin != null && ProcessorUtility.getLookupClassName(abstractBean, freshJoin) != null) {
                 isNoopBean = false;
             }
 
@@ -311,12 +313,12 @@ public class ProcessorTask implements Callable<Void> {
                                         infraService.getProcessorQueue()
                                                 .add(objectMapper.writeValueAsString(newlyConvertedBean));
                                     }
-                                }
-                            } // here
-                        }
-                    }
+                                }// shouldFilter close 
+                            } // AbstractAsset object not null
+                        } // If asset is present close 
+                    } // Loop through all assets close
                 }
-            }
+            } // else close
         }
     }
 
