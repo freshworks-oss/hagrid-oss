@@ -21,7 +21,6 @@ public @interface FreshJoin {
     enum JOIN_TYPE{
         INNER_JOIN,
         LEFT_JOIN,
-        RIGHT_JOIN,
         NOOP_JOIN
     }
 }
