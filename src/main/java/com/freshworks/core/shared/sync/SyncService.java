@@ -1,5 +1,6 @@
 package com.freshworks.core.shared.sync;
 
+import com.freshworks.core.processor.AssetAssetDependencyService;
 import com.freshworks.core.processor.AssetBeanDependencyService;
 import com.freshworks.core.processor.ProcessorConfigService;
 import com.freshworks.core.processor.ProcessorExecutorService;
@@ -64,6 +65,8 @@ public class SyncService {
     DagService dagService;
 
     AssetBeanDependencyService assetBeanDependencyService;
+
+    AssetAssetDependencyService assetAssetDependencyService;
 
     TraverserExecutorService traverserExecutorService;
 
@@ -169,9 +172,12 @@ public class SyncService {
         this.assetBeanDependencyService = applicationContext.getBean(AssetBeanDependencyService.class);
         this.syncServiceContainer.add(assetBeanDependencyService, AssetBeanDependencyService.class);
 
+        this.assetAssetDependencyService = applicationContext.getBean(AssetAssetDependencyService.class);
+        this.syncServiceContainer.add(assetAssetDependencyService, AssetAssetDependencyService.class);
+
         String parentProcessorServicePath = "/" + namespace.getNamespace() + "/" + "processor" + "/" + "processor_service";
         this.processorService = applicationContext.getBean(ProcessorService.class);
-        this.processorService.configure(parentProcessorServicePath, new Phaser(), syncServiceContainer, assetBeanDependencyService, infraService, syncStatusService, processorConfigService);
+        this.processorService.configure(parentProcessorServicePath, new Phaser(), syncServiceContainer, assetBeanDependencyService, assetAssetDependencyService, infraService, syncStatusService, processorConfigService);
         this.syncServiceContainer.add(this.processorService, ProcessorService.class);
 
 

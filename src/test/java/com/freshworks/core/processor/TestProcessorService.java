@@ -93,7 +93,7 @@ public class TestProcessorService {
         processorConfigService.configure(syncServiceContainer);
 
         ProcessorService processorService = mockFacadeProcessorService.build();
-        doCallRealMethod().when(processorService).configure(anyString(), any(), any(), any(), any(), any(),any());
+        doCallRealMethod().when(processorService).configure(anyString(), any(), any(), any(), any(), any(), any(),any());
         doCallRealMethod().when(processorService).run();
 
         processorService.configure( "traverser", new Phaser(), syncServiceContainer, assetBeanDependencyService, mongoInfraService, syncStatusService, processorConfigService );
