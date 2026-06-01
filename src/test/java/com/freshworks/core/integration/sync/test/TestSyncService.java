@@ -1,5 +1,6 @@
 package com.freshworks.core.integration.sync.test;
 
+import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUserUsageAsset;
 import com.freshworks.core.data.four_zero_zero.integration.fb.assets.FbUser;
 import com.freshworks.core.data.four_zero_zero.integration.recursive.contextual.assets.PublishedAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -69,6 +70,10 @@ public class TestSyncService {
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
         List<FbUser> fbUserList = consumerService.getAssetByAssetType(FbUser.class);
         assertThat(fbUserList.size(), Matchers.is(1));
+        
+        List<FbUserUsageAsset> fbUserUsageAssetList = consumerService.getAssetByAssetType(FbUserUsageAsset.class);
+        assertThat(fbUserUsageAssetList.size(), Matchers.is(fbUserList.size()));
+
         assertThat(syncStatusService.getSyncStatus() , Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status() , Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status() , Matchers.is(1));

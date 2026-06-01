@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.processor.AbstractAsset;
+
+import io.netty.util.internal.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +19,7 @@ import org.springframework.context.annotation.Conditional;
 @Conditional(CustomRegExConditionComparator.class)
 public class FbComment extends AbstractAsset {
 
+    String userId;
     String comment_id;
     String comment_title;
     String comment_text;
@@ -30,7 +33,9 @@ public class FbComment extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating comment asset");
+
+        // int randomNumber = ThreadLocalRandom.current().nextInt(0, 10);
+        userId = "1000";
     }
 
     @Override

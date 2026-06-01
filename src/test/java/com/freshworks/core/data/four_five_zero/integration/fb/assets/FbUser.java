@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.processor.AbstractAsset;
+
+import io.netty.util.internal.ThreadLocalRandom;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,7 +31,9 @@ public class FbUser extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating user asset");
+
+        // I am setting this id to test non primitive assets by combining this with comment primitive asset 
+        userId = "1000";
     }
 
     @Override
