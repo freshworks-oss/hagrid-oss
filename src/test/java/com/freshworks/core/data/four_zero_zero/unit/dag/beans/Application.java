@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Conditional;
 @Conditional(CustomRegExConditionComparator.class)
 public class Application extends AbstractBean {
 
+    String id;
+
     @Override
     public void transform() {
 
