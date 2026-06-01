@@ -30,7 +30,7 @@ public class MockFacadeProcessorService implements MockFacadeInterface {
     public ProcessorService build() throws Exception {
 
         doNothing().when(processorServiceSpy).run();
-        doNothing().when(processorServiceSpy).configure(anyString(), any(), any(), any(), any(), any(),any());
+        doNothing().when(processorServiceSpy).configure(anyString(), any(), any(), any(), any(), any(), any(),any());
         return processorServiceSpy;
     }
 }
