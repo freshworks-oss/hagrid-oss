@@ -2,27 +2,26 @@ package com.freshworks.core.traverser;
 
 
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestServicePrinciple;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SyncServiceContainer;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doCallRealMethod;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.SyncServiceContainer;
 
 
 @SpringBootTest
@@ -78,13 +77,15 @@ public class TestTraverserConfigService{
     @Test
     public void testTraverseWhenLoadedConfigureRateLimitViaFreshHierarchyAnnotation() throws Exception {
 
+        Class<? extends AbstractStep> sc = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
 
         DagNode servicePrincipal = mockFacadeDagNode
-                .name(TestServicePrinciple.class)
+                .name(sc)
                 .build();
 
+        Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
         DagNode applicationNode = mockFacadeDagNode
-                .name(TestApplication.class)
+                .name(c)
                 .children(new LinkedHashMap<>(Map.of(servicePrincipal, new Relationship())))
                 .build();
 
@@ -104,7 +105,7 @@ public class TestTraverserConfigService{
         doCallRealMethod().when(traverseConfigService).setStepLocation(anyString());
 
         traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps");
-        JsonNode stepRateLimitNode = traverseConfigService.getRateLimitForStep(TestApplication.class);
+        JsonNode stepRateLimitNode = traverseConfigService.getRateLimitForStep(c);
 
         assertThat(stepRateLimitNode.has("api_count"), is(true));
         assertThat(stepRateLimitNode.get("api_count").asInt(), is(20));
@@ -112,7 +113,8 @@ public class TestTraverserConfigService{
         assertThat(stepRateLimitNode.get("seconds").asInt(), is(100));
 
 
-        stepRateLimitNode = traverseConfigService.getRateLimitForStep(TestServicePrinciple.class);
+    
+        stepRateLimitNode = traverseConfigService.getRateLimitForStep(sc);
 
         assertThat(stepRateLimitNode.has("api_count"), is(true));
         assertThat(stepRateLimitNode.get("api_count").asInt(), is(800));

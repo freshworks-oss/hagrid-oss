@@ -1,18 +1,11 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
-import com.freshworks.core.traverser.net.http.HttpResponse;
-import org.apache.hc.core5.http.ParseException;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.mockserver.integration.ClientAndServer;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.mockserver.model.HttpRequest.request;
+import static org.mockserver.model.HttpResponse.response;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,10 +13,17 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
+import org.apache.hc.core5.http.ParseException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.mockserver.integration.ClientAndServer;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.freshworks.core.traverser.net.http.HttpRequest;
+import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.core.traverser.net.http.HttpResponse;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")

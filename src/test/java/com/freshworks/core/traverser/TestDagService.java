@@ -1,10 +1,5 @@
 package com.freshworks.core.traverser;
 
-
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.*;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.loop.StepA;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.loop.StepB;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.loop.StepC;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -50,9 +45,32 @@ public class TestDagService {
 
     String releaseVersion;
 
+    Class<? extends AbstractStep> stepA;
+    Class<? extends AbstractStep> stepB;
+    Class<? extends AbstractStep> stepC;
+    Class<? extends AbstractStep> application;
+    Class<? extends AbstractStep> servicePrinciple;
+    Class<? extends AbstractStep> appRoleAssignment;
+    Class<? extends AbstractStep> users;
+    Class<? extends AbstractStep> groups;
+    Class<? extends AbstractStep> usages;
+    Class<? extends AbstractStep> testIgnored;
+
     @BeforeEach
     public void beforeEach() throws Exception {
+        
         releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
+        stepA  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepA");
+        stepB  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepB");
+        stepC  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepC");
+        application  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
+        servicePrinciple  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
+        appRoleAssignment  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestAppRoleAssignment");
+        users = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestUser");
+        groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestGroup");
+        usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestUsage");
+        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestIgnored");
+        
     }
 
 
@@ -76,15 +94,15 @@ public class TestDagService {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        DagNode nodeToDrop = this.dagNode.find(TestAppRoleAssignment.class.getName());
+        DagNode nodeToDrop = this.dagNode.find(appRoleAssignment.getName());
         this.dagNode.dropSubtree(nodeToDrop);
-        assertThat(this.dagNode.find(TestAppRoleAssignment.class.getName()), is(nullValue()));
-        assertThat(this.dagNode.find(TestUser.class.getName()), is(nullValue()));
-        assertThat(this.dagNode.find(TestGroup.class.getName()), is(nullValue()));
+        assertThat(this.dagNode.find(appRoleAssignment.getName()), is(nullValue()));
+        assertThat(this.dagNode.find(users.getName()), is(nullValue()));
+        assertThat(this.dagNode.find(groups.getName()), is(nullValue()));
 
-        assertThat(this.dagNode.find(TestApplication.class.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(TestUsage.class.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(TestServicePrinciple.class.getName()), is(notNullValue()));
+        assertThat(this.dagNode.find(application.getName()), is(notNullValue()));
+        assertThat(this.dagNode.find(usages.getName()), is(notNullValue()));
+        assertThat(this.dagNode.find(servicePrinciple.getName()), is(notNullValue()));
     }
 
     @Test
@@ -95,13 +113,13 @@ public class TestDagService {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        DagNode nodeToDrop = this.dagNode.find(StepB.class.getName());
+        DagNode nodeToDrop = this.dagNode.find(stepB.getName());
         this.dagNode.dropSubtree(nodeToDrop);
-        assertThat(this.dagNode.find(StepB.class.getName()), is(nullValue()));
+        assertThat(this.dagNode.find(stepB.getName()), is(nullValue()));
 
         assertThat(this.dagNode.find(ParentStep.class.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(StepA.class.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(StepC.class.getName()), is(notNullValue()));
+        assertThat(this.dagNode.find(stepA.getName()), is(notNullValue()));
+        assertThat(this.dagNode.find(stepC.getName()), is(notNullValue()));
 
     }
 
@@ -114,7 +132,7 @@ public class TestDagService {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        assertThat(this.dagNode.find(TestIgnored.class.getName()), is(nullValue()));
+        assertThat(this.dagNode.find(testIgnored.getName()), is(nullValue()));
     }
 
 
@@ -127,31 +145,31 @@ public class TestDagService {
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
 
         List<DagNode> children = this.dagNode.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(TestApplication.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(application.getName()))));
 
-        DagNode node = this.dagNode.find(TestApplication.class.getName());
+        DagNode node = this.dagNode.find(application.getName());
         children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(TestServicePrinciple.class.getName()))));
-        assertThat(children, hasItem(hasProperty("name", is(TestUsage.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(servicePrinciple.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(usages.getName()))));
 
-        node = this.dagNode.find(TestUsage.class.getName());
-        children = node.getSubtree();
-        assertThat(children, is(empty()));
-
-        node = this.dagNode.find(TestServicePrinciple.class.getName());
-        children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(TestAppRoleAssignment.class.getName()))));
-
-        node = this.dagNode.find(TestAppRoleAssignment.class.getName());
-        children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(TestUser.class.getName()))));
-        assertThat(children, hasItem(hasProperty("name", is(TestGroup.class.getName()))));
-
-        node = this.dagNode.find(TestUser.class.getName());
+        node = this.dagNode.find(usages.getName());
         children = node.getSubtree();
         assertThat(children, is(empty()));
 
-        node = this.dagNode.find(TestGroup.class.getName());
+        node = this.dagNode.find(servicePrinciple.getName());
+        children = node.getSubtree();
+        assertThat(children, hasItem(hasProperty("name", is(appRoleAssignment.getName()))));
+
+        node = this.dagNode.find(appRoleAssignment.getName());
+        children = node.getSubtree();
+        assertThat(children, hasItem(hasProperty("name", is(users.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(groups.getName()))));
+
+        node = this.dagNode.find(users.getName());
+        children = node.getSubtree();
+        assertThat(children, is(empty()));
+
+        node = this.dagNode.find(groups.getName());
         children = node.getSubtree();
         assertThat(children, is(empty()));
     }
@@ -165,21 +183,21 @@ public class TestDagService {
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
 
         List<DagNode> children = this.dagNode.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(StepA.class.getName()))));
-        assertThat(children, hasItem(hasProperty("name", is(StepC.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepA.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepC.getName()))));
 
-        DagNode node = this.dagNode.find(StepA.class.getName());
+        DagNode node = this.dagNode.find(stepA.getName());
         children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(StepB.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepB.getName()))));
 
-        node = this.dagNode.find(StepB.class.getName());
+        node = this.dagNode.find(stepB.getName());
         children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(StepA.class.getName()))));
-        assertThat(children, hasItem(hasProperty("name", is(StepC.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepA.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepC.getName()))));
 
-        node = this.dagNode.find(StepC.class.getName());
+        node = this.dagNode.find(stepC.getName());
         children = node.getSubtree();
-        assertThat(children, hasItem(hasProperty("name", is(StepB.class.getName()))));
+        assertThat(children, hasItem(hasProperty("name", is(stepB.getName()))));
 
     }
 }
