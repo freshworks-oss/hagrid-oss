@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.concurrency.fb.beans;
+package com.freshworks.core.data.four_five_zero.concurrency.fb.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.core.CustomRegExConditionComparator;

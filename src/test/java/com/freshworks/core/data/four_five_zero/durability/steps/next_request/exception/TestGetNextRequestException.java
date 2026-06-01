@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.durability.steps.next_request.exception;
+package com.freshworks.core.data.four_five_zero.durability.steps.next_request.exception;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

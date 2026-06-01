@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans;
+package com.freshworks.core.data.four_five_zero.unit.processor.joins.beans;
 
 import com.freshworks.core.processor.AbstractBean;
 

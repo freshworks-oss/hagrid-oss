@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.durability.steps.is_valid.shutdown;
+package com.freshworks.core.data.four_five_zero.durability.steps.is_valid.shutdown;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

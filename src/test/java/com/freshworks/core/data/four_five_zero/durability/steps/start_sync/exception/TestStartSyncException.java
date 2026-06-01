@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.durability.steps.start_sync.exception;
+package com.freshworks.core.data.four_five_zero.durability.steps.start_sync.exception;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

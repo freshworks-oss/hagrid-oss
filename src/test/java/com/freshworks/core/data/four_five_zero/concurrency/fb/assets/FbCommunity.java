@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.concurrency.fb.assets;
+package com.freshworks.core.data.four_five_zero.concurrency.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

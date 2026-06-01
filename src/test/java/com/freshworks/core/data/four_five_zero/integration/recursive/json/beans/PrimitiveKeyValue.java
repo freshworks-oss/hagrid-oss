@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.integration.recursive.json.beans;
+package com.freshworks.core.data.four_five_zero.integration.recursive.json.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.core.CustomRegExConditionComparator;

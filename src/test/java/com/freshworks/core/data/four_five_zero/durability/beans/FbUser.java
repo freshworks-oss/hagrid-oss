@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.durability.beans;
+package com.freshworks.core.data.four_five_zero.durability.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.core.CustomRegExConditionComparator;

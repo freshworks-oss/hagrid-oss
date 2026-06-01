@@ -1,4 +1,4 @@
-package com.freshworks.core.data.four_zero_zero.integration.recursive.json.assets;
+package com.freshworks.core.data.four_five_zero.integration.recursive.json.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
