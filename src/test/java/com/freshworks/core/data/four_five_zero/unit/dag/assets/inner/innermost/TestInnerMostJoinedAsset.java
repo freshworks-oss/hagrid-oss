@@ -17,9 +17,4 @@ public class TestInnerMostJoinedAsset extends AbstractAsset {
     public void transform() {
 
     }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
-    }
 }

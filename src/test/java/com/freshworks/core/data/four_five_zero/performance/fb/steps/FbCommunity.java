@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
+import com.freshworks.core.data.four_five_zero.performance.fb.beans.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
@@ -166,7 +166,7 @@ public class FbCommunity extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.performance.fb.beans.FbCommunity.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_five_zero.performance.fb.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

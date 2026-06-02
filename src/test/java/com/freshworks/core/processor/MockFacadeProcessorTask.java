@@ -56,13 +56,8 @@ public class MockFacadeProcessorTask implements MockFacadeInterface {
     @Override
     public Object build() throws Exception {
 
-        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
-        doNothing().when(processorTaskSpy).processItem(anyString());
-        doNothing().when(processorTaskSpy).assetsReadyToBePublished(any());
-        doNothing().when(processorTaskSpy).publishAbstractAsset();
-        doAnswer(isAssetDependsOnThisBean.answer()).when(processorTaskSpy).isAssetDependsOnThisBean(anyList(), any());
-        doAnswer(getAssetBeanDependencyList.answer()).when(processorTaskSpy).getAssetBeanDependencyList(anyString(), any());
-        doAnswer(shouldFilterAsset.answer()).when(processorTaskSpy).shouldFilterAsset(any());
+        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        doNothing().when(processorTaskSpy).processBeanForAsset(anyString());
         return processorTaskSpy;
     }
 }

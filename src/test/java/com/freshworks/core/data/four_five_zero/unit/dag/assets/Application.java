@@ -9,8 +9,8 @@ public class Application extends AbstractAsset {
 
     String id;
 
-    public void setFromBean(com.freshworks.core.data.four_zero_zero.unit.dag.beans.Application application){
-        this.id = application.getId();
+    public void setFromBean(com.freshworks.core.data.four_five_zero.unit.dag.beans.Application application){
+        this.id = application.getClazz();
     }
 
     @Override
@@ -18,8 +18,4 @@ public class Application extends AbstractAsset {
 
     }
 
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
-    }
 }

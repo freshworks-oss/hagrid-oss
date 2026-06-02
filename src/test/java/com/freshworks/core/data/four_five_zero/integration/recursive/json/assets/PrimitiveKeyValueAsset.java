@@ -3,7 +3,7 @@ package com.freshworks.core.data.four_five_zero.integration.recursive.json.asset
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.integration.recursive.json.beans.PrimitiveKeyValue;
+import com.freshworks.core.data.four_five_zero.integration.recursive.json.beans.PrimitiveKeyValue;
 import com.freshworks.core.processor.AbstractAsset;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,10 +30,5 @@ public class PrimitiveKeyValueAsset extends AbstractAsset {
 
     @Override
     public void transform() {
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

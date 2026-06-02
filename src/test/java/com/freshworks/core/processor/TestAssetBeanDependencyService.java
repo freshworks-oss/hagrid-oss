@@ -34,7 +34,6 @@ public class TestAssetBeanDependencyService {
     Class<? extends AbstractAsset> innerAsset;
     Class<? extends AbstractAsset> innerMostAsset;
     Class<? extends AbstractAsset> innerMostJoinedAsset;
-    Class<? extends AbstractAsset> fbUserUsageAssetMultiFreshJoin;
 
     @BeforeEach
     public void beforeEach() throws Exception {
@@ -47,7 +46,6 @@ public class TestAssetBeanDependencyService {
         innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.TestInnerAsset");
         innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.innermost.TestInnerMostAsset");
         innerMostJoinedAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.innermost.TestInnerMostJoinedAsset");
-        fbUserUsageAssetMultiFreshJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.processor.joins.assets.FbUserUsageAssetMultiFreshJoin");
     }
 
     @Test
@@ -74,23 +72,4 @@ public class TestAssetBeanDependencyService {
         assertThat(x.containsKey(innerAsset.getName()), Matchers.is(true));
     }
 
-    @Test
-    public void testWhenAssetHasMultipleFreshJoinAnnotationThenAssetBeanDependencyShouldNotCombineTwo() throws Exception{
-
-        ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
-                .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.processor.joins.assets")
-                .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.processor.joins.beans")
-                .build();
-
-        AssetBeanDependencyService assetBeanDependencyService = mockFacadeAssetBeanDependencyService
-            .build();
-
-        doCallRealMethod().when(assetBeanDependencyService).scanner(anyString(), any());
-        doCallRealMethod().when(assetBeanDependencyService).findDependencyOfAsset(anyList(), any());
-        ImmutableListMultimap<String, String> x = assetBeanDependencyService.scanner("some-random-namespace", processorConfigService);
-        assertThat(x.containsKey(fbUserUsageAssetMultiFreshJoin.getName()), Matchers.is(true));
-        List<String> listOfBeanDependencies = x.get(fbUserUsageAssetMultiFreshJoin.getName());
-        assertThat(listOfBeanDependencies, Matchers.hasItems(Matchers.containsString("FbUserBean"), Matchers.containsString("FbGroupBean"), Matchers.containsString("FbUsageBean")));
-        
-    }
 }

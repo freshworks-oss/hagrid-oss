@@ -21,7 +21,7 @@ public class FbPost extends AbstractAsset {
     String post_title;
     String post_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.integration.fb.beans.FbPost post){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.integration.fb.beans.FbPost post){
 
         post_id = post.getPost_id();
         post_title = post.getPost_title();
@@ -31,10 +31,5 @@ public class FbPost extends AbstractAsset {
     @Override
     public void transform() {
 //        System.out.println("Creating post asset");
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

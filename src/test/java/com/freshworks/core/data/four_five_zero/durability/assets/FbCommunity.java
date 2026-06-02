@@ -20,7 +20,7 @@ public class FbCommunity extends AbstractAsset {
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.durability.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.durability.beans.FbCommunity community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();
@@ -31,8 +31,4 @@ public class FbCommunity extends AbstractAsset {
     public void transform() {
     }
 
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
-    }
 }

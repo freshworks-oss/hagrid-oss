@@ -19,8 +19,4 @@ public class TestInnerAsset extends AbstractAsset {
 
     }
 
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
-    }
 }

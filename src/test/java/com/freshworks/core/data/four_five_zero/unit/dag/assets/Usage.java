@@ -13,7 +13,7 @@ public class Usage extends AbstractAsset {
     String usage;
     SyncServiceContainer syncServiceContainer;
 
-    public void setFromBean(com.freshworks.core.data.four_zero_zero.unit.dag.beans.Usage usage){
+    public void setFromBean(com.freshworks.core.data.four_five_zero.unit.dag.beans.Usage usage){
 
     }
 
@@ -24,10 +24,5 @@ public class Usage extends AbstractAsset {
     @Override
     public void transform() {
 
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

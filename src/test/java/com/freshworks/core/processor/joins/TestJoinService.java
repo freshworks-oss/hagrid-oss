@@ -144,7 +144,7 @@ public class TestJoinService {
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
 
         // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
+        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 
@@ -208,7 +208,7 @@ public class TestJoinService {
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
 
         // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
+        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 
@@ -274,7 +274,7 @@ public class TestJoinService {
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
 
         // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
+        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 

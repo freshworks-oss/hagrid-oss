@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.integration.recursive.contextual.beans.GeneratedToken;
+import com.freshworks.core.data.four_five_zero.integration.recursive.contextual.beans.GeneratedToken;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;

@@ -175,7 +175,7 @@ public class FbCommunity extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("communities"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.concurrency.fb.beans.FbCommunity.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_five_zero.concurrency.fb.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

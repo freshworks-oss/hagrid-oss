@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.net.URISyntaxException;
 
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
+import com.freshworks.core.data.four_five_zero.performance.fb.beans.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbPost.class, rateLimit = 800, duration = 1, ignore = false)
@@ -182,7 +182,7 @@ public class FbComment extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("comments"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.performance.fb.beans.FbComment.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_five_zero.performance.fb.beans.FbComment.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

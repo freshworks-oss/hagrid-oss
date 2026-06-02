@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.performance.fb.beans.*;
+import com.freshworks.core.data.four_five_zero.performance.fb.beans.*;
 
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -157,7 +157,7 @@ public class FbUser extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_zero_zero.performance.fb.beans.FbUser.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_five_zero.performance.fb.beans.FbUser.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

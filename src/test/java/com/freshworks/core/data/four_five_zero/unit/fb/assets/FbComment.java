@@ -25,7 +25,7 @@ public class FbComment extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.unit.fb.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.unit.fb.beans.FbComment comment){
 
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();
@@ -35,10 +35,5 @@ public class FbComment extends AbstractAsset {
     @Override
     public void transform() {
 //        System.out.println("Creating comment asset");
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

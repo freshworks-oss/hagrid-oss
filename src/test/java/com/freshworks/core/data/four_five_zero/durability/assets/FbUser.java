@@ -19,7 +19,7 @@ public class FbUser extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.durability.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.durability.beans.FbUser dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();
@@ -31,8 +31,4 @@ public class FbUser extends AbstractAsset {
 //        System.out.println("Creating user asset");
     }
 
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
-    }
 }

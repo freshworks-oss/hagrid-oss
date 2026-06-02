@@ -22,7 +22,7 @@ public class FbUser extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.integration.fb.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.integration.fb.beans.FbUser dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();
@@ -34,10 +34,5 @@ public class FbUser extends AbstractAsset {
 
         // I am setting this id to test non primitive assets by combining this with comment primitive asset 
         userId = "1000";
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

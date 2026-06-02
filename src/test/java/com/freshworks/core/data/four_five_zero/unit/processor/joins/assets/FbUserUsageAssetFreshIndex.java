@@ -29,12 +29,4 @@ public class FbUserUsageAssetFreshIndex extends AbstractAsset{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'transform'");
     }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUniqueIdentifier'");
-    }
-
-
 }

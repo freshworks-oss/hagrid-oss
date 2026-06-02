@@ -3,8 +3,8 @@ package com.freshworks.core.data.four_five_zero.unit.traverser.single.steps.exce
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.Authentication;
-import com.freshworks.core.data.four_zero_zero.unit.traverser.single.beans.Application;
+import com.freshworks.core.data.four_five_zero.unit.dag.steps.Authentication;
+import com.freshworks.core.data.four_five_zero.unit.traverser.single.beans.Application;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsService;

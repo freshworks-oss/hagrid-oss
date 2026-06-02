@@ -76,24 +76,4 @@ public class TestAssetAssetDependencyService {
         assertThat(x.containsKey(outer.getName()), Matchers.is(true));
         assertThat(x.containsKey(innerAsset.getName()), Matchers.is(true));
     }
-
-    // @Test
-    // public void testWhenAssetHasMultipleFreshJoinAnnotationThenAssetBeanDependencyShouldNotCombineTwo() throws Exception{
-
-    //     ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
-    //             .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.processor.joins.assets")
-    //             .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.processor.joins.beans")
-    //             .build();
-
-    //     AssetAssetDependencyService assetAssetDependencyService = mockFacadeAssetAssetDependencyService
-    //         .build();
-
-    //     doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
-    //     doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
-    //     ImmutableListMultimap<String, String> x = assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
-    //     assertThat(x.containsKey(fbUserUsageAssetMultiFreshJoin.getName()), Matchers.is(true));
-    //     List<String> listOfBeanDependencies = x.get(fbUserUsageAssetMultiFreshJoin.getName());
-    //     assertThat(listOfBeanDependencies, Matchers.hasItems(Matchers.containsString("FbUserBean"), Matchers.containsString("FbGroupBean"), Matchers.containsString("FbUsageBean")));
-        
-    // }
 }

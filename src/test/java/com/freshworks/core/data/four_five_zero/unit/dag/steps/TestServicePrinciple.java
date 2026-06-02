@@ -3,7 +3,7 @@ package com.freshworks.core.data.four_five_zero.unit.dag.steps;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.unit.dag.beans.Application;
+import com.freshworks.core.data.four_five_zero.unit.dag.beans.Application;
 import com.freshworks.core.traverser.AbstractStep;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 import com.freshworks.core.traverser.DagTraversalService;
@@ -37,7 +37,7 @@ public class TestServicePrinciple extends HttpAbstractStep {
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
 
-        this.token = com.freshworks.core.data.four_zero_zero.unit.dag.steps.Authentication.getAuthtoken();
+        this.token = com.freshworks.core.data.four_five_zero.unit.dag.steps.Authentication.getAuthtoken();
     }
 
     @Override

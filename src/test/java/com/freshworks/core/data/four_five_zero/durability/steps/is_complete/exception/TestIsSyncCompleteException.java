@@ -3,7 +3,7 @@ package com.freshworks.core.data.four_five_zero.durability.steps.is_complete.exc
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.durability.beans.FbUser;
+import com.freshworks.core.data.four_five_zero.durability.beans.FbUser;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;

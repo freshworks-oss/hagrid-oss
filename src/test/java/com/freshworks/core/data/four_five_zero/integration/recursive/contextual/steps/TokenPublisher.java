@@ -2,7 +2,7 @@ package com.freshworks.core.data.four_five_zero.integration.recursive.contextual
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.core.CustomRegExConditionComparator;
-import com.freshworks.core.data.four_zero_zero.integration.recursive.contextual.beans.PublishedBean;
+import com.freshworks.core.data.four_five_zero.integration.recursive.contextual.beans.PublishedBean;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;

@@ -24,7 +24,7 @@ public class FbComment extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.four_zero_zero.integration.fb.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.core.data.four_five_zero.integration.fb.beans.FbComment comment){
 
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();
@@ -36,10 +36,5 @@ public class FbComment extends AbstractAsset {
 
         // int randomNumber = ThreadLocalRandom.current().nextInt(0, 10);
         userId = "1000";
-    }
-
-    @Override
-    public Object getUniqueIdentifier() {
-        return null;
     }
 }

@@ -255,7 +255,7 @@ public class ProcessorTask implements Callable<Void> {
 
     }
 
-    public AbstractAsset processPrimitiveAsset(String asset, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception{
+    private AbstractAsset processPrimitiveAsset(String asset, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception{
 
         AbstractAsset abstractAssetClassObject = null;
 
@@ -288,7 +288,7 @@ public class ProcessorTask implements Callable<Void> {
         return abstractAssetClassObject;
     }
 
-    public List<AbstractAsset> processNonPrimitiveAsset(String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList) throws Exception{
+    private List<AbstractAsset> processNonPrimitiveAsset(String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList) throws Exception{
 
         List<AbstractAsset> newlyGeneratedAssets = new ArrayList<>();
         AbstractAsset abstractAssetClassObject = null;

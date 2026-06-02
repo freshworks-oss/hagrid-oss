@@ -1,9 +1,9 @@
 ---
 configuration:
   connector:
-    step_path: "com.freshworks.core.data.four_zero_zero.performance.fb.steps"
-    bean_path: "com.freshworks.core.data.four_zero_zero.performance.fb.beans"
-    asset_path: "com.freshworks.core.data.four_zero_zero.performance.fb.assets"
+    step_path: "com.freshworks.core.data.four_five_zero.performance.fb.steps"
+    bean_path: "com.freshworks.core.data.four_five_zero.performance.fb.beans"
+    asset_path: "com.freshworks.core.data.four_five_zero.performance.fb.assets"
 
   core:
     publisher:
