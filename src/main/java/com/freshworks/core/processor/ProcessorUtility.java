@@ -167,13 +167,9 @@ public class ProcessorUtility {
     }
 
 
-    protected static Boolean shouldFilterAsset(AbstractAsset abstractAssetClassObject) {
-        Optional<Boolean> opt = abstractAssetClassObject.filter();
-        if (opt.isPresent() && Boolean.TRUE.equals(opt.get())) {
-            return true;
-        } else {
-            return false;
-        }
+    protected static boolean shouldFilterAsset(AbstractAsset abstractAssetClassObject) {
+        return abstractAssetClassObject.filter();
+        
     }
 
 }

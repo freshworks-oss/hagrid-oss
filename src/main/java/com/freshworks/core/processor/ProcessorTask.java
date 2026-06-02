@@ -344,9 +344,6 @@ public class ProcessorTask implements Callable<Void> {
                                     
                         analyticsService.debugEvent("HAGRID_PROCESSOR_TASK_SERVICE", "asset", assetClassName, "asset", assetName, "method", "transform", "uuid", uuid, "namespace",namespace.getNamespace());
                             
-                        String uniqueAssetIdentifier = (String) abstractAssetClassObject.getUniqueIdentifier();
-                        abstractAssetClassObject.setUniqueIdentifier(uniqueAssetIdentifier);
-                            
                         newlyGeneratedAssets.add(abstractAssetClassObject);
                         assetsReadyToBePublishedList.add(abstractAssetClassObject);
                             
