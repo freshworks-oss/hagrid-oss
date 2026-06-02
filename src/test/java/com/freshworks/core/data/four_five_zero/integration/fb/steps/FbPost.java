@@ -164,7 +164,7 @@ public class FbPost extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("posts"));
+            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("posts"));
             stepDataBeanMapping.setBeanClass(com.freshworks.core.data.four_five_zero.integration.fb.beans.FbPost.class);
             return stepDataBeanMapping;
         }
