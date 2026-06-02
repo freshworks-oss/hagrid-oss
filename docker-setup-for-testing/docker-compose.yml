@@ -28,9 +28,9 @@ services:
     container_name: hagrid
     ports:
       - 8080:8080
-    command: ["main"]
+    command: ["dsr18/feature"]
     environment:
-      - SPRING_PROFILES_ACTIVE=
+      - SPRING_PROFILES_ACTIVE=four_five_zero_integration_inmemory
     volumes:
       # CACHE MAVEN DEPENDENCIES HERE:
       - maven-repo:/root/.m2

@@ -42,7 +42,7 @@ if [ -n "$SPRING_PROFILES_ACTIVE" ]; then
   echo "Running maven test cases with profile $SPRING_PROFILES_ACTIVE"
   mvn clean test -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}
 else
-  echo "Running maven test cases without profile"
+  echo "Running maven test cases without profile. Running default unit test cases with profile mentioned in pom.xml"
   mvn clean test
 
 fi
