@@ -16,11 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.four_zero_zero.unit.processor.joins.assets.FbUserUsageAsset;
-import com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbApplicationBean;
-import com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbServicePrincipleBean;
-import com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUsageBean;
-import com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean;
+import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
@@ -35,6 +31,9 @@ import com.freshworks.core.shared.infra.inmemory.InmemoryService;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
+import com.freshworks.core.TestUtility;
+import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
+import com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUsageBean;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -52,6 +51,13 @@ public class TestJoinService {
     @Autowired
     AnalyticsFactory analyticsFactory;
 
+    Class<? extends AbstractAsset> fbUserUsageAsset;
+    Class<? extends AbstractAsset> fbUserAsset;
+    Class<? extends AbstractAsset> fbUserAsset1;
+    Class<? extends AbstractAsset> fbUsageAsset;
+    Class<? extends AbstractAsset> fbUsageAsset1;
+
+
     @BeforeEach
     public void beforeEach() throws Exception {
 
@@ -62,226 +68,58 @@ public class TestJoinService {
     @Test
     public void testGetLookupFieldValueOfLeftClass() throws Exception{
 
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+
+        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUserAsset, "setUserId", "aggarwal");
+        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
         
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
-        String lookupFieldValueOfLeftClass = leftJoinService.getLookupFieldValueOfLeftClass(fbUserBean, freshJoin);
+        FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
+        String lookupFieldValueOfLeftClass = JoinUtility.getLookupFieldValueOfLeftClass(fbUserAsset, freshJoin);
         
-        assertThat(lookupFieldValueOfLeftClass, Matchers.is("user_id_123456"));
+        assertThat(lookupFieldValueOfLeftClass, Matchers.is("aggarwal"));
                 
     }
 
     @Test
     public void testGetLookupFieldValueOfRightClass() throws Exception{
 
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_654321");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+
+        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
+        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
         
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
-        String lookupFieldValueOfRightClass = leftJoinService.getLookupFieldValueOfRightClass(fbUsageBean, freshJoin);
+        FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
+        String lookupFieldValueOfRightClass = JoinUtility.getLookupFieldValueOfRightClass(fbUsageAsset, freshJoin);
         
-        assertThat(lookupFieldValueOfRightClass, Matchers.is("user_id_654321"));
+        assertThat(lookupFieldValueOfRightClass, Matchers.is("aggarwal"));
 
     }
 
     @Test
-    public void testCompareParentWhenThereIsCommonParent() throws Exception{
-        
-        ObjectMapper objectMapper = new ObjectMapper();
+    public void testLookupStagingAreaWithSingleLeftAssetAndRightAsset() throws Exception{
 
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
-
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_654321");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
-
-        ArrayList<AbstractBean> list = new ArrayList<>();
-        list.add(0, fbUserBean);
-        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
-        
-        list.add(0, fbUsageBean);
-        HashMap<String, AbstractBean> unwrappedRightClassMap = leftJoinService.unwrappedBeanToClassMap(list);
-
-        Boolean isEqual = leftJoinService.compareParent(unwrappedLeftClassMap, unwrappedRightClassMap);
-        assertThat(isEqual, Matchers.is(true));
-    }
-
-    @Test
-    public void testCompareAttributesWhenThereIsCommonParentAndValuesAreMatching() throws Exception{
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
-
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
-
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_123456");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
-
-        ArrayList<AbstractBean> list = new ArrayList<>();
-        list.add(0, fbUserBean);
-        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
-
-        Boolean isEqual = leftJoinService.compareAttributes(unwrappedLeftClassMap, fbUsageBean, freshJoin);
-        assertThat(isEqual, Matchers.is(true));
-
-    }
-
-    @Test
-    public void testCompareAttributesWhenThereIsCommonParentAndValuesAreNotMatching() throws Exception{
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
-
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
-
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_654321");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
-
-        ArrayList<AbstractBean> list = new ArrayList<>();
-        list.add(0, fbUserBean);
-        HashMap<String, AbstractBean> unwrappedLeftClassMap = leftJoinService.unwrappedBeanToClassMap(list);
-
-        Boolean isEqual = leftJoinService.compareAttributes(unwrappedLeftClassMap, fbUsageBean, freshJoin);
-        assertThat(isEqual, Matchers.is(false));
-
-    }
-
-    @Test
-    public void testUnwrappedBeanToClassMap() throws Exception{
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
-
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        ArrayList<AbstractBean> list = new ArrayList<>();
-        list.add(0, fbUserBean);
-
-        HashMap<String, AbstractBean> unwrappedBeanToClassMap = leftJoinService.unwrappedBeanToClassMap(list);
-
-        assertThat(unwrappedBeanToClassMap.size(), Matchers.is(3));
-        Set<String> keySet = unwrappedBeanToClassMap.keySet();
-
-        for(String key : keySet){
-            System.out.println(key);
-        }
-        
-        assertThat(unwrappedBeanToClassMap.containsKey("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbApplicationBean"), Matchers.is(true));
-
-        assertThat(unwrappedBeanToClassMap.containsKey("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbServicePrincipleBean"), Matchers.is(true));
-
-        assertThat(unwrappedBeanToClassMap.containsKey("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean"), Matchers.is(true));
-
-    }
-
-    @Test
-    public void testLookupStagingAreaWithSingleLeftBeanAndRightBean() throws Exception{
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
+        FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
 
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
 
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
+        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUserAsset, "setUserId", "aggarwal");
+        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
 
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_123456");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
+        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
 
 
         // Setting up services 
@@ -308,55 +146,44 @@ public class TestJoinService {
         // Simulate that left bean has arrived already
         // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
-        List<HashMap<String, AbstractBean>> joinBeanData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserBean, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 
-        // String s = objectMapper.writeValueAsString(joinBeanData);
+        // String s = objectMapper.writeValueAsString(joinAssetData);
         // System.out.print(s);
 
-        assertThat(joinBeanData.size(), Matchers.is(1));
-        HashMap<String, AbstractBean> beanMap = joinBeanData.get(0);
-        assertThat(beanMap.size(), Matchers.is(3));
+        assertThat(joinAssetData.size(), Matchers.is(1));
+        HashMap<String, AbstractAsset> assetMap = joinAssetData.get(0);
+        assertThat(assetMap.size(), Matchers.is(1));
 
-        List<HashMap<String, AbstractBean>> joinBeanData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageBean, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinAssetData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
 
-        String s = objectMapper.writeValueAsString(joinBeanData1);
+        String s = objectMapper.writeValueAsString(joinAssetData1);
         System.out.print(s);
 
-        assertThat(joinBeanData1.size(), Matchers.is(1));
-        HashMap<String, AbstractBean> beanMap1 = joinBeanData1.get(0);
-        assertThat(beanMap1.size(), Matchers.is(4));
+        assertThat(joinAssetData1.size(), Matchers.is(1));
+        HashMap<String, AbstractAsset> assetMap1 = joinAssetData1.get(0);
+        assertThat(assetMap1.size(), Matchers.is(2));
     }
 
     @Test
     public void testLookupStagingAreaWithSingleLeftBeanAndRightBeanWithNullKeyInLeftBean() throws Exception{
 
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
+        FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
 
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
 
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
+        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
 
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
-
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_123456");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
+        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
 
 
         // Setting up services 
@@ -383,61 +210,46 @@ public class TestJoinService {
         // Simulate that left bean has arrived already
         // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
-        List<HashMap<String, AbstractBean>> joinBeanData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserBean, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 
-        // String s = objectMapper.writeValueAsString(joinBeanData);
-        // System.out.print(s);
+        assertThat(joinAssetData.size(), Matchers.is(1));
+        HashMap<String, AbstractAsset> assetMap = joinAssetData.get(0);
+        assertThat(assetMap.size(), Matchers.is(1));
 
-        assertThat(joinBeanData.size(), Matchers.is(1));
-        HashMap<String, AbstractBean> beanMap = joinBeanData.get(0);
-        assertThat(beanMap.size(), Matchers.is(3));
+        List<HashMap<String, AbstractAsset>> joinAssetData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
 
-        List<HashMap<String, AbstractBean>> joinBeanData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageBean, freshJoin);
+        String s = objectMapper.writeValueAsString(joinAssetData1);
+        System.out.print(s);
 
-        assertThat(joinBeanData1.size(), Matchers.is(0));
+        assertThat(joinAssetData1.size(), Matchers.is(0));
     }
 
     @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBean() throws Exception{
 
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
-
-        FreshJoin freshJoin = FbUserUsageAsset.class.getAnnotation(FreshJoin.class);
-
-        FbApplicationBean fbApplicationBean = new FbApplicationBean();
-        fbApplicationBean.setApplicationId("app_id_994433");
-        fbApplicationBean.setApplicationName("slack");
-        fbApplicationBean.setClazz(fbApplicationBean.getClass().getName());
-
-        FbServicePrincipleBean fbServicePrincipleBean = new FbServicePrincipleBean();
-        fbServicePrincipleBean.setServicePrincipleId("sp_id_5575775");
-        fbServicePrincipleBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-
-        fbServicePrincipleBean.setClazz(fbServicePrincipleBean.getClass().getName());
-
-        FbUserBean fbUserBean = new FbUserBean();
-        fbUserBean.setLastName("aggarwal");
-        fbUserBean.setFirstName("amit");
-        fbUserBean.setId("user_id_123456");
-        fbUserBean.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean.setClazz(fbUserBean.getClass().getName());
+        FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
 
 
-        FbUserBean fbUserBean1 = new FbUserBean();
-        fbUserBean1.setLastName("menon");
-        fbUserBean1.setFirstName("praveen");
-        fbUserBean1.setId("user_id_123456");
-        fbUserBean1.setParentBean(objectMapper.convertValue(fbServicePrincipleBean, JsonNode.class));
-        fbUserBean1.setClazz(fbUserBean1.getClass().getName());
+        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUserAsset, "setUserId", "user_id_1234");
+        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
 
 
+        AbstractAsset fbUserAsset1 = this.fbUserAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUserAsset1, "setUserId", "user_id_1234");
+        TestUtility.callMethod(fbUserAsset1, "setUserName", "praveen");
 
-        FbUsageBean fbUsageBean = new FbUsageBean();
-        fbUsageBean.setCreatedAt("02-06-1989");
-        fbUsageBean.setUserId("user_id_123456");
-        fbUsageBean.setParentBean(objectMapper.convertValue(fbApplicationBean, JsonNode.class));
-        fbUsageBean.setClazz(fbUsageBean.getClass().getName());
+
+        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        TestUtility.callMethod(fbUsageAsset, "setUserId", "user_id_1234");
+        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
 
 
         // Setting up services 
@@ -464,36 +276,36 @@ public class TestJoinService {
         // Simulate that left bean has arrived already
         // infraDbKeyValue.put("com.freshworks.core.data.four_zero_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
-        List<HashMap<String, AbstractBean>> joinBeanData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserBean, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
 
         // String s = objectMapper.writeValueAsString(joinBeanData);
         // System.out.print(s);
 
-        assertThat(joinBeanData.size(), Matchers.is(1));
-        HashMap<String, AbstractBean> beanMap = joinBeanData.get(0);
-        assertThat(beanMap.size(), Matchers.is(3));
+        assertThat(joinAssetData.size(), Matchers.is(1));
+        HashMap<String, AbstractAsset> beanMap = joinAssetData.get(0);
+        assertThat(beanMap.size(), Matchers.is(1));
 
 
-        List<HashMap<String, AbstractBean>> joinBeanDataWithAnotherLeftBean = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserBean1, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinAssetDataWithAnotherLeftAsset = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset1, freshJoin);
 
         // String s = objectMapper.writeValueAsString(joinBeanDataWithAnotherLeftBean);
         // System.out.print(s);
 
-        assertThat(joinBeanDataWithAnotherLeftBean.size(), Matchers.is(1));
-        HashMap<String, AbstractBean> beanMapWithSecondLeftBean = joinBeanDataWithAnotherLeftBean.get(0);
-        assertThat(beanMapWithSecondLeftBean.size(), Matchers.is(3));
+        assertThat(joinAssetDataWithAnotherLeftAsset.size(), Matchers.is(1));
+        HashMap<String, AbstractAsset> assetMapWithSecondLeftBean = joinAssetDataWithAnotherLeftAsset.get(0);
+        assertThat(assetMapWithSecondLeftBean.size(), Matchers.is(1));
 
 
-        List<HashMap<String, AbstractBean>> joinBeanDataWithSingleRightBeanMatchingWithTwoLeftBean = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageBean, freshJoin);
+        List<HashMap<String, AbstractAsset>> joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
 
-        String s = objectMapper.writeValueAsString(joinBeanDataWithSingleRightBeanMatchingWithTwoLeftBean);
+        assertThat(joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.size(), Matchers.is(2));
+        HashMap<String, AbstractAsset> beanMapWithFirstLeftBeanAndSingleRightBean = joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(0);
+        assertThat(beanMapWithFirstLeftBeanAndSingleRightBean.size(), Matchers.is(2));
+
+        HashMap<String, AbstractAsset> assetMapWithSecondLeftAssetAndSingleRightAsset = joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(1);
+        assertThat(assetMapWithSecondLeftAssetAndSingleRightAsset.size(), Matchers.is(2));
+
+        String s = objectMapper.writeValueAsString(joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset);
         System.out.print(s);
-
-        assertThat(joinBeanDataWithSingleRightBeanMatchingWithTwoLeftBean.size(), Matchers.is(2));
-        HashMap<String, AbstractBean> beanMapWithFirstLeftBeanAndSingleRightBean = joinBeanDataWithSingleRightBeanMatchingWithTwoLeftBean.get(0);
-        assertThat(beanMapWithFirstLeftBeanAndSingleRightBean.size(), Matchers.is(4));
-
-        HashMap<String, AbstractBean> beanMapWithSecondLeftBeanAndSingleRightBean = joinBeanDataWithSingleRightBeanMatchingWithTwoLeftBean.get(0);
-        assertThat(beanMapWithSecondLeftBeanAndSingleRightBean.size(), Matchers.is(4));
     }
 }

@@ -7,7 +7,6 @@ import lombok.Data;
 import org.springframework.context.annotation.Conditional;
 
 @Data
-
 @Conditional(CustomRegExConditionComparator.class)
 public class Usage extends AbstractAsset {
 
