@@ -98,6 +98,7 @@ public class ProcessorTask implements Callable<Void> {
     ProcessorService.ProcessTaskTracker processTaskTracker;
 
     List<AbstractAsset> globalGeneratedAssetList = new ArrayList<>();
+    ListIterator<AbstractAsset> generatorAssetIterator = this.globalGeneratedAssetList.listIterator();
 
 
     public ProcessorTask() {
@@ -148,10 +149,11 @@ public class ProcessorTask implements Callable<Void> {
             for (String bean : itemList) {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
-                    this.globalGeneratedAssetList.addAll(processBeanForAsset(bean));
-
-                    ListIterator<AbstractAsset> generatorAssetIterator = this.globalGeneratedAssetList.listIterator();
-
+                    List<AbstractAsset> abstractAssetList = processBeanForAsset(bean);
+                    for(AbstractAsset a : abstractAssetList){
+                        this.generatorAssetIterator.add(a);
+                    }
+                    
                     while(generatorAssetIterator.hasNext()){
                         AbstractAsset abstractAsset = generatorAssetIterator.next();
                         processAssetForAsset(abstractAsset);
@@ -249,8 +251,11 @@ public class ProcessorTask implements Callable<Void> {
             checkArgument(assetAssetDependencyList.size() > 0, "A assets must be dependent on atleast one bean");
 
             List<AbstractAsset> newlyGeneratedAssets = processNonPrimitiveAsset(asset, abstractAsset, assetAssetDependencyList);
-            this.globalGeneratedAssetList.addAll(newlyGeneratedAssets);
 
+            for ( AbstractAsset absAsset: newlyGeneratedAssets){
+                this.generatorAssetIterator.add(absAsset);
+            }
+            
         } // Creation of non primitive is happening in continuous loop here 
 
     }

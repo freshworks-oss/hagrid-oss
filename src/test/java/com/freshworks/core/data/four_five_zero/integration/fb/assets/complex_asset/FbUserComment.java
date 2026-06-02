@@ -21,11 +21,10 @@ public class FbUserComment extends AbstractAsset{
     }
 
 
-
     @Override
     public void transform() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'transform'");
+    
+    
     }
     
 }
