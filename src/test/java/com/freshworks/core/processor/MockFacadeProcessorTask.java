@@ -2,24 +2,20 @@ package com.freshworks.core.processor;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
 @Component
 public class MockFacadeProcessorTask implements MockFacadeInterface {
 
     @SpyBean
-    ProcessorTask processorTaskSpy;
+    ProcessorTaskService processorTaskSpy;
 
     ReturnableMockTypeList<Boolean> isAssetDependsOnThisBean;
     ReturnableMockTypeList<List<String>> getAssetBeanDependencyList;

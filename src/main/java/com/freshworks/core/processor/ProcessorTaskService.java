@@ -1,6 +1,5 @@
 package com.freshworks.core.processor;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.Annotations.FreshAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
@@ -8,22 +7,15 @@ import com.freshworks.core.processor.joins.AbstractJoinService;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraDbQueue;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.infra.persistent.MongoDbQueue;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
 import com.freshworks.freshindex.index.JsonIndexService;
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.hash.BloomFilter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
-import io.micrometer.observation.annotation.Observed;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -31,20 +23,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Phaser;
-import java.util.concurrent.atomic.AtomicLong;
-
-import javax.annotation.Nonnull;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Slf4j
 @Component
 @Scope("prototype")
-public class ProcessorTask implements Callable<Void> {
+public class ProcessorTaskService implements Callable<Void> {
 
     @Getter
     String uuid;
@@ -101,7 +89,7 @@ public class ProcessorTask implements Callable<Void> {
     LinkedList<AbstractAsset> tempListOfNewlyGeneratedAssets = new LinkedList<>();
 
 
-    public ProcessorTask() {
+    public ProcessorTaskService() {
     }
 
     public void configure(String parentPath, List<String> s, SyncServiceContainer syncServiceContainer,

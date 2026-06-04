@@ -204,7 +204,7 @@ public class ProcessorService implements Callable<Void> {
 
                 List<String> sList = processorQueue.poll(processorPollCount);
                 phaser.register();
-                ProcessorTask processorTask = getProcessorTask();
+                ProcessorTaskService processorTask = getProcessorTask();
                 String parentPath = uuid + "/" + "processor_service_task";
                 processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService, this.jsonIndexService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, this.freshIndexObjectMapper, phaser, processTaskTracker);
                 processorExecutorService.submit(namespace.getNamespace(), processorTask);
@@ -225,7 +225,7 @@ public class ProcessorService implements Callable<Void> {
     }
 
     @Lookup
-    public ProcessorTask getProcessorTask() {
+    public ProcessorTaskService getProcessorTask() {
         return null;
     }
 
