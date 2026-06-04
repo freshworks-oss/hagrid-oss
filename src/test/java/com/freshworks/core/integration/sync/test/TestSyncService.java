@@ -2,6 +2,7 @@ package com.freshworks.core.integration.sync.test;
 
 import com.freshworks.core.data.four_five_zero.integration.fb.assets.complex_asset.FbUserComment;
 import com.freshworks.core.data.four_five_zero.integration.fb.assets.FbUser;
+import com.freshworks.core.data.four_five_zero.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
 import com.freshworks.core.data.four_five_zero.integration.recursive.contextual.assets.PublishedAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,10 +29,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.integration\\..*")
-
 public class TestSyncService {
 
     static String infraType;
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Autowired
     SyncService syncService;
@@ -55,13 +59,14 @@ public class TestSyncService {
                 .put("numberOfPostsEachPage", "1")
                 .put("numberOfPostPagination", "1")
                 .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "10")
+                .put("numberOfCommentsEachPage", "1")
                 .put("numberOfCommentPagination", "1")
                 .put("waitBetweenCommentPaginationInMs", "0")
                 .put("numberOfCommunitiesEachPage", "1")
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
+        syncService = applicationContext.getBean(SyncService.class);
         SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer(UUID.randomUUID().toString(), ParentStep.class, x);
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
@@ -72,7 +77,10 @@ public class TestSyncService {
         assertThat(fbUserList.size(), Matchers.is(1));
         
         List<FbUserComment> fbUserCommentAssetList = consumerService.getAssetByAssetType(FbUserComment.class);
-        assertThat(fbUserCommentAssetList.size(), Matchers.is(fbUserList.size()));
+        assertThat(fbUserCommentAssetList.size(), Matchers.is(1));
+
+        List<FbUserCommentUserJoinAsset> fbUserCommentUserAssetList = consumerService.getAssetByAssetType(FbUserCommentUserJoinAsset.class);
+        assertThat(fbUserCommentUserAssetList.size(), Matchers.is(1));
 
         assertThat(syncStatusService.getSyncStatus() , Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status() , Matchers.is(1));

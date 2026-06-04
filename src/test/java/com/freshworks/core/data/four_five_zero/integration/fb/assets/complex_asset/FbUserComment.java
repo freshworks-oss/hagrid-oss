@@ -4,8 +4,12 @@ import com.freshworks.core.data.four_five_zero.integration.fb.assets.FbComment;
 import com.freshworks.core.data.four_five_zero.integration.fb.assets.FbUser;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
+import lombok.Getter;
+import lombok.Setter;
 
 
+@Getter
+@Setter
 @FreshJoin(leftClass = FbUser.class, leftClassFieldName = "userId", 
         rightClass = FbComment.class, rightClassFieldName = "userId", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN, uniqueJoinName = "fbuser_fbcomment_inner_join")
 public class FbUserComment extends AbstractAsset{

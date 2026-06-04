@@ -97,8 +97,8 @@ public class ProcessorTask implements Callable<Void> {
 
     ProcessorService.ProcessTaskTracker processTaskTracker;
 
-    List<AbstractAsset> globalGeneratedAssetList = new ArrayList<>();
-    ListIterator<AbstractAsset> generatorAssetIterator = this.globalGeneratedAssetList.listIterator();
+    LinkedList<AbstractAsset> globalGeneratedAssetList = new LinkedList<>();
+    LinkedList<AbstractAsset> tempListOfNewlyGeneratedAssets = new LinkedList<>();
 
 
     public ProcessorTask() {
@@ -141,6 +141,7 @@ public class ProcessorTask implements Callable<Void> {
     public Void call() throws Exception {
 
         try {
+
             analyticsService.infoEvent("HAGRID_PROCESSOR_TASK_SERVICE", "_message", "ProcessorServiceTask started",
                     "uuid", uuid, "namespace", namespace.getNamespace());
             processTaskTracker.incrementTotalProcessTask();
@@ -150,14 +151,18 @@ public class ProcessorTask implements Callable<Void> {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
                     List<AbstractAsset> abstractAssetList = processBeanForAsset(bean);
-                    for(AbstractAsset a : abstractAssetList){
-                        this.generatorAssetIterator.add(a);
+                    tempListOfNewlyGeneratedAssets.addAll(abstractAssetList);
+
+                    while(!tempListOfNewlyGeneratedAssets.isEmpty()) {
+                        globalGeneratedAssetList.clear();
+                        globalGeneratedAssetList.addAll(tempListOfNewlyGeneratedAssets);
+                        tempListOfNewlyGeneratedAssets.clear();
+                        for (AbstractAsset abstractAsset : globalGeneratedAssetList) {
+                            processAssetForAsset(abstractAsset);
+                        }
                     }
-                    
-                    while(generatorAssetIterator.hasNext()){
-                        AbstractAsset abstractAsset = generatorAssetIterator.next();
-                        processAssetForAsset(abstractAsset);
-                    }
+
+
                 } else {
                     // If thread is interrupted or asked to terminate then skip the list and publish
                     // whatever assets are generated
@@ -251,10 +256,7 @@ public class ProcessorTask implements Callable<Void> {
             checkArgument(assetAssetDependencyList.size() > 0, "A assets must be dependent on atleast one bean");
 
             List<AbstractAsset> newlyGeneratedAssets = processNonPrimitiveAsset(asset, abstractAsset, assetAssetDependencyList);
-
-            for ( AbstractAsset absAsset: newlyGeneratedAssets){
-                this.generatorAssetIterator.add(absAsset);
-            }
+            tempListOfNewlyGeneratedAssets.addAll(newlyGeneratedAssets);
             
         } // Creation of non primitive is happening in continuous loop here 
 

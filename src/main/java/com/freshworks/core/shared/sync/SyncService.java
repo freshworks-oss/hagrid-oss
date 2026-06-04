@@ -202,6 +202,8 @@ public class SyncService {
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         this.processorExecutorService = syncServiceContainer.getBean(ProcessorExecutorService.class);
         this.nodeCycleService = syncServiceContainer.getBean(NodeCycleService.class);
+        
+        System.out.println("I am from sync service");
 
         Namespace namespace = syncServiceContainer.getBean(Namespace.class);
         traverserExecutorService.submit(namespace.getNamespace(), this.dagTraversalService);

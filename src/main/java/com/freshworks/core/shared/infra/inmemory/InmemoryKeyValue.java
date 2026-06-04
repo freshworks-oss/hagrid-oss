@@ -33,7 +33,7 @@ public class InmemoryKeyValue implements InfraDbKeyValue {
 
     @Override
     public void put(String key, String value) throws Exception{
-
+        // I think this is set functionality. Method name of this method should be set instead of put.
         this.concurrentHashMap.put(key, Lists.newArrayList(value));
     }
 
@@ -45,7 +45,13 @@ public class InmemoryKeyValue implements InfraDbKeyValue {
     @Override
     public void putList(String key, List<String> value) throws Exception{
 
-        this.concurrentHashMap.put(key, value);
+        if (concurrentHashMap.containsKey(key)) {
+            this.concurrentHashMap.get(key).addAll(value);
+            this.concurrentHashMap.put(key, this.concurrentHashMap.get(key));
+        }
+        else {
+            this.concurrentHashMap.put(key, value);
+        }
     }
 
     @Override
@@ -62,7 +68,7 @@ public class InmemoryKeyValue implements InfraDbKeyValue {
 
     @Override
     public List<String> getList(String key) throws Exception {
-        return this.concurrentHashMap.get(key);
+        return new ArrayList<>(this.concurrentHashMap.get(key));
     }
 
     @Override
