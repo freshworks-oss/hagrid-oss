@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 
+import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import com.freshworks.core.TestUtility;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.google.common.collect.ImmutableListMultimap;
+
+import java.util.List;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -75,5 +78,30 @@ public class TestAssetAssetDependencyService {
         assertThat(x.containsKey(innerMostAsset.getName()), Matchers.is(true));
         assertThat(x.containsKey(outer.getName()), Matchers.is(true));
         assertThat(x.containsKey(innerAsset.getName()), Matchers.is(true));
+    }
+
+    @Test
+    public void testAssetDependencyCorrectlyIdentifyForDeepNonPrimitiveAssets() throws Exception{
+
+        ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
+                .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets")
+                .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.dag.beans")
+                .build();
+
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
+                .build();
+
+        AssetAssetDependencyService assetAssetDependencyService = mockFacadeAssetAssetDependencyService
+                .build();
+
+        doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
+        doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
+
+        ImmutableListMultimap<String, String> x = this.assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
+
+        ImmutableList<String> dependencyList = x.get(outer.getName());
+        assertThat(dependencyList, Matchers.hasItem(Matchers.containsString("unit.dag.assets.Application")));
+        assertThat(dependencyList, Matchers.hasItem(Matchers.containsString("unit.dag.assets.Usage")));
+
     }
 }

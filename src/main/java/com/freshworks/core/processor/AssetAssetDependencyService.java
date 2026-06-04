@@ -1,5 +1,6 @@
 package com.freshworks.core.processor;
 
+import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -29,7 +30,7 @@ public class AssetAssetDependencyService {
         this.analyticsFactory = analyticsFactory;
     }
 
-    public ImmutableListMultimap<String, String> scanner(String namespace, ProcessorConfigService processorConfigService) throws IOException {
+    public ImmutableListMultimap<String, String> scanner(String namespace, ProcessorConfigService processorConfigService) throws Exception {
 
         try{
             lock.writeLock().lock();
@@ -52,6 +53,7 @@ public class AssetAssetDependencyService {
                     .asClass());
 
             for (Class<?> asset : assets) {
+
                 List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(asset), assetPath);
                 for (String dependent :
                         dependentClassList) {
