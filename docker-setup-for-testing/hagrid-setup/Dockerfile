@@ -6,10 +6,10 @@ RUN apk add --no-cache git
 
 
 # Copy the build configuration configuration layout
-COPY performance_test.sh .
+COPY branch_test.sh .
 
 
-RUN chmod +x performance_test.sh
+RUN chmod +x branch_test.sh
 
 # Configure JVM flags optimized for container environments
-ENTRYPOINT ["./performance_test.sh"]
+ENTRYPOINT ["./branch_test.sh"]

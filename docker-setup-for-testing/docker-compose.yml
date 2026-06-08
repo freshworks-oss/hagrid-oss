@@ -28,9 +28,9 @@ services:
     container_name: hagrid
     ports:
       - 8080:8080
-    command: ["main"]
+    command: ["dsr18/feature"]
     environment:
-      - SPRING_PROFILES_ACTIVE=
+      - SPRING_PROFILES_ACTIVE=four_five_zero.performance.persistent
     volumes:
       # CACHE MAVEN DEPENDENCIES HERE:
       - maven-repo:/root/.m2
@@ -47,35 +47,7 @@ services:
     command: python manage.py runserver 0.0.0.0:3000
     ports:
       - 3000:3000
-    environment:
-      - DATABASE_HOST=db
-      - DATABASE_NAME=django
-      - DATABASE_USERNAME=postgres
-      - DATABASE_PASSWORD=postgres
-    depends_on:
-      db:
-        condition: service_healthy  # Forces Django to wait for the healthcheck
 
-  db:
-    image: postgres:15-alpine
-    container_name: hagrid-thirdparty-postgres
-    restart: always
-    volumes:
-      - hagrid-postgres_data:/var/lib/postgresql/data/
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: django
-    
-    healthcheck:
-      # pg_isready is the built-in tool for checking Postgres status
-      test: ["CMD-SHELL", "pg_isready -U postgres -d django"]
-      interval: 5s   # How often to check
-      timeout: 5s    # How long to wait for a response
-      retries: 5     # Number of failures before marking as unhealthy
-      start_period: 10s # Wait before starting checks to allow initial boot
   
   mongodb:
     image: mongo:latest
