@@ -13,10 +13,10 @@ configuration:
       thread_count: 100
       poll_count: 100
 
-    # Keep traverser thread count as 1.
+      # Keep traverser thread count as 1.
     processor:
-      thread_count: 100
-      poll_count: 100
+      poll_count: 1000
+      number_of_parallel_processor : 20
 
     traverser:
       thread_count: 1
@@ -34,7 +34,9 @@ configuration:
 
 
     infra:
-      infra_type: "inmemory"
+      infra_type: "persistent"
+      h2_data_path: "/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/hagrid-db-file"
+      h2_database_type: "file"
       environment: "development"
       persistent:
         development:

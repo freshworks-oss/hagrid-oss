@@ -32,8 +32,8 @@ import java.util.Objects;
 public class FbCommunity extends HttpAbstractStep {
 
 
-    int numberOfCommunitiesEachPage = 1;
-    int numberOfCommunityPagination = 1;
+    int numberOfCommunitiesEachPage = 100;
+    int numberOfCommunityPagination = 10;
     long waitBetweenCommunityPaginationInMs = 0;
 
     int count = 0;

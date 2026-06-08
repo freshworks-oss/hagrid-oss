@@ -31,7 +31,7 @@ import java.net.URISyntaxException;
 @Scope("prototype")
 public class FbPost extends HttpAbstractStep {
 
-    int numberOfPostsEachPage = 1;
+    int numberOfPostsEachPage = 100;
     int numberOfPostPagination = 1;
     long waitBetweenPostPaginationInMs = 0;
 

@@ -31,8 +31,8 @@ import java.net.URISyntaxException;
 @Scope("prototype")
 public class FbComment extends HttpAbstractStep {
 
-    int numberOfCommentsEachPage = 1;
-    int numberOfCommentPagination = 1;
+    int numberOfCommentsEachPage = 100;
+    int numberOfCommentPagination = 10;
     long waitBetweenCommentPaginationInMs = 0;
 
     int count = 0;
