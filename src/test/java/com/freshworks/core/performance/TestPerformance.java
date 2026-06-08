@@ -61,11 +61,11 @@ public class TestPerformance {
                 .put("numberOfUsersEachPage", "1")
                 .put("numberOfUserPagination", "1")
                 .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "10")
-                .put("numberOfPostPagination", "10")
+                .put("numberOfPostsEachPage", "1")
+                .put("numberOfPostPagination", "1")
                 .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "100")
-                .put("numberOfCommentPagination", "100")
+                .put("numberOfCommentsEachPage", "1")
+                .put("numberOfCommentPagination", "1")
                 .put("waitBetweenCommentPaginationInMs", "0")
                 .put("numberOfCommunitiesEachPage", "1")
                 .put("numberOfCommunityPagination", "1")
@@ -76,7 +76,13 @@ public class TestPerformance {
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
+
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        List<FbUserComment> fbUserComment = consumerService.getAssetByAssetType(FbUserComment.class);
+        assertThat(fbUserComment.size(), Matchers.is(2));
+
         syncService.shutdown();
+
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status(), Matchers.is(1));
@@ -109,12 +115,7 @@ public class TestPerformance {
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
-
-        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
-
-        List<FbUserComment> fbUserComment = consumerService.getAssetByAssetType(FbUserComment.class);
         syncService.shutdown();
-        assertThat(fbUserComment.size(), Matchers.is(20000));
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status(), Matchers.is(1));

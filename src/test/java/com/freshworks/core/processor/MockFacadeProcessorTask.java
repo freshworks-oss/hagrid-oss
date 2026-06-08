@@ -3,6 +3,7 @@ package com.freshworks.core.processor;
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 
+@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
 @Component
 public class MockFacadeProcessorTask implements MockFacadeInterface {
 

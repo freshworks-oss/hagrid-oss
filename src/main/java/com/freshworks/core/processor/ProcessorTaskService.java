@@ -139,16 +139,16 @@ public class ProcessorTaskService implements Callable<Void> {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
                     List<AbstractAsset> abstractAssetList = processBeanForAsset(bean);
-//                    tempListOfNewlyGeneratedAssets.addAll(abstractAssetList);
-//
-//                    while(!tempListOfNewlyGeneratedAssets.isEmpty()) {
-//                        globalGeneratedAssetList.clear();
-//                        globalGeneratedAssetList.addAll(tempListOfNewlyGeneratedAssets);
-//                        tempListOfNewlyGeneratedAssets.clear();
-//                        for (AbstractAsset abstractAsset : globalGeneratedAssetList) {
-//                            processAssetForAsset(abstractAsset);
-//                        }
-//                    }
+                   tempListOfNewlyGeneratedAssets.addAll(abstractAssetList);
+
+                   while(!tempListOfNewlyGeneratedAssets.isEmpty()) {
+                       globalGeneratedAssetList.clear();
+                       globalGeneratedAssetList.addAll(tempListOfNewlyGeneratedAssets);
+                       tempListOfNewlyGeneratedAssets.clear();
+                       for (AbstractAsset abstractAsset : globalGeneratedAssetList) {
+                           processAssetForAsset(abstractAsset);
+                       }
+                   }
 
 
                 } else {
