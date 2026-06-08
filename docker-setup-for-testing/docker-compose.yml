@@ -1,0 +1,124 @@
+
+services:
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - prometheus_data:/prometheus
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - 9091:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=amit
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+
+  hagrid:
+    image: 0xvoila/hagrid-test-setup:latest
+    container_name: hagrid
+    ports:
+      - 8080:8080
+    command: ["main"]
+    environment:
+      - SPRING_PROFILES_ACTIVE=
+    volumes:
+      # CACHE MAVEN DEPENDENCIES HERE:
+      - maven-repo:/root/.m2
+
+    depends_on:
+      - django
+      - grafana
+      - prometheus
+      - mongodb
+
+  django:
+    image: 0xvoila/hagrid-third-party-setup:latest
+    container_name: hagrid-thirdparty-dango
+    command: python manage.py runserver 0.0.0.0:3000
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_NAME=django
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+    depends_on:
+      db:
+        condition: service_healthy  # Forces Django to wait for the healthcheck
+
+  db:
+    image: postgres:15-alpine
+    container_name: hagrid-thirdparty-postgres
+    restart: always
+    volumes:
+      - hagrid-postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: django
+    
+    healthcheck:
+      # pg_isready is the built-in tool for checking Postgres status
+      test: ["CMD-SHELL", "pg_isready -U postgres -d django"]
+      interval: 5s   # How often to check
+      timeout: 5s    # How long to wait for a response
+      retries: 5     # Number of failures before marking as unhealthy
+      start_period: 10s # Wait before starting checks to allow initial boot
+  
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_server
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password12345
+    volumes:
+      - mongo_data:/data/db
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongodb_gui
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password12345
+      ME_CONFIG_MONGODB_URL: mongodb://admin:password12345@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: webuser
+      ME_CONFIG_BASICAUTH_PASSWORD: webpassword
+    depends_on:
+      - mongodb
+
+volumes:
+  hagrid-postgres_data:
+  grafana_data:
+  prometheus_data:
+  mongo_data:
+  maven-repo:
+
+
+configs:
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+      scrape_configs:
+        - job_name: 'prometheus'
+          metrics_path: '/actuator/prometheus'
+          static_configs:
+            - targets: ['hagrid:8080']
