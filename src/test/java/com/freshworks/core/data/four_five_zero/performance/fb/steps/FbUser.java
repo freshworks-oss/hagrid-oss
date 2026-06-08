@@ -33,7 +33,7 @@ import java.util.Objects;
 @Conditional(CustomRegExConditionComparator.class)
 public class FbUser extends HttpAbstractStep {
 
-    int numberOfUsersEachPage = 100;
+    int numberOfUsersEachPage = 2;
     int numberOfUserPagination = 1;
     long waitBetweenUserPaginationInMs = 0;
 

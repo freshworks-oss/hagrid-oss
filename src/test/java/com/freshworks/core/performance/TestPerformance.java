@@ -1,5 +1,6 @@
 package com.freshworks.core.performance;
 
+import com.freshworks.core.data.four_five_zero.performance.fb.assets.non_primitive_assets.FbUserComment;
 import com.freshworks.core.processor.ProcessorConfigService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
@@ -15,6 +16,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.reflect.ClassPath;
 import io.github.classgraph.ClassInfo;
+
+import org.apache.commons.lang3.function.Consumers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
@@ -28,6 +31,7 @@ import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -105,11 +109,15 @@ public class TestPerformance {
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
+
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+
+        List<FbUserComment> fbUserComment = consumerService.getAssetByAssetType(FbUserComment.class);
         syncService.shutdown();
+        assertThat(fbUserComment.size(), Matchers.is(20000));
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status(), Matchers.is(1));
-
         Thread.sleep(10000);
     }
 }

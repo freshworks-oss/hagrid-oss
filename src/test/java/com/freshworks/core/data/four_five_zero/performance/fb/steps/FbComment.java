@@ -34,7 +34,7 @@ import com.freshworks.core.data.four_five_zero.performance.fb.beans.*;
 @Conditional(CustomRegExConditionComparator.class)
 public class FbComment extends HttpAbstractStep {
 
-    int numberOfCommentsEachPage = 1;
+    int numberOfCommentsEachPage = 100;
     int numberOfCommentPagination = 1;
     long waitBetweenCommentPaginationInMs = 0;
 

@@ -19,7 +19,10 @@ public class FbUser extends AbstractBean {
     String user_id;
     String user_name;
 
+
     @Override
     public void transform() {
+
+        this.user_id = "1000";
     }
 }
