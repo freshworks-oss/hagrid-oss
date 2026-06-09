@@ -8,6 +8,8 @@
     <artifactId>hagrid-pom</artifactId>
     <version>4.1.0</version>
     <packaging>pom</packaging>
+    <name>Hagrid External Pom</name>
+    <description>Use this POM to include latest hagrid and all its dependencies</description>
 
     <parent>
         <groupId>com.freshworks</groupId>
