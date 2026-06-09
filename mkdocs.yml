@@ -42,9 +42,8 @@ plugins:
   
 nav:
   - "Home": index.md
-  # - Get Started:
-  #     - Basic Concepts: get_start/concepts.md
-  #     - Development: get_start/develop.md
+
+  - Setup: setup/playground.md
 
   # Below section, we explain advance concepts from user perspective
   - Use cases:
