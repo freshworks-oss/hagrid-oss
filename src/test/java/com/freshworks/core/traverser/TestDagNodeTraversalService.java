@@ -1,16 +1,14 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.SimpleMockUtility;
+import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
+import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")

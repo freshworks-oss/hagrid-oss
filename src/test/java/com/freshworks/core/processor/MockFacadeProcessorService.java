@@ -5,17 +5,20 @@ import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
+@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
 @Component
 public class MockFacadeProcessorService implements MockFacadeInterface {
 
 
     ReturnableMockTypeList<AnalyticsService> analyticsService;
+    
     @SpyBean
     ProcessorService processorServiceSpy;
 
@@ -30,7 +33,7 @@ public class MockFacadeProcessorService implements MockFacadeInterface {
     public ProcessorService build() throws Exception {
 
         doNothing().when(processorServiceSpy).run();
-        doNothing().when(processorServiceSpy).configure(anyString(), any(), any(), any(), any(), any(),any());
+        doNothing().when(processorServiceSpy).configure(anyString(), any(), any(), any(), any(), any(), any(),any());
         return processorServiceSpy;
     }
 }

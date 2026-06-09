@@ -76,6 +76,8 @@ public class ProcessorService implements Callable<Void> {
     Map<String, String> mainThreadMdcCopy;
 
     ImmutableListMultimap<String, String> assetBeanDependencyMap;
+     
+    ImmutableListMultimap<String, String> assetAssetDependencyMap;
 
     ProcessTaskTracker processTaskTracker;
 
@@ -153,7 +155,7 @@ public class ProcessorService implements Callable<Void> {
         return null;
     }
 
-    public void configure(String parentServicePath, Phaser phaser, SyncServiceContainer syncServiceContainer, AssetBeanDependencyService assetBeanDependencyService, InfraService infraService, SyncStatusService syncStatusService, ProcessorConfigService processorConfigService) throws Exception {
+    public void configure(String parentServicePath, Phaser phaser, SyncServiceContainer syncServiceContainer, AssetBeanDependencyService assetBeanDependencyService, AssetAssetDependencyService assetAssetDependencyService, InfraService infraService, SyncStatusService syncStatusService, ProcessorConfigService processorConfigService) throws Exception {
         uuid = parentServicePath + "/" + UUID.randomUUID();
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
         this.syncServiceContainer = syncServiceContainer;
@@ -164,7 +166,8 @@ public class ProcessorService implements Callable<Void> {
         this.infraService = infraService;
         this.syncStatusService = syncStatusService;
         this.assetBeanDependencyMap = assetBeanDependencyService.scanner(this.namespace.getNamespace(), this.processorConfigService);
-        this.phaser = phaser;
+        this.assetAssetDependencyMap = assetAssetDependencyService.scanner(this.namespace.getNamespace(), this.processorConfigService);
+        this.phaser = phaser;   
         mainThreadMdcCopy = MDC.getCopyOfContextMap();
         this.processTaskTracker = new ProcessTaskTracker();
 
@@ -201,9 +204,9 @@ public class ProcessorService implements Callable<Void> {
 
                 List<String> sList = processorQueue.poll(processorPollCount);
                 phaser.register();
-                ProcessorTask processorTask = getProcessorTask();
+                ProcessorTaskService processorTask = getProcessorTask();
                 String parentPath = uuid + "/" + "processor_service_task";
-                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService, this.jsonIndexService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, this.freshIndexObjectMapper, phaser, processTaskTracker);
+                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService, this.jsonIndexService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, this.freshIndexObjectMapper, phaser, processTaskTracker);
                 processorExecutorService.submit(namespace.getNamespace(), processorTask);
                 numberOfProcessorTaskScheduled = numberOfProcessorTaskScheduled + 1;
             }
@@ -222,7 +225,7 @@ public class ProcessorService implements Callable<Void> {
     }
 
     @Lookup
-    public ProcessorTask getProcessorTask() {
+    public ProcessorTaskService getProcessorTask() {
         return null;
     }
 

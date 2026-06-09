@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.freshworks.core.data.four_zero_zero.unit.fb.assets.FbComment;
+import com.freshworks.core.data.four_five_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.FreshIndexBeanSerializeModifier;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;

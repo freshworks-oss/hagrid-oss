@@ -50,6 +50,8 @@ public class TestProcessorService {
     @Autowired
     MockFacadeAssetBeanDependencyService mockFacadeAssetBeanDependencyService;
 
+    @Autowired
+    MockFacadeAssetAssetDependencyService mockFacadeAssetAssetDependencyService;
 
     @Autowired
     SyncStatusService syncStatusService;
@@ -65,6 +67,7 @@ public class TestProcessorService {
         mockFacadeSyncServiceContainer.configure().build();
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeAssetBeanDependencyService.configure().build();
+        mockFacadeAssetAssetDependencyService.configure().build();
     }
 
     @Test
@@ -89,14 +92,16 @@ public class TestProcessorService {
         AssetBeanDependencyService assetBeanDependencyService = mockFacadeAssetBeanDependencyService
                 .build();
 
+        AssetAssetDependencyService assetAssetDependencyService = mockFacadeAssetAssetDependencyService.build();
+
         ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService.build();
         processorConfigService.configure(syncServiceContainer);
 
         ProcessorService processorService = mockFacadeProcessorService.build();
-        doCallRealMethod().when(processorService).configure(anyString(), any(), any(), any(), any(), any(),any());
+        doCallRealMethod().when(processorService).configure(anyString(), any(), any(), any(), any(), any(), any(),any());
         doCallRealMethod().when(processorService).run();
 
-        processorService.configure( "traverser", new Phaser(), syncServiceContainer, assetBeanDependencyService, mongoInfraService, syncStatusService, processorConfigService );
+        processorService.configure( "traverser", new Phaser(), syncServiceContainer, assetBeanDependencyService, assetAssetDependencyService, mongoInfraService, syncStatusService, processorConfigService );
 
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         assertThat(syncStatusService.getProcessor_status(), Matchers.is(-100));

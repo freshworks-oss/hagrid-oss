@@ -8,6 +8,7 @@ import com.freshworks.core.traverser.ParentStep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -15,6 +16,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
+@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
 @Component
 public class MockFacadeSyncService implements MockFacadeInterface {
 

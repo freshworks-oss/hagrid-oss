@@ -23,4 +23,4 @@ jobs:
 
     - name: Run Tests
       # Replace with "./gradlew test" if using Gradle
-      run: ./mvnw clean test -Dspring.profiles.active=four_zero_zero.unit.inmemory -Dno-transfer-progress
+      run: ./mvnw clean test -Dspring.profiles.active=four_five_zero.unit.inmemory -Dno-transfer-progress

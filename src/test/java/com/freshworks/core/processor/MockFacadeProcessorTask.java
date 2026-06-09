@@ -2,24 +2,22 @@ package com.freshworks.core.processor;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
+@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
 @Component
 public class MockFacadeProcessorTask implements MockFacadeInterface {
 
     @SpyBean
-    ProcessorTask processorTaskSpy;
+    ProcessorTaskService processorTaskSpy;
 
     ReturnableMockTypeList<Boolean> isAssetDependsOnThisBean;
     ReturnableMockTypeList<List<String>> getAssetBeanDependencyList;
@@ -56,13 +54,8 @@ public class MockFacadeProcessorTask implements MockFacadeInterface {
     @Override
     public Object build() throws Exception {
 
-        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
-        doNothing().when(processorTaskSpy).processItem(anyString());
-        doNothing().when(processorTaskSpy).assetsReadyToBePublished(any());
-        doNothing().when(processorTaskSpy).publishAbstractAsset();
-        doAnswer(isAssetDependsOnThisBean.answer()).when(processorTaskSpy).isAssetDependsOnThisBean(anyList(), any());
-        doAnswer(getAssetBeanDependencyList.answer()).when(processorTaskSpy).getAssetBeanDependencyList(anyString(), any());
-        doAnswer(shouldFilterAsset.answer()).when(processorTaskSpy).shouldFilterAsset(any());
+        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        doNothing().when(processorTaskSpy).processBeanForAsset(anyString());
         return processorTaskSpy;
     }
 }

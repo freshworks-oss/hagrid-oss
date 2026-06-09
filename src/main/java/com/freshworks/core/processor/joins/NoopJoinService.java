@@ -29,25 +29,23 @@ public class NoopJoinService extends AbstractJoinService {
     }
 
     @Override
-    public List<Optional<AbstractAsset>> getAssetWithFreshJoin(InfraDbKeyValue abstractKeyValue, String assetName, AbstractBean abstractBean, List<String> assetStepDependencyList, FreshJoin freshJoin) throws Exception {
-        List<Optional<AbstractAsset>> returnList  = new ArrayList<>();
-
-        returnList.add(Optional.fromNullable(null));
+    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
+        List<AbstractAsset> returnList  = new ArrayList<>();
         return returnList;
     }
 
     @Override
-    public AbstractAsset getAsset(String asset, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception {
+    public AbstractAsset getPrimitiveAsset(String asset, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception {
 
         if(assetBeanDependencyList.contains(abstractBean.getClass().getName())){
             log.debug("Asset {} depends on single step and depends on this step {}", asset, Joiner.on(",").join(assetBeanDependencyList));
             Class<?> assetClass =  Class.forName(asset, false, this.getClass().getClassLoader());
             List<Method> setterMethods = ProcessorUtility.getAllSetters(assetClass);
             AbstractAsset abstractAssetClassObject = (AbstractAsset) assetClass.getConstructor().newInstance();
-            HashMap<String, AbstractBean> unwrappedBeanClassMap = unwrappedBeanToClassMap(Lists.newArrayList(abstractBean));
+            HashMap<String, AbstractBean> unwrappedBeanClassMap = JoinUtility.unwrappedBeanToClassMap(Lists.newArrayList(abstractBean));
             log.debug("Classes unwrapped from main class are {}" , Joiner.on(",").withKeyValueSeparator("=").join(unwrappedBeanClassMap));
 
-            invokeSetterOnAssetObject(setterMethods, abstractAssetClassObject, unwrappedBeanClassMap);
+            JoinUtility.invokeSetterOnAssetObjectByBean(setterMethods, abstractAssetClassObject, unwrappedBeanClassMap);
             return abstractAssetClassObject;
         }
         else {
