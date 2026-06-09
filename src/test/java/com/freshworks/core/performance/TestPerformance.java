@@ -58,17 +58,17 @@ public class TestPerformance {
         int number = random.nextInt();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("numberOfUsersEachPage", "1")
-                .put("numberOfUserPagination", "1")
+                .put("numberOfUsersEachPage", "100")
+                .put("numberOfUserPagination", "100")
                 .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "1")
-                .put("numberOfPostPagination", "1")
+                .put("numberOfPostsEachPage", "100")
+                .put("numberOfPostPagination", "100")
                 .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "1")
-                .put("numberOfCommentPagination", "1")
+                .put("numberOfCommentsEachPage", "100")
+                .put("numberOfCommentPagination", "100")
                 .put("waitBetweenCommentPaginationInMs", "0")
-                .put("numberOfCommunitiesEachPage", "1")
-                .put("numberOfCommunityPagination", "1")
+                .put("numberOfCommunitiesEachPage", "100")
+                .put("numberOfCommunityPagination", "100")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
         MDC.put("mdc_key", "mdc_value");
         SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x);

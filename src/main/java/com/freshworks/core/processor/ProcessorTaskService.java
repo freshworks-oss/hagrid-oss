@@ -85,9 +85,7 @@ public class ProcessorTaskService implements Callable<Void> {
 
     ProcessorService.ProcessTaskTracker processTaskTracker;
 
-    LinkedList<AbstractAsset> globalGeneratedAssetList = new LinkedList<>();
-    LinkedList<AbstractAsset> tempListOfNewlyGeneratedAssets = new LinkedList<>();
-
+    LinkedList<AbstractAsset> abstractAssetList = new LinkedList<>();
 
     public ProcessorTaskService() {
     }
@@ -135,21 +133,21 @@ public class ProcessorTaskService implements Callable<Void> {
             processTaskTracker.incrementTotalProcessTask();
             MDC.setContextMap(mainThreadMdcCopy);
             // serviceTree.register(uuid);
+
+            // Clear abstractAssetList before using it, as it will be reused for every bean
+            abstractAssetList.clear();
             for (String bean : itemList) {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
-                    List<AbstractAsset> abstractAssetList = processBeanForAsset(bean);
-                   tempListOfNewlyGeneratedAssets.addAll(abstractAssetList);
-
-                   while(!tempListOfNewlyGeneratedAssets.isEmpty()) {
-                       globalGeneratedAssetList.clear();
-                       globalGeneratedAssetList.addAll(tempListOfNewlyGeneratedAssets);
-                       tempListOfNewlyGeneratedAssets.clear();
-                       for (AbstractAsset abstractAsset : globalGeneratedAssetList) {
-                           processAssetForAsset(abstractAsset);
-                       }
+                    abstractAssetList = processBeanForAsset(bean);
+                   while(true) {
+                       
+                        if (abstractAssetList.isEmpty()){
+                            break;
+                        }
+                        processAssetForAsset(abstractAssetList.pop());
+                       
                    }
-
 
                 } else {
                     // If thread is interrupted or asked to terminate then skip the list and publish
@@ -188,9 +186,9 @@ public class ProcessorTaskService implements Callable<Void> {
     }
 
     // Main method to create new assets from this bean
-    protected List<AbstractAsset> processBeanForAsset(String bean) throws Exception {
+    protected LinkedList<AbstractAsset> processBeanForAsset(String bean) throws Exception {
 
-        ArrayList<AbstractAsset> generatedAssetList = new ArrayList<>();
+        LinkedList<AbstractAsset> generatedAssetList = new LinkedList<>();
 
         checkArgument(!Strings.isNullOrEmpty(bean), "Input object can not be null. It must be not null");
         AbstractBean abstractBean = objectMapper.readValue(bean, AbstractBean.class);
@@ -214,7 +212,6 @@ public class ProcessorTaskService implements Callable<Void> {
             abstractAssetClassObject = processPrimitiveAsset(asset, abstractBean, assetBeanDependencyList);
 
             if (abstractAssetClassObject != null){
-                
                 generatedAssetList.add(abstractAssetClassObject);
             }
 
@@ -243,9 +240,8 @@ public class ProcessorTaskService implements Callable<Void> {
             List<String> assetAssetDependencyList = ProcessorUtility.getAssetAssetDependencyList(asset, assetAssetDependencyMap);
             checkArgument(assetAssetDependencyList.size() > 0, "A assets must be dependent on atleast one bean");
 
-            List<AbstractAsset> newlyGeneratedAssets = processNonPrimitiveAsset(asset, abstractAsset, assetAssetDependencyList);
-            tempListOfNewlyGeneratedAssets.addAll(newlyGeneratedAssets);
-            
+            LinkedList<AbstractAsset> newlyGeneratedAssets = processNonPrimitiveAsset(asset, abstractAsset, assetAssetDependencyList);
+            abstractAssetList.addAll(newlyGeneratedAssets);
         } // Creation of non primitive is happening in continuous loop here 
 
     }
@@ -283,9 +279,9 @@ public class ProcessorTaskService implements Callable<Void> {
         return abstractAssetClassObject;
     }
 
-    private List<AbstractAsset> processNonPrimitiveAsset(String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList) throws Exception{
+    private LinkedList<AbstractAsset> processNonPrimitiveAsset(String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList) throws Exception{
 
-        List<AbstractAsset> newlyGeneratedAssets = new ArrayList<>();
+        LinkedList<AbstractAsset> newlyGeneratedAssets = new LinkedList<>();
         AbstractAsset abstractAssetClassObject = null;
 
         Class<?> assetClass = ProcessorUtility.getClassByClassName(asset);
