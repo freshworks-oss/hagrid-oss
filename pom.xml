@@ -12,7 +12,7 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>Hagrid</artifactId>
-    <version>ce52faf</version>
+    <version>4.1.0</version>
     <name>Hagrid</name>
     <description>High performance generic asset discovery framework</description>
     <url>https://github.com/freshdesk/hagrid</url>
