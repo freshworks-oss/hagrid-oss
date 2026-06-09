@@ -17,14 +17,13 @@ import lombok.Setter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = Constants.JsonTypeInfo_As_PROPERTY, visible = true)
 public abstract class AbstractAsset {
 
-    String uniqueIdentifier = null;
-
-    public Optional<Boolean> filter(){
-        return Optional.fromNullable(true);
-    };
-
     @JsonIgnore
     SyncServiceContainer syncServiceContainer;
+
+    public boolean filter(){
+        return true;
+    };
+
 
     public void configure(SyncServiceContainer syncServiceContainer){
         this.syncServiceContainer = syncServiceContainer;
@@ -32,13 +31,5 @@ public abstract class AbstractAsset {
 
     public abstract void transform();
 
-    public abstract Object getUniqueIdentifier();
 
-    public Class<? extends AbstractBean> publishAsBean(){
-        return null;
-    }
-
-    public void setUniqueIdentifier(String uniqueIdentifier){
-        this.uniqueIdentifier = uniqueIdentifier;
-    }
 }

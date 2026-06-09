@@ -1,20 +1,12 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestAppRoleAssignment;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestServicePrinciple;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.executor.SharedExecutorService;
-import com.freshworks.core.shared.infra.InfraConfigService;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
-import com.freshworks.core.shared.Namespace;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.google.common.collect.ImmutableMap;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.concurrent.Phaser;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -22,11 +14,18 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.*;
-
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Phaser;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.SimpleMockUtility;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.executor.SharedExecutorService;
+import com.freshworks.core.shared.infra.InfraConfigService;
+import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
+import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
+import com.freshworks.core.shared.sync.SyncStatusService;
+import com.google.common.collect.ImmutableMap;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -57,9 +56,15 @@ public class TestDagTraversalService {
     @Autowired
     private MockFacadeMongoDbService mockFacadeMongoDbService;
 
+    String releaseVersion;
+
+    Class<? extends AbstractStep> appRoleAssignmentStep;
+    Class<? extends AbstractStep> application;
+    Class<? extends AbstractStep> servicePrinciple;
 
     @BeforeEach
     public void beforeEach() throws Exception {
+        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNode.configure().build();
         mongoDbServiceFacade.configure().build();
@@ -67,6 +72,9 @@ public class TestDagTraversalService {
         mockFacadeSyncStatusService.configure().build();
         mockFacadeInfraConfigService.configure().build();
 
+        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestAppRoleAssignment");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
+        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
     }
 
 
@@ -76,20 +84,20 @@ public class TestDagTraversalService {
         Phaser mockedPhaser = Mockito.mock(Phaser.class);
 
         DagNode parentNode = mockFacadeDagNode
-                .name(TestApplication.class)
+                .name(application)
                 .build();
 
         mockFacadeDagNode.configure();
 
         DagNode childNode = mockFacadeDagNode
-                .name(TestServicePrinciple.class)
+                .name(servicePrinciple)
                 .build();
         parentNode.addChild(childNode);
 
         mockFacadeDagNode.configure();
 
         DagNode childNode2 = mockFacadeDagNode
-                .name(TestAppRoleAssignment.class)
+                .name(appRoleAssignmentStep)
                         .build();
         parentNode.addChild(childNode2);
 

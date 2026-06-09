@@ -2,8 +2,8 @@ package com.freshworks.core.traverser;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestServicePrinciple;
+import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestApplication;
+import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestServicePrinciple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.stereotype.Component;

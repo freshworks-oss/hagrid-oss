@@ -1,6 +1,31 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.data.four_zero_zero.unit.dag.steps.TestApplication;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Phaser;
+import java.util.concurrent.Semaphore;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SimpleMockUtility;
@@ -11,28 +36,9 @@ import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
 import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
 import com.freshworks.core.shared.infra.persistent.MongoDbList;
 import com.google.common.collect.ImmutableMap;
+
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.time.Duration;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Phaser;
-import java.util.concurrent.Semaphore;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.not;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doCallRealMethod;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -63,8 +69,14 @@ public class TestDagNodePerParentTraversalService {
     @Autowired
     DagNodePerParentTraversalService dagNodePerParentTraversalService;
 
+    Class< ? extends AbstractStep> application;
+
+    String releaseVersion;
+
     @BeforeEach
     public void Mock() throws Exception {
+
+        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNodeTraversal.configure().build();
         mockFacadeMongoDbService.configure().build();
@@ -72,6 +84,8 @@ public class TestDagNodePerParentTraversalService {
         mockFacadeTraverseConfigService.configure().build();
         dagNodeMockFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
+
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion  + ".unit.dag.steps.TestApplication");
     }
 
     @Test
@@ -104,7 +118,7 @@ public class TestDagNodePerParentTraversalService {
 
         DagNode nodeToTraverse = dagNodeMockFacade
                 .hasMoreData(true, false)
-                .name(TestApplication.class)
+                .name(application)
                 .parentList(new LinkedHashMap<>(Map.of(parentNode, new Relationship())))
                 .build();
 
@@ -131,7 +145,7 @@ public class TestDagNodePerParentTraversalService {
                 list.add(abstractStep);
                 return abstractStep;
             }
-        }).when(syncServiceContainer).getBean(TestApplication.class.getName());
+        }).when(syncServiceContainer).getBean(application.getName());
 
 
         int rateLimit = 10;
@@ -143,8 +157,8 @@ public class TestDagNodePerParentTraversalService {
         sharedExecutorService.submit(namespace.getNamespace(), dagNodePerParentTraversalService).get();
 
         assertThat(list.size(), greaterThan(1));
-        assertThat(list.get(0), instanceOf(TestApplication.class));
-        assertThat(list.get(1), instanceOf(TestApplication.class));
+        assertThat(list.get(0), instanceOf(application));
+        assertThat(list.get(1), instanceOf(application));
         assertThat(list.get(0).hashCode(), is(not(list.get(1).hashCode())));
     }
 }

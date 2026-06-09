@@ -12,7 +12,7 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>Hagrid</artifactId>
-    <version>4.0.0</version>
+    <version>4.1.0</version>
     <name>Hagrid</name>
     <description>High performance generic asset discovery framework</description>
     <url>https://github.com/freshdesk/hagrid</url>
@@ -43,8 +43,8 @@
         <start-class>com.freshworks.HagridApplication</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <unit_test_in_memory>four_zero_zero.unit.inmemory</unit_test_in_memory>
-        <unit_test_in_persistent>four_zero_zero.unit.persistent</unit_test_in_persistent>
+        <unit_test_in_memory>four_five_zero.unit.inmemory</unit_test_in_memory>
+        <unit_test_in_persistent>four_five_zero.unit.persistent</unit_test_in_persistent>
     </properties>
 
     <dependencies>

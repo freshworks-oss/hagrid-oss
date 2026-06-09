@@ -1,6 +1,6 @@
 package com.freshworks.core.concurrency;
 
-import com.freshworks.core.data.four_zero_zero.concurrency.fb.assets.FbComment;
+import com.freshworks.core.data.four_five_zero.concurrency.fb.assets.FbComment;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.infra.InfraService;

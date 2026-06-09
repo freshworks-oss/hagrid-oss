@@ -1,16 +1,19 @@
 package com.freshworks.core.traverser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.data.four_zero_zero.unit.dag.beans.ComplexBean;
-import com.freshworks.core.data.four_zero_zero.unit.dag.beans.SimpleBean;
-import com.freshworks.core.data.four_zero_zero.unit.traverser.single.steps.TestSingleApplicationStep;
-import com.freshworks.core.data.four_zero_zero.unit.traverser.single.steps.TestSingleNonHttpApplicationStep;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -22,13 +25,14 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.SimpleMockUtility;
+import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -57,9 +61,17 @@ public class TestDagNodePerItemTraversalService {
     @Autowired
     MockFacadeNonHttpAbstractStep nonHttpAbstractStepFacade;
 
+    Class<? extends AbstractBean> complexBean;
+    Class<? extends AbstractBean> simpleBean;
+    Class<? extends HttpAbstractStep> singleApplicationStep;
+    Class<? extends NonHttpAbstractStep> singleNonHttpApplicationStep;
+
+    String releaseVersion;
+    
 
     @BeforeEach
     public void beforeEach() throws Exception {
+        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeSyncServiceContainer.configure();
         mockFacadeDagNode.configure();
@@ -67,6 +79,11 @@ public class TestDagNodePerItemTraversalService {
         dagNodePerItemTraversalFacade.configure();
         nonHttpAbstractStepFacade.configure();
         mockFacadeHttpRequestResponse.configure();
+
+        complexBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.beans.ComplexBean");
+        simpleBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.beans.SimpleBean");
+        singleApplicationStep = (Class<? extends HttpAbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.traverser.single.steps.TestSingleApplicationStep");
+        singleNonHttpApplicationStep = (Class<? extends NonHttpAbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.traverser.single.steps.TestSingleNonHttpApplicationStep");
 
     }
 
@@ -81,7 +98,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(true)
@@ -126,7 +143,7 @@ public class TestDagNodePerItemTraversalService {
 
             DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(false)
@@ -173,7 +190,7 @@ public class TestDagNodePerItemTraversalService {
             DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
             traverseAction.abortTransaction();
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(false, true)
@@ -214,7 +231,7 @@ public class TestDagNodePerItemTraversalService {
             DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
             traverseAction.holdAndReTry(1, TimeUnit.MILLISECONDS);
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(false, true)
@@ -254,7 +271,7 @@ public class TestDagNodePerItemTraversalService {
             DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
             traverseAction.retryWithNewRequest(mockFacadeHttpRequestResponse.configure().build());
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(false, true)
@@ -294,7 +311,7 @@ public class TestDagNodePerItemTraversalService {
             DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
             traverseAction.abortCurrentParentAndContinueWithNextParentInstance();
 
-            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(TestSingleApplicationStep.class)
+            AbstractStep mockedAbstractStep = httpAbstractStepFacade.abstractStep(singleApplicationStep)
                     .shouldProceedWithParentObject(true)
                     .startSync(httpRequestResponse)
                     .isValidResponseWithHttp(false, true)
@@ -342,7 +359,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .executeNonHttp(requestResponseContainer)
@@ -397,7 +414,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .isValidResponseNonHttp(false)
@@ -452,7 +469,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .isValidResponseNonHttp(false)
@@ -505,7 +522,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .isValidResponseNonHttp(false, true)
@@ -559,7 +576,7 @@ public class TestDagNodePerItemTraversalService {
             ObjectNode parentNode = objectMapper.createObjectNode();
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .isValidResponseNonHttp(false, true)
@@ -613,7 +630,7 @@ public class TestDagNodePerItemTraversalService {
 
 
 
-            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(TestSingleNonHttpApplicationStep.class)
+            AbstractStep mockedAbstractStep = nonHttpAbstractStepFacade.abstractStepClass(singleNonHttpApplicationStep)
                     .shouldProceedWithParentObjectNonHttp(true)
                     .startSyncNonHttp(requestResponseContainer)
                     .isValidResponseNonHttp(false, true)
@@ -675,7 +692,7 @@ public class TestDagNodePerItemTraversalService {
         objectNode.put("company", "freshworks");
         jNodeList.add(objectNode);
 
-        dagNodePerItemTraversalService.processIntoBean(currentNode, jNodeList, SimpleBean.class, true);
+        dagNodePerItemTraversalService.processIntoBean(currentNode, jNodeList, simpleBean, true);
 
         assertThat(savedList.size(), Matchers.is(1));
         assertThat(savedList, Matchers.hasItem(Matchers.containsString("Amit Aggarwal")));
@@ -714,7 +731,7 @@ public class TestDagNodePerItemTraversalService {
         objectNode.set("address", addressNode);
         jNodeList.add(objectNode);
 
-        dagNodePerItemTraversalService.processIntoBean(currentNode, jNodeList, ComplexBean.class, true);
+        dagNodePerItemTraversalService.processIntoBean(currentNode, jNodeList, complexBean, true);
 
         assertThat(savedList.size(), Matchers.is(1));
         assertThat(savedList, Matchers.hasItem(Matchers.containsString("Amit Aggarwal")));

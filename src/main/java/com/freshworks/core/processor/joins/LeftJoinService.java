@@ -1,22 +1,23 @@
 package com.freshworks.core.processor.joins;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.processor.AbstractBean;
-import com.freshworks.core.processor.Annotations.FreshJoin;
-import com.freshworks.core.processor.ProcessorUtility;
-import com.freshworks.core.shared.infra.InfraDbKeyValue;
-import com.google.common.base.Optional;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.core.processor.ProcessorUtility;
+import com.freshworks.core.processor.Annotations.FreshJoin;
+import com.freshworks.core.shared.infra.InfraDbKeyValue;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component("LeftJoinService")
@@ -30,38 +31,29 @@ public class LeftJoinService extends AbstractJoinService {
     }
 
     @Override
-    public List<Optional<AbstractAsset>> getAssetWithFreshJoin(InfraDbKeyValue abstractKeyValue, String asset, AbstractBean abstractBean, List<String> assetBeanDependencyList, FreshJoin freshJoin) throws Exception {
+    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
 
         Class<?> assetClass =  Class.forName(asset, false, this.getClass().getClassLoader());
         checkNotNull(freshJoin, "When a assets depends on multiple items at child node then join condition must be provided with Freshjoin annotation");
         log.info("Fresh join annotation is mentioned. All Ok ");
 
-        List<HashMap<String, AbstractBean>> unwrappedAssetBeansMapList = lookupStagingArea(abstractKeyValue, abstractBean, freshJoin);
-        log.debug("Saving main bean as key in mongodb {} " , abstractBean.getClass().getName());
+        List<HashMap<String, AbstractAsset>> unwrappedAssetAssetsMapList = lookupStagingArea(abstractKeyValue, abstractAsset, freshJoin);
+        log.debug("Saving main bean as key in mongodb {} " , abstractAsset.getClass().getName());
 
-        List<Optional<AbstractAsset>> returnList  = new ArrayList<>();
+        List<AbstractAsset> returnList  = new ArrayList<>();
 
-        if(unwrappedAssetBeansMapList.isEmpty()){
-            log.warn("Lookup failed for abstract bean {}", abstractBean.getClass().getName());
-            returnList.add(Optional.absent());
+        if(unwrappedAssetAssetsMapList.isEmpty()){
+            log.warn("Lookup failed for abstract bean {}", abstractAsset.getClass().getName());
             return returnList;
         }
         else{
 
-            for(int i=0; i<unwrappedAssetBeansMapList.size(); i++){
+            for(int i=0; i<unwrappedAssetAssetsMapList.size(); i++){
                 List<Method> setterMethods = ProcessorUtility.getAllSetters(assetClass);
                 AbstractAsset abstractAssetClassObject = (AbstractAsset) assetClass.getConstructor().newInstance();
-
-//        Optional<ArrayList<AbstractBean>> opt = getListOfBeansWhichAlreadyExists(assetBeanDependencyList, assetDocument);
-//        ArrayList<AbstractBean> listOfDifferentBeansOnWhichThisAssetDepends = null;
-//        if(opt.isPresent()){
-//            listOfDifferentBeansOnWhichThisAssetDepends = opt.get();
-//        }
-
-//        HashMap<String, AbstractBean> unwrappedStepClassMap = unwrappedBeanToClassMap(listOfDifferentBeansOnWhichThisAssetDepends);
-                invokeSetterOnAssetObject(setterMethods, abstractAssetClassObject, unwrappedAssetBeansMapList.get(i));
+                JoinUtility.invokeSetterOnAssetObjectByAsset(setterMethods, abstractAssetClassObject, unwrappedAssetAssetsMapList.get(i));
                 log.debug("Asset generated is {}", abstractAssetClassObject.getClass().getName());
-                returnList.add(Optional.fromNullable(abstractAssetClassObject));
+                returnList.add(abstractAssetClassObject);
             }
 
             return  returnList;
@@ -69,7 +61,7 @@ public class LeftJoinService extends AbstractJoinService {
     }
 
     @Override
-    public AbstractAsset getAsset(String asset, AbstractBean abstractBean, List<String> assetStepDependencyList) throws Exception {
+    public AbstractAsset getPrimitiveAsset(String asset, AbstractBean abstractBean, List<String> assetStepDependencyList) throws Exception {
         return null;
     }
 }
