@@ -12,7 +12,5 @@
 `DSR` should be created and approved. Once done, it is good for implementation. All these process should go through `issues` templates present in `hagrid` github repo. 
 
 
-## List of Approved DSR
-
 
 
