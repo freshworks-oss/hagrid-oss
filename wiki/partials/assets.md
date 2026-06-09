@@ -2,19 +2,24 @@
 
 <!-- Assets BASIC START -->
 
-`Asset` are the artifacts that you can consume. Assets are created by combining one or more `bean`. 
-You can create one `asset` `FbUser` which might be a direct mapping of a `bean` `FbUser`. You can create asset `FbUser` 
-joining two or more `beans` on some `key` like joining `FbCommunity` with `FbPost` on `community.creator_id == post.creator_id`
+`Asset` are the artifacts that you can consume. Assets are of two types `primitive` assets and `non primitive` assets. 
+
+`Primitive Assets` are created from `beans` while `non primitive assets` are created by joining two `primitive assets`
+
+
+You can create an `asset` `FbUserAsset` which might be a direct mapping of a `bean` `FbUserBean`. 
+
+You can create an asset `FbUserCommentAsset` joining two `primitve assets` on some `key` like joining primitive `FbUserAsset` with primitive `FbCommentAsset` on `user.user_id == comment.creator_id`
 
 It looks like this 
 
-![simple_assets_produce.png](../assets/images/simple_assets_produce.png)
+![asset_produce_diagram](../assets/images/asset_production_diagram.png)
 
+Once `beans` are defined, dev should define their `primitive` `assets`. Once `primitive` assets are defined then developer can create `non primitive` assets by using `freshJoin` as shown below in this doc. 
 
-Once `beans` are defined, dev should define the `assets`. `Assets` can be created from single bean itself or multiple beans can be
-joined together in a particular fashion to create a complex `asset`.
+Primitive Asset definition looks like this
 
-Asset definition looks like this
+If you notice the `setFromBean` parameter then we have passed a `bean` from which we want `Hagrid` to create this asset. If an asset definition has `bean` parameter then `Hagrid` consider it as `primitive asset` 
 
 ```java
 @NoArgsConstructor
@@ -32,13 +37,13 @@ public class FbUserAsset extends AbstractAsset {
 }
 ```
 
-Asset definition for complex asset may look like this 
+Once you have defined the `primtive assets` then you can create `non primtive assets` like below
+
+Non primitive Asset definition for complex asset may look like this 
 
 ```java
-@FreshJoin(rightClass = FbCommunity.class, uniqueJoinName = "user_community_join", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN,
-        onFieldList = {
-                @FreshJoin.OnField(rightClassFieldName = "ownerId", leftClass = FbUser.class, leftClassFieldName = "userId"),
-        })
+@FreshJoin(rightClass = FbCommunityAsset.class, rightClassFieldName = "creator_id", leftClass = FbUser.class, leftClassFieldName = "userId", uniqueJoinName = "user_community_join", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN)
+
 class UserCommunities{
 
     String communityOwner; // it would the userName from user bean
@@ -58,13 +63,11 @@ class UserCommunities{
 
 <!-- Assets FRESH_JOIN START -->
 
-`@Freshjoins` joins the two beans to create the asset. Like in the above case, we are creating the asset `UserCommunities`, which are the join of two beans `Community` and `User`.
+`@Freshjoins` joins the two assets to create another asset. Like in the above case, we are creating the asset `UserCommunities`, which are the join of two beans `Community` and `User`.
 
 ```java
-@FreshJoin(rightClass = FbCommunity.class, uniqueJoinName = "user_community_join", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN,
-        onFieldList = {
-                @FreshJoin.OnField(rightClassFieldName = "ownerId", leftClass = FbUser.class, leftClassFieldName = "userId"),
-        })
+@FreshJoin(rightClass = FbCommunityAsset.class, rightClassFieldName = "creator_id", leftClass = FbUser.class, leftClassFieldName = "userId", uniqueJoinName = "user_community_join", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN)
+
 class UserCommunities{
 
     String communityOwner; // it would the userName from user bean
@@ -80,13 +83,13 @@ class UserCommunities{
 }
 ```
 
-The beans are joined based on a common key, which are provided in `@Freshjoin`. Unlike Kafka, there is not a time window of the join. Like Kafka uses data store to look up the events (beans in our case), Hagrid also uses the data structure called `key_value` to store the stream of beans for lookup.
+The assets are joined based on a common key, which are provided in `@Freshjoin`. Unlike Kafka, there is not a time window of the join. Like Kafka uses data store to look up the events (assets in our case), Hagrid also uses the data structure called `key_value` to store the stream of assets for lookup.
 
 ### Inner Joins
-If and only if both sides are available, a join is emitted. Thus, if the left class bean has already come but the right class has not, then nothing will be emitted.
+If and only if both sides are available, a join is emitted. Thus, if the left class asset has already come but the right class has not, then nothing will be emitted.
 
 ### Outer Joins [ Not yet implemented ]
-With an outer join, both (left and right class ) beans always produce an output an asset. If both the left side and the right side are available, a join of the two is returned.
+With an outer join, both (left and right class ) assets always produce an output an asset. If both the left side and the right side are available, a join of the two is returned.
 If only the left side is available, the join will have the value of the left side and a null for the right side. The converse is true: If only the right side is available, the join will include the value of the right side and a null for the left side.
 
 ### Left-Outer Joins

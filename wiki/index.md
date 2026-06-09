@@ -164,9 +164,9 @@ For better understanding please take a look at this [visual diagram](pages/beans
 Think of asset classes like Bean classes except these major differences 
 
 1. Asset object is again a `java` class which set of attributes defined in it, just like beans 
-2. Asset object could be of simple type or complex type. 
-3. Simple assets is just a translation of Bean attributes to asset attributes. 
-4. Complex asset is formed by combining the multiple beans into single asset object. 
+2. Asset object could be of `primitive`  or `non primitive` type. 
+3. `Primitive Assets`is just a translation of Bean attributes to asset attributes. 
+4. `Non Primitive Assets` is formed by combining the two `primitive` assets using annotation `FreshJoin`
 5. Assets are consumable by developer to send it to their business application 
 
 
@@ -174,11 +174,18 @@ For better understanding please take a look at this [visual diagram](pages/asset
 
 Watch below series of screenshots to understand how assets are organised in code
 
+For primtive asset 
+
 ![Asset view of FbUser](assets/images/assets_view_of_FbUser.png)
+
+
+For non primitive asset
+![Asset view of non primitive assets](assets/images/asset_view_of_non_primitive_assets.png)
+
+
 
 Once you have configured steps, beans and assets then the configuration part of the connector is completed. 
  
-
 ### Connector Execution
 Once the connector configuration is understood, next question is 
 1. How do I run hagrid ?
