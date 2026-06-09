@@ -251,6 +251,26 @@
     
     
       <li class="md-tabs__item">
+        <a href="dsr/main/" class="md-tabs__link">
+          
+  
+  
+  DSR By Module
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
         <a href="services/high_level/" class="md-tabs__link">
           
   
@@ -889,6 +909,63 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DSR By Module
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    DSR By Module
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix="">
+            
               
                 
   
@@ -896,14 +973,126 @@
   
   
     <li class="md-nav__item">
-      <a href="versions/4.0.0/" class="md-nav__link">
+      <a href="dsr/main/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    4.0.0
+    Introduction
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dsr/traverser/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Traverser DSR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dsr/processor/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Processor DSR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dsr/infra/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infra DSR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="dsr/cut-across/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Across DSR
   
 
     
@@ -942,10 +1131,10 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
   
@@ -963,8 +1152,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -1475,14 +1664,17 @@ I have divided the concepts of Hagrid in two categories </p>
 <p>Think of asset classes like Bean classes except these major differences </p>
 <ol>
 <li>Asset object is again a <code>java</code> class which set of attributes defined in it, just like beans </li>
-<li>Asset object could be of simple type or complex type. </li>
-<li>Simple assets is just a translation of Bean attributes to asset attributes. </li>
-<li>Complex asset is formed by combining the multiple beans into single asset object. </li>
+<li>Asset object could be of <code>primitive</code>  or <code>non primitive</code> type. </li>
+<li><code>Primitive Assets</code>is just a translation of Bean attributes to asset attributes. </li>
+<li><code>Non Primitive Assets</code> is formed by combining the two <code>primitive</code> assets using annotation <code>FreshJoin</code></li>
 <li>Assets are consumable by developer to send it to their business application </li>
 </ol>
 <p>For better understanding please take a look at this <a href="pages/assets/assets/">visual diagram</a></p>
 <p>Watch below series of screenshots to understand how assets are organised in code</p>
+<p>For primtive asset </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="assets/images/assets_view_of_FbUser.png" data-desc-position="bottom"><img alt="Asset view of FbUser" src="assets/images/assets_view_of_FbUser.png"></a></p>
+<p>For non primitive asset
+<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="assets/images/asset_view_of_non_primitive_assets.png" data-desc-position="bottom"><img alt="Asset view of non primitive assets" src="assets/images/asset_view_of_non_primitive_assets.png"></a></p>
 <p>Once you have configured steps, beans and assets then the configuration part of the connector is completed. </p>
 <h3 id="connector-execution">Connector Execution</h3>
 <p>Once the connector configuration is understood, next question is 
