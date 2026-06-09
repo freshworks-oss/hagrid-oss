@@ -63,10 +63,12 @@ public void filter() {
 
 ```
 
-## Join two Bean 
-
-
-## Join three or more Bean
+## Creating Non Primitive Assets 
+{%
+include-markdown "partials/assets.md"
+start="<!-- Assets FRESH_JOIN START -->"
+end="<!-- Assets FRESH_JOIN END -->"
+%}
 
 
 

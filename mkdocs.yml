@@ -61,6 +61,13 @@ nav:
       - 4.1.0: versions/4.1.0.md
       - 4.0.0: versions/4.0.0.md
 
+  - DSR By Module:
+    - Introduction: dsr/main.md
+    - Traverser DSR: dsr/traverser.md
+    - Processor DSR: dsr/processor.md
+    - Infra DSR: dsr/infra.md
+    - Across DSR: dsr/cut-across.md
+    
   - Services:
     - Combined View: services/high_level.md
     - Traverser Services: services/traverser_services.md
@@ -76,7 +83,6 @@ nav:
 #      - Concepts: internals/high_level.md
 #      - Meetings: internals/meetings.md
 
-#  - DSR List: dsr/dsr.md
 
 #  - Glossary:
 #    - glossary/glossary.md
