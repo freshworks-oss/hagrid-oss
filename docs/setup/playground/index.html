@@ -1257,7 +1257,7 @@
 
 
 <h1 id="playground-setup">Playground Setup</h1>
-<p>In this section, we are going to do playground setup. Basically a setup which allow developers to understand and play around with various features of Hagrid without much infra level setup. </p>
+<p>In this section, we are going to do playground setup. Basically a setup which allow developers to understand and play around with various features of Hagrid with docker based setup. </p>
 <h2 id="pre-requisite">Pre-requisite</h2>
 <p>Below are the pre-requisite for setup up playground setup </p>
 <ol>
@@ -1266,21 +1266,25 @@
 </ol>
 <h2 id="get-started">Get Started</h2>
 <p>With every released version of Hagrid, we release its <code>initializer</code> i.e fully functional code which would use that version of Hagrid. Main idea was to make it easy for developers to understand the new features added in this release. This idea is taken from <code>spring initializer</code> </p>
-<p>So now, go to Hagrid repository at https://github.com/freshworks-oss/hagrid-oss, switch to branch <code>hagrid/initializer</code> </p>
+<p>So now, go to Hagrid repository at <a href="https://github.com/freshworks-oss/hagrid-oss">hagrid-repo</a>, switch to branch <code>hagrid/initializer</code> branch</p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/hagrid_branches_display.png" data-desc-position="bottom"><img alt="display_list_of_branches" src="../../assets/images/setup/hagrid_branches_display.png"></a></p>
 <p>Checkout that branch on your local like below </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/init_branch_checkout.png" data-desc-position="bottom"><img alt="checkout_screenshot" src="../../assets/images/setup/init_branch_checkout.png"></a></p>
 <p>Next, look at the directory <code>docker-setup-for-testing</code>. This directory contains following containers </p>
 <ol>
 <li><code>Django</code> - It acts as third-party server which has dummy APIs to simulate <code>facebook</code> api case</li>
-<li><code>Grafana</code> AND <code>Prometheus</code> - It is used to view metrics that Hagrid fetches along with it. </li>
-<li><code>Hagrid</code> - This container checkout branches that are passed via <code>docker-compose.yml</code> and run test cases on that branch. </li>
-<li>For <code>playgound</code> set up we DO NOT NEED this container. Hence we will scale it down to 0 </li>
-<li>We need this container only during development of <code>Hagrid</code> framework itself. </li>
-<li><code>mongodb</code> - Hagrid internally uses two kind of storage to store beans and assets </li>
-<li><code>persistent</code> - Which means Hagrid should use <code>mongodb</code> as its infra layer</li>
-<li><code>inmemory</code> -  Which means Hagrid should use <code>RAM</code> as its infra layer. </li>
+<li><code>Grafana</code> AND <code>Prometheus</code> - It is used to view metrics that Hagrid generated while fetching data from third-party.</li>
+<li><code>Hagrid</code> - This container checkout branches that are passed via <code>docker-compose.yml</code> and run test cases on that branch.<ol>
+<li>For <code>playgound</code> set up we <strong>DO NOT NEED</strong> this container. Hence <strong>we will scale it down to 0</strong> </li>
+<li>We need this container only during development of <code>Hagrid</code> framework and branch testing. </li>
+</ol>
+</li>
+<li><code>mongodb</code> - Hagrid internally uses two kind of storage to store beans and assets <ol>
+<li><code>persistent</code> - Which means Hagrid should use <code>mongodb</code> as its infra layer to store intermediate data i.e <code>beans</code> . Use <code>persistent</code> when your connector is going to fetch huge amount of data.  </li>
+<li><code>inmemory</code> -  Which means Hagrid should use <code>RAM</code> as its infra layer to store intermediate data i.e <code>beans</code>. Use <code>immemory</code> when your connector fetches very small amount of data.</li>
 <li>For this playground set up we will use <code>persistent</code> i.e <code>mongoDb</code> container to store data</li>
+</ol>
+</li>
 </ol>
 <p>So basically, we are going to run Hagrid on our local computer and it will connect with <code>django</code> , <code>grafana</code> , <code>prometheus</code> and <code>mongodb</code> inside docker. </p>
 <p>Architecture would be something like this </p>
@@ -1291,12 +1295,14 @@
 <p>Once this is done, then launch docker container except <code>hagrid</code> container like this </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/docker_launch_command.png" data-desc-position="bottom"><img alt="docker_launch_setup" src="../../assets/images/setup/docker_launch_command.png"></a></p>
 <p>After this you should be able to access following services </p>
-<p>Access <code>Grafana</code> on  <code>http://localhost:9091</code> - 
-1. Username would be <code>admin</code>
-2. Password would be <code>amit</code> - You can change it from <code>docker-compose.yml</code> that comes along with Hagrid intializer</p>
+<p>Access <code>Grafana</code> on  <code>http://localhost:9091</code> </p>
+<ol>
+<li>Username would be <code>admin</code></li>
+<li>Password would be <code>amit</code> - You can change it from <code>docker-compose.yml</code> that comes along with Hagrid intializer</li>
+</ol>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/grafana_launch.png" data-desc-position="bottom"><img alt="grafana_launch" src="../../assets/images/setup/grafana_launch.png"></a></p>
 <p>After login to granfa, you may not be seeing the dashboard <code>performance testing</code> out of the box. </p>
-<p>If so then please import the dashboard from this json <a href="grafana Dashboard json">https://github.com/freshworks-oss/hagrid-oss/blob/main/src/main/resources/grafana_dashboard.json</a></p>
+<p>If so then please import the dashboard from this json <a href="https://github.com/freshworks-oss/hagrid-oss/blob/main/src/main/resources/grafana_dashboard.json">grafana Dashboard json</a></p>
 <p>We have already set <code>prometheus</code> to scan metrics from <code>host.docker.internal:8080</code> in <code>docker-compose.yml</code> </p>
 <p>Once above metric setup is ready then next is to run Hagrid like below </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/start_hagrid.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/start_hagrid.png"></a></p>
@@ -1307,7 +1313,8 @@
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/Hagrid-Logs_details.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/Hagrid-Logs_details.png"></a></p>
 <p>Checkout grafana metrics </p>
 <p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/grafana_metrics.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/grafana_metrics.png"></a></p>
-<p>If you are still facing any kind of issue, please send your query at <code>user-hagrid@googlegroups.com</code> so that any one from community can answer. </p>
+<p><strong>Note</strong>
+If you are still facing any kind of issue, please send your query at <code>user-hagrid@googlegroups.com</code> so that any one from community can answer. </p>
 
 
 
