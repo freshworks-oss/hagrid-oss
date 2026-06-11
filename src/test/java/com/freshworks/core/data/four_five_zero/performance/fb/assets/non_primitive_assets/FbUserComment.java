@@ -3,6 +3,7 @@ package com.freshworks.core.data.four_five_zero.performance.fb.assets.non_primit
 import com.freshworks.core.data.four_five_zero.performance.fb.assets.FbUser;
 import com.freshworks.core.data.four_five_zero.performance.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.processor.Annotations.FreshAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 
 import lombok.Getter;
