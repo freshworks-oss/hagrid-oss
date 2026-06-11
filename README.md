@@ -1,5 +1,5 @@
 # Complete Documentation Here. 
-For detailed documentation please visit here. Only accessible to freshworks internal employees 
+For detailed documentation please visit here.
 
 [Hagrid Documentation Website](https://freshworks-oss.github.io/hagrid-oss/)
 
