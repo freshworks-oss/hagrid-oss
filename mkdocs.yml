@@ -57,7 +57,7 @@ nav:
 
 
   - Versions:
-      - 4.1.0: versions/4.1.0.md
+      - 4.5.0: versions/4.5.0.md
 
   - DSR By Module:
     - Introduction: dsr/main.md
