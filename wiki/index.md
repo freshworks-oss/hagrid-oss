@@ -264,7 +264,7 @@ With this basic idea of how Hagrid works, here I would like to summarize few thi
 
 With the basic understanding of `Hagrid`, next move to [Set up](setup/playground.md) to set up a playground so that we can do practical with `Hagrid` framework and understand its working better. 
 
-Please reach out to me for any suggestions and questions at [Amit Aggarwal](mailto:amit.aggarwal@freshworks.com)
+Please reach out to the community for any suggestions and questions at [community-email](mailto:user-hagrid@googlegroups.com)
 
 
 
