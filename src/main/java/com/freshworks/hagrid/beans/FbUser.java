@@ -25,5 +25,6 @@ public class FbUser extends AbstractBean {
 
     @Override
     public void transform() {
+
     }
 }

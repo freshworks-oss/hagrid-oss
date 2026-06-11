@@ -8,7 +8,11 @@ import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.sync.SyncService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.ParentStep;
+import com.freshworks.freshindex.index.query.Expression;
+import com.freshworks.hagrid.assets.FbComment;
 import com.google.common.collect.ImmutableMap;
+
+import org.apache.commons.lang3.function.Consumers;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +42,12 @@ public class Initialization {
             syncServiceContainer = syncService.startSync(ParentStep.class, namespace,  map);
             SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
             syncStatusService.waitUntilSyncIsInProgress();
+            ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+            List<FbComment> listOfAllComments = consumerService.getAssetByAssetType(FbComment.class);
+
+            // To check various example of consuming, please checkout this documentation - https://freshworks-oss.github.io/hagrid-oss/usecases/consumer/
+
+            
             System.out.println("Sync is done");
         }
 
