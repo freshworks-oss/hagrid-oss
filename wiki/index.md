@@ -260,8 +260,7 @@ With this basic idea of how Hagrid works, here I would like to summarize few thi
     3. Knows how to handle if there is `non200 http response`
     4. Filter data and attributes which is of no interest
 
-With the basic understanding of `Dag` and `steps`, next move to [Get Started](pages/concepts.md) to understand some more concepts of Hagrid which is useful and 
-mandatory to develop a connector on Hagrid.
+With the basic understanding of `Hagrid`, next move to [Set up](setup/playground.md) to set up a playground so that we can do practical with `Hagrid` framework and understand its working better. 
 
 Please reach out to me for any suggestions and questions at [Amit Aggarwal](mailto:amit.aggarwal@freshworks.com)
 
