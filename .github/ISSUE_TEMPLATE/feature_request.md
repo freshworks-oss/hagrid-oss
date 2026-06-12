@@ -1,14 +1,14 @@
 ---
 name: Feature request Idea
-about: Suggest an idea for this project
+about: Feature request by end user.
 title: ''
-labels: ''
+labels: 'feature,code,draft'
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Describe your feature here**
+A clear and concise description of what the problem it will solve. 
 
 **Describe the solution you'd like**
 A clear and concise description of what you want to happen.
@@ -16,7 +16,7 @@ A clear and concise description of what you want to happen.
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.
 
-**Write a BDD test case here *
+**Write test cases here *
 <em>Scenario</em> : Add Scenario to test here 
 <em>Given</em> : Given the following state
 <em>When</em> : When the following action is taken place

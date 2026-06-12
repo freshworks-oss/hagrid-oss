@@ -1,8 +1,8 @@
 ---
-name: Bug report
-about: Create a report to help us improve
+name: Bug Report
+about: Bug report by end user either in hagrid code or documentation
 title: ''
-labels: ''
+labels: 'bug,code,draft'
 assignees: ''
 
 ---
@@ -34,7 +34,7 @@ If applicable, add screenshots to help explain your problem.
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Write a BDD test case here *
+**Write test cases here (if any) *
 <em>Scenario</em> : Add Scenario to test here 
 <em>Given</em> : Given the following state
 <em>When</em> : When the following action is taken place

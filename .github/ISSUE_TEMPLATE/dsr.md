@@ -1,8 +1,8 @@
 ---
 name: Detailed Specification Request of a feature 
-about: Detailed specifications about the changes in Hagrid.  
+about: DSR are created by Hagrid code team members to fix bugs and features created by end users
 title: ''
-labels: 'dsr,draft'
+labels: 'dsr,code,draft'
 assignees: '0xvoila'
 
 ---
