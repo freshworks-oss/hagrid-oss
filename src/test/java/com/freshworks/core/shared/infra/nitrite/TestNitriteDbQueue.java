@@ -1,19 +1,10 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -21,15 +12,20 @@ import java.util.List;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import org.dizitart.no2.Nitrite;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.zaxxer.hikari.HikariConfig;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.h2")
-public class TestH2DbQueue {
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+public class TestNitriteDbQueue {
 
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
     @BeforeEach
     public void setup(){
 
@@ -39,14 +35,15 @@ public class TestH2DbQueue {
         config.setUsername("");
         config.setPassword("");
         config.setIdleTimeout(60000); // 60 seconds
-        hikariDataSource = new HikariDataSource(config);
+        nitriteDb = Nitrite.builder()
+            .openOrCreate();
     }
 
 
     @Test
     public void testAddMethod() throws Exception {
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource, "some_name_space", "some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
         h2DbQueue.add("{\"name\": \"amit\"}");
         assertThat(h2DbQueue.getQueueIndex().get(), is(1L));
         assertThat(h2DbQueue.hasMoreData(), is(true));
@@ -56,7 +53,7 @@ public class TestH2DbQueue {
     @Test
     public void testAddListMethod() throws Exception {
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource, "some_name_space", "some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
@@ -70,7 +67,7 @@ public class TestH2DbQueue {
     @Test
     public void testPollMethod() throws Exception {
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
         assertThat(h2DbQueue.getPopIndex(), is(0L));
         assertThat(h2DbQueue.getQueueIndex().get(), is(0L));
@@ -95,7 +92,7 @@ public class TestH2DbQueue {
     @Test
     public void testPollNElementsMethod() throws Exception{
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
         assertThat(h2DbQueue.getPopIndex(), is(0L));
         assertThat(h2DbQueue.getQueueIndex().get(), is(0L));
@@ -120,7 +117,7 @@ public class TestH2DbQueue {
 
     public void testHashMoreDataWhenThereIsDataInQueue() throws Exception {
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
         h2DbQueue.add("{\"name\": \"amit\"}");
         assertThat(h2DbQueue.getQueueIndex().get(), is(1L));
         assertThat(h2DbQueue.hasMoreData(), is(true));
@@ -131,7 +128,7 @@ public class TestH2DbQueue {
     @Test
     public void testHashMoreDataWhenQueueIsEmpty() throws Exception{
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
         Thread s = new Thread( () ->{
             try {
@@ -154,7 +151,7 @@ public class TestH2DbQueue {
     @Test
     public void testHashMoreDataWhenQueueIsHasData() throws Exception{
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource, "some_name_space", "some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
         h2DbQueue.add("{\"name\": \"amit\"}");
         assertThat(h2DbQueue.hasMoreData(), is(true));
 
@@ -167,10 +164,10 @@ public class TestH2DbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
         h2DbQueue.setHasMoreDataLock(mockedLock);
 
-        Field field = H2DbQueue.class.getDeclaredField("hasNotMoreDataQueue");
+        Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
         field.set(h2DbQueue, mockedCondition);
 
@@ -193,10 +190,10 @@ public class TestH2DbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
         h2DbQueue.setHasMoreDataLock(mockedLock);
 
-        Field field = H2DbQueue.class.getDeclaredField("hasNotMoreDataQueue");
+        Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
         field.set(h2DbQueue, mockedCondition);
 
@@ -222,10 +219,10 @@ public class TestH2DbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        H2DbQueue h2DbQueue = new H2DbQueue(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
         h2DbQueue.setHasMoreDataLock(mockedLock);
 
-        Field field = H2DbQueue.class.getDeclaredField("hasNotMoreDataQueue");
+        Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
         field.set(h2DbQueue, mockedCondition);
 

@@ -1,48 +1,37 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.rocksdb.RocksDBModule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.h2")
-public class TestH2DbList {
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+public class TestNitriteDbList {
 
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
     @BeforeEach
     public void setup(){
-
-        HikariConfig config = new HikariConfig();
-        String dbString =  "jdbc:h2:mem:testdb";
-        config.setJdbcUrl(dbString);
-        config.setUsername("");
-        config.setPassword("");
-        config.setIdleTimeout(60000); // 60 seconds
-        hikariDataSource = new HikariDataSource(config);
+        nitriteDb = Nitrite.builder()
+            .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/nitrite/demo/database.db"))
+            .openOrCreate();
     }
 
 
     @Test
     public void testAddMethod() throws Exception{
 
-        H2DbList h2DbList = new H2DbList(hikariDataSource, "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
 
         h2DbList.add("{\"name\": \"amit\"}");
         assertThat(h2DbList.getListIndex().get(), is(1L));
@@ -51,7 +40,7 @@ public class TestH2DbList {
 
     @Test
     public void testAddListMethod() throws Exception{
-        H2DbList h2DbList = new H2DbList(hikariDataSource, "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
 
         ArrayList<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
@@ -65,7 +54,7 @@ public class TestH2DbList {
     @Test
     public void testAddAndGetIndexBulkMethod() throws Exception{
 
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -86,7 +75,7 @@ public class TestH2DbList {
 
     @Test
     public void testAddAndGetIndexMethod() throws Exception{
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         Long index = h2DbList.addAndGetIndex("{\"name\": \"amit\"}");
         assertThat(index, is(0L));
@@ -96,7 +85,7 @@ public class TestH2DbList {
 
     @Test
     public void testGetByIndexMethod() throws Exception {
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         h2DbList.add("{\"name\": \"amit\"}");
         h2DbList.add("{\"name\": \"rahul\"}");
@@ -107,7 +96,7 @@ public class TestH2DbList {
 
     @Test
     public void testGetByIndexNElementsMethod() throws Exception {
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         h2DbList.add("{\"name\": \"amit\"}");
         h2DbList.add("{\"name\": \"rahul\"}");
@@ -125,7 +114,7 @@ public class TestH2DbList {
     @Test
     public void testGetByDocumentIdNElementsMethod() throws Exception {
 
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         h2DbList.add("{\"name\": \"amit\"}");
         h2DbList.add("{\"name\": \"rahul\"}");
@@ -145,7 +134,7 @@ public class TestH2DbList {
 
     @Test
     public void testIsEndOfListReachedMethod() throws Exception{
-        H2DbList h2DbList = new H2DbList(hikariDataSource,  "some_name_space","some_name");
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
         h2DbList.add("{\"name\": \"amit\"}");
         h2DbList.add("{\"name\": \"rahul\"}");

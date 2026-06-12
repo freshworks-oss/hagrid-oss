@@ -174,29 +174,20 @@ public class InfraConfigService {
         return infraType;
     }
 
-    public String getH2HostAddress() throws IOException {
+    public String getNitriteDataPath() throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         JsonNode configJsonNode = objectMapper.readTree(resource.getInputStream());
-        String h2HostAddress = configJsonNode.at( InfraConstants.INFRA_PATH + InfraConstants.H2_HOST_ADDRESS).asText();
-
-        return h2HostAddress;
-    }
-
-    public String getH2DataPath() throws IOException {
-
-        ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
-        JsonNode configJsonNode = objectMapper.readTree(resource.getInputStream());
-        String h2DataPath = configJsonNode.at( InfraConstants.INFRA_PATH + InfraConstants.H2_DATA_PATH).asText();
+        String h2DataPath = configJsonNode.at( InfraConstants.INFRA_PATH + InfraConstants.Nitrite_DATA_PATH).asText();
 
         return h2DataPath;
     }
 
-    public String getH2DatabaseType() throws IOException {
+    public String getNitriteDatabaseType() throws IOException {
 
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         JsonNode configJsonNode = objectMapper.readTree(resource.getInputStream());
-        String h2DatabaseType = configJsonNode.at( InfraConstants.INFRA_PATH + InfraConstants.H2_DATABASE_TYPE).asText();
+        String h2DatabaseType = configJsonNode.at( InfraConstants.INFRA_PATH + InfraConstants.Nitrite_DATABASE_TYPE).asText();
 
         return h2DatabaseType;
     }

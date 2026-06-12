@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.Namespace;
@@ -18,9 +18,11 @@ import org.springframework.context.ApplicationContext;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import org.dizitart.no2.Nitrite;
+
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.h2")
-public class TestH2ClientFactory {
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+public class TestNitriteClientFactory {
 
 
     @Autowired
@@ -33,7 +35,7 @@ public class TestH2ClientFactory {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
     @Autowired
-    MongoClientFactory mongoClientFactory;
+    NitriteFactory nitriteClientFactory;
 
 
     @BeforeEach
@@ -45,28 +47,22 @@ public class TestH2ClientFactory {
 
 
     @Test
-    public void testSingleMongoClientIsCreatedForMultipleMongoService() throws Exception {
+    public void testSingleNitriteClientIsCreatedForMultipleNitriteService() throws Exception {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService.configure()
-                .getDatabaseHost("127.0.0.1")
-                .getDatabasePort(27017)
+                .getDatabaseHost("")
+                .getDatabasePort(0)
                 . getDatabaseAuthDb("admin")
                 .getDatabaseUserName("admin")
                 .getDatabasePassword("admin")
-                .getInfraType("")
+                .getInfraType("nitrite")
                 .build();
 
-        AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
         Namespace namespace = applicationContext.getBean(Namespace.class);
         namespace.setNamespace("dummy_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                .add(namespace, Namespace.class)
-                        .add(analyticsFactory, AnalyticsFactory.class)
-                                .build();
-
-        MongoClient mongoClient1  = mongoClientFactory.getMongoClientObject(syncServiceContainer,infraConfigService);
-        MongoClient mongoClient2  = mongoClientFactory.getMongoClientObject(syncServiceContainer,infraConfigService);
+        Nitrite mongoClient1  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
+        Nitrite mongoClient2  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
 
         assertThat(mongoClient1, Matchers.equalToObject(mongoClient2));
 //

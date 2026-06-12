@@ -1,10 +1,14 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +20,9 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
 @Component
-public class MockFacadeH2dbList implements MockFacadeInterface {
+public class MockFacadeNitritedbList implements MockFacadeInterface {
 
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
 
     ReturnableMockTypeList<String> listName;
     ReturnableMockTypeList<String> namespace;
@@ -38,19 +42,14 @@ public class MockFacadeH2dbList implements MockFacadeInterface {
 
 
     @Override
-    public MockFacadeH2dbList configure(){
+    public MockFacadeNitritedbList configure(){
 
         reset();
 
-
-        HikariConfig config = new HikariConfig();
-        String dbString =  "jdbc:h2:mem:testdb";
-        config.setJdbcUrl(dbString);
-        config.setUsername("");
-        config.setPassword("");
-        config.setIdleTimeout(60000); // 60 seconds
-        hikariDataSource = new HikariDataSource(config);
-
+        nitriteDb = Nitrite.builder()
+            .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/nitrite/demo/database.db"))
+            .openOrCreate();
+        
         listName.add("dummy_list");
         namespace.add("dummy_namespace");
         addAndGetIndex.add(1000L);
@@ -62,64 +61,64 @@ public class MockFacadeH2dbList implements MockFacadeInterface {
     }
 
 
-    public MockFacadeH2dbList addAndGetIndex(Long... addAndGetIndex) {
+    public MockFacadeNitritedbList addAndGetIndex(Long... addAndGetIndex) {
         this.addAndGetIndex.clear();
         this.addAndGetIndex.add(addAndGetIndex);
         return this;
     }
 
-    public MockFacadeH2dbList addAndGetIndexBulk(List<Long>... addAndGetIndexBulk ){
+    public MockFacadeNitritedbList addAndGetIndexBulk(List<Long>... addAndGetIndexBulk ){
         this.addAndGetIndexBulk.clear();
         this.addAndGetIndexBulk.add(addAndGetIndexBulk);
         return this;
     }
 
-    public MockFacadeH2dbList get(String... get){
+    public MockFacadeNitritedbList get(String... get){
         this.get.clear();
         this.get.add(get);
         return this;
     }
 
-    public MockFacadeH2dbList getNFromStartIndex(List<String>... getNFromStartIndex){
+    public MockFacadeNitritedbList getNFromStartIndex(List<String>... getNFromStartIndex){
         this.getNFromStartIndex.clear();
         this.getNFromStartIndex.add(getNFromStartIndex);
         return this;
     }
 
-    public MockFacadeH2dbList getGivenDocList(List<String>... getGivenDocList){
+    public MockFacadeNitritedbList getGivenDocList(List<String>... getGivenDocList){
         this.getGivenDocList.clear();
         this.getGivenDocList.add(getGivenDocList);
         return this;
     }
 
-    public MockFacadeH2dbList isEndOfListReached(Boolean... isEndOfListReached){
+    public MockFacadeNitritedbList isEndOfListReached(Boolean... isEndOfListReached){
         this.isEndOfListReached.clear();
         this.isEndOfListReached.add(isEndOfListReached);
         return this;
     }
 
 
-    public MockFacadeH2dbList addHikariDataSource(HikariDataSource hikariDataSource){
-        this.hikariDataSource = hikariDataSource;
+    public MockFacadeNitritedbList addHikariDataSource(Nitrite nitriteDb){
+        this.nitriteDb = nitriteDb;
         return this;
     }
 
-    public MockFacadeH2dbList listName(String... listName){
+    public MockFacadeNitritedbList listName(String... listName){
         this.listName.clear();;
         this.listName.add(listName);
         return this;
     }
 
-    public MockFacadeH2dbList namespace(String... namespace){
+    public MockFacadeNitritedbList namespace(String... namespace){
         this.namespace.clear();;
         this.namespace.add(namespace);
         return this;
     }
 
     @Override
-    public H2DbList build() throws Exception {
+    public NitriteDbList build() throws Exception {
 
-        H2DbList h2DbList = new H2DbList(hikariDataSource, namespace.next(),listName.next());
+        NitriteDbList h2DbList = new NitriteDbList(nitriteDb, namespace.next(),listName.next());
         h2DbList = Mockito.spy(h2DbList);
 
         doNothing().when(h2DbList).add(anyString());

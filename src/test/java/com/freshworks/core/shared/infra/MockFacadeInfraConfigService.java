@@ -31,9 +31,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
     ReturnableMockTypeList<Integer> getDatabasePort;
 
     ReturnableMockTypeList<String> getInfraType;
-    ReturnableMockTypeList<String> getH2DataPath;
+    ReturnableMockTypeList<String> getNitriteDataPath;
 
-    ReturnableMockTypeList<String> getH2DatabaseType;
+    ReturnableMockTypeList<String> getNitriteDatabaseType;
 
 
     @Override
@@ -47,8 +47,8 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         getAdditionalParams.add("dummy-additional-param=dummy-additional-value");
         getDatabasePort.add(27017);
         getInfraType.add("persistent");
-        getH2DataPath.add("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some-database");
-        getH2DatabaseType.add("file");
+        getNitriteDataPath.add("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database");
+        getNitriteDatabaseType.add("file");
         getConnectionString.add("");
 
         return this;
@@ -95,9 +95,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeInfraConfigService getH2DataPath(String... getH2DataPath) {
-        this.getH2DataPath.clear();
-        this.getH2DataPath.add(getH2DataPath);
+    public MockFacadeInfraConfigService getNitriteDataPath(String... getNitriteDataPath) {
+        this.getNitriteDataPath.clear();
+        this.getNitriteDataPath.add(getNitriteDataPath);
         return this;
     }
 
@@ -107,9 +107,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeInfraConfigService getH2DatabaseType(String... getH2DatabaseType) {
-        this.getH2DatabaseType.clear();
-        this.getH2DatabaseType.add(getH2DatabaseType);
+    public MockFacadeInfraConfigService getNitriteDatabaseType(String... getNitriteDatabaseType) {
+        this.getNitriteDatabaseType.clear();
+        this.getNitriteDatabaseType.add(getNitriteDatabaseType);
         return this;
     }
 
@@ -124,8 +124,8 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         doAnswer(getAdditionalParams.answer()).when(infraConfigServiceSpy).getAdditionalParams();
         doAnswer(getDatabasePort.answer()).when(infraConfigServiceSpy).getDatabasePort();
         doAnswer(getInfraType.answer()).when(infraConfigServiceSpy).getInfraType();
-        doAnswer(getH2DataPath.answer()).when(infraConfigServiceSpy).getH2DataPath();
-        doAnswer(getH2DatabaseType.answer()).when(infraConfigServiceSpy).getH2DatabaseType();
+        doAnswer(getNitriteDataPath.answer()).when(infraConfigServiceSpy).getNitriteDataPath();
+        doAnswer(getNitriteDatabaseType.answer()).when(infraConfigServiceSpy).getNitriteDatabaseType();
         doAnswer(getConnectionString.answer()).when(infraConfigServiceSpy).getConnectionString();
 
         return infraConfigServiceSpy;

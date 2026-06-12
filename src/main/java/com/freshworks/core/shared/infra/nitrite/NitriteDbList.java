@@ -1,62 +1,54 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.infra.InfraDbList;
-import com.mongodb.client.MongoCollection;
-import com.zaxxer.hikari.HikariDataSource;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
-import org.bson.conversions.Bson;
+import static org.dizitart.no2.filters.FluentFilter.where;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.collection.Document;
+import org.dizitart.no2.collection.NitriteCollection;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.infra.InfraDbList;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
 @Getter
 @Setter
 
-public class H2DbList implements InfraDbList {
+public class NitriteDbList implements InfraDbList {
 
+    ObjectMapper objectMapper = new ObjectMapper();
 
     String dbString;
     String listName;
 
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
+    NitriteCollection nitriteCollection;
 
     AtomicLong listIndex = new AtomicLong(0);
 
 
     private final ReentrantReadWriteLock.WriteLock listAddLock = new ReentrantReadWriteLock().writeLock();
 
-    protected H2DbList(HikariDataSource hikariDataSource, String namespace, String listName) throws Exception {
+    protected NitriteDbList(Nitrite nitriteDb, String namespace, String listName) throws Exception {
 
-        this.hikariDataSource = hikariDataSource;
-        String sanitizedNameSpace = sanitizeName(namespace);
-        String sanitizedListName = sanitizeName(listName);
-        String createSchemaSql = "CREATE SCHEMA IF NOT EXISTS "  + sanitizedNameSpace;
-
-        try(Connection connection = hikariDataSource.getConnection()){
-            connection.createStatement().execute(createSchemaSql);
-        }
-
-
-        this.listName = sanitizedNameSpace + "." + sanitizedListName;
-        // SQL statement to create a table
-        String createTableSQL = "CREATE TABLE IF NOT EXISTS " +  this.listName  + "("
-                + "list_index BIGINT NOT NULL PRIMARY KEY, "
-                + "item VARCHAR(20000000), "
-                + "PRIMARY KEY (list_index))";
-
-        try(Connection connection = hikariDataSource.getConnection()){
-            connection.createStatement().execute(createTableSQL);
-        }
+        this.nitriteDb = nitriteDb;
+        this.listName = namespace + "_" + listName;
+        this.nitriteCollection = nitriteDb.getCollection(listName);
+        this.nitriteCollection.createIndex("list_index");
     }
 
     @Override
@@ -234,14 +226,11 @@ public class H2DbList implements InfraDbList {
     @Override
     public void delete() throws Exception{
 
-        String dropTableSQL = "DROP TABLE IF EXISTS " + this.listName;
-
-        try (Connection connection = hikariDataSource.getConnection();
-             Statement statement = connection.createStatement()) {
+        try{
 
             listAddLock.lock();
             // Execute the drop table statement
-            statement.executeUpdate(dropTableSQL);
+            this.nitriteCollection.drop();
         }
 
         finally {
@@ -252,46 +241,33 @@ public class H2DbList implements InfraDbList {
 
     private void insert(long listIndex, String item) throws Exception{
 
-        String insertSql =  "Insert into " + this.listName + " (list_index, item) values (?, ?)";
+        try{
+            
+            // Check if this item can be converted to MAP i.e json  
+            Map<String, Object> map = objectMapper.readValue(item, new TypeReference<Map<String, Object>>() {});
+            map.put("list_index", listIndex);
+            Document document = Document.createDocument(map);   
+            nitriteCollection.insert(document);
+        }   
 
-        try(Connection connection = hikariDataSource.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(insertSql);){
-
-            // Set the values for the placeholders
-            preparedStatement.setLong(1, listIndex);
-            preparedStatement.setString(2, item);
-
-            // Execute the insert statement
-            int rowsAffected = preparedStatement.executeUpdate();
+        catch(JsonParseException e){
+            
+            Document document = Document.createDocument();
+            document.put("list_index", listIndex);
+            document.put("value", item);  
+            nitriteCollection.insert(document);
         }
     }
 
     private String  find(long listIndex) throws Exception{
 
-        String selectSQL = "SELECT item FROM " + this.listName + " WHERE list_index = ?";
-        String itemValue = null;
+        Document doc = this.nitriteCollection.find(where("list_index").eq(listIndex)).firstOrNull();
 
-        try(Connection connection = hikariDataSource.getConnection();PreparedStatement preparedStatement = connection.prepareStatement(selectSQL)){
-
-            // Set the values for the placeholders
-            preparedStatement.setLong(1, listIndex);
-
-
-            // Execute the select statement
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    // Retrieve the item value
-                    itemValue = resultSet.getString("item");
-                    return itemValue;
-                }
-            }
+        if(doc != null){
+            return objectMapper.writeValueAsString(doc);
         }
-        
-        return itemValue;
-    }
-
-
-    private String sanitizeName(String name){
-
-        return "h2_" + name.toLowerCase().replaceAll("\\.", "_").replaceAll("-", "_").replaceAll(":", "_");
+        else {
+            return null;
+        }
     }
 }

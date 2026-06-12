@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -10,6 +10,8 @@ import com.freshworks.freshindex.NamespaceService;
 import com.freshworks.freshindex.index.JsonIndexService;
 import com.freshworks.freshindex.index.query.JsonQueryService;
 import com.zaxxer.hikari.HikariDataSource;
+
+import org.dizitart.no2.Nitrite;
 import org.h2.tools.Server;
 
 import java.io.IOException;
@@ -18,7 +20,7 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
-public class H2DbService implements InfraService {
+public class NitriteService implements InfraService {
 
     // We are adding this locking implementation as we have identified a bug in H2 where if two concurrent threads
     // are deleting the same namespace at the same time then H2 throws errors of various kinds.
@@ -27,15 +29,15 @@ public class H2DbService implements InfraService {
 
     SyncServiceContainer syncServiceContainer;
 
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
 
-    static HashMap<String, HashMap<String, H2DbQueue>> persistentQueueSingletonMap = new HashMap<>();
+    static HashMap<String, HashMap<String, NitriteDbQueue>> persistentQueueSingletonMap = new HashMap<>();
     ReentrantReadWriteLock.WriteLock uniqueQueue = new ReentrantReadWriteLock().writeLock();
 
-    static HashMap<String, HashMap<String, H2DbList>> persistentListSingletonMap = new HashMap<>();
+    static HashMap<String, HashMap<String, NitriteDbList>> persistentListSingletonMap = new HashMap<>();
     ReentrantReadWriteLock.WriteLock uniqueList = new ReentrantReadWriteLock().writeLock();
 
-    static HashMap<String, HashMap<String, H2DbKeyValue>> persistentKeyValueSingletonMap = new HashMap<>();
+    static HashMap<String, HashMap<String, NitriteDbKeyValue>> persistentKeyValueSingletonMap = new HashMap<>();
     ReentrantReadWriteLock.WriteLock uniqueKeyValue = new ReentrantReadWriteLock().writeLock();
 
     InfraConfigService infraConfigService;
@@ -45,9 +47,9 @@ public class H2DbService implements InfraService {
     String dataPath;
 
     String namespace;
-    H2Factory h2Factory;
+    NitriteFactory nitriteFactory;
 
-    public H2DbService() throws IOException {
+    public NitriteService() throws IOException {
 
     }
 
@@ -57,15 +59,14 @@ public class H2DbService implements InfraService {
         this.syncServiceContainer = syncServiceContainer;
         this.infraConfigService = infraConfigService;
         this.namespace = syncServiceContainer.getBean(Namespace.class).getNamespace();
-        h2Factory = syncServiceContainer.getBean(H2Factory.class);
-        this.hikariDataSource = h2Factory.getH2Client(this.namespace,infraConfigService);
-        this.dataPath = infraConfigService.getH2DataPath();
+        nitriteFactory = syncServiceContainer.getBean(NitriteFactory.class);
+        this.nitriteDb = nitriteFactory.getNitriteClient(this.namespace,infraConfigService);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace);
     }
 
     @Override
-    public H2DbQueue getProcessorQueue() throws Exception{
+    public NitriteDbQueue getProcessorQueue() throws Exception{
 
         return getH2DbQueue(namespace, "processor");
     }
@@ -99,20 +100,20 @@ public class H2DbService implements InfraService {
     }
 
 
-    public H2DbList getPublisherList() throws Exception{
+    public NitriteDbList getPublisherList() throws Exception{
 
         return getH2DbList(this.namespace, "publisher_list");
     }
 
     @Override
-    public H2DbKeyValue getKeyValue() throws Exception{
+    public NitriteDbKeyValue getKeyValue() throws Exception{
 
         return getH2DbKeyValue(this.namespace, "key_value");
     }
 
 
     @Override
-    public H2DbList getInfraDbList(String listName) throws Exception{
+    public NitriteDbList getInfraDbList(String listName) throws Exception{
 
         return getH2DbList(this.namespace, listName);
     }
@@ -137,29 +138,7 @@ public class H2DbService implements InfraService {
 
             // We need to clear the freshIndex as well.
             destroyFreshIndex();
-
-
-            String sql = "DROP SCHEMA IF EXISTS " + sanitizeName(namespace)  + " CASCADE;";
-
-            try(Connection connection = hikariDataSource.getConnection();){
-
-                // There will be a case when threads are interrupted then JDBC will close the database file channel
-                // Now if there are connections lies in hikari .. then with setting setConnectionTestQuery, Hikari
-                // will check if connection is valid. If not then it will take another connection and will keep doing.
-                // Once all say 100 ( 0 - 99 ) are exhausted, then it will create 100th connection again ( new connection )
-                // which will succeed this time as new connection will open new file channel
-
-                if(connection != null && connection.isValid(2)){
-                    connection.createStatement().execute(sql);
-                }
-                else{
-                    hikariDataSource = h2Factory.getHikariDataSource();
-                    try(Connection connection2 = hikariDataSource.getConnection();){
-                        connection2.createStatement().execute(sql);
-                    }
-                }
-
-            }
+            nitriteDb.close();
         }
 
         finally {
@@ -167,7 +146,7 @@ public class H2DbService implements InfraService {
         }
     }
 
-    private H2DbQueue getH2DbQueue(String namespace, String queueName)  throws Exception{
+    private NitriteDbQueue getH2DbQueue(String namespace, String queueName)  throws Exception{
 
         try{
 
@@ -178,14 +157,14 @@ public class H2DbService implements InfraService {
 
             else if (persistentQueueSingletonMap.containsKey(namespace) && !persistentQueueSingletonMap.get(namespace).containsKey(queueName)){
 
-                H2DbQueue H2DbQueue = new H2DbQueue(hikariDataSource, namespace, queueName);
+                NitriteDbQueue H2DbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
                 persistentQueueSingletonMap.get(namespace).put(queueName, H2DbQueue);
                 return H2DbQueue;
             }
 
             else{
-                H2DbQueue mongoDbQueue = new H2DbQueue(hikariDataSource, namespace, queueName);
-                HashMap<String, H2DbQueue> map = new HashMap<>();
+                NitriteDbQueue mongoDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
+                HashMap<String, NitriteDbQueue> map = new HashMap<>();
                 map.put(queueName, mongoDbQueue);
                 persistentQueueSingletonMap.put(namespace, map);
                 return mongoDbQueue;
@@ -198,7 +177,7 @@ public class H2DbService implements InfraService {
         }
     } // close
 
-    private H2DbList getH2DbList(String namespace, String listName) throws Exception{
+    private NitriteDbList getH2DbList(String namespace, String listName) throws Exception{
         // This should return singleton for single listname
 
         try{
@@ -209,13 +188,13 @@ public class H2DbService implements InfraService {
             }
 
             else if(persistentListSingletonMap.containsKey(namespace) && !persistentListSingletonMap.get(namespace).containsKey(listName)){
-                H2DbList mongoDbList = new H2DbList(hikariDataSource, namespace, listName);
+                NitriteDbList mongoDbList = new NitriteDbList(nitriteDb, namespace, listName);
                 persistentListSingletonMap.get(namespace).put(listName, mongoDbList);
                 return mongoDbList;
             }
             else{
-                H2DbList mongoDbList = new H2DbList(hikariDataSource, namespace, listName);
-                HashMap<String, H2DbList> map = new HashMap<>();
+                NitriteDbList mongoDbList = new NitriteDbList(nitriteDb, namespace, listName);
+                HashMap<String, NitriteDbList> map = new HashMap<>();
                 map.put(listName, mongoDbList);
                 persistentListSingletonMap.put(namespace, map);
                 return mongoDbList;
@@ -228,7 +207,7 @@ public class H2DbService implements InfraService {
         }
     }
 
-    private H2DbKeyValue getH2DbKeyValue(String namespace, String keyValueName) throws Exception{
+    private NitriteDbKeyValue getH2DbKeyValue(String namespace, String keyValueName) throws Exception{
 
         try{
 
@@ -237,13 +216,13 @@ public class H2DbService implements InfraService {
                 return persistentKeyValueSingletonMap.get(namespace).get(keyValueName);
             }
             else if (persistentKeyValueSingletonMap.containsKey(namespace) && !persistentKeyValueSingletonMap.get(namespace).containsKey(keyValueName)){
-                H2DbKeyValue mongoDbKeyValue = new H2DbKeyValue(hikariDataSource, namespace, keyValueName);
+                NitriteDbKeyValue mongoDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
                 persistentKeyValueSingletonMap.get(namespace).put(keyValueName, mongoDbKeyValue);
                 return mongoDbKeyValue;
             }
             else{
-                H2DbKeyValue mongoDbKeyValue = new H2DbKeyValue(hikariDataSource, namespace, keyValueName);
-                HashMap<String, H2DbKeyValue> map = new HashMap<>();
+                NitriteDbKeyValue mongoDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
+                HashMap<String, NitriteDbKeyValue> map = new HashMap<>();
                 map.put(keyValueName, mongoDbKeyValue);
                 persistentKeyValueSingletonMap.put(namespace, map);
                 return mongoDbKeyValue;

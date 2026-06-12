@@ -14,9 +14,9 @@ import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.h2.H2DbList;
-import com.freshworks.core.shared.infra.h2.MockFacadeH2DbService;
-import com.freshworks.core.shared.infra.h2.MockFacadeH2dbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.freshindex.NamespaceService;
@@ -24,7 +24,9 @@ import com.freshworks.freshindex.index.JsonIndexService;
 import com.freshworks.freshindex.index.query.Expression;
 import com.freshworks.freshindex.index.query.JsonQueryService;
 import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,30 +62,24 @@ public class TestConsumerService {
     MockFacadeInfraConfigService mockFacadeInfraConfigService;
 
     @Autowired
-    MockFacadeH2DbService mockFacadeH2DbService;
+    MockFacadeNitriteDbService mockFacadeH2DbService;
 
     @Autowired
     MockFacadeSyncStatusService mockFacadeSyncStatusService;
 
     @Autowired
-    MockFacadeH2dbList mockFacadeH2dbList;
+    MockFacadeNitritedbList mockFacadeH2dbList;
 
     ObjectMapper objectMapper = new ObjectMapper();
     String releaseVersion;
 
-    static HikariDataSource hikariDataSource;
+    static Nitrite nitriteDb;
 
     @BeforeAll
     public static void beforeAll(){
 
-       String  dbString =  "jdbc:h2:mem:test-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE;MODE=MYSQL;TRACE_LEVEL_FILE=0";
-       HikariConfig config = new HikariConfig();
-       config.setMaximumPoolSize(100);
-       config.setJdbcUrl(dbString);
-       config.setUsername("");
-       config.setPassword("");
-       config.setIdleTimeout(60000);
-       hikariDataSource = new HikariDataSource(config);
+       nitriteDb = Nitrite.builder()
+            .openOrCreate();
     }
 
     @BeforeEach
@@ -115,14 +111,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -214,14 +210,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -319,14 +315,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -424,14 +420,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -552,14 +548,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -680,14 +676,14 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("h2")
-                .getH2DatabaseType("memory")
+                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        H2DbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(hikariDataSource)
+        NitriteDbList publisherList = mockFacadeH2dbList
+                .addHikariDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();

@@ -1,10 +1,14 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbKeyValue;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import org.dizitart.no2.Nitrite;
+import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
@@ -16,51 +20,45 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
 @Component
-public class MockFacadeH2dbKeyValue implements MockFacadeInterface {
+public class MockFacadeNitritedbKeyValue implements MockFacadeInterface {
 
     ReturnableMockTypeList<String> get = new ReturnableMockTypeList<>();
     ReturnableMockTypeList<List<String>> getList = new ReturnableMockTypeList<>();
-    HikariDataSource hikariDataSource;
+    Nitrite nitriteDb;
 
     @Override
-    public MockFacadeH2dbKeyValue configure(){
+    public MockFacadeNitritedbKeyValue configure(){
         reset();
-
-        HikariConfig config = new HikariConfig();
-        String dbString =  "jdbc:h2:mem:testdb";
-        config.setJdbcUrl(dbString);
-        config.setUsername("");
-        config.setPassword("");
-        config.setIdleTimeout(60000); // 60 seconds
-        hikariDataSource = new HikariDataSource(config);
+        nitriteDb = Nitrite.builder()
+            .openOrCreate();
 
         get.add("{\"name\":\"amit\"}");
         getList.add(Lists.newArrayList("{\"name\":\"amit\"}", "{\"name\":\"rahul\"}", "{\"name\":\"deepak\"}"));
         return this;
     }
 
-    public MockFacadeH2dbKeyValue get(String... get) {
+    public MockFacadeNitritedbKeyValue get(String... get) {
         this.get.clear();
         this.get.add(get);
         return this;
     }
 
 
-    public MockFacadeH2dbKeyValue getList(List<String>... getList){
+    public MockFacadeNitritedbKeyValue getList(List<String>... getList){
         this.getList.clear();
         this.getList.add(getList);
         return this;
     }
 
-    public MockFacadeH2dbKeyValue addHikariDataSource(HikariDataSource hikariDataSource){
-        this.hikariDataSource = hikariDataSource;
+    public MockFacadeNitritedbKeyValue addHikariDataSource(Nitrite nitriteDb){
+        this.nitriteDb = nitriteDb;
         return this;
     }
 
     @Override
-    public H2DbKeyValue build() throws Exception {
+    public NitriteDbKeyValue build() throws Exception {
 
-        H2DbKeyValue h2DbKeyValue = new H2DbKeyValue(hikariDataSource, "some_namespace","key_value");
+        NitriteDbKeyValue h2DbKeyValue = new NitriteDbKeyValue(nitriteDb, "some_namespace","key_value");
         h2DbKeyValue = Mockito.spy(h2DbKeyValue);
 
         doNothing().when(h2DbKeyValue).put(anyString(), anyString());

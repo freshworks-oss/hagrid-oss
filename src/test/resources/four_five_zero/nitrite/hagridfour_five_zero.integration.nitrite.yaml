@@ -1,9 +1,8 @@
----
 configuration:
   connector:
-    step_path: "com.freshworks.core.data.four_five_zero.performance.fb.steps"
-    bean_path: "com.freshworks.core.data.four_five_zero.performance.fb.beans"
-    asset_path: "com.freshworks.core.data.four_five_zero.performance.fb.assets"
+    step_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.steps"
+    bean_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.beans"
+    asset_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.assets"
 
   core:
     publisher:
@@ -34,10 +33,9 @@ configuration:
 
 
     infra:
-      infra_type: "h2"
-      h2_data_path: "/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-4.0.0-alpha/database/performance-test-file"
-      h2_host_address: "localhost:9092"
-      h2_database_type: "tcp"
+      infra_type: "nitrite"
+      nitrite_data_path: "/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database"
+      nitrite_database_type: "file"
       environment: "development"
       persistent:
         development:
