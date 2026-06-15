@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
+import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.NitriteCollection;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -174,15 +175,37 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         }
     }
 
-
     private void insert(String key, String value) throws Exception{
 
         try{    
-            // Check if this item can be converted to MAP i.e json  
-            Map<String, Object> map = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
-            map.put("key", key);
-            Document document = Document.createDocument(map);   
-            nitriteCollection.insert(document);
+
+            JsonNode jsonNode = objectMapper.readTree(value);
+            if(jsonNode.isArray()){
+                // This mean, this key is array 
+                List<Document> docList = new ArrayList<>();
+
+                for(JsonNode j : jsonNode){
+
+                    // Check if this item can be converted to MAP i.e json  
+                    Map<String, Object> map = objectMapper.convertValue(j, new TypeReference<Map<String, Object>>() {});
+                    map.put("key", key);
+                    Document document = Document.createDocument(map);
+                    docList.add(document);
+                }
+
+                Document[] docArray = docList.toArray(new Document[0]);
+                nitriteCollection.insert(docArray);
+
+            }
+
+            else{
+                    // Check if this item can be converted to MAP i.e json  
+                    Map<String, Object> map = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+                    map.put("key", key);
+                    Document document = Document.createDocument(map);
+                    nitriteCollection.insert(document);
+            }
+            
         }   
 
         catch(JsonParseException e){
@@ -195,15 +218,18 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     }
 
-    private String  find(String key) throws Exception{
 
-        Document doc = this.nitriteCollection.find(where("key").eq(key)).firstOrNull();
+    private String find(String key) throws Exception{
 
-        if(doc != null){
-            return objectMapper.writeValueAsString(doc);
+        DocumentCursor docCursor = this.nitriteCollection.find(where("key").eq(key));
+
+        List<Map<String, Object>> rawMaps = new ArrayList<>();
+        for (Document doc : docCursor) {
+            // Converts the Nitrite Document directly into a standard Java Map
+            rawMaps.add(doc.toMap());
         }
-        else {
-            return null;
-        }
+
+        return objectMapper.writeValueAsString(rawMaps);
+
     }
 }

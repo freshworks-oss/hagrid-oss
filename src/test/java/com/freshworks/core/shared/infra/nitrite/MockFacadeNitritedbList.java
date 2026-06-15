@@ -47,7 +47,6 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         reset();
 
         nitriteDb = Nitrite.builder()
-            .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/nitrite/demo/database.db"))
             .openOrCreate();
         
         listName.add("dummy_list");
@@ -98,7 +97,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
     }
 
 
-    public MockFacadeNitritedbList addHikariDataSource(Nitrite nitriteDb){
+    public MockFacadeNitritedbList addNitriteDataSource(Nitrite nitriteDb){
         this.nitriteDb = nitriteDb;
         return this;
     }
@@ -118,26 +117,26 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
     @Override
     public NitriteDbList build() throws Exception {
 
-        NitriteDbList h2DbList = new NitriteDbList(nitriteDb, namespace.next(),listName.next());
-        h2DbList = Mockito.spy(h2DbList);
+        NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, namespace.next(),listName.next());
+        nitriteDbList = Mockito.spy(nitriteDbList);
 
-        doNothing().when(h2DbList).add(anyString());
+        doNothing().when(nitriteDbList).add(anyString());
 
-        doAnswer(addAndGetIndex.answer()).when(h2DbList).addAndGetIndex(anyString());
+        doAnswer(addAndGetIndex.answer()).when(nitriteDbList).addAndGetIndex(anyString());
 
-        doAnswer(addAndGetIndexBulk.answer()).when(h2DbList).addAndGetIndexBulk(anyList());
+        doAnswer(addAndGetIndexBulk.answer()).when(nitriteDbList).addAndGetIndexBulk(anyList());
 
-        doNothing().when(h2DbList).add(any(ArrayList.class));
+        doNothing().when(nitriteDbList).add(any(ArrayList.class));
 
-        doAnswer(get.answer()).when(h2DbList).get(anyInt());
+        doAnswer(get.answer()).when(nitriteDbList).get(anyInt());
 
-        doAnswer(getNFromStartIndex.answer()).when(h2DbList).get(anyInt(), anyInt());
+        doAnswer(getNFromStartIndex.answer()).when(nitriteDbList).get(anyInt(), anyInt());
 
-        doAnswer(getGivenDocList.answer()).when(h2DbList).get(anyList());
+        doAnswer(getGivenDocList.answer()).when(nitriteDbList).get(anyList());
 
-        doAnswer(isEndOfListReached.answer()).when(h2DbList).isEndOfListReached(anyInt());
+        doAnswer(isEndOfListReached.answer()).when(nitriteDbList).isEndOfListReached(anyInt());
 
-        return h2DbList;
+        return nitriteDbList;
     }
 
 }

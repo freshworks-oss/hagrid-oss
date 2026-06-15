@@ -62,13 +62,13 @@ public class TestConsumerService {
     MockFacadeInfraConfigService mockFacadeInfraConfigService;
 
     @Autowired
-    MockFacadeNitriteDbService mockFacadeH2DbService;
+    MockFacadeNitriteDbService mockFacadeNitriteDbService;
 
     @Autowired
     MockFacadeSyncStatusService mockFacadeSyncStatusService;
 
     @Autowired
-    MockFacadeNitritedbList mockFacadeH2dbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
     ObjectMapper objectMapper = new ObjectMapper();
     String releaseVersion;
@@ -86,7 +86,8 @@ public class TestConsumerService {
     public void beforeEach() throws Exception {
         releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
         mockFacadeConsumerService.configure().build();
-        mockFacadeH2DbService.configure().build();
+        mockFacadeNitriteDbService.configure().build();
+        mockFacadeNitritedbList.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
         mockFacadeInfraConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
@@ -110,15 +111,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -140,14 +141,14 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
                 .getNamespaceService(namespaceService)
                 .build();
 
-        syncServiceContainer.add(h2DbService, InfraService.class);
+        syncServiceContainer.add(nitriteDbService, InfraService.class);
 
 
         // Here insert data into the infra layer so that it can be consumed by consumer
@@ -209,15 +210,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -239,7 +240,7 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService h2DbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
@@ -314,15 +315,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -344,7 +345,7 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService h2DbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
@@ -419,15 +420,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -449,7 +450,7 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService h2DbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
@@ -547,15 +548,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -577,14 +578,14 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
                 .getNamespaceService(namespaceService)
                 .build();
 
-        syncServiceContainer.add(h2DbService, InfraService.class);
+        syncServiceContainer.add(nitriteDbService, InfraService.class);
 
 
         // Here insert data into the infra layer so that it can be consumed by consumer
@@ -675,15 +676,15 @@ public class TestConsumerService {
 
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                .getInfraType("h2")
+                .getInfraType("nitrite")
                 .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
 
 
-        NitriteDbList publisherList = mockFacadeH2dbList
-                .addHikariDataSource(nitriteDb)
+        NitriteDbList publisherList = mockFacadeNitritedbList
+                .addNitriteDataSource(nitriteDb)
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
@@ -705,7 +706,7 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeH2DbService
+        InfraService h2DbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
