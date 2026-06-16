@@ -152,27 +152,27 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
     public InfraService build() throws Exception {
 
         Preconditions.checkNotNull(this.getNamespace, "Namespace must be set before hand as it is pre-requisite for configuring mongoService.");
-        NitriteService h2DbService = new NitriteService();
-        h2DbService = Mockito.spy(h2DbService);
+        NitriteService nitriteDbService = new NitriteService();
+        nitriteDbService = Mockito.spy(nitriteDbService);
 
-        doNothing().when(h2DbService).configure(any(), any());
+        doNothing().when(nitriteDbService).configure(any(), any());
 
-        doAnswer(getProcessorQueue.answer()).when(h2DbService).getProcessorQueue();
+        doAnswer(getProcessorQueue.answer()).when(nitriteDbService).getProcessorQueue();
 
-        doAnswer(getJsonIndexService.answer()).when(h2DbService).getJsonIndexService();
+        doAnswer(getJsonIndexService.answer()).when(nitriteDbService).getJsonIndexService();
 
-        doAnswer(getJsonQueryService.answer()).when(h2DbService).getJsonQueryService();
+        doAnswer(getJsonQueryService.answer()).when(nitriteDbService).getJsonQueryService();
 
-        doAnswer(getNamespaceService.answer()).when(h2DbService).getNamespaceService();
+        doAnswer(getNamespaceService.answer()).when(nitriteDbService).getNamespaceService();
 
-        doAnswer(getPublisherList.answer()).when(h2DbService).getPublisherList();
+        doAnswer(getPublisherList.answer()).when(nitriteDbService).getPublisherList();
 
-        doAnswer(getKeyValue.answer()).when(h2DbService).getKeyValue();
+        doAnswer(getKeyValue.answer()).when(nitriteDbService).getKeyValue();
 
-        doAnswer(getInfraDbListGivenName.answer()).when(h2DbService).getInfraDbList(anyString());
+        doAnswer(getInfraDbListGivenName.answer()).when(nitriteDbService).getInfraDbList(anyString());
 
-        doAnswer(getNamespace.answer()).when(h2DbService).getNamespace();
+        doAnswer(getNamespace.answer()).when(nitriteDbService).getNamespace();
 
-        return h2DbService;
+        return nitriteDbService;
     }
 }

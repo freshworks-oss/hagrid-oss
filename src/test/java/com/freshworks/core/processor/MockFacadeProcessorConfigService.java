@@ -2,17 +2,22 @@ package com.freshworks.core.processor;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import static org.mockito.Mockito.doAnswer;
 
+import org.mockito.Mockito;
+
 @Component
 public class MockFacadeProcessorConfigService implements MockFacadeInterface {
 
-    @SpyBean
-    ProcessorConfigService processorConfigServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
 
+    ProcessorConfigService processorConfigService;
     ReturnableMockTypeList<Integer> getProcessorPollCount;
     ReturnableMockTypeList<Integer> getNumberOfParallelProcessor;
     ReturnableMockTypeList<String> getAssetLocation;
@@ -57,6 +62,9 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
     @Override
     public ProcessorConfigService build() throws Exception {
 
+        ProcessorConfigService processorConfigService = applicationContext.getBean(ProcessorConfigService.class);
+        ProcessorConfigService processorConfigServiceSpy = Mockito.spy(processorConfigService);
+        
         doAnswer(getProcessorPollCount.answer()).when(processorConfigServiceSpy).getProcessorPollCount();
         doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
         doAnswer(getAssetLocation.answer()).when(processorConfigServiceSpy).getAssetLocation();

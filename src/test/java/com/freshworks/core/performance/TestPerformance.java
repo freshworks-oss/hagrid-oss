@@ -1,41 +1,25 @@
 package com.freshworks.core.performance;
 
-// import com.freshworks.core.data.four_five_zero.performance.fb.assets.non_primitive_assets.FbUserComment;
-import com.freshworks.core.processor.ProcessorConfigService;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.consumer.ConsumerService;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.sync.SyncService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.core.shared.synchronizers.ServiceTree;
-import com.freshworks.core.traverser.ParentStep;
-import com.freshworks.core.traverser.TraverseConfigService;
-import com.freshworks.core.traverser.net.http.HttpClientService;
-import com.freshworks.freshindex.index.query.Expression;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.reflect.ClassPath;
-import io.github.classgraph.ClassInfo;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-import org.apache.commons.lang3.function.Consumers;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Random;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.EnabledIf;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import static org.hamcrest.MatcherAssert.assertThat;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.sync.SyncService;
+import com.freshworks.core.shared.sync.SyncStatusService;
+import com.freshworks.core.shared.synchronizers.ServiceTree;
+import com.freshworks.core.traverser.ParentStep;
+import com.google.common.collect.ImmutableMap;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureObservability

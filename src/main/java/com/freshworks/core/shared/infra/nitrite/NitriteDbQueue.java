@@ -3,6 +3,7 @@ package com.freshworks.core.shared.infra.nitrite;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -257,10 +258,12 @@ public class NitriteDbQueue implements InfraDbQueue {
 
         try{
             
+            Map<String, Object> documentMap = new HashMap<>();
             // Check if this item can be converted to MAP i.e json  
             Map<String, Object> map = objectMapper.readValue(item, new TypeReference<Map<String, Object>>() {});
-            map.put("queue_index", queueIndex);
-            Document document = Document.createDocument(map);   
+            documentMap.put("queue_index", queueIndex);
+            documentMap.put("value", map);
+            Document document = Document.createDocument(documentMap);   
             nitriteCollection.insert(document);
         }   
 
@@ -278,7 +281,8 @@ public class NitriteDbQueue implements InfraDbQueue {
         Document doc = this.nitriteCollection.find(where("queue_index").eq(queueIndex)).firstOrNull();
 
         if(doc != null){
-            return objectMapper.writeValueAsString(doc);
+            Map<String, Object> valueMap = doc.get("value", Map.class);
+            return objectMapper.writeValueAsString(valueMap);
         }
         else {
             return null;

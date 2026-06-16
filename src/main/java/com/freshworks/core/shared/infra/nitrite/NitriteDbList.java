@@ -3,6 +3,7 @@ package com.freshworks.core.shared.infra.nitrite;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -240,32 +241,25 @@ public class NitriteDbList implements InfraDbList {
 
 
     private void insert(long listIndex, String item) throws Exception{
-
-        try{
             
-            // Check if this item can be converted to MAP i.e json  
-            Map<String, Object> map = objectMapper.readValue(item, new TypeReference<Map<String, Object>>() {});
-            map.put("list_index", listIndex);
-            Document document = Document.createDocument(map);   
-            nitriteCollection.insert(document);
-        }   
-
-        catch(JsonParseException e){
-            
-            Document document = Document.createDocument();
-            document.put("list_index", listIndex);
-            document.put("value", item);  
-            nitriteCollection.insert(document);
-        }
+        Map<String, Object> documentMap = new HashMap<>();
+        // Check if this item can be converted to MAP i.e json  
+        Map<String, Object> map = objectMapper.readValue(item, new TypeReference<Map<String, Object>>() {});
+        documentMap.put("list_index", listIndex);
+        documentMap.put("value", map);
+        Document document = Document.createDocument(documentMap);   
+        nitriteCollection.insert(document);
     }
 
-    private String  find(long listIndex) throws Exception{
+    private String find(long listIndex) throws Exception{
 
         Document doc = this.nitriteCollection.find(where("list_index").eq(listIndex)).firstOrNull();
-
+        
         if(doc != null){
-            return objectMapper.writeValueAsString(doc);
+            Map<String, Object> valueMap = doc.get("value", Map.class);
+            return objectMapper.writeValueAsString(valueMap);
         }
+        
         else {
             return null;
         }

@@ -1,16 +1,18 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.shared.infra.nitrite.NitriteFactory;
-
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import com.freshworks.core.MockFacadeInterface;
 
 @Component
 public class MockFacadeNitriteClientFactory implements MockFacadeInterface {
 
+    @Autowired
+    ApplicationContext applicationContext;
 
-    @SpyBean
     NitriteFactory nitriteClientFactory;
 
     @Override
@@ -23,7 +25,8 @@ public class MockFacadeNitriteClientFactory implements MockFacadeInterface {
 
     @Override
     public NitriteFactory build() throws Exception {
-
-        return nitriteClientFactory;
+        nitriteClientFactory = applicationContext.getBean(NitriteFactory.class);
+        NitriteFactory nitriteClientFactorySpy = Mockito.spy(nitriteClientFactory);
+        return nitriteClientFactorySpy;
     }
 }

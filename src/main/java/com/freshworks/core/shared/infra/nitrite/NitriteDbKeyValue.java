@@ -3,6 +3,7 @@ package com.freshworks.core.shared.infra.nitrite;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -11,12 +12,11 @@ import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.index.IndexOptions;
+import org.dizitart.no2.index.IndexType;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 
@@ -44,6 +44,8 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         this.nitriteDb = nitriteDb;
         this.keyValueName = namespace + "_" + keyValueName;
         this.nitriteCollection = nitriteDb.getCollection(keyValueName);
+        IndexOptions options = new IndexOptions();
+        options.setIndexType(IndexType.NON_UNIQUE);
         this.nitriteCollection.createIndex("key");
 
     }
@@ -74,7 +76,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
     public String get(String key) throws Exception{
 
         key = key.replaceAll("\\.", "ENCODE_DOT");
-        return find(key);
+        return find(key).get(0);
     }
 
     @Override
@@ -84,30 +86,9 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             keyAddLock.lock();
             key = key.replaceAll("\\.", "ENCODE_DOT");
 
-            String s = find(key);
-            if(s != null){
-
-                ArrayNode jsonNode = (ArrayNode) objectMapper.readTree(s);
-
-                for(int i = 0; i < value.size(); i++){
-                    String v = value.get(i).replaceAll("\\.", "ENCODE_DOT");
-                    JsonNode x = objectMapper.readTree(v);
-                    jsonNode.add(x);
-                }
-
-                insert(key, objectMapper.writeValueAsString(jsonNode));
-            }
-            else{
-                ArrayNode arrayNode = objectMapper.createArrayNode();
-
-                for(int i = 0; i < value.size(); i++){
-
-                    String v = value.get(i).replaceAll("\\.", "ENCODE_DOT");
-                    JsonNode x = objectMapper.readTree(v);
-                    arrayNode.add(x);
-                }
-
-                insert(key, objectMapper.writeValueAsString(arrayNode));
+            for(int i = 0; i < value.size(); i++){
+                String v = value.get(i).replaceAll("\\.", "ENCODE_DOT");
+                insert(key, objectMapper.writeValueAsString(v));
             }
         }
 
@@ -125,21 +106,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             keyAddLock.lock();
             key = key.replaceAll("\\.", "ENCODE_DOT");
             value = value.replaceAll("\\.", "ENCODE_DOT");
-
-            String s = find(key);
-            if(s != null){
-
-                ArrayNode jsonNode = (ArrayNode) objectMapper.readTree(s);
-                JsonNode x = objectMapper.readTree(value);
-                jsonNode.add(x);
-                insert(key, objectMapper.writeValueAsString(jsonNode));
-            }
-            else{
-                ArrayNode arrayNode = objectMapper.createArrayNode();
-                JsonNode x = objectMapper.readTree(value);
-                arrayNode.add(x);
-                insert(key, objectMapper.writeValueAsString(arrayNode));
-            }
+            insert(key, objectMapper.writeValueAsString(value));
         }
         finally {
             keyAddLock.unlock();
@@ -150,13 +117,12 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
     public List<String> getList(String key) throws Exception{
         key = key.replaceAll("\\.", "ENCODE_DOT");
         ArrayList<String> returnResult = new ArrayList<>();
-        String s = find(key);
-        JsonNode j = objectMapper.readTree(s);
+        List<String> sList = find(key);
 
-        for(int i = 0; i < j.size(); i++){
-            String ss = j.get(i).asText();
-            returnResult.add(ss.replaceAll("ENCODE_DOT", "\\."));
+        for(int i = 0; i < sList.size(); i++){
+            returnResult.add(sList.get(i).replaceAll("ENCODE_DOT", "\\."));
         }
+
         return returnResult;
     }
 
@@ -177,59 +143,46 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     private void insert(String key, String value) throws Exception{
 
-        try{    
+        Document existingDoc = this.nitriteCollection.find(where("key").eq(key)).firstOrNull();
+        Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+        
+        if ( existingDoc == null){
 
-            JsonNode jsonNode = objectMapper.readTree(value);
-            if(jsonNode.isArray()){
-                // This mean, this key is array 
-                List<Document> docList = new ArrayList<>();
-
-                for(JsonNode j : jsonNode){
-
-                    // Check if this item can be converted to MAP i.e json  
-                    Map<String, Object> map = objectMapper.convertValue(j, new TypeReference<Map<String, Object>>() {});
-                    map.put("key", key);
-                    Document document = Document.createDocument(map);
-                    docList.add(document);
-                }
-
-                Document[] docArray = docList.toArray(new Document[0]);
-                nitriteCollection.insert(docArray);
-
-            }
-
-            else{
-                    // Check if this item can be converted to MAP i.e json  
-                    Map<String, Object> map = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
-                    map.put("key", key);
-                    Document document = Document.createDocument(map);
-                    nitriteCollection.insert(document);
-            }
-            
-        }   
-
-        catch(JsonParseException e){
-            
-            Document document = Document.createDocument();
-            document.put("key", key);
-            document.put("value", value);  
+            Map<String, Object> documentMap = new HashMap<>();
+            ArrayList<Map<String, Object>> valueList = new ArrayList<>();
+            valueList.add(valueMap);
+                
+            documentMap.put("key", key);
+            documentMap.put("value", valueList);
+            Document document = Document.createDocument(documentMap);
             nitriteCollection.insert(document);
         }
 
+        else{
+            // It exists 
+            List<Map<String, Object>> valueList = (List<Map<String, Object>>) existingDoc.get("value");
+            valueList.add(valueMap);
+            existingDoc.put("value", valueList);
+            this.nitriteCollection.update(where("key").eq(key), existingDoc);
+        }
     }
 
 
-    private String find(String key) throws Exception{
+    private List<String> find(String key) throws Exception{
 
         DocumentCursor docCursor = this.nitriteCollection.find(where("key").eq(key));
 
-        List<Map<String, Object>> rawMaps = new ArrayList<>();
+        List<Map<String, Object>> valueList = new ArrayList<>();
         for (Document doc : docCursor) {
             // Converts the Nitrite Document directly into a standard Java Map
-            rawMaps.add(doc.toMap());
+            valueList = (List<Map<String, Object>>) doc.get("value");
         }
 
-        return objectMapper.writeValueAsString(rawMaps);
+        List<String> valueStringList = new ArrayList<>();
+        for(Map<String, Object> map : valueList){
+            valueStringList.add(objectMapper.writeValueAsString(map));
+        }
+        return valueStringList;
 
     }
 }

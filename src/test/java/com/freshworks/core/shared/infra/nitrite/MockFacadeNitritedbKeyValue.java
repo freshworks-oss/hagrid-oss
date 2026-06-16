@@ -58,19 +58,19 @@ public class MockFacadeNitritedbKeyValue implements MockFacadeInterface {
     @Override
     public NitriteDbKeyValue build() throws Exception {
 
-        NitriteDbKeyValue h2DbKeyValue = new NitriteDbKeyValue(nitriteDb, "some_namespace","key_value");
-        h2DbKeyValue = Mockito.spy(h2DbKeyValue);
+        NitriteDbKeyValue nitritebKeyValue = new NitriteDbKeyValue(nitriteDb, "some_namespace","key_value");
+        nitritebKeyValue = Mockito.spy(nitritebKeyValue);
 
-        doNothing().when(h2DbKeyValue).put(anyString(), anyString());
+        doNothing().when(nitritebKeyValue).put(anyString(), anyString());
 
-        doAnswer(get.answer()).when(h2DbKeyValue).get(anyString());
+        doAnswer(get.answer()).when(nitritebKeyValue).get(anyString());
 
-        doNothing().when(h2DbKeyValue).putList(anyString(), anyList());
+        doNothing().when(nitritebKeyValue).putList(anyString(), anyList());
 
-        doNothing().when(h2DbKeyValue).putList(anyString(), anyString());
+        doNothing().when(nitritebKeyValue).putList(anyString(), anyString());
 
-        doAnswer(getList.answer()).when(h2DbKeyValue).getList(anyString());
+        doAnswer(getList.answer()).when(nitritebKeyValue).getList(anyString());
 
-        return h2DbKeyValue;
+        return nitritebKeyValue;
     }
 }

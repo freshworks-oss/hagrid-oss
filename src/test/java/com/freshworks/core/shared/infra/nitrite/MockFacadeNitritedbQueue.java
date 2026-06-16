@@ -71,20 +71,20 @@ public class MockFacadeNitritedbQueue implements MockFacadeInterface {
 
     @Override
     public NitriteDbQueue build() throws Exception {
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space","some_queue");
-        h2DbQueue = Mockito.spy(h2DbQueue);
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space","some_queue");
+        nitriteDbQueue = Mockito.spy(nitriteDbQueue);
 
-        doNothing().when(h2DbQueue).add(anyString());
+        doNothing().when(nitriteDbQueue).add(anyString());
 
-        doNothing().when(h2DbQueue).add(anyList());
+        doNothing().when(nitriteDbQueue).add(anyList());
 
-        doAnswer(poll.answer()).when(h2DbQueue).poll();
+        doAnswer(poll.answer()).when(nitriteDbQueue).poll();
 
-        doAnswer(hasMoreData.answer()).when(h2DbQueue).hasMoreData();
+        doAnswer(hasMoreData.answer()).when(nitriteDbQueue).hasMoreData();
 
-        doAnswer(pollNItems.answer()).when(h2DbQueue).poll(anyInt());
+        doAnswer(pollNItems.answer()).when(nitriteDbQueue).poll(anyInt());
 
 
-        return h2DbQueue;
+        return nitriteDbQueue;
     }
 }

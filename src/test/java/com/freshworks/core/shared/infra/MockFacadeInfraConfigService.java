@@ -3,18 +3,22 @@ package com.freshworks.core.shared.infra;
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import static org.mockito.ArgumentMatchers.any;
+import org.mockito.Mockito;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
+
 
 @Component
 public class MockFacadeInfraConfigService implements MockFacadeInterface {
 
-    @SpyBean
-    InfraConfigService infraConfigServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    InfraConfigService infraConfigService;
 
     ReturnableMockTypeList<String> getDatabaseUserName;
 
@@ -115,6 +119,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
 
     @Override
     public InfraConfigService build() throws Exception {
+
+        infraConfigService = applicationContext.getBean(InfraConfigService.class);
+        InfraConfigService infraConfigServiceSpy = Mockito.spy(infraConfigService);
 
         doNothing().when(infraConfigServiceSpy).configure(any());
         doAnswer(getDatabaseUserName.answer()).when(infraConfigServiceSpy).getDatabaseUserName();

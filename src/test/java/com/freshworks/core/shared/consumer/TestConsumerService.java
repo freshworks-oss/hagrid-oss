@@ -124,6 +124,8 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
+        System.out.print("Inserting document in list " + publisherList.getListName() );
+
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
         doCallRealMethod().when(publisherList).addAndGetIndex(anyString());
@@ -222,6 +224,8 @@ public class TestConsumerService {
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
+
+        System.out.println("Inserting document in list " + publisherList.getListName() );
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
@@ -328,6 +332,8 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
+        System.out.println("Inserting document in list " + publisherList.getListName() );
+
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
         doCallRealMethod().when(publisherList).addAndGetIndex(anyString());
@@ -432,6 +438,8 @@ public class TestConsumerService {
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
+
+        System.out.println("Inserting document in list " + publisherList.getListName() );
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
@@ -561,6 +569,8 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
+        System.out.println("Inserting document in list " + publisherList.getListName() );
+
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
         doCallRealMethod().when(publisherList).addAndGetIndex(anyString());
@@ -688,6 +698,8 @@ public class TestConsumerService {
                 .listName("publisher_list")
                 .namespace(namespace.getNamespace())
                 .build();
+
+        System.out.println("Inserting document in list " + publisherList.getListName() );
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());

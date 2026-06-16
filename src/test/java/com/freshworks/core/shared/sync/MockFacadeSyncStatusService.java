@@ -1,21 +1,24 @@
 package com.freshworks.core.shared.sync;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.stereotype.Component;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
+import org.mockito.Mockito;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.core.ReturnableMockTypeList;
 
 @Component
 public class MockFacadeSyncStatusService implements MockFacadeInterface {
 
-    @SpyBean
-    SyncStatusService syncStatusServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    SyncStatusService syncStatusService;
 
     ReturnableMockTypeList<Integer> setTraverserStatus;
     ReturnableMockTypeList<Integer> setProcessorStatus;
@@ -53,6 +56,8 @@ public class MockFacadeSyncStatusService implements MockFacadeInterface {
     @Override
     public SyncStatusService build() throws Exception {
 
+        syncStatusService = applicationContext.getBean(SyncStatusService.class);
+        SyncStatusService syncStatusServiceSpy = Mockito.spy(syncStatusService); 
         doNothing().when(syncStatusServiceSpy).configure(any());
         doNothing().when(syncStatusServiceSpy).setTraverserInProgress();
         doNothing().when(syncStatusServiceSpy).setProcessorInProgress();

@@ -8,7 +8,9 @@ import static org.mockito.Mockito.doAnswer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.core.MockFacadeInterface;
@@ -21,9 +23,10 @@ import com.google.common.collect.Multimap;
 @Component
 public class MockFacadeAssetAssetDependencyService implements MockFacadeInterface {
 
-    @SpyBean
-    AssetAssetDependencyService assetAssetDependencyServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
 
+    AssetAssetDependencyService assetAssetDependencyService;    
     ReturnableMockTypeList<ImmutableListMultimap<String, String>> scanner;
     ReturnableMockTypeList<List<String>> findDependencyOfAsset;
 
@@ -58,7 +61,8 @@ public class MockFacadeAssetAssetDependencyService implements MockFacadeInterfac
 
     @Override
     public AssetAssetDependencyService build() throws Exception {
-
+        assetAssetDependencyService = applicationContext.getBean(AssetAssetDependencyService.class);
+        AssetAssetDependencyService assetAssetDependencyServiceSpy = Mockito.spy(assetAssetDependencyService);
         doAnswer(scanner.answer()).when(assetAssetDependencyServiceSpy).scanner(anyString(), any());
         doAnswer(findDependencyOfAsset.answer()).when(assetAssetDependencyServiceSpy).findDependencyOfAsset(anyList(), any());
 

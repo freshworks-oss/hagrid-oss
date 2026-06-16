@@ -1,25 +1,28 @@
 package com.freshworks.core.processor.joins;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.processor.AbstractBean;
-import com.google.common.base.Optional;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.mockito.Mockito;
+
+import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.processor.AbstractBean;
+
 @Component
 public class MockFacadeAbstractJoinService implements MockFacadeInterface {
 
-    @SpyBean
-    AbstractJoinService abstractJoinServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    AbstractJoinService abstractJoinService;
 
     ReturnableMockTypeList<List<HashMap<String, AbstractBean>>> lookupStagingArea;
 
@@ -42,6 +45,8 @@ public class MockFacadeAbstractJoinService implements MockFacadeInterface {
     @Override
     public AbstractJoinService build() throws Exception {
 
+        abstractJoinService = applicationContext.getBean(AbstractJoinService.class);
+        AbstractJoinService abstractJoinServiceSpy = Mockito.spy(abstractJoinService);
         doNothing().when(abstractJoinServiceSpy).configure(any());
         doAnswer(lookupStagingArea.answer()).when(abstractJoinServiceSpy).lookupStagingArea(any(), any(), any());
 

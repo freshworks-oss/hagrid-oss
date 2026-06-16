@@ -28,13 +28,6 @@ public class TestNitriteDbQueue {
     Nitrite nitriteDb;
     @BeforeEach
     public void setup(){
-
-        HikariConfig config = new HikariConfig();
-        String dbString =  "jdbc:h2:mem:testdb";
-        config.setJdbcUrl(dbString);
-        config.setUsername("");
-        config.setPassword("");
-        config.setIdleTimeout(60000); // 60 seconds
         nitriteDb = Nitrite.builder()
             .openOrCreate();
     }
@@ -43,96 +36,96 @@ public class TestNitriteDbQueue {
     @Test
     public void testAddMethod() throws Exception {
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
-        h2DbQueue.add("{\"name\": \"amit\"}");
-        assertThat(h2DbQueue.getQueueIndex().get(), is(1L));
-        assertThat(h2DbQueue.hasMoreData(), is(true));
-        h2DbQueue.delete();
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+        nitriteDbQueue.add("{\"name\": \"amit\"}");
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(1L));
+        assertThat(nitriteDbQueue.hasMoreData(), is(true));
+        nitriteDbQueue.delete();
     }
 
     @Test
     public void testAddListMethod() throws Exception {
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
 
-        h2DbQueue.add(list);
-        assertThat(h2DbQueue.getQueueIndex().get(), is(2L));
-        assertThat(h2DbQueue.hasMoreData(), is(true));
-        h2DbQueue.delete();
+        nitriteDbQueue.add(list);
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(2L));
+        assertThat(nitriteDbQueue.hasMoreData(), is(true));
+        nitriteDbQueue.delete();
     }
 
     @Test
     public void testPollMethod() throws Exception {
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
-        assertThat(h2DbQueue.getPopIndex(), is(0L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(0L));
+        assertThat(nitriteDbQueue.getPopIndex(), is(0L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(0L));
 
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
-        h2DbQueue.add(list);
+        nitriteDbQueue.add(list);
 
-        assertThat(h2DbQueue.getPopIndex(), is(0L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(2L));
+        assertThat(nitriteDbQueue.getPopIndex(), is(0L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(2L));
 
-        h2DbQueue.poll();
+        nitriteDbQueue.poll();
 
-        assertThat(h2DbQueue.getPopIndex(), is(1L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(2L));
-        assertThat(h2DbQueue.hasMoreData(), is(true));
+        assertThat(nitriteDbQueue.getPopIndex(), is(1L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(2L));
+        assertThat(nitriteDbQueue.hasMoreData(), is(true));
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 
     @Test
     public void testPollNElementsMethod() throws Exception{
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
-        assertThat(h2DbQueue.getPopIndex(), is(0L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(0L));
+        assertThat(nitriteDbQueue.getPopIndex(), is(0L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(0L));
 
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
-        h2DbQueue.add(list);
+        nitriteDbQueue.add(list);
 
-        assertThat(h2DbQueue.getPopIndex(), is(0L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(2L));
+        assertThat(nitriteDbQueue.getPopIndex(), is(0L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(2L));
 
-        h2DbQueue.poll(2);
+        nitriteDbQueue.poll(2);
 
-        assertThat(h2DbQueue.getPopIndex(), is(2L));
-        assertThat(h2DbQueue.getQueueIndex().get(), is(2L));
-        assertThat(h2DbQueue.size(), is(2L));
-        assertThat(h2DbQueue.isEmpty(), is(true));
+        assertThat(nitriteDbQueue.getPopIndex(), is(2L));
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(2L));
+        assertThat(nitriteDbQueue.size(), is(2L));
+        assertThat(nitriteDbQueue.isEmpty(), is(true));
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 
     public void testHashMoreDataWhenThereIsDataInQueue() throws Exception {
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
-        h2DbQueue.add("{\"name\": \"amit\"}");
-        assertThat(h2DbQueue.getQueueIndex().get(), is(1L));
-        assertThat(h2DbQueue.hasMoreData(), is(true));
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        nitriteDbQueue.add("{\"name\": \"amit\"}");
+        assertThat(nitriteDbQueue.getQueueIndex().get(), is(1L));
+        assertThat(nitriteDbQueue.hasMoreData(), is(true));
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 
     @Test
     public void testHashMoreDataWhenQueueIsEmpty() throws Exception{
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
         Thread s = new Thread( () ->{
             try {
-                assertThat(h2DbQueue.hasMoreData(), is(true));
+                assertThat(nitriteDbQueue.hasMoreData(), is(true));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -141,21 +134,21 @@ public class TestNitriteDbQueue {
         s.start();
         Thread.sleep(2000);
 
-        h2DbQueue.hasMoreDataLock.lock();
-        assertThat(h2DbQueue.hasMoreDataLock.getWaitQueueLength(h2DbQueue.getHasNotMoreDataQueue()), is(1));
-        h2DbQueue.hasMoreDataLock.unlock();
+        nitriteDbQueue.hasMoreDataLock.lock();
+        assertThat(nitriteDbQueue.hasMoreDataLock.getWaitQueueLength(nitriteDbQueue.getHasNotMoreDataQueue()), is(1));
+        nitriteDbQueue.hasMoreDataLock.unlock();
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 
     @Test
     public void testHashMoreDataWhenQueueIsHasData() throws Exception{
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
-        h2DbQueue.add("{\"name\": \"amit\"}");
-        assertThat(h2DbQueue.hasMoreData(), is(true));
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+        nitriteDbQueue.add("{\"name\": \"amit\"}");
+        assertThat(nitriteDbQueue.hasMoreData(), is(true));
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 
     @Test
@@ -164,23 +157,23 @@ public class TestNitriteDbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
-        h2DbQueue.setHasMoreDataLock(mockedLock);
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
-        field.set(h2DbQueue, mockedCondition);
+        field.set(nitriteDbQueue, mockedCondition);
 
 
         mockedLock.lock();
         assertThat(mockedLock.getWaitQueueLength(mockedCondition), is(0));
-        h2DbQueue.add("{\"name\": \"amit\"}");
+        nitriteDbQueue.add("{\"name\": \"amit\"}");
 
         verify(mockedCondition, times(1)).signalAll();
         verify(mockedCondition, times(0)).signal();
         mockedLock.unlock();
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
 
     }
 
@@ -190,12 +183,12 @@ public class TestNitriteDbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
-        h2DbQueue.setHasMoreDataLock(mockedLock);
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
-        field.set(h2DbQueue, mockedCondition);
+        field.set(nitriteDbQueue, mockedCondition);
 
 
         mockedLock.lock();
@@ -203,13 +196,13 @@ public class TestNitriteDbQueue {
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
-        h2DbQueue.add(list);
+        nitriteDbQueue.add(list);
 
         verify(mockedCondition, times(1)).signalAll();
         verify(mockedCondition, times(0)).signal();
         mockedLock.unlock();
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
 
     }
 
@@ -219,20 +212,20 @@ public class TestNitriteDbQueue {
         ReentrantLock mockedLock = Mockito.mock(ReentrantLock.class);
         Condition mockedCondition = Mockito.mock(Condition.class);
 
-        NitriteDbQueue h2DbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
-        h2DbQueue.setHasMoreDataLock(mockedLock);
+        NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+        nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
         field.setAccessible(true);
-        field.set(h2DbQueue, mockedCondition);
+        field.set(nitriteDbQueue, mockedCondition);
 
         mockedLock.lock();
         assertThat(mockedLock.getWaitQueueLength(mockedCondition), is(0));
-        h2DbQueue.removePublisher();
+        nitriteDbQueue.removePublisher();
         verify(mockedCondition, times(1)).signalAll();
         verify(mockedCondition, times(0)).signal();
         mockedLock.unlock();
 
-        h2DbQueue.delete();
+        nitriteDbQueue.delete();
     }
 }
