@@ -48,6 +48,7 @@ public class NitriteDbList implements InfraDbList {
 
         this.nitriteDb = nitriteDb;
         this.listName = namespace + "_" + listName;
+        System.out.println("Creating list with name " + this.listName);
         this.nitriteCollection = nitriteDb.getCollection(this.listName);
         this.nitriteCollection.createIndex("list_index");
     }
@@ -244,7 +245,7 @@ public class NitriteDbList implements InfraDbList {
             
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json  
-        Map<String, Object> map = objectMapper.readValue(item, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
         documentMap.put("list_index", listIndex);
         documentMap.put("value", map);
         Document document = Document.createDocument(documentMap);   

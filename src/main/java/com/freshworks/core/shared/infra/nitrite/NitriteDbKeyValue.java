@@ -88,7 +88,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
             for(int i = 0; i < value.size(); i++){
                 String v = value.get(i).replaceAll("\\.", "ENCODE_DOT");
-                insert(key, objectMapper.writeValueAsString(v));
+                insert(key, v);
             }
         }
 
@@ -106,7 +106,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             keyAddLock.lock();
             key = key.replaceAll("\\.", "ENCODE_DOT");
             value = value.replaceAll("\\.", "ENCODE_DOT");
-            insert(key, objectMapper.writeValueAsString(value));
+            insert(key, value);
         }
         finally {
             keyAddLock.unlock();
@@ -144,7 +144,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
     private void insert(String key, String value) throws Exception{
 
         Document existingDoc = this.nitriteCollection.find(where("key").eq(key)).firstOrNull();
-        Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<Map<String, Object>>() {});
+        Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<HashMap<String, Object>>() {});
         
         if ( existingDoc == null){
 

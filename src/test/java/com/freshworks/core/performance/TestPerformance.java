@@ -35,7 +35,7 @@ public class TestPerformance {
     public void testTenMillionPayloadWhenChildNodeHasMoreDataThanParent() throws Exception {
 
         LocalDateTime localDataTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm");
         String formattedDateTime = localDataTime.format(formatter);
         Random random = new Random();
         int number = random.nextInt();
