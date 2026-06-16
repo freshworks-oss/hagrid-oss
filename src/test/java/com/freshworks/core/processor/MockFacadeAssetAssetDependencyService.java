@@ -27,6 +27,7 @@ public class MockFacadeAssetAssetDependencyService implements MockFacadeInterfac
     ApplicationContext applicationContext;
 
     AssetAssetDependencyService assetAssetDependencyService;    
+    
     ReturnableMockTypeList<ImmutableListMultimap<String, String>> scanner;
     ReturnableMockTypeList<List<String>> findDependencyOfAsset;
 

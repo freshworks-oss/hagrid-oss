@@ -60,7 +60,7 @@ public class NitriteDbQueue implements InfraDbQueue {
 
         this.nitriteDb = nitriteDb;
         this.queueName = namespace + "_" + queueName;
-        this.nitriteCollection = nitriteDb.getCollection(queueName);
+        this.nitriteCollection = nitriteDb.getCollection(this.queueName);
         this.nitriteCollection.createIndex("queue_index");
     }
 

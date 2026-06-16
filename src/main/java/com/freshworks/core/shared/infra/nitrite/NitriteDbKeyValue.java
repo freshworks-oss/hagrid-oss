@@ -43,7 +43,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
         this.nitriteDb = nitriteDb;
         this.keyValueName = namespace + "_" + keyValueName;
-        this.nitriteCollection = nitriteDb.getCollection(keyValueName);
+        this.nitriteCollection = nitriteDb.getCollection(this.keyValueName);
         IndexOptions options = new IndexOptions();
         options.setIndexType(IndexType.NON_UNIQUE);
         this.nitriteCollection.createIndex("key");

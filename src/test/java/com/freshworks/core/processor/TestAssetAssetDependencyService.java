@@ -34,9 +34,6 @@ public class TestAssetAssetDependencyService {
     @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
-    @Autowired
-    AssetAssetDependencyService assetAssetDependencyService;
-
     String releaseVersion;
 
     Class<? extends AbstractAsset> innerAsset;
@@ -64,16 +61,13 @@ public class TestAssetAssetDependencyService {
                 .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.dag.beans")
                 .build();
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                .build();
-
         AssetAssetDependencyService assetAssetDependencyService = mockFacadeAssetAssetDependencyService
                 .build();
 
         doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
         doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
 
-        ImmutableListMultimap<String, String> x = this.assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
+        ImmutableListMultimap<String, String> x = assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
 
         assertThat(x.containsKey(innerMostAsset.getName()), Matchers.is(true));
         assertThat(x.containsKey(outer.getName()), Matchers.is(true));
@@ -97,7 +91,7 @@ public class TestAssetAssetDependencyService {
         doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
         doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
 
-        ImmutableListMultimap<String, String> x = this.assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
+        ImmutableListMultimap<String, String> x = assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
 
         ImmutableList<String> dependencyList = x.get(outer.getName());
         assertThat(dependencyList, Matchers.hasItem(Matchers.containsString("unit.dag.assets.Application")));

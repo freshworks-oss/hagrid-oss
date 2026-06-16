@@ -30,6 +30,7 @@ import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -332,7 +333,9 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
-        System.out.println("Inserting document in list " + publisherList.getListName() );
+        System.out.println("publisher list name is " + publisherList.getListName() );
+        System.out.println("documents in publisher list are" + publisherList.getNitriteCollection().find().size());
+        System.out.println("publisher list nitrite collection name is " + publisherList.getNitriteCollection().getName());
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
@@ -351,14 +354,14 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeNitriteDbService
+        InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
                 .getNamespaceService(namespaceService)
                 .build();
 
-        syncServiceContainer.add(h2DbService, InfraService.class);
+        syncServiceContainer.add(nitriteDbService, InfraService.class);
 
 
         // Here insert data into the infra layer so that it can be consumed by consumer
@@ -439,7 +442,10 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
-        System.out.println("Inserting document in list " + publisherList.getListName() );
+        System.out.println("publisher list name is " + publisherList.getListName() );
+        System.out.println("documents in publisher list are" + publisherList.getNitriteCollection().find().size());
+        System.out.println("publisher list nitrite collection name is " + publisherList.getNitriteCollection().getName());
+        
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
@@ -458,14 +464,14 @@ public class TestConsumerService {
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
-        InfraService h2DbService = mockFacadeNitriteDbService
+        InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
                 .getJsonIndexService(jsonIndexService)
                 .getJsonQueryService(jsonQueryService)
                 .getNamespaceService(namespaceService)
                 .build();
 
-        syncServiceContainer.add(h2DbService, InfraService.class);
+        syncServiceContainer.add(nitriteDbService, InfraService.class);
 
 
         // Here insert data into the infra layer so that it can be consumed by consumer

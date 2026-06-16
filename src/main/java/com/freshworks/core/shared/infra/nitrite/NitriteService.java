@@ -138,7 +138,11 @@ public class NitriteService implements InfraService {
 
             // We need to clear the freshIndex as well.
             destroyFreshIndex();
-            nitriteDb.close();
+
+            if(Boolean.FALSE.equals(nitriteDb.isClosed())){
+                nitriteDb.close();
+            }
+            
         }
 
         finally {

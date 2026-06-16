@@ -25,6 +25,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
     Nitrite nitriteDb;
 
     ReturnableMockTypeList<String> listName;
+    
     ReturnableMockTypeList<String> namespace;
 
     ReturnableMockTypeList<Long> addAndGetIndex = new ReturnableMockTypeList<>();

@@ -48,7 +48,7 @@ public class NitriteDbList implements InfraDbList {
 
         this.nitriteDb = nitriteDb;
         this.listName = namespace + "_" + listName;
-        this.nitriteCollection = nitriteDb.getCollection(listName);
+        this.nitriteCollection = nitriteDb.getCollection(this.listName);
         this.nitriteCollection.createIndex("list_index");
     }
 
