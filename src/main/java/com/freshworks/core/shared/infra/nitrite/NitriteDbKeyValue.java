@@ -143,6 +143,10 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     private void insert(String key, String value) throws Exception{
 
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the key value");
+        }
+
         Document existingDoc = this.nitriteCollection.find(where("key").eq(key)).firstOrNull();
         Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<HashMap<String, Object>>() {});
         
@@ -170,6 +174,10 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     private List<String> find(String key) throws Exception{
 
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the key value");
+        }
+
         DocumentCursor docCursor = this.nitriteCollection.find(where("key").eq(key));
 
         List<Map<String, Object>> valueList = new ArrayList<>();
@@ -185,4 +193,16 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         return valueStringList;
 
     }
+
+
+    private boolean isDatabaseOpen(){
+
+        if (this.nitriteDb != null && Boolean.FALSE.equals(this.nitriteDb.isClosed())){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 }

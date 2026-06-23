@@ -256,6 +256,10 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     private void insert(long queueIndex, String item) throws Exception{
 
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the queue");
+        }
+
         try{
             
             Map<String, Object> documentMap = new HashMap<>();
@@ -278,6 +282,10 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     private String  find(long queueIndex) throws Exception{
 
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the queue");
+        }
+
         Document doc = this.nitriteCollection.find(where("queue_index").eq(queueIndex)).firstOrNull();
 
         if(doc != null){
@@ -286,6 +294,16 @@ public class NitriteDbQueue implements InfraDbQueue {
         }
         else {
             return null;
+        }
+    }
+
+    private boolean isDatabaseOpen(){
+
+        if (this.nitriteDb != null && Boolean.FALSE.equals(this.nitriteDb.isClosed())){
+            return true;
+        }
+        else{
+            return false;
         }
     }
 
