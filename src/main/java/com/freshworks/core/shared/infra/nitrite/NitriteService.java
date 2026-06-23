@@ -68,7 +68,7 @@ public class NitriteService implements InfraService {
     @Override
     public NitriteDbQueue getProcessorQueue() throws Exception{
 
-        return getH2DbQueue(namespace, "processor");
+        return getNitriteDbQueue(namespace, "processor");
     }
 
     @Override
@@ -102,20 +102,20 @@ public class NitriteService implements InfraService {
 
     public NitriteDbList getPublisherList() throws Exception{
 
-        return getH2DbList(this.namespace, "publisher_list");
+        return getNitriteDbList(this.namespace, "publisher_list");
     }
 
     @Override
     public NitriteDbKeyValue getKeyValue() throws Exception{
 
-        return getH2DbKeyValue(this.namespace, "key_value");
+        return getNitriteDbKeyValue(this.namespace, "key_value");
     }
 
 
     @Override
     public NitriteDbList getInfraDbList(String listName) throws Exception{
 
-        return getH2DbList(this.namespace, listName);
+        return getNitriteDbList(this.namespace, listName);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class NitriteService implements InfraService {
         }
     }
 
-    private NitriteDbQueue getH2DbQueue(String namespace, String queueName)  throws Exception{
+    private NitriteDbQueue getNitriteDbQueue(String namespace, String queueName)  throws Exception{
 
         try{
 
@@ -161,17 +161,26 @@ public class NitriteService implements InfraService {
 
             else if (persistentQueueSingletonMap.containsKey(namespace) && !persistentQueueSingletonMap.get(namespace).containsKey(queueName)){
 
-                NitriteDbQueue H2DbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
-                persistentQueueSingletonMap.get(namespace).put(queueName, H2DbQueue);
-                return H2DbQueue;
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbQueue creation operation has been asked to perform in the nitrite service");
+                }
+
+                NitriteDbQueue nitriteDbDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
+                persistentQueueSingletonMap.get(namespace).put(queueName, nitriteDbDbQueue);
+                return nitriteDbDbQueue;
             }
 
             else{
-                NitriteDbQueue mongoDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
+
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbQueue creation operation has been asked to perform in the nitrite service");
+                }
+
+                NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
                 HashMap<String, NitriteDbQueue> map = new HashMap<>();
-                map.put(queueName, mongoDbQueue);
+                map.put(queueName, nitriteDbQueue);
                 persistentQueueSingletonMap.put(namespace, map);
-                return mongoDbQueue;
+                return nitriteDbQueue;
             }
 
         }
@@ -181,7 +190,7 @@ public class NitriteService implements InfraService {
         }
     } // close
 
-    private NitriteDbList getH2DbList(String namespace, String listName) throws Exception{
+    private NitriteDbList getNitriteDbList(String namespace, String listName) throws Exception{
         // This should return singleton for single listname
 
         try{
@@ -192,16 +201,27 @@ public class NitriteService implements InfraService {
             }
 
             else if(persistentListSingletonMap.containsKey(namespace) && !persistentListSingletonMap.get(namespace).containsKey(listName)){
-                NitriteDbList mongoDbList = new NitriteDbList(nitriteDb, namespace, listName);
-                persistentListSingletonMap.get(namespace).put(listName, mongoDbList);
-                return mongoDbList;
+
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbList creation operation has been asked to perform in the nitrite service");
+                }
+
+
+                NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, namespace, listName);
+                persistentListSingletonMap.get(namespace).put(listName, nitriteDbList);
+                return nitriteDbList;
             }
             else{
-                NitriteDbList mongoDbList = new NitriteDbList(nitriteDb, namespace, listName);
+
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbList creation operation has been asked to perform in the nitrite service");
+                }
+
+                NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, namespace, listName);
                 HashMap<String, NitriteDbList> map = new HashMap<>();
-                map.put(listName, mongoDbList);
+                map.put(listName, nitriteDbList);
                 persistentListSingletonMap.put(namespace, map);
-                return mongoDbList;
+                return nitriteDbList;
             }
 
         }
@@ -211,7 +231,7 @@ public class NitriteService implements InfraService {
         }
     }
 
-    private NitriteDbKeyValue getH2DbKeyValue(String namespace, String keyValueName) throws Exception{
+    private NitriteDbKeyValue getNitriteDbKeyValue(String namespace, String keyValueName) throws Exception{
 
         try{
 
@@ -220,16 +240,26 @@ public class NitriteService implements InfraService {
                 return persistentKeyValueSingletonMap.get(namespace).get(keyValueName);
             }
             else if (persistentKeyValueSingletonMap.containsKey(namespace) && !persistentKeyValueSingletonMap.get(namespace).containsKey(keyValueName)){
-                NitriteDbKeyValue mongoDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
-                persistentKeyValueSingletonMap.get(namespace).put(keyValueName, mongoDbKeyValue);
-                return mongoDbKeyValue;
+
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbKeyValue creation operation has been asked to perform in the nitrite service");
+                }
+
+                NitriteDbKeyValue nitriteDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
+                persistentKeyValueSingletonMap.get(namespace).put(keyValueName, nitriteDbKeyValue);
+                return nitriteDbKeyValue;
             }
             else{
-                NitriteDbKeyValue mongoDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
+
+                if (!isDatabaseOpen()){
+                    throw new IllegalStateException("Nitrite DB is closed and newNitriteDbKeyValue creation operation has been asked to perform in the nitrite service");
+                }
+                
+                NitriteDbKeyValue nitriteDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
                 HashMap<String, NitriteDbKeyValue> map = new HashMap<>();
-                map.put(keyValueName, mongoDbKeyValue);
+                map.put(keyValueName, nitriteDbKeyValue);
                 persistentKeyValueSingletonMap.put(namespace, map);
-                return mongoDbKeyValue;
+                return nitriteDbKeyValue;
             }
         }
 
@@ -238,9 +268,14 @@ public class NitriteService implements InfraService {
         }
     }
 
-    private String sanitizeName(String name){
+    private boolean isDatabaseOpen(){
 
-        return "h2_" + name.toLowerCase().replaceAll("\\.", "_").replaceAll("-", "_").replaceAll(":", "_");
+        if (this.nitriteDb != null && Boolean.FALSE.equals(this.nitriteDb.isClosed())){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 }
