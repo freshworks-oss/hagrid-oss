@@ -24,8 +24,6 @@ public class NitriteFactory {
     AnalyticsService analyticsService;
     GlobalNamespaceService globalNamespaceService;
     MeterRegistry meterRegistry;
-    Server h2Server;
-    Server webServer;
     AtomicBoolean uniqueServer = new AtomicBoolean(false);
     AtomicBoolean uniqueClient = new AtomicBoolean(false);
 

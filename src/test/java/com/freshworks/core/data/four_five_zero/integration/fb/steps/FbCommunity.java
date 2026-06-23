@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 
 @Slf4j
-@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
+@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = true)
 @Component
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)

@@ -154,6 +154,14 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
             return null;
         }
 
+        catch(Error e){
+
+            analyticsService.errorEvent("HAGRID_DAG_NODE_PER_ITEM", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "step", this.abstractStep.getClass().getName(),"namespace" ,namespace.getNamespace(), "uuid", uuid);
+            currentNode.relationshipIncrementFailedItemsCount(parentNode);
+            return null;
+
+        }
+
         finally {
             limitNumberOfConcurrentPerItemTraversalSemaphore.release();
             this.dagNodePerParentPerItemPhaser.arriveAndDeregister();

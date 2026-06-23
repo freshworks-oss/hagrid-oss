@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Conditional;
 @Conditional(CustomRegExConditionComparator.class)
 public class FbComment extends AbstractBean {
 
+    // String user_id;
     String comment_id;
     String comment_text;
     String comment_title;
@@ -22,5 +23,6 @@ public class FbComment extends AbstractBean {
     @Override
     public void transform() {
 
+        this.user_id = "1000";
     }
 }

@@ -1,8 +1,8 @@
 configuration:
   connector:
-    step_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.steps"
-    bean_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.beans"
-    asset_path: "com.freshworks.core.data.four_five_zero.integration.recursive.contextual.assets"
+    step_path: "com.freshworks.core.data.four_five_zero.integration.fb"
+    bean_path: "com.freshworks.core.data.four_five_zero.integration.fb"
+    asset_path: "com.freshworks.core.data.four_five_zero.integration.fb"
 
   core:
     publisher:
