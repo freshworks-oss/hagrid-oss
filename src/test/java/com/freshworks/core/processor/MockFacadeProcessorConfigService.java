@@ -69,6 +69,7 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
         doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
         doAnswer(getAssetLocation.answer()).when(processorConfigServiceSpy).getAssetLocation();
         doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
+        doAnswer(getNumberOfParallelProcessor.answer()).when(processorConfigServiceSpy).getNumberOfParallelProcessor();
         return processorConfigServiceSpy;
     }
 }
