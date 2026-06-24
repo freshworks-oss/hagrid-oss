@@ -4,7 +4,9 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbKeyValue;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbQueue;
@@ -36,18 +38,22 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
     @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
+    @Autowired
+    MockFacadeInfraConfigService mockFacadeInfraConfigService;
 
     @Autowired
-    MockFacadeNitritedbList mockFacadeH2dbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
 
     @Autowired
-    MockFacadeNitritedbKeyValue mockFacadeH2KeyValue;
+    MockFacadeNitritedbKeyValue mockFacadeNitriteKeyValue;
 
     @Autowired
-    MockFacadeNitritedbQueue mockFacadeH2DbQueue;
+    MockFacadeNitritedbQueue mockFacadeNitriteDbQueue;
 
     ReturnableMockTypeList<SyncServiceContainer> syncServiceContainer = new ReturnableMockTypeList<>();
+
+    ReturnableMockTypeList<InfraConfigService> infraConfigService = new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<NitriteDbQueue> getProcessorQueue = new ReturnableMockTypeList<>();
 
@@ -72,13 +78,14 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
 
         reset();
         syncServiceContainer.add(mockFacadeSyncServiceContainer.configure().build());
-        getProcessorQueue.add(mockFacadeH2DbQueue.configure().build());
+        infraConfigService.add(mockFacadeInfraConfigService.configure().build());
+        getProcessorQueue.add(mockFacadeNitriteDbQueue.configure().build());
         getJsonIndexService.add(Mockito.mock(JsonIndexService.class));
         getJsonQueryService.add(Mockito.mock(JsonQueryService.class));
         getNamespaceService.add(Mockito.mock(NamespaceService.class));
-        getPublisherList.add(mockFacadeH2dbList.configure().build());
-        getKeyValue.add(mockFacadeH2KeyValue.configure().build());
-        getInfraDbListGivenName.add(mockFacadeH2dbList.configure().build());
+        getPublisherList.add(mockFacadeNitritedbList.configure().build());
+        getKeyValue.add(mockFacadeNitriteKeyValue.configure().build());
+        getInfraDbListGivenName.add(mockFacadeNitritedbList.configure().build());
         getNamespace.add("some_dummy_namespace");
         return this;
 
@@ -142,8 +149,14 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
         return this;
     }
 
+    public MockFacadeNitriteDbService infraConfigService(InfraConfigService... infraConfigService) {
+        this.infraConfigService.clear();
+        this.infraConfigService.add(infraConfigService);
+        return this;
+    }
 
-    public MockFacadeNitriteDbService addHikariDataSource(Nitrite nitriteDb){
+
+    public MockFacadeNitriteDbService addNitriteDb(Nitrite nitriteDb){
         this.nitriteDb = nitriteDb;
         return this;
     }
@@ -153,6 +166,7 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
 
         Preconditions.checkNotNull(this.getNamespace, "Namespace must be set before hand as it is pre-requisite for configuring mongoService.");
         NitriteService nitriteDbService = new NitriteService();
+        nitriteDbService.configure(syncServiceContainer.next(), infraConfigService.next());
         nitriteDbService = Mockito.spy(nitriteDbService);
 
         doNothing().when(nitriteDbService).configure(any(), any());

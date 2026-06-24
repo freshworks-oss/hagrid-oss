@@ -38,7 +38,7 @@ public class MockFacadeAssetBeanDependencyService implements MockFacadeInterface
 
         reset();
         Multimap<String, String> connectorConfigItemTable = ArrayListMultimap.create();
-        connectorConfigItemTable.put("com.freshworks.core.three_seven_zero.assets.fb.data.FbComment", "com.freshworks.core.three_seven_zero.beans.fb.data.FbComment");
+        connectorConfigItemTable.put("com.freshworks.core.four_five_zero.assets.fb.data.FbComment", "com.freshworks.core.four_five_zero.beans.fb.data.FbComment");
         scanner.add(ImmutableListMultimap.copyOf(connectorConfigItemTable));
 
         List<String> dependencyList = new ArrayList<>();

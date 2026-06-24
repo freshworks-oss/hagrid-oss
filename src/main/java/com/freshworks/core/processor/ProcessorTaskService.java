@@ -140,14 +140,14 @@ public class ProcessorTaskService implements Callable<Void> {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
                     abstractAssetList = processBeanForAsset(bean);
-                   while(true) {
+                //    while(true) {
                        
-                        if (abstractAssetList.isEmpty()){
-                            break;
-                        }
-                        processAssetForAsset(abstractAssetList.pop());
+                //         if (abstractAssetList.isEmpty()){
+                //             break;
+                //         }
+                //         processAssetForAsset(abstractAssetList.pop());
                        
-                   }
+                //    }
 
                 } else {
                     // If thread is interrupted or asked to terminate then skip the list and publish

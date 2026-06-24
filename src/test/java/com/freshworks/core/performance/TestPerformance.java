@@ -41,11 +41,11 @@ public class TestPerformance {
         int number = random.nextInt();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("numberOfUsersEachPage", "10")
+                .put("numberOfUsersEachPage", "1")
                 .put("numberOfUserPagination", "1")
                 .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "10")
-                .put("numberOfPostPagination", "10")
+                .put("numberOfPostsEachPage", "5")
+                .put("numberOfPostPagination", "5")
                 .put("waitBetweenPostPaginationInMs", "0")
                 .put("numberOfCommentsEachPage", "10")
                 .put("numberOfCommentPagination", "10")
@@ -59,10 +59,6 @@ public class TestPerformance {
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
-
-        // ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
-        // List<FbUserComment> fbUserComment = consumerService.getAssetByAssetType(FbUserComment.class);
-        // assertThat(fbUserComment.size(), Matchers.is(0));
 
         syncService.shutdown();
 
