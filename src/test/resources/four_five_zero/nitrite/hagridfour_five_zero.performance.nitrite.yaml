@@ -34,7 +34,7 @@ configuration:
 
 
     infra:
-      infra_type: "inmemory"
+      infra_type: "nitrite"
       nitrite_data_path: "/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database"
       nitrite_database_type: ""
       environment: "development"
