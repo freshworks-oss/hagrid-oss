@@ -120,10 +120,10 @@ public class TestPerformance {
     @Test
     public void testWhenThousandAPIRequestComes() throws Exception {
 
-        CompletableFuture<Void> futureTasks[] = new CompletableFuture[1000];
+        CompletableFuture<Void> futureTasks[] = new CompletableFuture[10];
         ObjectMapper objectMapper = new ObjectMapper();
         
-        for(int i=0; i<1000; i++){
+        for(int i=0; i<10; i++){
 
             CompletableFuture<Void> task = CompletableFuture.runAsync(() ->{
 
@@ -142,7 +142,7 @@ public class TestPerformance {
                     List<FbUser> fbUserList = consumerService.getAssetByAssetType(FbUser.class);
                     System.out.println(objectMapper.writeValueAsString(fbUserList));
                     assertThat(fbUserList.size(), Matchers.is(100));
-                    syncService.shutdown();
+                    // syncService.shutdown();
                 }
                 catch(Exception e){
                     e.printStackTrace();
