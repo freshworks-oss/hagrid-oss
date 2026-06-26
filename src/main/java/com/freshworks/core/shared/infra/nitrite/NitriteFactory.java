@@ -55,7 +55,6 @@ public class NitriteFactory {
 
                     }
                     else{
-                        
                         nitriteDb = Nitrite.builder()
                         .openOrCreate();
                     }
