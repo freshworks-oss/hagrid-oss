@@ -6,18 +6,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
+import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 
 import lombok.Getter;
@@ -33,6 +38,11 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     String keyValueName;
     Nitrite nitriteDb;
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
+
+    AtomicLong keyListSize = new AtomicLong(0);
+
     ObjectMapper objectMapper = new ObjectMapper();
     NitriteCollection nitriteCollection;
 
@@ -46,12 +56,16 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         this.nitriteCollection = nitriteDb.getCollection(this.keyValueName);
         IndexOptions options = new IndexOptions();
         options.setIndexType(IndexType.NON_UNIQUE);
-        this.nitriteCollection.createIndex("key");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"key");
 
     }
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
+
+        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
     }
 
@@ -126,12 +140,24 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         return returnResult;
     }
 
+
+    @Override
+    public long size() {
+
+        return keyListSize.get();
+    }
+
     @Override
     public void delete() throws Exception{
 
         try {
 
             keyAddLock.lock();
+        
+            if (!isDatabaseOpen()){
+                throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the key value");
+            }
+
             // Execute the drop table statement
             this.nitriteCollection.drop();
 
@@ -169,6 +195,8 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             existingDoc.put("value", valueList);
             this.nitriteCollection.update(where("key").eq(key), existingDoc);
         }
+
+        keyListSize.incrementAndGet();
     }
 
 
@@ -178,10 +206,22 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the key value");
         }
 
-        DocumentCursor docCursor = this.nitriteCollection.find(where("key").eq(key));
+        DocumentCursor cursor = this.nitriteCollection.find(where("key").eq(key));
+
+        FindPlan plan = cursor.getFindPlan();
+        
+        if (plan.getIndexScanFilter() != null) {
+           analyticsService.debugEvent("NITRITE_DB_KEYVALUE","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+        } 
+
+        // 2. Is it falling back to a full collection scan?
+        if (plan.getCollectionScanFilter() != null) {
+            analyticsService.errorEvent("NITRITE_DB_KEYVALUE","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
+        }
+
 
         List<Map<String, Object>> valueList = new ArrayList<>();
-        for (Document doc : docCursor) {
+        for (Document doc : cursor) {
             // Converts the Nitrite Document directly into a standard Java Map
             valueList = (List<Map<String, Object>>) doc.get("value");
         }

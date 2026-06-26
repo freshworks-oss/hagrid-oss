@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,12 +16,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
+import org.dizitart.no2.collection.DocumentCursor;
+import org.dizitart.no2.collection.FindOptions;
+import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.filters.Filter;
+import org.dizitart.no2.index.IndexOptions;
+import org.dizitart.no2.index.IndexType;
+import org.dizitart.no2.repository.Cursor;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraDbQueue;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -39,6 +51,9 @@ public class NitriteDbQueue implements InfraDbQueue {
     ObjectMapper objectMapper = new ObjectMapper();
 
     AtomicLong queueIndex = new AtomicLong(0);
+
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
 
     String dbString;
     String queueName;
@@ -61,7 +76,7 @@ public class NitriteDbQueue implements InfraDbQueue {
         this.nitriteDb = nitriteDb;
         this.queueName = namespace + "_" + queueName;
         this.nitriteCollection = nitriteDb.getCollection(this.queueName);
-        this.nitriteCollection.createIndex("queue_index");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.UNIQUE),"queue_index");
     }
 
 
@@ -69,6 +84,9 @@ public class NitriteDbQueue implements InfraDbQueue {
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
         MeterRegistry meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
         timer = meterRegistry.timer(queueName + ".execution.time");
+        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
 
     @Override
@@ -80,7 +98,6 @@ public class NitriteDbQueue implements InfraDbQueue {
             queueAddLock.lock();
             long currentIndex = this.queueIndex.get();
             insert(currentIndex, s);
-            this.queueIndex.incrementAndGet();
             hasMoreDataLock.lock();
             hasNotMoreDataQueue.signalAll();
             hasMoreDataLock.unlock();
@@ -102,15 +119,12 @@ public class NitriteDbQueue implements InfraDbQueue {
 
         try{
             queueAddLock.lock();
-            long currentIndex = this.queueIndex.get();
             for(int i=0; i<s.size(); i++){
-
+                long currentIndex = this.queueIndex.get();
                 String ss = s.get(i).replaceAll("\\.", "ENCODE_DOT");
                 insert(currentIndex, ss);
-                currentIndex = currentIndex + 1;
             }
 
-            this.queueIndex.addAndGet(s.size());
             hasMoreDataLock.lock();
             hasNotMoreDataQueue.signalAll();
             hasMoreDataLock.unlock();
@@ -124,7 +138,6 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public String poll() throws Exception{
-
         consumerAttached = 0;
         try{
             queuePollLock.lock();
@@ -146,24 +159,12 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public List<String> poll(int n) throws Exception{
-
         consumerAttached = 0;
 
         try{
             queuePollLock.lock();
             ArrayList<String> returnList = new ArrayList<>();
-            long index = this.popIndex;
-            ArrayList<String> list = new ArrayList<>();
-            for(int i=0; i< n; i++){
-
-                String s = find(index);
-
-                if(s != null){
-                    list.add(s);
-                }
-
-                index = index + 1;
-            }
+            List<String> list = find(this.popIndex, n);
 
             Iterator<String> it = list.iterator();
 
@@ -245,6 +246,12 @@ public class NitriteDbQueue implements InfraDbQueue {
         try {
 
             queueAddLock.lock();
+
+            if(!isDatabaseOpen()){
+
+                throw new IllegalStateException("Nitrite DB is closed and drop db operation has been asked to perform in the queue");
+            }
+
             this.nitriteCollection.drop();
         }
 
@@ -259,25 +266,16 @@ public class NitriteDbQueue implements InfraDbQueue {
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the queue");
         }
-
-        try{
             
-            Map<String, Object> documentMap = new HashMap<>();
-            // Check if this item can be converted to MAP i.e json  
-            Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
-            documentMap.put("queue_index", queueIndex);
-            documentMap.put("value", map);
-            Document document = Document.createDocument(documentMap);   
-            nitriteCollection.insert(document);
-        }   
-
-        catch(JsonParseException e){
-            
-            Document document = Document.createDocument();
-            document.put("queue_index", queueIndex);
-            document.put("value", item);  
-            nitriteCollection.insert(document);
-        }
+        Map<String, Object> documentMap = new HashMap<>();
+        // Check if this item can be converted to MAP i.e json 
+        Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
+        documentMap.put("queue_index", queueIndex);
+        documentMap.put("value", map);
+        Document document = Document.createDocument(documentMap);   
+        nitriteCollection.insert(document);
+        
+        this.queueIndex.incrementAndGet();
     }
 
     private String  find(long queueIndex) throws Exception{
@@ -286,7 +284,27 @@ public class NitriteDbQueue implements InfraDbQueue {
             throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the queue");
         }
 
-        Document doc = this.nitriteCollection.find(where("queue_index").eq(queueIndex)).firstOrNull();
+        DocumentCursor cursor = this.nitriteCollection.find(where("queue_index").eq(queueIndex));
+
+        FindPlan plan = cursor.getFindPlan();
+        
+        if (plan.getIndexScanFilter() != null) {
+           analyticsService.debugEvent("NITRITE_DB_QUEUE","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+        } 
+
+        // 2. Is it falling back to a full collection scan?
+        if (plan.getCollectionScanFilter() != null) {
+            analyticsService.errorEvent("NITRITE_DB_QUEUE","_message","FAILURE: Index is NOT being USED!. It is table scan being performed", "targeted_fields", "");
+        }
+
+
+        if(cursor.size() > 1){
+
+            analyticsService.errorEvent("NITRITE_DB_QUEUE","_message","Item at queue index " + queueIndex + " are most than 1. It should not be the case");
+            throw new IllegalStateException("Number of items at queue index " + queueIndex + " are most than 1. It should not be the case");
+        }
+
+        Document doc = cursor.firstOrNull();
 
         if(doc != null){
             Map<String, Object> valueMap = doc.get("value", Map.class);
@@ -295,6 +313,38 @@ public class NitriteDbQueue implements InfraDbQueue {
         else {
             return null;
         }
+    }
+
+    private List<String>  find(long start, long number) throws Exception{
+
+        List<String> foundDocuments = new ArrayList<>();
+
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the queue");
+        }
+
+        FindOptions findOptions = new FindOptions();
+        findOptions.limit(number);
+        DocumentCursor cursor = this.nitriteCollection.find(where("queue_index").gte(start), findOptions);
+
+        FindPlan plan = cursor.getFindPlan();
+        
+        if (plan.getIndexScanFilter() != null) {
+           analyticsService.debugEvent("NITRITE_DB_QUEUE","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+        } 
+
+        // 2. Is it falling back to a full collection scan?
+        if (plan.getCollectionScanFilter() != null) {
+            analyticsService.errorEvent("NITRITE_DB_QUEUE","_message","FAILURE: Index is NOT being USED!. It is table scan being performed", "targeted_fields", "");
+        }
+
+        for(Document doc: cursor){
+            Map<String, Object> valueMap = doc.get("value", Map.class);
+            String docString =  objectMapper.writeValueAsString(valueMap);
+            foundDocuments.add(docString);
+        }
+
+        return foundDocuments;
     }
 
     private boolean isDatabaseOpen(){

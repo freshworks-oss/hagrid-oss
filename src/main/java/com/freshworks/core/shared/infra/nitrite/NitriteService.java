@@ -68,7 +68,18 @@ public class NitriteService implements InfraService {
     @Override
     public NitriteDbQueue getProcessorQueue() throws Exception{
 
-        return getNitriteDbQueue(namespace, "processor");
+        NitriteDbQueue nitriteDbQueue = getNitriteDbQueue(namespace, "processor");
+        this.analyticsService.meterGauge("infra.collection.size", nitriteDbQueue, queue -> {
+            try {
+                double size = queue.size();
+                return size;
+            } catch (Exception e) {
+                
+                return 0d;
+            }
+        }, "name", nitriteDbQueue.getQueueName().substring(namespace.length()));
+
+        return nitriteDbQueue;
     }
 
     @Override
@@ -102,20 +113,60 @@ public class NitriteService implements InfraService {
 
     public NitriteDbList getPublisherList() throws Exception{
 
-        return getNitriteDbList(this.namespace, "publisher_list");
+        NitriteDbList nitriteDbList =  getNitriteDbList(this.namespace, "publisher_list");
+
+        this.analyticsService.meterGauge("infra.collection.size", nitriteDbList, list -> {
+            try {
+                double size = list.size();
+                return size;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return 0D;
+            }
+        }, "name", "publisher_list");
+
+        return nitriteDbList;
+
     }
 
     @Override
     public NitriteDbKeyValue getKeyValue() throws Exception{
 
-        return getNitriteDbKeyValue(this.namespace, "key_value");
+        NitriteDbKeyValue nitriteDbKeyValue = getNitriteDbKeyValue(this.namespace, "key_value");
+
+        this.analyticsService.meterGauge("infra.collection.size", nitriteDbKeyValue, keyValue -> {
+            try {
+                double size = keyValue.size();
+                return size;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return 0D;
+            }
+        }, "name", "key_value");
+
+        return nitriteDbKeyValue;
     }
 
 
     @Override
     public NitriteDbList getInfraDbList(String listName) throws Exception{
 
-        return getNitriteDbList(this.namespace, listName);
+        NitriteDbList nitriteDbList =  getNitriteDbList(this.namespace, listName);
+
+        this.analyticsService.meterGauge("infra.collection.size", nitriteDbList, list -> {
+            try {
+                double size = list.size();
+                return size;
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return 0D;
+            }
+        }, "name", listName);
+
+        return nitriteDbList;
     }
 
     @Override
@@ -166,6 +217,7 @@ public class NitriteService implements InfraService {
                 }
 
                 NitriteDbQueue nitriteDbDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
+                nitriteDbDbQueue.configure(syncServiceContainer);
                 persistentQueueSingletonMap.get(namespace).put(queueName, nitriteDbDbQueue);
                 return nitriteDbDbQueue;
             }
@@ -177,6 +229,7 @@ public class NitriteService implements InfraService {
                 }
 
                 NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, namespace, queueName);
+                nitriteDbQueue.configure(syncServiceContainer);
                 HashMap<String, NitriteDbQueue> map = new HashMap<>();
                 map.put(queueName, nitriteDbQueue);
                 persistentQueueSingletonMap.put(namespace, map);
@@ -208,6 +261,7 @@ public class NitriteService implements InfraService {
 
 
                 NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, namespace, listName);
+                nitriteDbList.configure(syncServiceContainer);
                 persistentListSingletonMap.get(namespace).put(listName, nitriteDbList);
                 return nitriteDbList;
             }
@@ -218,6 +272,7 @@ public class NitriteService implements InfraService {
                 }
 
                 NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, namespace, listName);
+                nitriteDbList.configure(syncServiceContainer);
                 HashMap<String, NitriteDbList> map = new HashMap<>();
                 map.put(listName, nitriteDbList);
                 persistentListSingletonMap.put(namespace, map);
@@ -246,6 +301,7 @@ public class NitriteService implements InfraService {
                 }
 
                 NitriteDbKeyValue nitriteDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
+                nitriteDbKeyValue.configure(syncServiceContainer);
                 persistentKeyValueSingletonMap.get(namespace).put(keyValueName, nitriteDbKeyValue);
                 return nitriteDbKeyValue;
             }
@@ -256,6 +312,7 @@ public class NitriteService implements InfraService {
                 }
                 
                 NitriteDbKeyValue nitriteDbKeyValue = new NitriteDbKeyValue(nitriteDb, namespace, keyValueName);
+                nitriteDbKeyValue.configure(syncServiceContainer);
                 HashMap<String, NitriteDbKeyValue> map = new HashMap<>();
                 map.put(keyValueName, nitriteDbKeyValue);
                 persistentKeyValueSingletonMap.put(namespace, map);

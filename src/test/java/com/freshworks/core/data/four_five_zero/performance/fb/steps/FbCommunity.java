@@ -29,7 +29,7 @@ import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.data.four_five_zero.performance.fb.beans.*;
 
 @Slf4j
-@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = FbUser.class, rateLimit = 50, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)

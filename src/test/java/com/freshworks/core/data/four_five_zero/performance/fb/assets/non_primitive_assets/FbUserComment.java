@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 @FreshJoin(leftClass = FbUser.class, leftClassFieldName = "userId", 
         rightClass = FbComment.class, rightClassFieldName = "userId", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN, uniqueJoinName = "fbuser_fbcomment_inner_join")
+@FreshAsset(ignore = true)
 public class FbUserComment extends AbstractAsset{
 
     String userId;

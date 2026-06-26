@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.MDC;
@@ -44,11 +45,11 @@ public class TestPerformance {
                 .put("numberOfUsersEachPage", "1")
                 .put("numberOfUserPagination", "1")
                 .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "5")
-                .put("numberOfPostPagination", "5")
+                .put("numberOfPostsEachPage", "10")
+                .put("numberOfPostPagination", "10")
                 .put("waitBetweenPostPaginationInMs", "0")
                 .put("numberOfCommentsEachPage", "10")
-                .put("numberOfCommentPagination", "10")
+                .put("numberOfCommentPagination", "100")
                 .put("waitBetweenCommentPaginationInMs", "0")
                 .put("numberOfCommunitiesEachPage", "10")
                 .put("numberOfCommunityPagination", "10")
@@ -72,7 +73,7 @@ public class TestPerformance {
     public void testTenMillionPayloadWhenParentNodeHasMoreDataThanChildNode() throws Exception {
 
         LocalDateTime localDataTime = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm");
         String formattedDateTime = localDataTime.format(formatter);
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()

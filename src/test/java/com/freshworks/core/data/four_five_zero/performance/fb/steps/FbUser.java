@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 @Slf4j
-@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 50, duration = 1)
 @Component
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)

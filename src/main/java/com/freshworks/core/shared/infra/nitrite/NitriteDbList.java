@@ -12,12 +12,20 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
+import org.dizitart.no2.collection.DocumentCursor;
+import org.dizitart.no2.collection.FindOptions;
+import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.index.IndexOptions;
+import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraDbList;
 
 import lombok.Getter;
@@ -36,6 +44,9 @@ public class NitriteDbList implements InfraDbList {
     String dbString;
     String listName;
 
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
+
     Nitrite nitriteDb;
     NitriteCollection nitriteCollection;
 
@@ -49,12 +60,15 @@ public class NitriteDbList implements InfraDbList {
         this.nitriteDb = nitriteDb;
         this.listName = namespace + "_" + listName;
         this.nitriteCollection = nitriteDb.getCollection(this.listName);
-        this.nitriteCollection.createIndex("list_index");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.UNIQUE),"list_index");
     }
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
 
+        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
 
 
@@ -68,7 +82,6 @@ public class NitriteDbList implements InfraDbList {
             listAddLock.lock();
             long currentIndex = this.listIndex.get();
             insert(currentIndex, s);
-            listIndex.incrementAndGet();
         }
 
         finally {
@@ -84,7 +97,6 @@ public class NitriteDbList implements InfraDbList {
             listAddLock.lock();
             long currentIndex = this.listIndex.get();
             insert(currentIndex, s);
-            this.listIndex.incrementAndGet();
             return currentIndex;
         }
 
@@ -103,16 +115,12 @@ public class NitriteDbList implements InfraDbList {
 
         try{
             listAddLock.lock();
-            long currentIndex = this.listIndex.get();
             for(int i=0; i<s.size(); i++){
+                long currentIndex = this.listIndex.get();
                 String ss = s.get(i).replaceAll("\\.", "ENCODE_DOT");
-
                 insert(currentIndex, ss);
                 documentIds.add(currentIndex);
-                currentIndex = currentIndex + 1;
             }
-
-            this.listIndex.addAndGet(documentIds.size());
             return documentIds;
         }
 
@@ -132,14 +140,11 @@ public class NitriteDbList implements InfraDbList {
 
         try{
             listAddLock.lock();
-            long currentIndex = this.listIndex.get();
             for(int i=0; i<s.size(); i++){
+                long currentIndex = this.listIndex.get();
                 String ss = s.get(i).replaceAll("\\.", "ENCODE_DOT");
                 insert(currentIndex, ss);
-                currentIndex = currentIndex + 1;
             }
-
-            this.listIndex.addAndGet(s.size());
         }
 
         finally {
@@ -164,18 +169,7 @@ public class NitriteDbList implements InfraDbList {
     public List<String> get(int start, int n) throws Exception {
 
         ArrayList<String> returnList = new ArrayList<>();
-        long index = start;
-        ArrayList<String> list = new ArrayList<>();
-        for(int i=0; i< n; i++){
-
-            String s = find(index);
-            if(s != null){
-                list.add(s);
-            }
-
-            index = index + 1;
-        }
-
+        List<String> list = find(start, n);
         Iterator<String> it = list.iterator();
 
         while (it.hasNext()){
@@ -231,6 +225,12 @@ public class NitriteDbList implements InfraDbList {
 
             listAddLock.lock();
             // Execute the drop table statement
+
+            if(!isDatabaseOpen()){
+
+                throw new IllegalStateException("Nitrite DB is closed and drop db operation has been asked to perform in the list");
+            }
+
             this.nitriteCollection.drop();
         }
 
@@ -246,6 +246,7 @@ public class NitriteDbList implements InfraDbList {
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
         }
 
+        
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json  
         Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
@@ -253,6 +254,8 @@ public class NitriteDbList implements InfraDbList {
         documentMap.put("value", map);
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
+        
+        this.listIndex.incrementAndGet();
     }
 
     private String find(long listIndex) throws Exception{
@@ -261,8 +264,28 @@ public class NitriteDbList implements InfraDbList {
             throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the list");
         }
 
-        Document doc = this.nitriteCollection.find(where("list_index").eq(listIndex)).firstOrNull();
+        DocumentCursor cursor = this.nitriteCollection.find(where("list_index").eq(listIndex));
+
+        FindPlan plan = cursor.getFindPlan();
         
+        if (plan.getIndexScanFilter() != null) {
+           analyticsService.debugEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+        } 
+
+        // 2. Is it falling back to a full collection scan?
+        if (plan.getCollectionScanFilter() != null) {
+            analyticsService.errorEvent("NITRITE_DB_LIST","_message","FAILURE: Index is NOT being USED!. It is table scan being performed", "targeted_fields", "");
+        }
+
+
+        if(cursor.size() > 1){
+
+            analyticsService.errorEvent("NITRITE_DB_LIST","_message","Item at list index " + listIndex + " are most than 1. It should not be the case");
+            throw new IllegalStateException("Number of items at list index " + listIndex + " are most than 1. It should not be the case");
+        }
+
+        Document doc = cursor.firstOrNull();
+
         if(doc != null){
             Map<String, Object> valueMap = doc.get("value", Map.class);
             return objectMapper.writeValueAsString(valueMap);
@@ -272,6 +295,39 @@ public class NitriteDbList implements InfraDbList {
             return null;
         }
     }
+
+    private List<String>  find(long start, long limit) throws Exception{
+
+        List<String> foundDocuments = new ArrayList<>();
+
+        if (!isDatabaseOpen()){
+            throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the list");
+        }
+
+        FindOptions findOptions = new FindOptions();
+        findOptions.limit(limit);
+        DocumentCursor cursor = this.nitriteCollection.find(where("list_index").gte(start), findOptions);
+
+        FindPlan plan = cursor.getFindPlan();
+        
+        if (plan.getIndexScanFilter() != null) {
+           analyticsService.debugEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+        } 
+
+        // 2. Is it falling back to a full collection scan?
+        if (plan.getCollectionScanFilter() != null) {
+            analyticsService.errorEvent("NITRITE_DB_LIST","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
+        }
+
+        for(Document doc: cursor){
+            Map<String, Object> valueMap = doc.get("value", Map.class);
+            String docString =  objectMapper.writeValueAsString(valueMap);
+            foundDocuments.add(docString);
+        }
+
+        return foundDocuments;
+    }
+
 
     private boolean isDatabaseOpen(){
 
