@@ -6,18 +6,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.common.WriteResult;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -56,7 +60,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         this.nitriteCollection = nitriteDb.getCollection(this.keyValueName);
         IndexOptions options = new IndexOptions();
         options.setIndexType(IndexType.NON_UNIQUE);
-        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"key");
+        this.nitriteCollection.createIndex(options,"key");
 
     }
 
@@ -115,15 +119,19 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
     @Override
     public void putList(String key, String value) throws Exception{
 
-        try{
+        
 
+        try{
             keyAddLock.lock();
             key = key.replaceAll("\\.", "ENCODE_DOT");
             value = value.replaceAll("\\.", "ENCODE_DOT");
+            long start = System.currentTimeMillis();
             insert(key, value);
+            System.out.println("Time taken to putlist is " + (System.currentTimeMillis() - start));
         }
         finally {
             keyAddLock.unlock();
+            
         }
     }
 
@@ -173,34 +181,21 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the key value");
         }
 
-        Document existingDoc = this.nitriteCollection.find(where("key").eq(key)).firstOrNull();
         Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<HashMap<String, Object>>() {});
-        
-        if ( existingDoc == null){
-
-            Map<String, Object> documentMap = new HashMap<>();
-            ArrayList<Map<String, Object>> valueList = new ArrayList<>();
-            valueList.add(valueMap);
-                
-            documentMap.put("key", key);
-            documentMap.put("value", valueList);
-            Document document = Document.createDocument(documentMap);
-            nitriteCollection.insert(document);
-        }
-
-        else{
-            // It exists 
-            List<Map<String, Object>> valueList = (List<Map<String, Object>>) existingDoc.get("value");
-            valueList.add(valueMap);
-            existingDoc.put("value", valueList);
-            this.nitriteCollection.update(where("key").eq(key), existingDoc);
-        }
+        Map<String, Object> documentMap = new HashMap<>();        
+        documentMap.put("key", key);
+        documentMap.put("value", valueMap);
+        Document document = Document.createDocument(documentMap);
+        nitriteCollection.insert(document);
 
         keyListSize.incrementAndGet();
+    
     }
 
 
     private List<String> find(String key) throws Exception{
+
+        long start = System.currentTimeMillis();
 
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and find operation has been asked to perform in the key value");
@@ -211,25 +206,28 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         FindPlan plan = cursor.getFindPlan();
         
         if (plan.getIndexScanFilter() != null) {
-           analyticsService.debugEvent("NITRITE_DB_KEYVALUE","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+           analyticsService.debugLogEvent("NITRITE_DB_KEYVALUE","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
         } 
 
         // 2. Is it falling back to a full collection scan?
         if (plan.getCollectionScanFilter() != null) {
-            analyticsService.errorEvent("NITRITE_DB_KEYVALUE","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
+            analyticsService.errorLogEvent("NITRITE_DB_KEYVALUE","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
         }
 
 
         List<Map<String, Object>> valueList = new ArrayList<>();
         for (Document doc : cursor) {
             // Converts the Nitrite Document directly into a standard Java Map
-            valueList = (List<Map<String, Object>>) doc.get("value");
+            Map<String, Object> valueMap = (Map<String,Object>) doc.get("value");
+            valueList.add(valueMap);
         }
 
         List<String> valueStringList = new ArrayList<>();
         for(Map<String, Object> map : valueList){
             valueStringList.add(objectMapper.writeValueAsString(map));
         }
+
+        System.out.println("Time taken to find is " + (System.currentTimeMillis() - start));
         return valueStringList;
 
     }

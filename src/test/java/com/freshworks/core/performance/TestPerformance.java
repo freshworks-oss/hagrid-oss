@@ -4,14 +4,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.hamcrest.Matchers;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.slf4j.MDC;
@@ -22,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.data.four_five_zero.performance.fb.assets.FbUser;
+import com.freshworks.core.data.four_five_zero.performance.fb.assets.non_primitive_assets.FbUserComment;
 import com.freshworks.core.data.four_five_zero.performance.fb.steps.FbUserServer;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
@@ -46,6 +45,7 @@ public class TestPerformance {
     @Autowired
     private ServiceTree serviceTree;
 
+
     @Test
     public void testTenMillionPayloadWhenChildNodeHasMoreDataThanParent() throws Exception {
 
@@ -62,24 +62,27 @@ public class TestPerformance {
                 .put("numberOfPostsEachPage", "10")
                 .put("numberOfPostPagination", "10")
                 .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "10")
+                .put("numberOfCommentsEachPage", "100")
                 .put("numberOfCommentPagination", "100")
                 .put("waitBetweenCommentPaginationInMs", "0")
                 .put("numberOfCommunitiesEachPage", "10")
                 .put("numberOfCommunityPagination", "10")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
+
         MDC.put("mdc_key", "mdc_value");
         SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x);
         syncService.startSync(syncServiceContainer);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
-
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        List<FbUserComment> fbUserCommentList = consumerService.getAssetByAssetType(FbUserComment.class);
         syncService.shutdown();
 
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status(), Matchers.is(1));
+        assertThat(fbUserCommentList.size(), Matchers.is(8));
         Thread.sleep(10000);
     }
 

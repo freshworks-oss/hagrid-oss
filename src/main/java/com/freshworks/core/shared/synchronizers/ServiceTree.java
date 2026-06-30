@@ -84,7 +84,7 @@ public class ServiceTree {
             ServiceNode serviceNode = findMatchingServiceNodeGivenServicePath(root, servicePathParts, 0);
 
             if (serviceNode == null) {
-                analyticsService.errorEvent("SERVICE_TERMINATION", "service_path" ,servicePath, "_message", "can not terminate service");
+                analyticsService.errorLogEvent("SERVICE_TERMINATION", "service_path" ,servicePath, "_message", "can not terminate service");
                 throw new IllegalArgumentException("Can not terminate service: " + servicePath);
             }
 
@@ -104,7 +104,7 @@ public class ServiceTree {
             List<String> servicePathParts = validateServicePath(servicePath);
             ServiceNode serviceNode = findMatchingServiceNodeGivenServicePath(root, servicePathParts, 0);
             if (serviceNode == null) {
-                analyticsService.errorEvent("SERVICE_TERMINATION", "service_path" , servicePath,  "_message", "Can find matching service node");
+                analyticsService.errorLogEvent("SERVICE_TERMINATION", "service_path" , servicePath,  "_message", "Can find matching service node");
                 throw new IllegalArgumentException("Can find matching service node: " + servicePath);
             }
             return serviceNode.getShouldTerminate();
@@ -162,19 +162,19 @@ public class ServiceTree {
 
             ServiceNode serviceNode = findMatchingServiceNodeGivenServicePath(root, servicePathParts, 0);
             if (serviceNode == null) {
-                analyticsService.errorEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because it does not exists in service tree");
+                analyticsService.errorLogEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because it does not exists in service tree");
                 throw new IllegalArgumentException("Can not de-register service: " + servicePath + " because it doesn't exist in service tree");
             }
 
             if (Boolean.FALSE.equals(serviceNode.getChildren().isEmpty())){
-                analyticsService.errorEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because child processes are still running");
+                analyticsService.errorLogEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because child processes are still running");
                 throw new IllegalArgumentException("Can not de-register service: " + servicePath + " because there are child processes still running");
             }
 
             ServiceNode parentServiceNode = findMatchingServiceNodeGivenServicePath(root, parentServicePathParts, 0);
 
             if (parentServiceNode == null) {
-                analyticsService.errorEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because its parent does not exist in service tree");
+                analyticsService.errorLogEvent("DE-REGISTRATION", "service_path" ,servicePath, "_message", "Can not de-register service because its parent does not exist in service tree");
                 throw new IllegalArgumentException("Can not de-register service: " + servicePath + " because it parent node doesn't exist in service tree");
             }
 
@@ -234,7 +234,7 @@ public class ServiceTree {
             // Then add all remaining child nodes
             for(int i = index; i < servicePathParts.size(); i++){
                 node = node.addChild(servicePathParts.get(i));
-                analyticsService.debugEvent("REGISTRATION", "service_path" , servicePathParts.subList(0,i));
+                analyticsService.debugLogEvent("REGISTRATION", "service_path" , servicePathParts.subList(0,i));
                 analyticsService.meterCounterByIncrement("SERVICE_REGISTER", 1);
             }
         }
@@ -278,7 +278,7 @@ public class ServiceTree {
 
         // Remove this node from parent
         parentNode.getChildren().remove(childIdToDeRegister);
-        analyticsService.debugEvent("DE-REGISTRATION", "service_path" , servicePath);
+        analyticsService.debugLogEvent("DE-REGISTRATION", "service_path" , servicePath);
         analyticsService.meterCounterByIncrement("SERVICE_DE_REGISTER", 1);
     }
 
@@ -287,17 +287,17 @@ public class ServiceTree {
         String sanitisedServicePath;
 
         if(servicePath == null){
-            analyticsService.errorEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "Service path cannot be null");
+            analyticsService.errorLogEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "Service path cannot be null");
             throw new IllegalArgumentException("Service path cannot be null");
         }
 
         if(Boolean.FALSE.equals(isServicePathStartsWithSlash(servicePath))){
-            analyticsService.errorEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "service path must start with '/'");
+            analyticsService.errorLogEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "service path must start with '/'");
             throw new IllegalArgumentException("service path must start with '/'");
         }
 
         if(Boolean.TRUE.equals(hasConsecutiveForwardSlashWithoutKeys(servicePath))){
-            analyticsService.errorEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "service path can not have consecutive forward slash like //");
+            analyticsService.errorLogEvent("SERVICE_PATH_VALIDATION", "service_path" ,servicePath, "_message", "service path can not have consecutive forward slash like //");
             throw new IllegalArgumentException("service path can not have consecutive forward slash like //");
         }
 

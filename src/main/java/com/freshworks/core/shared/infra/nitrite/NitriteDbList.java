@@ -269,18 +269,18 @@ public class NitriteDbList implements InfraDbList {
         FindPlan plan = cursor.getFindPlan();
         
         if (plan.getIndexScanFilter() != null) {
-           analyticsService.debugEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+           analyticsService.debugLogEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
         } 
 
         // 2. Is it falling back to a full collection scan?
         if (plan.getCollectionScanFilter() != null) {
-            analyticsService.errorEvent("NITRITE_DB_LIST","_message","FAILURE: Index is NOT being USED!. It is table scan being performed", "targeted_fields", "");
+            analyticsService.errorLogEvent("NITRITE_DB_LIST","_message","FAILURE: Index is NOT being USED!. It is table scan being performed", "targeted_fields", "");
         }
 
 
         if(cursor.size() > 1){
 
-            analyticsService.errorEvent("NITRITE_DB_LIST","_message","Item at list index " + listIndex + " are most than 1. It should not be the case");
+            analyticsService.errorLogEvent("NITRITE_DB_LIST","_message","Item at list index " + listIndex + " are most than 1. It should not be the case");
             throw new IllegalStateException("Number of items at list index " + listIndex + " are most than 1. It should not be the case");
         }
 
@@ -311,12 +311,12 @@ public class NitriteDbList implements InfraDbList {
         FindPlan plan = cursor.getFindPlan();
         
         if (plan.getIndexScanFilter() != null) {
-           analyticsService.debugEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
+           analyticsService.debugLogEvent("NITRITE_DB_LIST","_message","SUCCESS: Index is being USED!", "targeted_fields", plan.getIndexDescriptor().getFields());
         } 
 
         // 2. Is it falling back to a full collection scan?
         if (plan.getCollectionScanFilter() != null) {
-            analyticsService.errorEvent("NITRITE_DB_LIST","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
+            analyticsService.errorLogEvent("NITRITE_DB_LIST","_message","FAILURE: Index is being USED!. It is table scan being performed", "targeted_fields", "");
         }
 
         for(Document doc: cursor){

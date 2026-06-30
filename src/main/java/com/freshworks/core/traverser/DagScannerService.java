@@ -31,7 +31,7 @@ public class DagScannerService {
         Reflections  reflectionForSteps = new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(stepPath)));
 
-        analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
+        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
         DagNode treeNode =   createDAG(reflectionForSteps, stepPath, analyticsService);
 
         List<DagNode> nodeList = treeNode.preOrder();
@@ -41,7 +41,7 @@ public class DagScannerService {
             node.setShortName(dagShortName);
         }
 
-        analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
+        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
         return  treeNode;
     }
 
@@ -153,7 +153,7 @@ public class DagScannerService {
 
         HashMap<String, DagNode> nodeNameWithNodeObjectMap = new HashMap<>();
         DagNode root = new DagNode(ParentStep.class.getName());
-        analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", ParentStep.class.getName());
+        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", ParentStep.class.getName());
 
         Set<Class<?>> steps = getSteps(stepReflections, stepPath);
 

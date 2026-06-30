@@ -4,9 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.core.CustomRegExConditionComparator;
 import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.shared.SyncServiceContainer;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.context.annotation.Conditional;
 
 @Getter
@@ -24,16 +28,17 @@ public class FbUser extends AbstractBean {
     @Override
     public void transform() {
 
-        this.user_id = "1000";
+        int randomId = ThreadLocalRandom.current().nextInt(1, 1000);
+        this.user_id = String.valueOf(randomId);
 
-        int sizeInBytes = 8 * 1024 * 1024; // 8388608 bytes
+        // int sizeInBytes = 8 * 1024 * 1024; // 8388608 bytes
         
-        StringBuilder sb = new StringBuilder(sizeInBytes);
-        for (int i = 0; i < sizeInBytes; i++) {
-            sb.append('a'); 
-        }
+        // StringBuilder sb = new StringBuilder(sizeInBytes);
+        // for (int i = 0; i < sizeInBytes; i++) {
+        //     sb.append('a'); 
+        // }
         
-        this.extra_bytes = sb.toString();
+        // this.extra_bytes = sb.toString();
 
     }
 }

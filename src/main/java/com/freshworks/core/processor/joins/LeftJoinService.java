@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -33,31 +34,44 @@ public class LeftJoinService extends AbstractJoinService {
     @Override
     public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
 
+        String lookupTraceId = UUID.randomUUID().toString();
+
         Class<?> assetClass =  Class.forName(asset, false, this.getClass().getClassLoader());
         checkNotNull(freshJoin, "When a assets depends on multiple items at child node then join condition must be provided with Freshjoin annotation");
-        log.info("Fresh join annotation is mentioned. All Ok ");
 
-        List<HashMap<String, AbstractAsset>> unwrappedAssetAssetsMapList = lookupStagingArea(abstractKeyValue, abstractAsset, freshJoin);
-        log.debug("Saving main bean as key in mongodb {} " , abstractAsset.getClass().getName());
+        this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Left join look up started" , "lookup_trace_id", lookupTraceId, "non_primitive_asset", asset, "incoming_asset", abstractAsset.getClass().getName(), "type" , "left_join", "lookup_name" , freshJoin.uniqueJoinName());
+        List<HashMap<String, AbstractAsset>> unwrappedAssetAssetsMapList = lookupStagingArea(lookupTraceId, abstractKeyValue, abstractAsset, freshJoin);
 
         List<AbstractAsset> returnList  = new ArrayList<>();
 
         if(unwrappedAssetAssetsMapList.isEmpty()){
-            log.warn("Lookup failed for abstract bean {}", abstractAsset.getClass().getName());
-            return returnList;
+
+            this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Perfect look up not found. As Left join, will generate partial asset" , "lookup_trace_id", lookupTraceId, "non_primitive_asset", asset, "incoming_asset", abstractAsset.getClass().getName(), "type" , "left_join", "lookup_name" , freshJoin.uniqueJoinName());
+
+            if (freshJoin.leftClass().getName().contains(abstractAsset.getClass().getName())){
+
+                // Add self abstractAsset and generate non primitive asset
+                HashMap<String, AbstractAsset> map = new HashMap<>();
+                map.put(abstractAsset.getClass().getName(), abstractAsset);
+                unwrappedAssetAssetsMapList.add(map);
+            }
+
         }
         else{
 
-            for(int i=0; i<unwrappedAssetAssetsMapList.size(); i++){
-                List<Method> setterMethods = ProcessorUtility.getAllSetters(assetClass);
-                AbstractAsset abstractAssetClassObject = (AbstractAsset) assetClass.getConstructor().newInstance();
-                JoinUtility.invokeSetterOnAssetObjectByAsset(setterMethods, abstractAssetClassObject, unwrappedAssetAssetsMapList.get(i));
-                log.debug("Asset generated is {}", abstractAssetClassObject.getClass().getName());
-                returnList.add(abstractAssetClassObject);
-            }
-
-            return  returnList;
+            this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Perfect look up found. Will generat primitive assets of size given in tag" , "lookup_trace_id", lookupTraceId, "size" , unwrappedAssetAssetsMapList.size(), "non_primitive_asset", asset, "incoming_asset", abstractAsset.getClass().getName(), "type" , "left_join", "lookup_name" , freshJoin.uniqueJoinName());
         }
+
+        for(int i=0; i<unwrappedAssetAssetsMapList.size(); i++){
+            List<Method> setterMethods = ProcessorUtility.getAllSetters(assetClass);
+            AbstractAsset abstractAssetClassObject = (AbstractAsset) assetClass.getConstructor().newInstance();
+            JoinUtility.invokeSetterOnAssetObjectByAsset(setterMethods, abstractAssetClassObject, unwrappedAssetAssetsMapList.get(i));
+            log.debug("Asset generated is {}", abstractAssetClassObject.getClass().getName());
+            returnList.add(abstractAssetClassObject);
+        }
+
+        return  returnList;
+        
     }
 
     @Override

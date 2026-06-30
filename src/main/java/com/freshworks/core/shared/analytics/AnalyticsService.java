@@ -1,27 +1,23 @@
 package com.freshworks.core.shared.analytics;
 
-import com.freshworks.core.shared.Annotations.AlphaRelease;
-import com.freshworks.core.shared.Annotations.BetaRelease;
-import com.freshworks.core.shared.executor.SharedExecutorService;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import io.micrometer.core.instrument.Gauge;
-import io.micrometer.core.instrument.ImmutableTag;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tag;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import static net.logstash.logback.argument.StructuredArguments.entries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.function.ToDoubleFunction;
 
-import static net.logstash.logback.argument.StructuredArguments.entries;
-import static net.logstash.logback.argument.StructuredArguments.f;
+import com.freshworks.core.shared.Annotations.AlphaRelease;
+import com.freshworks.core.shared.Annotations.BetaRelease;
+import com.google.common.base.Preconditions;
+
+import io.micrometer.core.instrument.Gauge;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -29,8 +25,12 @@ import static net.logstash.logback.argument.StructuredArguments.f;
 public class AnalyticsService {
 
     String namespace;
-    AtomicLong numberOfErrorEvents = new AtomicLong(0);
+    AtomicLong numberOfDebugEvents = new AtomicLong(0);
+    AtomicLong numberOfInfoEvents = new AtomicLong(0);
     AtomicLong numberOfWarningEvents = new AtomicLong(0);
+    AtomicLong numberOfErrorEvents = new AtomicLong(0);
+
+    ConcurrentHashMap<String, AtomicLong> appEventsMap = new ConcurrentHashMap<>();
 
     MeterRegistry meterRegistry;
 
@@ -40,7 +40,8 @@ public class AnalyticsService {
 
     String NAMESPACE_KEY = "namespace";
 
-    Boolean shouldPassTagsToMeterRegistry;
+    boolean shouldPassLogEventTagsToMeterRegistry = false;
+    boolean shouldPrintSummaryOnDestroy = true;
 
 
     protected AnalyticsService( MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility) {
@@ -50,10 +51,15 @@ public class AnalyticsService {
 
     protected void configure(String namespace, Boolean shouldPassTagsToMeterRegistry){
         this.namespace = namespace;
-        this.shouldPassTagsToMeterRegistry = shouldPassTagsToMeterRegistry;
+        this.shouldPassLogEventTagsToMeterRegistry = shouldPassTagsToMeterRegistry;
     }
 
-    public void debugEvent(String eventName, Object... tags){
+    /**
+     * Use this method to log a event in log file
+     * @param eventName
+     * @param tags
+     */
+    public void debugLogEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
@@ -62,13 +68,24 @@ public class AnalyticsService {
         addCallerInformation(s);
         log.debug(eventName, entries(s));
 
+        // Here I am firing event to meterRegistry
+        fireMeter(eventName, tags);
+
+        numberOfDebugEvents.incrementAndGet();
+
         // Here I am making a callback called if this event type is present
         if(consumerHashMap.containsKey(eventName)){
             consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
         }
     }
 
-    public void infoEvent(String eventName, Object... tags){
+    /**
+     * Use this method to log a event in log file
+     * @param eventName
+     * @param tags
+     */
+
+    public void infoLogEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
@@ -80,6 +97,8 @@ public class AnalyticsService {
         // Here I am firing event to meterRegistry
         fireMeter(eventName, tags);
 
+        numberOfInfoEvents.incrementAndGet();
+
         // Here I am making a callback called if this event type is present
         if(consumerHashMap.containsKey(eventName)){
             consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
@@ -87,7 +106,12 @@ public class AnalyticsService {
     }
 
 
-    public void warnEvent(String eventName, Object... tags){
+    /**
+     * Use this method to log a event in log file
+     * @param eventName
+     * @param tags
+     */
+    public void warnLogEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
@@ -107,7 +131,12 @@ public class AnalyticsService {
         }
     }
 
-    public void errorEvent(String eventName, Object... tags){
+    /**
+     * Use this method to log a event in log file
+     * @param eventName
+     * @param tags
+     */
+    public void errorLogEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
@@ -128,16 +157,27 @@ public class AnalyticsService {
     }
 
     /**
-     * Use simpleEvent to fire event on which other services may be listening on. This event is not logged in any of logger or metrics
+     * Use app event method when you want to fire an event without logging it 
      * @param eventName
      * @param tags
      */
-    public void simpleEvent(String eventName, Object... tags){
+    public void appEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
         Map<String, Object> s = analyticsUtility.processTagListIntoMap(tags);
         s.put(NAMESPACE_KEY, namespace);
+
+        // Here I am firing event to meterRegistry
+        fireMeter(eventName, tags);
+
+        if(appEventsMap.contains(eventName)){
+            AtomicLong count = appEventsMap.get(eventName);
+            count.incrementAndGet();
+        }
+        else{
+            appEventsMap.put(eventName, new AtomicLong(0));
+        }
 
         // Here I am making a callback called if this event type is present
         if(consumerHashMap.containsKey(eventName)){
@@ -208,6 +248,20 @@ public class AnalyticsService {
     }
 
 
+    public boolean anyDebugEvent(){
+
+        double d =  numberOfDebugEvents.get();
+
+        return d != 0;
+    }
+
+    public boolean anyInfoEvent(){
+
+        double d =  numberOfInfoEvents.get();
+
+        return d != 0;
+    }
+
     public boolean anyWarnEvent(){
 
         double d =  numberOfWarningEvents.get();
@@ -221,6 +275,22 @@ public class AnalyticsService {
         return d != 0;
     }
 
+    public boolean anyAppEvent(){
+
+        double d = appEventsMap.keySet().size();
+        return d != 0;
+    }
+
+
+    public double howManyDebugEvent(){
+
+        return numberOfDebugEvents.get();
+    }
+
+    public double howManyInfoEvent(){
+
+        return numberOfInfoEvents.get();
+    }
 
     public double howManyWarnEvent(){
 
@@ -232,6 +302,51 @@ public class AnalyticsService {
         return numberOfErrorEvents.get();
     }
 
+    public double howManyAppEvent(){
+
+        return appEventsMap.keySet().size();
+    }
+
+
+    public void destroy(){
+
+        if (shouldPrintSummaryOnDestroy){
+
+            System.out.println("Below is the analytics Report");
+
+            String anyWarning = anyWarnEvent() ? "yes" : "false";
+            System.out.println("Any Warning Event ? " + anyWarning);
+
+            String anyError = anyErrorEvent() ? "yes" : "false";
+            System.out.println("Any Error Event ? " + anyError);
+
+            String anyInfo = anyInfoEvent() ? "yes" : "false";
+            System.out.println("Any Info Event ? " + anyInfo);
+
+            String anyDebug = anyDebugEvent() ? "yes" : "false";
+            System.out.println("Any Debug Event ? " + anyDebug);
+
+            String anyApp = anyAppEvent() ? "yes" : "false";
+            System.out.println("Any App Event ? " + anyApp);
+
+
+            System.out.println("No. warn events ? " + numberOfWarningEvents.get());
+
+            System.out.println("No. error events ? " + numberOfErrorEvents.get());
+
+            System.out.println("No. info events ? " + numberOfInfoEvents.get());
+
+            System.out.println("No. Debug events ? " + numberOfDebugEvents.get());
+
+            System.out.println("No. App events ? " + appEventsMap.keySet().size());
+
+            System.out.println("List of App Events fired are below");
+            for(Map.Entry<String, AtomicLong> entry: appEventsMap.entrySet()){
+                System.out.println(entry.getKey() + " : " + entry.getValue());
+            }
+        }
+
+    }
 
     /**
      * Register a consumer which will be called whenever a event with given name is fired anywhere across application
@@ -258,7 +373,7 @@ public class AnalyticsService {
 
         String[] meterTagList = new String[s.length];
 
-        if(shouldPassTagsToMeterRegistry && s.length %2 == 0){
+        if(shouldPassLogEventTagsToMeterRegistry && s.length %2 == 0){
             int i = 0;
             for(Object o : s){
                 meterTagList[i] = String.valueOf(o);

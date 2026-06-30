@@ -70,7 +70,7 @@ public class DagTraversalService implements Callable<Void> {
 
         try{
 
-            analyticsService.infoEvent("HAGRID_DAG",  "_message", "DagTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.infoLogEvent("HAGRID_DAG",  "_message", "DagTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
             MDC.setContextMap(mainThreadMdcCopy);
             traverser();
 
@@ -93,7 +93,7 @@ public class DagTraversalService implements Callable<Void> {
 
                     if(treeNode.getNodeOverallTraverserStatus() == 0 ){
                         String errorMessage = "One of the DagNode " + treeNode.getName() + " is still in progress with status " + treeNode.getNodeOverallTraverserStatus() + " while DagTraversing has returned. It should not be the case";
-                        analyticsService.errorEvent("HAGRID_DAG", "_message", errorMessage,"uuid", uuid, "namespace", namespace.getNamespace());
+                        analyticsService.errorLogEvent("HAGRID_DAG", "_message", errorMessage,"uuid", uuid, "namespace", namespace.getNamespace());
                         throw new IllegalStateException(errorMessage);
                     }
                     if(treeNode.getNodeOverallTraverserStatus() == -1){
@@ -104,12 +104,12 @@ public class DagTraversalService implements Callable<Void> {
 
                 if(isTraverserSuccessful){
                     syncStatusService.setTraverserInSuccessful();
-                    analyticsService.infoEvent("HAGRID_DAG",  "_message", "returning because sync is completed", "uuid", uuid, "namespace", namespace.getNamespace());
-                    analyticsService.infoEvent("HAGRID_DAG",  "_message", "Sync is successful", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_DAG",  "_message", "returning because sync is completed", "uuid", uuid, "namespace", namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_DAG",  "_message", "Sync is successful", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
                 else{
                     syncStatusService.setTraverserInFailed();
-                    analyticsService.warnEvent("HAGRID_DAG",  "_message", "sync has failed because one or more node has failed status", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.warnLogEvent("HAGRID_DAG",  "_message", "sync has failed because one or more node has failed status", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
             }
         }
@@ -117,7 +117,7 @@ public class DagTraversalService implements Callable<Void> {
         catch(Exception e){
 
             syncStatusService.setTraverserInFailed();
-            analyticsService.errorEvent("HAGRID_DAG", "_message", e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e),  "uuid" , uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.errorLogEvent("HAGRID_DAG", "_message", e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e),  "uuid" , uuid, "namespace" ,namespace.getNamespace());
         }
 
         finally {

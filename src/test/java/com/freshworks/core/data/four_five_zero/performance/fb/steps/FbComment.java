@@ -51,7 +51,7 @@ public class FbComment extends HttpAbstractStep {
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
         
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "setup");
         if(baggageMap.containsKey("numberOfCommentsEachPage")){
             numberOfCommentsEachPage = Integer.parseInt(baggageMap.get("numberOfCommentsEachPage"));
             numberOfCommentPagination = Integer.parseInt(baggageMap.get("numberOfCommentPagination"));
@@ -61,13 +61,13 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "startSync");
         try{
 
             JsonNode data = parentJsonObject[0];
@@ -87,7 +87,7 @@ public class FbComment extends HttpAbstractStep {
 
             httpRequestResponse.setRequest(httpRequest);
 
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             count = count + 1;
             return httpRequestResponse;
@@ -107,8 +107,8 @@ public class FbComment extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             JsonNode postData = parentJsonObject[0];
             String postId = postData.get("post_id").asText();
@@ -140,7 +140,7 @@ public class FbComment extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -151,15 +151,15 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
-        analyticsService.infoEvent( "THIRD_PARTY_API_INVALID_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoLogEvent( "THIRD_PARTY_API_INVALID_RESPONSE");
 
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isSyncComplete");
 
         if(count < numberOfCommentPagination){
             return false;
@@ -172,8 +172,8 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -194,6 +194,6 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "closeSync");
     }
 }
