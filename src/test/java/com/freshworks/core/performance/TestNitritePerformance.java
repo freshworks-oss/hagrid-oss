@@ -55,7 +55,7 @@ public class TestNitritePerformance {
 
 
         Nitrite nitriteDb = Nitrite.builder()
-                        .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/test-db/4.3.3/same_key"))
+                        .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/test-db/heavy-doc"))
                         .openOrCreate();
 
         NitriteCollection nitriteCollection = nitriteDb.getCollection("test_collection");
@@ -63,16 +63,18 @@ public class TestNitritePerformance {
         nitriteCollection.dropAllIndices();
 
         IndexOptions options = new IndexOptions();
-        options.setIndexType(IndexType.NON_UNIQUE);
+        options.setIndexType(IndexType.UNIQUE);
         nitriteCollection.createIndex(options,"key");
 
         options = new IndexOptions();
-        options.setIndexType(IndexType.FULL_TEXT);
+        options.setIndexType(IndexType.NON_UNIQUE);
         nitriteCollection.createIndex(options, "value");
 
+        int targetSizeInBytes = 10 * 1024 * 1024;
         for(int i=0 ; i<1000000; i++){
             long start = System.currentTimeMillis();
-            Document document = Document.createDocument("key", 100).put("value", String.valueOf(i));
+            String value = "A".repeat(targetSizeInBytes); 
+            Document document = Document.createDocument("key", i).put("value", value);
             nitriteCollection.insert(document);
             System.out.println("Document is inserted in " + (System.currentTimeMillis() - start));
         }
