@@ -13,6 +13,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.dizitart.no2.filters.FluentFilter.where;
+
+import org.checkerframework.checker.units.qual.s;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
@@ -53,7 +55,7 @@ public class TestNitritePerformance {
 
 
         Nitrite nitriteDb = Nitrite.builder()
-                        .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/test-db/4.3.3"))
+                        .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/test-db/4.3.3/same_key"))
                         .openOrCreate();
 
         NitriteCollection nitriteCollection = nitriteDb.getCollection("test_collection");
@@ -69,9 +71,10 @@ public class TestNitritePerformance {
         nitriteCollection.createIndex(options, "value");
 
         for(int i=0 ; i<1000000; i++){
-            Document document = Document.createDocument("key", i).put("value", String.valueOf(i));
+            long start = System.currentTimeMillis();
+            Document document = Document.createDocument("key", 100).put("value", String.valueOf(i));
             nitriteCollection.insert(document);
-            System.out.println("Document is inserted");
+            System.out.println("Document is inserted in " + (System.currentTimeMillis() - start));
         }
 
     }

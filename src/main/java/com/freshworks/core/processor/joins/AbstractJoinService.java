@@ -79,11 +79,8 @@ public abstract class AbstractJoinService {
             String fieldValue = JoinUtility.getLookupFieldValueOfRightClass(abstractAsset, freshJoin);
 
             this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Performing Lookup" ,"lookup_trace_id", lookupTraceId, "left_or_right", "right class", "incoming_asset", abstractAsset.getClass().getName(), "lookup_key" , fieldValue , "lookup_name" , freshJoin.uniqueJoinName());
-
-            long start = System.currentTimeMillis();
             abstractKeyValue.putList(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_right",objectMapper.writeValueAsString(abstractAsset));
             bloomFilter.put(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_right");
-            System.out.println("Time taken to put key is " + (System.currentTimeMillis() - start));
 
             Boolean doesLeftLookupExists = bloomFilter.mightContain(freshJoin.uniqueJoinName() + "/" +fieldValue + "_left");
             List<String> listOfAllAbstractAssets = new ArrayList<>();

@@ -227,7 +227,6 @@ public class ProcessorTaskService implements Callable<Void> {
     // Main method to create new assets from this abstractAsset
     protected void processAssetForAsset(AbstractAsset abstractAsset) throws Exception {
         Set<String> assetAssetDependencyKeySet = assetAssetDependencyMap.keySet();
-        long start = 0 ;
         for (String asset : assetAssetDependencyKeySet) {
             Class<?> assetClass = ProcessorUtility.getClassByClassName(asset);
 
