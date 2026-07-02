@@ -33,19 +33,20 @@ So basically, we are going to run Hagrid on our local computer and it will conne
 
 Architecture would be something like this 
 
-![alt text](../assets/images/setup/docker-setup.png)
 
+``` mermaid
+flowchart TD
+    A[Hagrid] -->|1. fetch-data| C
 
-As you can see Hagrid should be able to connect to `mongodb` and `django` service running inside dockers, hence we need to modify `/etc/hosts` file to reflect below 
-
+        subgraph B[Docker-container]
+            C[django-app]
+            D[prometheus] 
+            E[grafanna]
+        end
+    
+    D -->|2. scrap metrics| A
+    E --> |3. visualisation|D
 ```
-127.0.0.1	localhost mongodb django
-
-```
-
-Once this is done, then launch docker container except `hagrid` container like this 
-
-![docker_launch_setup](../assets/images/setup/docker_launch_command.png)
 
 
 After this you should be able to access following services 
