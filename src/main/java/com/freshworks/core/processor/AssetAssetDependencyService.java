@@ -63,7 +63,6 @@ public class AssetAssetDependencyService {
                 List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(assetClass), assetPath);
                 for (String dependent :
                         dependentClassList) {
-                            System.out.println("Complex asset name is " + assetClass.getName());
                     connectorConfigItemTable.put(assetClass.getName(), dependent);
                 }
             }

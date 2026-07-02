@@ -109,8 +109,14 @@ public class ProcessorUtility {
                         assetsReadyToBePublishedListInFreshIndex.add(j);
                     }
 
+                    long currentTime = System.currentTimeMillis();
+
                     List<Long> documentIdList = infraService.getPublisherList()
                             .addAndGetIndexBulk(assetsReadyToBePublishedListInPublisherQueue);
+                    long endTime = System.currentTimeMillis();
+                    long diff = endTime - currentTime;
+                    analyticsService.debugLogEvent("PROCESSOR_UTILITY",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentIdList.size(), "execute_time_taken_ms", diff);
+
                     if (documentIdList.size() != assetsReadyToBePublishedList.size()) {
                         return "Assets ready to be published are not equal to assets published in publisher list";
                     }

@@ -78,7 +78,37 @@ public class TestNitritePerformance {
             nitriteCollection.insert(document);
             System.out.println("Document is inserted in " + (System.currentTimeMillis() - start));
         }
+    }
 
+
+    @Test
+    public void populateNitriteWith10MRecordsHavingSameKey(){
+
+
+        Nitrite nitriteDb = Nitrite.builder()
+                        .loadModule(new RocksDBModule("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/test-db/same_key"))
+                        .openOrCreate();
+
+        NitriteCollection nitriteCollection = nitriteDb.getCollection("test_collection");
+
+        nitriteCollection.dropAllIndices();
+
+        IndexOptions options = new IndexOptions();
+        options.setIndexType(IndexType.NON_UNIQUE);
+        nitriteCollection.createIndex(options,"key");
+
+        options = new IndexOptions();
+        options.setIndexType(IndexType.NON_UNIQUE);
+        nitriteCollection.createIndex(options, "value");
+
+        int targetSizeInBytes = 1024;
+        for(int i=0 ; i<1000000; i++){
+            long start = System.currentTimeMillis();
+            String value = "A".repeat(targetSizeInBytes); 
+            Document document = Document.createDocument("key", "1000").put("value", value);
+            nitriteCollection.insert(document);
+            System.out.println("Document is inserted in " + (System.currentTimeMillis() - start));
+        }
     }
 
     private void resetNitriteDbKeyValue(String searchKey,  NitriteCollection nitriteCollection){

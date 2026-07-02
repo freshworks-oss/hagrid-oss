@@ -28,7 +28,7 @@ public class FbUser extends AbstractBean {
     @Override
     public void transform() {
 
-        int randomId = ThreadLocalRandom.current().nextInt(1, 2);
+        int randomId = 1000;
         this.user_id = String.valueOf(randomId);
 
         // int sizeInBytes = 8 * 1024 * 1024; // 8388608 bytes

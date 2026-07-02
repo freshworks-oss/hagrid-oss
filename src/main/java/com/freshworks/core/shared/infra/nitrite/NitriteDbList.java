@@ -242,6 +242,7 @@ public class NitriteDbList implements InfraDbList {
 
     private void insert(long listIndex, String item) throws Exception{
         
+        
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
         }
@@ -256,6 +257,7 @@ public class NitriteDbList implements InfraDbList {
         nitriteCollection.insert(document);
         
         this.listIndex.incrementAndGet();
+
     }
 
     private String find(long listIndex) throws Exception{

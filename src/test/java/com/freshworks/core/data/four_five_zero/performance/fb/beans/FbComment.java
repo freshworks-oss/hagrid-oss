@@ -26,7 +26,7 @@ public class FbComment extends AbstractBean {
     @Override
     public void transform() {
 
-        int randomId = ThreadLocalRandom.current().nextInt(1, 2);
+        int randomId = 1000;
         this.user_id = String.valueOf(randomId);
     }
 }

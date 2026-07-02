@@ -140,7 +140,6 @@ public class ProcessorTaskService implements Callable<Void> {
 
                 if (Boolean.FALSE.equals(Thread.interrupted())) {
                   abstractAssetList = processBeanForAsset(bean);
-                  long start = System.currentTimeMillis();
                    while(true) {
                        
                         if (abstractAssetList.isEmpty()){
@@ -148,8 +147,6 @@ public class ProcessorTaskService implements Callable<Void> {
                         }
                         processAssetForAsset(abstractAssetList.pop());           
                    }
-
-                   System.out.println("****Time taken to process non primitive asset is " + (System.currentTimeMillis() - start));
 
                 } else {
                     // If thread is interrupted or asked to terminate then skip the list and publish

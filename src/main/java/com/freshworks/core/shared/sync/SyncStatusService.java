@@ -144,7 +144,6 @@ public final class SyncStatusService {
 
     public synchronized int getSyncStatus() {
 
-        System.out.println("Thread id is " + Thread.currentThread().getId());
         System.out.println("traverser status is " + getTraverser_status());
         System.out.println("processor status is " + getProcessor_status());
 

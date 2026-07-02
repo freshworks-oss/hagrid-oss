@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.freshworks</groupId>
         <artifactId>internal-pom</artifactId>
-        <version>spring-4.0.0</version>
+        <version>spring-4.0.1</version>
     </parent>
 
     <groupId>com.freshworks</groupId>
     <artifactId>Hagrid</artifactId>
-    <version>4.5.0</version>
+    <version>4.6.0</version>
     <name>Hagrid</name>
     <description>High performance generic asset discovery framework</description>
     <url>https://github.com/freshdesk/hagrid</url>
@@ -52,18 +52,6 @@
             <groupId>com.freshworks</groupId>
             <artifactId>freshindex</artifactId>
             <version>1.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.dizitart</groupId>
-            <artifactId>nitrite</artifactId>
-            <version>4.4.0</version>
-        </dependency>
-    
-        <dependency>
-            <groupId>org.dizitart</groupId>
-            <artifactId>nitrite-rocksdb-adapter</artifactId>
-            <version>4.4.0</version>
         </dependency>
     </dependencies>
 

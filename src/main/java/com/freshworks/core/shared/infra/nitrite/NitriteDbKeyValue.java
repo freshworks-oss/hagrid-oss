@@ -118,9 +118,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     @Override
     public void putList(String key, String value) throws Exception{
-        long start = 0;
         try{
-            start = System.currentTimeMillis();
             keyAddLock.lock();
             
             key = key.replaceAll("\\.", "ENCODE_DOT");
@@ -130,8 +128,6 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         }
         finally {
             keyAddLock.unlock();
-            System.out.println("Time taken to put key is " + (System.currentTimeMillis() - start));
-            
         }
     }
 
@@ -176,7 +172,6 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
     private void insert(String key, String value) throws Exception{
 
-        long start = System.currentTimeMillis();
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the key value");
         }
@@ -189,10 +184,8 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         Document document = Document.createDocument(documentMap);
 
         nitriteCollection.insert(document);
-        System.out.println("Time taken to insert is " + (System.currentTimeMillis() - start));
 
-        keyListSize.incrementAndGet();
-    
+        keyListSize.incrementAndGet();    
     }
 
 
@@ -216,14 +209,12 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
         List<Map<String, Object>> valueList = new ArrayList();
         
-        long start = System.currentTimeMillis();
         for(Document doc : cursor){
 
             Map<String, Object> valueMap = (Map<String, Object>) doc.get("value");
             valueList.add(valueMap);
         }
 
-        System.out.println("Time taken to find is " + (System.currentTimeMillis() - start));
 
         List<String> valueStringList = new ArrayList<>();
         for(Map<String, Object> map : valueList){
