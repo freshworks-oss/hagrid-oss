@@ -26,13 +26,6 @@ Next, look at the directory `docker-setup-for-testing`. This directory contains 
 
 1. `Django` - It acts as third-party server which has dummy APIs to simulate `facebook` api case
 2. `Grafana` AND `Prometheus` - It is used to view metrics that Hagrid generated while fetching data from third-party.
-3. `Hagrid` - This container checkout branches that are passed via `docker-compose.yml` and run test cases on that branch.
-      1. For `playgound` set up we **DO NOT NEED** this container. Hence **we will scale it down to 0** 
-      2. We need this container only during development of `Hagrid` framework and branch testing. 
-4. `mongodb` - Hagrid internally uses two kind of storage to store beans and assets 
-      1. `persistent` - Which means Hagrid should use `mongodb` as its infra layer to store intermediate data i.e `beans` . Use `persistent` when your connector is going to fetch huge amount of data.  
-      2. `inmemory` -  Which means Hagrid should use `RAM` as its infra layer to store intermediate data i.e `beans`. Use `immemory` when your connector fetches very small amount of data.
-      3. For this playground set up we will use `persistent` i.e `mongoDb` container to store data
 
 
 
