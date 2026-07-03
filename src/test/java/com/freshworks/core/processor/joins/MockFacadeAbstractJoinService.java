@@ -47,8 +47,8 @@ public class MockFacadeAbstractJoinService implements MockFacadeInterface {
 
         abstractJoinService = applicationContext.getBean(AbstractJoinService.class);
         AbstractJoinService abstractJoinServiceSpy = Mockito.spy(abstractJoinService);
-        doNothing().when(abstractJoinServiceSpy).configure(any());
-        doAnswer(lookupStagingArea.answer()).when(abstractJoinServiceSpy).lookupStagingArea(any(), any(), any());
+        doNothing().when(abstractJoinServiceSpy).configure(any(), any());
+        doAnswer(lookupStagingArea.answer()).when(abstractJoinServiceSpy).lookupStagingArea(any(), any(), any(), any());
 
         return abstractJoinServiceSpy;
     }

@@ -10,17 +10,35 @@ import org.dizitart.no2.Nitrite;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.infra.InfraConfigService;
+import com.freshworks.core.shared.sync.MockFacadeSyncService;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
 public class TestNitriteDbList {
 
     Nitrite nitriteDb;
+
+    @Autowired
+    MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
+
+    @Autowired
+    AnalyticsFactory analyticsFactory;
+
     @BeforeEach
     public void setup(){
         nitriteDb = Nitrite.builder()
             .openOrCreate();
+
+        mockFacadeSyncServiceContainer.configure().build();
     }
 
 
@@ -29,6 +47,16 @@ public class TestNitriteDbList {
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
 
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
+        
         nitriteDbList.add("{\"name\": \"amit\"}");
         assertThat(nitriteDbList.getListIndex().get(), is(1L));
         nitriteDbList.delete();
@@ -36,21 +64,41 @@ public class TestNitriteDbList {
 
     @Test
     public void testAddListMethod() throws Exception{
-        NitriteDbList h2DbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
+        NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         ArrayList<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
 
-        h2DbList.add(list);
-        assertThat(h2DbList.getListIndex().get(), is(2L));
-        h2DbList.delete();
+        nitriteDbList.add(list);
+        assertThat(nitriteDbList.getListIndex().get(), is(2L));
+        nitriteDbList.delete();
     }
 
     @Test
     public void testAddAndGetIndexBulkMethod() throws Exception{
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         ArrayList<String> list = new ArrayList<>();
 
@@ -73,6 +121,16 @@ public class TestNitriteDbList {
     public void testAddAndGetIndexMethod() throws Exception{
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
+
         Long index = nitriteDbList.addAndGetIndex("{\"name\": \"amit\"}");
         assertThat(index, is(0L));
         nitriteDbList.delete();
@@ -82,6 +140,16 @@ public class TestNitriteDbList {
     @Test
     public void testGetByIndexMethod() throws Exception {
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         nitriteDbList.add("{\"name\": \"amit\"}");
         nitriteDbList.add("{\"name\": \"rahul\"}");
@@ -93,6 +161,16 @@ public class TestNitriteDbList {
     @Test
     public void testGetByIndexNElementsMethod() throws Exception {
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         nitriteDbList.add("{\"name\": \"amit\"}");
         nitriteDbList.add("{\"name\": \"rahul\"}");
@@ -111,6 +189,16 @@ public class TestNitriteDbList {
     public void testGetByDocumentIdNElementsMethod() throws Exception {
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         nitriteDbList.add("{\"name\": \"amit\"}");
         nitriteDbList.add("{\"name\": \"rahul\"}");
@@ -131,6 +219,16 @@ public class TestNitriteDbList {
     @Test
     public void testIsEndOfListReachedMethod() throws Exception{
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbList.configure(syncServiceContainer);
 
         nitriteDbList.add("{\"name\": \"amit\"}");
         nitriteDbList.add("{\"name\": \"rahul\"}");

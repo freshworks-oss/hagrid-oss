@@ -113,7 +113,7 @@ public abstract class AbstractJoinService {
     }
 
 
-    public abstract List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception;
+    public abstract List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception;
 
     public abstract AbstractAsset getPrimitiveAsset(String assetName, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception;
 

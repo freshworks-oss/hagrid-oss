@@ -32,7 +32,7 @@ public class LeftJoinService extends AbstractJoinService {
     }
 
     @Override
-    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
+    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception {
 
         String lookupTraceId = UUID.randomUUID().toString();
 

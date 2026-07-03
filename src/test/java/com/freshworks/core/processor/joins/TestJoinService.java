@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.core.processor.MockFacadeAssetAssetDependencyService;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.Namespace;
@@ -32,6 +34,8 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.freshworks.core.TestUtility;
+import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUsageAsset;
+import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUserAsset;
 import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
 import com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUsageBean;
 
@@ -49,6 +53,9 @@ public class TestJoinService {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
     @Autowired
+    MockFacadeAssetAssetDependencyService mockAssetAssetDependencyService;
+
+    @Autowired
     AnalyticsFactory analyticsFactory;
 
     Class<? extends AbstractAsset> fbUserUsageAsset;
@@ -63,6 +70,7 @@ public class TestJoinService {
 
         mockFacadeInfraConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
+        mockAssetAssetDependencyService.configure().build();
     }
 
     @Test
@@ -112,21 +120,20 @@ public class TestJoinService {
         ObjectMapper objectMapper = new ObjectMapper();
         FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
 
+        FbUserUsageAsset fbUserUsageAsset = (FbUserUsageAsset) this.fbUserUsageAsset.getDeclaredConstructor().newInstance();
+        FbUserAsset fbUserAsset = (FbUserAsset) this.fbUserAsset.getDeclaredConstructor().newInstance();
+        fbUserAsset.setUserId("aggarwal");
+        fbUserAsset.setUserName("amit");
 
-        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUserAsset, "setUserId", "aggarwal");
-        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
 
-        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
-        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
-
+        FbUsageAsset fbUsageAsset = (FbUsageAsset) this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        fbUsageAsset.setUserId("aggarwal");
+        fbUsageAsset.setCreatedAt("2026-01-01");
+    
 
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
 
-        leftJoinService.configure(bloomFilter);
-    
         InmemoryService inMemoryService = new InmemoryService();   
         
         Namespace namespace = new Namespace();
@@ -139,6 +146,7 @@ public class TestJoinService {
         .add(analyticsService, AnalyticsService.class)
         .build();
 
+        leftJoinService.configure(syncServiceContainer, bloomFilter);
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
@@ -146,23 +154,21 @@ public class TestJoinService {
         // Simulate that left bean has arrived already
         // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
-        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
-
-        // String s = objectMapper.writeValueAsString(joinAssetData);
-        // System.out.print(s);
+        List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
         assertThat(joinAssetData.size(), Matchers.is(1));
-        HashMap<String, AbstractAsset> assetMap = joinAssetData.get(0);
-        assertThat(assetMap.size(), Matchers.is(1));
+        FbUserUsageAsset partiallyFormedUserUsageAsset = (FbUserUsageAsset) joinAssetData.get(0);
+        assertThat(partiallyFormedUserUsageAsset.getUserId(), Matchers.is(fbUserAsset.getUserId()));
+        assertThat(partiallyFormedUserUsageAsset.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(partiallyFormedUserUsageAsset.getCreatedAt(), Matchers.nullValue());
 
-        List<HashMap<String, AbstractAsset>> joinAssetData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
-
-        String s = objectMapper.writeValueAsString(joinAssetData1);
-        System.out.print(s);
+        List<AbstractAsset> joinAssetData1 = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUsageAsset, freshJoin);
 
         assertThat(joinAssetData1.size(), Matchers.is(1));
-        HashMap<String, AbstractAsset> assetMap1 = joinAssetData1.get(0);
-        assertThat(assetMap1.size(), Matchers.is(2));
+        FbUserUsageAsset fullyFormedUserUsageAsset = (FbUserUsageAsset) joinAssetData1.get(0);
+        assertThat(fullyFormedUserUsageAsset.getUserId(), Matchers.is(fbUserAsset.getUserId()));
+        assertThat(fullyFormedUserUsageAsset.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(fullyFormedUserUsageAsset.getCreatedAt(), Matchers.is(fbUsageAsset.getCreatedAt()));
     }
 
     @Test
@@ -174,22 +180,18 @@ public class TestJoinService {
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
-
         FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
+        FbUserUsageAsset fbUserUsageAsset = (FbUserUsageAsset) this.fbUserUsageAsset.getDeclaredConstructor().newInstance();
 
+        FbUserAsset fbUserAsset = (FbUserAsset) this.fbUserAsset.getDeclaredConstructor().newInstance();
+        fbUserAsset.setUserName("amit");
 
-        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
-
-        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
-        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
-
-
+        FbUsageAsset fbUsageAsset = (FbUsageAsset) this.fbUsageAsset.getDeclaredConstructor().newInstance();
+        fbUsageAsset.setUserId("aggarwal");
+        fbUsageAsset.setCreatedAt("2026-01-01");
+        
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
-
-        leftJoinService.configure(bloomFilter);
     
         InmemoryService inMemoryService = new InmemoryService();   
         
@@ -203,24 +205,22 @@ public class TestJoinService {
         .add(analyticsService, AnalyticsService.class)
         .build();
 
+        leftJoinService.configure(syncServiceContainer, bloomFilter);
+
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
 
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
-
-        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
+        List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
         assertThat(joinAssetData.size(), Matchers.is(1));
-        HashMap<String, AbstractAsset> assetMap = joinAssetData.get(0);
-        assertThat(assetMap.size(), Matchers.is(1));
+        FbUserUsageAsset partiallyFormedUserUsageAsset = (FbUserUsageAsset) joinAssetData.get(0);
+        assertThat(partiallyFormedUserUsageAsset.getUserId(), Matchers.nullValue());
+        assertThat(partiallyFormedUserUsageAsset.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(partiallyFormedUserUsageAsset.getCreatedAt(), Matchers.nullValue());
 
-        List<HashMap<String, AbstractAsset>> joinAssetData1 = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
-
-        String s = objectMapper.writeValueAsString(joinAssetData1);
-        System.out.print(s);
-
+        // If keys are not matched then for right bean no asset will be generated
+        List<AbstractAsset> joinAssetData1 = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUsageAsset, freshJoin);
         assertThat(joinAssetData1.size(), Matchers.is(0));
     }
 
@@ -236,26 +236,23 @@ public class TestJoinService {
         ObjectMapper objectMapper = new ObjectMapper();
         FreshJoin freshJoin = fbUserUsageAsset.getAnnotation(FreshJoin.class);
 
+        FbUserUsageAsset fbUserUsageAsset = (FbUserUsageAsset) this.fbUserUsageAsset.getDeclaredConstructor().newInstance();
 
-        AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUserAsset, "setUserId", "user_id_1234");
-        TestUtility.callMethod(fbUserAsset, "setUserName", "amit");
+        FbUserAsset fbUserAsset = (FbUserAsset) this.fbUserAsset.getDeclaredConstructor().newInstance();
+        fbUserAsset.setUserId("user_id_1234");
+        fbUserAsset.setUserName("amit");
 
+        FbUserAsset fbUserAsset1 = (FbUserAsset) this.fbUserAsset.getDeclaredConstructor().newInstance();
+        fbUserAsset1.setUserId("user_id_1234");
+        fbUserAsset1.setUserName("praveen");
 
-        AbstractAsset fbUserAsset1 = this.fbUserAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUserAsset1, "setUserId", "user_id_1234");
-        TestUtility.callMethod(fbUserAsset1, "setUserName", "praveen");
+        FbUsageAsset fbUsageAsset = (FbUsageAsset) this.fbUsageAsset.getDeclaredConstructor().newInstance();
 
-
-        AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
-        TestUtility.callMethod(fbUsageAsset, "setUserId", "user_id_1234");
-        TestUtility.callMethod(fbUsageAsset, "setCreatedAt", "2026-01-01");
-
+        fbUsageAsset.setUserId("user_id_1234");
+        fbUsageAsset.setUserId("2026-01-01");
 
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
-
-        leftJoinService.configure(bloomFilter);
     
         InmemoryService inMemoryService = new InmemoryService();   
         
@@ -269,6 +266,7 @@ public class TestJoinService {
         .add(analyticsService, AnalyticsService.class)
         .build();
 
+        leftJoinService.configure(syncServiceContainer, bloomFilter);
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
@@ -276,36 +274,38 @@ public class TestJoinService {
         // Simulate that left bean has arrived already
         // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
-        List<HashMap<String, AbstractAsset>> joinAssetData = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset, freshJoin);
-
-        // String s = objectMapper.writeValueAsString(joinBeanData);
-        // System.out.print(s);
+        List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
         assertThat(joinAssetData.size(), Matchers.is(1));
-        HashMap<String, AbstractAsset> beanMap = joinAssetData.get(0);
-        assertThat(beanMap.size(), Matchers.is(1));
+        FbUserUsageAsset partiallyFormedUserUsageAsset = (FbUserUsageAsset) joinAssetData.get(0);
+        
+        assertThat(partiallyFormedUserUsageAsset.getUserId(), Matchers.is(fbUserAsset.getUserId()));
+        assertThat(partiallyFormedUserUsageAsset.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(partiallyFormedUserUsageAsset.getCreatedAt(), Matchers.nullValue());
 
 
-        List<HashMap<String, AbstractAsset>> joinAssetDataWithAnotherLeftAsset = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUserAsset1, freshJoin);
-
-        // String s = objectMapper.writeValueAsString(joinBeanDataWithAnotherLeftBean);
-        // System.out.print(s);
+        List<AbstractAsset> joinAssetDataWithAnotherLeftAsset = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset1, freshJoin);
 
         assertThat(joinAssetDataWithAnotherLeftAsset.size(), Matchers.is(1));
-        HashMap<String, AbstractAsset> assetMapWithSecondLeftBean = joinAssetDataWithAnotherLeftAsset.get(0);
-        assertThat(assetMapWithSecondLeftBean.size(), Matchers.is(1));
+        FbUserUsageAsset secondPartiallyFormedUserUsageAsset = (FbUserUsageAsset) joinAssetData.get(0);
+        assertThat(secondPartiallyFormedUserUsageAsset.getUserId(), Matchers.is(fbUserAsset.getUserId()));
+        assertThat(secondPartiallyFormedUserUsageAsset.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(secondPartiallyFormedUserUsageAsset.getCreatedAt(), Matchers.nullValue());
 
 
-        List<HashMap<String, AbstractAsset>> joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset = leftJoinService.lookupStagingArea(infraDbKeyValue, fbUsageAsset, freshJoin);
+        List<AbstractAsset> joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUsageAsset, freshJoin);
 
         assertThat(joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.size(), Matchers.is(2));
-        HashMap<String, AbstractAsset> beanMapWithFirstLeftBeanAndSingleRightBean = joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(0);
-        assertThat(beanMapWithFirstLeftBeanAndSingleRightBean.size(), Matchers.is(2));
+        FbUserUsageAsset assetWithFirstLeftBeanAndSingleRightBean = (FbUserUsageAsset) joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(0);
+        assertThat(assetWithFirstLeftBeanAndSingleRightBean.getUserId(), Matchers.is(fbUserAsset.getUserId()));
+        assertThat(assetWithFirstLeftBeanAndSingleRightBean.getUserName(), Matchers.is(fbUserAsset.getUserName()));
+        assertThat(assetWithFirstLeftBeanAndSingleRightBean.getCreatedAt(), Matchers.is(fbUsageAsset.getCreatedAt()));
 
-        HashMap<String, AbstractAsset> assetMapWithSecondLeftAssetAndSingleRightAsset = joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(1);
-        assertThat(assetMapWithSecondLeftAssetAndSingleRightAsset.size(), Matchers.is(2));
 
-        String s = objectMapper.writeValueAsString(joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset);
-        System.out.print(s);
+        FbUserUsageAsset assetWithSecondLeftBeanAndSingleRightBean = (FbUserUsageAsset) joinBeanDataWithSingleRightAssetMatchingWithTwoLeftAsset.get(0);
+        assertThat(assetWithSecondLeftBeanAndSingleRightBean.getUserId(), Matchers.is(fbUserAsset1.getUserId()));
+        assertThat(assetWithSecondLeftBeanAndSingleRightBean.getUserName(), Matchers.is(fbUserAsset1.getUserName()));
+        assertThat(assetWithSecondLeftBeanAndSingleRightBean.getCreatedAt(), Matchers.is(fbUsageAsset.getCreatedAt()));
+
     }
 }

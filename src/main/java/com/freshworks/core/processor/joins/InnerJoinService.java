@@ -32,7 +32,7 @@ public class InnerJoinService extends AbstractJoinService {
     }
 
     @Override
-    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
+    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String asset, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception {
 
         String lookupTraceId = UUID.randomUUID().toString();
 
@@ -63,25 +63,5 @@ public class InnerJoinService extends AbstractJoinService {
     @Override
     public AbstractAsset getPrimitiveAsset(String asset, AbstractBean abstractBean, List<String> assetStepDependencyList) throws Exception {
         return null;
-    }
-
-    private List<Boolean> isAssetAssetDependencyAlreadyExists(List<String> assetAssetDependencyList, List<HashMap<String, AbstractAsset>> unwrappedAssetAssetsMapList) throws Exception {
-
-        List<Boolean> booleanList = new ArrayList<>();
-
-        for(int i=0; i< unwrappedAssetAssetsMapList.size(); i++){
-            ArrayList<String> unwrappedKeys = new ArrayList<>(unwrappedAssetAssetsMapList.get(i).keySet());
-
-            // Here fix the case when setField is of primitive type like setName(String name)
-            //
-            if(unwrappedKeys.containsAll(assetAssetDependencyList)){
-                booleanList.add(true);
-            }
-            else{
-                booleanList.add(false);
-            }
-        }
-
-        return booleanList;
     }
 }

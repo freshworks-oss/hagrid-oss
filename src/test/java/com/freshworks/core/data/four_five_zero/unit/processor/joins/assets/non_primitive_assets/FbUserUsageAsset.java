@@ -7,12 +7,14 @@ import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.processor.Annotations.FreshJoin.JOIN_TYPE;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 
 @FreshJoin(rightClass = FbUsageAsset.class, uniqueJoinName = "usage_user_left_join", join_type = JOIN_TYPE.LEFT_JOIN,rightClassFieldName = "userId", leftClass = FbUserAsset.class , leftClassFieldName = "userId")
 
+@NoArgsConstructor
 @Getter
 @Setter
 public class FbUserUsageAsset extends AbstractAsset{
@@ -28,6 +30,7 @@ public class FbUserUsageAsset extends AbstractAsset{
     }
 
     public void setFromUserBean(FbUserAsset fbUserAsset){
+        this.userId = fbUserAsset.getUserId();
         this.userName = fbUserAsset.getUserName();
     }
 

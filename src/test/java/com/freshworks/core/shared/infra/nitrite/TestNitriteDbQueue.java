@@ -17,8 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.zaxxer.hikari.HikariConfig;
 
 @SpringBootTest
@@ -26,10 +32,19 @@ import com.zaxxer.hikari.HikariConfig;
 public class TestNitriteDbQueue {
 
     Nitrite nitriteDb;
+
+        @Autowired
+    MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
+
+    @Autowired
+    AnalyticsFactory analyticsFactory;
+
     @BeforeEach
     public void setup(){
         nitriteDb = Nitrite.builder()
             .openOrCreate();
+
+        mockFacadeSyncServiceContainer.configure().build();
     }
 
 
@@ -37,6 +52,17 @@ public class TestNitriteDbQueue {
     public void testAddMethod() throws Exception {
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         nitriteDbQueue.add("{\"name\": \"amit\"}");
         assertThat(nitriteDbQueue.getQueueIndex().get(), is(1L));
         assertThat(nitriteDbQueue.hasMoreData(), is(true));
@@ -47,6 +73,17 @@ public class TestNitriteDbQueue {
     public void testAddListMethod() throws Exception {
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         List<String> list = new ArrayList<>();
         list.add("{\"name\": \"amit\"}");
         list.add("{\"name\": \"rahul\"}");
@@ -61,6 +98,16 @@ public class TestNitriteDbQueue {
     public void testPollMethod() throws Exception {
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
 
         assertThat(nitriteDbQueue.getPopIndex(), is(0L));
         assertThat(nitriteDbQueue.getQueueIndex().get(), is(0L));
@@ -87,6 +134,17 @@ public class TestNitriteDbQueue {
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
 
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
+
         assertThat(nitriteDbQueue.getPopIndex(), is(0L));
         assertThat(nitriteDbQueue.getQueueIndex().get(), is(0L));
 
@@ -111,6 +169,17 @@ public class TestNitriteDbQueue {
     public void testHashMoreDataWhenThereIsDataInQueue() throws Exception {
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         nitriteDbQueue.add("{\"name\": \"amit\"}");
         assertThat(nitriteDbQueue.getQueueIndex().get(), is(1L));
         assertThat(nitriteDbQueue.hasMoreData(), is(true));
@@ -122,6 +191,16 @@ public class TestNitriteDbQueue {
     public void testHashMoreDataWhenQueueIsEmpty() throws Exception{
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
 
         Thread s = new Thread( () ->{
             try {
@@ -145,6 +224,17 @@ public class TestNitriteDbQueue {
     public void testHashMoreDataWhenQueueIsHasData() throws Exception{
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb, "some_name_space", "some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         nitriteDbQueue.add("{\"name\": \"amit\"}");
         assertThat(nitriteDbQueue.hasMoreData(), is(true));
 
@@ -158,6 +248,17 @@ public class TestNitriteDbQueue {
         Condition mockedCondition = Mockito.mock(Condition.class);
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
@@ -184,6 +285,17 @@ public class TestNitriteDbQueue {
         Condition mockedCondition = Mockito.mock(Condition.class);
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+
         nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
@@ -213,6 +325,17 @@ public class TestNitriteDbQueue {
         Condition mockedCondition = Mockito.mock(Condition.class);
 
         NitriteDbQueue nitriteDbQueue = new NitriteDbQueue(nitriteDb,  "some_name_space","some_name");
+
+        Namespace namespace = new Namespace();
+        namespace.setNamespace("some_namespace");
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        .add(analyticsService, AnalyticsService.class)
+        .build();
+
+        nitriteDbQueue.configure(syncServiceContainer);
+        
         nitriteDbQueue.setHasMoreDataLock(mockedLock);
 
         Field field = NitriteDbQueue.class.getDeclaredField("hasNotMoreDataQueue");
