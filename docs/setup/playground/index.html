@@ -49,6 +49,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/stylesheets/mkdocs_d2_plugin.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -252,7 +254,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../versions/4.5.0/" class="md-tabs__link">
+        <a href="../../versions/4.6.0/" class="md-tabs__link">
           
   
   
@@ -769,6 +771,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../versions/4.6.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.6.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../versions/4.5.0/" class="md-nav__link">
         
   
@@ -1274,26 +1304,21 @@
 <ol>
 <li><code>Django</code> - It acts as third-party server which has dummy APIs to simulate <code>facebook</code> api case</li>
 <li><code>Grafana</code> AND <code>Prometheus</code> - It is used to view metrics that Hagrid generated while fetching data from third-party.</li>
-<li><code>Hagrid</code> - This container checkout branches that are passed via <code>docker-compose.yml</code> and run test cases on that branch.<ol>
-<li>For <code>playgound</code> set up we <strong>DO NOT NEED</strong> this container. Hence <strong>we will scale it down to 0</strong> </li>
-<li>We need this container only during development of <code>Hagrid</code> framework and branch testing. </li>
 </ol>
-</li>
-<li><code>mongodb</code> - Hagrid internally uses two kind of storage to store beans and assets <ol>
-<li><code>persistent</code> - Which means Hagrid should use <code>mongodb</code> as its infra layer to store intermediate data i.e <code>beans</code> . Use <code>persistent</code> when your connector is going to fetch huge amount of data.  </li>
-<li><code>inmemory</code> -  Which means Hagrid should use <code>RAM</code> as its infra layer to store intermediate data i.e <code>beans</code>. Use <code>immemory</code> when your connector fetches very small amount of data.</li>
-<li>For this playground set up we will use <code>persistent</code> i.e <code>mongoDb</code> container to store data</li>
-</ol>
-</li>
-</ol>
-<p>So basically, we are going to run Hagrid on our local computer and it will connect with <code>django</code> , <code>grafana</code> , <code>prometheus</code> and <code>mongodb</code> inside docker. </p>
+<p>So basically, we are going to run Hagrid on our local computer and it will connect with <code>django</code> , <code>grafana</code> , <code>prometheus</code> inside docker. </p>
 <p>Architecture would be something like this </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/docker-setup.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/docker-setup.png"></a></p>
-<p>As you can see Hagrid should be able to connect to <code>mongodb</code> and <code>django</code> service running inside dockers, hence we need to modify <code>/etc/hosts</code> file to reflect below </p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>127.0.0.1   localhost mongodb django
-</span></code></pre></div>
-<p>Once this is done, then launch docker container except <code>hagrid</code> container like this </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/docker_launch_command.png" data-desc-position="bottom"><img alt="docker_launch_setup" src="../../assets/images/setup/docker_launch_command.png"></a></p>
+<pre class="mermaid"><code>flowchart BT
+    A[Hagrid] --&gt;|1. fetch-data| C
+
+        subgraph B[Docker-container]
+            C[django-app]
+            D[prometheus] 
+            E[grafanna]
+        end
+
+    D --&gt;|2. scrap metrics| A
+    E --&gt; |3. visualisation| D
+    E --&gt; |4. localhost:9091| M[Browser]</code></pre>
 <p>After this you should be able to access following services </p>
 <p>Access <code>Grafana</code> on  <code>http://localhost:9091</code> </p>
 <ol>

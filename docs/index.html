@@ -47,6 +47,8 @@
       
     
     
+      <link rel="stylesheet" href="assets/stylesheets/mkdocs_d2_plugin.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -250,7 +252,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="versions/4.5.0/" class="md-tabs__link">
+        <a href="versions/4.6.0/" class="md-tabs__link">
           
   
   
@@ -934,6 +936,34 @@
   
   
     <li class="md-nav__item">
+      <a href="versions/4.6.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.6.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="versions/4.5.0/" class="md-nav__link">
         
   
@@ -1588,7 +1618,41 @@
 
 
 
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="assets/images/Hagrid%20Producer%20Consumer%20Design.png" data-desc-position="bottom"><img alt="Hero Image" src="assets/images/Hagrid%20Producer%20Consumer%20Design.png"></a></p>
+<pre class="mermaid"><code>flowchart LR
+
+ thp["third-party"]
+
+ subgraph traverser-module ["Traverser Module Logic to fetch data"]
+      direction TB
+
+      N1["fbUser"]
+      N2["fbPost"]
+      N3["fbComment"]
+
+      N1 --&gt; N2
+      N2 --&gt; N3
+ end
+
+ thp --&gt; |traverse third-party|traverser-module
+ traverser-module --&gt; pq["processor_queue"]
+
+ subgraph processor-module ["Processor Module transform data into desired output"]
+
+      pq --&gt; proc1["processor1"]
+      pq --&gt; proc2["processor2"]
+      pq --&gt; proc3["processor3"]
+
+      class proc0 disable;
+      classDef disable display:none;
+ end
+
+ subgraph consumer-layer ["Using Consumer Service consume data by business"]
+      proc1 --&gt; pbl["publisher-list"]
+      proc2 --&gt; pbl["publisher-list"]
+      proc3 --&gt; pbl["publisher-list"]
+      pbl --&gt; cons["consumer service"]
+ end
+</code></pre>
 <h1 id="welcome">Welcome</h1>
 <h2 id="reach-out-to-the-community-via-google-groups">Reach out to the community via Google Groups.</h2>
 <p>If you have any question, need clarification or any feature idea, please mail at </p>
@@ -1630,7 +1694,17 @@
 <p>Think how APIs are organised of the third-party from where you would like to fetch data.
 Developers can identify this information easily from the documentation of the website of the third party. </p>
 <p>For <code>facebook</code> example, we can assume DAG will look like this. </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="custom_theme/assets/images/fb_dag.png" data-desc-position="bottom"><img alt="fb_dag.png" src="custom_theme/assets/images/fb_dag.png"></a></p>
+<pre class="mermaid"><code>flowchart TD
+
+      A["fbUser"]
+      B["fbCommunity"]
+      C["fbPost"]
+      D["fbComment"]
+
+      A --&gt; B
+      A --&gt; C
+      C --&gt; D
+</code></pre>
 <p>As per above <code>DAG</code>, we want to develop a connector which should follow this traversing mechanism </p>
 <ol>
 <li>Connector should first fetches <code>users</code> of facebook.</li>
@@ -1640,7 +1714,19 @@ Developers can identify this information easily from the documentation of the we
 <p>Another example, say you want to develop a connector to fetch data from <code>mysql</code> then in this case <code>DAG</code> may look like this </p>
 <p><strong>Mysql Connector</strong></p>
 <p>Dag to fetch the <code>tables and Records</code> from <code>mysql</code> may look like this</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="custom_theme/assets/images/mysql_dag.png" data-desc-position="bottom"><img alt="mysql_dag.png" src="custom_theme/assets/images/mysql_dag.png"></a></p>
+<pre class="mermaid"><code>flowchart TD
+
+      A["Databases"]
+      B["Permissions"]
+      C["Tables"]
+      D["Records"]
+      E["Permissions"]
+
+      A --&gt; B
+      A --&gt; C
+      C --&gt; D
+      C --&gt; E
+</code></pre>
 <p>As per above <code>DAG</code>, we want to develop a connector which should follow this traversing mechanism</p>
 <ol>
 <li>Connector should first fetches <code>databases</code> from <code>mysql</code></li>
