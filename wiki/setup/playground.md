@@ -28,14 +28,13 @@ Next, look at the directory `docker-setup-for-testing`. This directory contains 
 2. `Grafana` AND `Prometheus` - It is used to view metrics that Hagrid generated while fetching data from third-party.
 
 
-
-So basically, we are going to run Hagrid on our local computer and it will connect with `django` , `grafana` , `prometheus` and `mongodb` inside docker. 
+So basically, we are going to run Hagrid on our local computer and it will connect with `django` , `grafana` , `prometheus` inside docker. 
 
 Architecture would be something like this 
 
 
 ``` mermaid
-flowchart TD
+flowchart BT
     A[Hagrid] -->|1. fetch-data| C
 
         subgraph B[Docker-container]
@@ -45,7 +44,8 @@ flowchart TD
         end
     
     D -->|2. scrap metrics| A
-    E --> |3. visualisation|D
+    E --> |3. visualisation| D
+    E --> |4. localhost:9091| M[Browser]
 ```
 
 

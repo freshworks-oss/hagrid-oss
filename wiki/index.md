@@ -1,5 +1,42 @@
-![Hero Image](./assets/images/Hagrid%20Producer%20Consumer%20Design.png)
 
+
+```mermaid
+flowchart LR
+
+ thp["third-party"]
+
+ subgraph traverser-module ["Traverser Module Logic to fetch data"]
+      direction TB
+
+      N1["fbUser"]
+      N2["fbPost"]
+      N3["fbComment"]
+
+      N1 --> N2
+      N2 --> N3
+ end
+
+ thp --> |traverse third-party|traverser-module
+ traverser-module --> pq["processor_queue"]
+
+ subgraph processor-module ["Processor Module transform data into desired output"]
+
+      pq --> proc1["processor1"]
+      pq --> proc2["processor2"]
+      pq --> proc3["processor3"]
+
+      class proc0 disable;
+      classDef disable display:none;
+ end
+
+ subgraph consumer-layer ["Using Consumer Service consume data by business"]
+      proc1 --> pbl["publisher-list"]
+      proc2 --> pbl["publisher-list"]
+      proc3 --> pbl["publisher-list"]
+      pbl --> cons["consumer service"]
+ end
+ 
+```
 
 # Welcome
 
@@ -53,7 +90,19 @@ Developers can identify this information easily from the documentation of the we
 
 For `facebook` example, we can assume DAG will look like this. 
 
-![fb_dag.png](custom_theme/assets/images/fb_dag.png)
+```mermaid
+flowchart TD
+
+      A["fbUser"]
+      B["fbCommunity"]
+      C["fbPost"]
+      D["fbComment"]
+
+      A --> B
+      A --> C
+      C --> D
+
+```
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism 
 
@@ -67,8 +116,21 @@ Another example, say you want to develop a connector to fetch data from `mysql` 
 
 Dag to fetch the `tables and Records` from `mysql` may look like this
 
-![mysql_dag.png](custom_theme/assets/images/mysql_dag.png)
+```mermaid
+flowchart TD
 
+      A["Databases"]
+      B["Permissions"]
+      C["Tables"]
+      D["Records"]
+      E["Permissions"]
+
+      A --> B
+      A --> C
+      C --> D
+      C --> E
+
+```
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism
 
