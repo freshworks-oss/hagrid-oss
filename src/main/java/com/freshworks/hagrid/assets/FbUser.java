@@ -1,5 +1,7 @@
 package com.freshworks.hagrid.assets;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.processor.AbstractAsset;
@@ -26,6 +28,8 @@ public class FbUser extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating user asset");
+
+        // Simulating a case to perform join on userId to create non primitive asset FbUserComment.java
+        this.userId = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
     }
 }

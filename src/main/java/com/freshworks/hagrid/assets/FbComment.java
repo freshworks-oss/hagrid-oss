@@ -6,6 +6,9 @@ import com.freshworks.core.processor.AbstractAsset;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.context.annotation.Conditional;
 
 @NoArgsConstructor
@@ -15,6 +18,7 @@ import org.springframework.context.annotation.Conditional;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FbComment extends AbstractAsset {
 
+    String userId;
     String comment_id;
     String comment_title;
     String comment_text;
@@ -28,7 +32,9 @@ public class FbComment extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating comment asset");
+
+        // Simulating a case to perform join on userId to create non primitive asset FbUserComment.java
+        this.userId = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
     }
 
 }
