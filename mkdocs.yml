@@ -39,6 +39,7 @@ plugins:
   - search
   - include-markdown
   - glightbox
+  - d2
   
 nav:
   - "Home": index.md
