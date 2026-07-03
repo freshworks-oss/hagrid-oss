@@ -29,7 +29,7 @@ public class NoopJoinService extends AbstractJoinService {
     }
 
     @Override
-    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception {
+    public List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception {
         List<AbstractAsset> returnList  = new ArrayList<>();
         return returnList;
     }

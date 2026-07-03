@@ -299,7 +299,7 @@ public class ProcessorTaskService implements Callable<Void> {
                 throw new RuntimeException("Right join is not supported");
             }
 
-            List<AbstractAsset> assetList = abstractJoinService.getNonPrimitiveAsset(infraService.getKeyValue(), asset, abstractAsset, assetAssetDependencyList, freshJoin);
+            List<AbstractAsset> assetList = abstractJoinService.getNonPrimitiveAsset(infraService.getKeyValue(), asset, abstractAsset, freshJoin);
 
             String assetClassName = abstractAsset.getClass().getName();
 
