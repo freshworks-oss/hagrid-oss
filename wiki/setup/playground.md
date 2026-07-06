@@ -26,34 +26,27 @@ Next, look at the directory `docker-setup-for-testing`. This directory contains 
 
 1. `Django` - It acts as third-party server which has dummy APIs to simulate `facebook` api case
 2. `Grafana` AND `Prometheus` - It is used to view metrics that Hagrid generated while fetching data from third-party.
-3. `Hagrid` - This container checkout branches that are passed via `docker-compose.yml` and run test cases on that branch.
-      1. For `playgound` set up we **DO NOT NEED** this container. Hence **we will scale it down to 0** 
-      2. We need this container only during development of `Hagrid` framework and branch testing. 
-4. `mongodb` - Hagrid internally uses two kind of storage to store beans and assets 
-      1. `persistent` - Which means Hagrid should use `mongodb` as its infra layer to store intermediate data i.e `beans` . Use `persistent` when your connector is going to fetch huge amount of data.  
-      2. `inmemory` -  Which means Hagrid should use `RAM` as its infra layer to store intermediate data i.e `beans`. Use `immemory` when your connector fetches very small amount of data.
-      3. For this playground set up we will use `persistent` i.e `mongoDb` container to store data
 
 
-
-So basically, we are going to run Hagrid on our local computer and it will connect with `django` , `grafana` , `prometheus` and `mongodb` inside docker. 
+So basically, we are going to run Hagrid on our local computer and it will connect with `django` , `grafana` , `prometheus` inside docker. 
 
 Architecture would be something like this 
 
-![alt text](../assets/images/setup/docker-setup.png)
 
+``` d2
+    direction: right    
+    docker: docker-container{
+        prometheus: prometheus
+        grafanna: grafanna
+        django-app: django-app
+    }
 
-As you can see Hagrid should be able to connect to `mongodb` and `django` service running inside dockers, hence we need to modify `/etc/hosts` file to reflect below 
+    hagrid --> docker.django-app : Fetches data
+    docker.prometheus --> hagrid: scan metrics 
+    docker.grafanna --> docker.prometheus: scan metrics
+    docker.grafanna --> browser : localhost:9091
 
 ```
-127.0.0.1	localhost mongodb django
-
-```
-
-Once this is done, then launch docker container except `hagrid` container like this 
-
-![docker_launch_setup](../assets/images/setup/docker_launch_command.png)
-
 
 After this you should be able to access following services 
 
