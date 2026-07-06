@@ -46,10 +46,10 @@ public class NodeCycleService implements Callable<Void> {
                 throw new InterruptedException("leaving process without completing as thread is interrupted");
             }
 
-            analyticsService.infoEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_cycles", nodesCycles.size() , "_message", "returning because node cycle service is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.infoLogEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_cycles", nodesCycles.size() , "_message", "returning because node cycle service is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
         }
         catch(InterruptedException e){
-            analyticsService.errorEvent("HAGRID_NODE_CYCLE_SERVICE", "_message", e.getClass().getName() + ": " + e.getMessage(),  "stacktrace" , Throwables.getStackTraceAsString(e), "namespace" ,namespace.getNamespace(), "uuid", uuid);
+            analyticsService.errorLogEvent("HAGRID_NODE_CYCLE_SERVICE", "_message", e.getClass().getName() + ": " + e.getMessage(),  "stacktrace" , Throwables.getStackTraceAsString(e), "namespace" ,namespace.getNamespace(), "uuid", uuid);
         }
         finally {
 
@@ -62,12 +62,12 @@ public class NodeCycleService implements Callable<Void> {
 
     public void detectAndTerminateCyclesWithDelayOf(long delayInMs) throws Exception{
 
-        analyticsService.infoEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size() , "_message", "Starting node cycle service", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.infoLogEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size() , "_message", "Starting node cycle service", "uuid", uuid, "namespace" ,namespace.getNamespace());
         while(!nodesCycles.isEmpty()){
             NodesCycle nodesCycle = nodesCycles.pop();
 
                 if(isNodeCycleSaturated(nodesCycle)){
-                    analyticsService.infoEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size(), "_message" , "node cycle is saturated and terminated the entry point node" ,  "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName() , "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size(), "_message" , "node cycle is saturated and terminated the entry point node" ,  "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName() , "uuid", uuid, "namespace" ,namespace.getNamespace());
                     // TODO: Here I am taking just any ( first in this case) entry point and terminating its node which should eventually terminate all nodes in the cycles
                     // If there are multiple entry point, which entry point should we choose to terminate ?
                     // As of now I do not find any differentiation between entrypoints hence taking the first one.
@@ -76,13 +76,13 @@ public class NodeCycleService implements Callable<Void> {
                 }
 
                 else if (isNodeCycleAlreadyTerminated(nodesCycle)){
-                    analyticsService.errorEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size(), "_message" , "Cycles has been terminated automatically. This is usually when termination of some other cycles triggers termination of this cycle." , "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName(), "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.errorLogEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles", nodesCycles.size(), "_message" , "Cycles has been terminated automatically. This is usually when termination of some other cycles triggers termination of this cycle." , "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName(), "uuid", uuid, "namespace" ,namespace.getNamespace());
 
                 }
                 else{
                     // Then do not push this into stack again.
                     nodesCycles.push(nodesCycle);
-                    analyticsService.infoEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles`", nodesCycles.size(), "_message" , "node cycle is not yet saturated or automatically terminated. Pushing it back to stack for checking it after sometime" , "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName(), "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_NODE_CYCLE_SERVICE", "number_of_pending_cycles`", nodesCycles.size(), "_message" , "node cycle is not yet saturated or automatically terminated. Pushing it back to stack for checking it after sometime" , "node_cycle_id", nodesCycle.getCycleId(), "node_cycle_name" , nodesCycle.getReadableCycleName(), "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
 
             Thread.sleep(delayInMs);

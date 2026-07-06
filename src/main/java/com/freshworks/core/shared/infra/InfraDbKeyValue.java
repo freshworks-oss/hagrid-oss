@@ -18,4 +18,9 @@ public interface InfraDbKeyValue {
     public List<String> getList(String key) throws Exception;
 
     public void delete() throws Exception;
+
+    default public long size() throws Exception{
+
+        return 0;
+    }
 }

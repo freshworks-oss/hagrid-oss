@@ -86,13 +86,9 @@ public class ProcessorService implements Callable<Void> {
     public ProcessorService(@Qualifier("LeftJoinService") AbstractJoinService leftJoinService, @Qualifier("InnerJoinService") AbstractJoinService innerJoinService, @Qualifier("NoopJoinService") AbstractJoinService noopJoinService, ProcessorExecutorService processorExecutorService) throws IOException {
 
         this.innerJoinService = innerJoinService;
-        this.innerJoinService.configure(this.bloomFilter);
-
         this.leftJoinService = leftJoinService;
-        this.leftJoinService.configure(this.bloomFilter);
-
         this.noopJoinService = noopJoinService;
-        this.noopJoinService.configure(this.bloomFilter);
+        
 
         this.processorExecutorService = processorExecutorService;
         freshIndexObjectMapper = new ObjectMapper();
@@ -114,7 +110,7 @@ public class ProcessorService implements Callable<Void> {
     public Void call() throws Exception {
 
         try{
-            analyticsService.infoEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "Processor Service started", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.infoLogEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "Processor Service started", "uuid", uuid, "namespace" ,namespace.getNamespace());
             MDC.setContextMap(mainThreadMdcCopy);
             run();
             phaser.arriveAndAwaitAdvance();
@@ -127,19 +123,19 @@ public class ProcessorService implements Callable<Void> {
             else{
 
                 if((processTaskTracker.getTotalFailedTask() == 0L) && (processTaskTracker.getTotalProcessTask() == processTaskTracker.getTotalProcessTask())){
-                    analyticsService.infoEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "returning because processor service is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "returning because processor service is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
                     this.syncStatusService.setProcessorInSuccessful();
                 }
 
                 else{
-                    analyticsService.warnEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "returning because processor service is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.warnLogEvent("HAGRID_PROCESSOR_SERVICE",  "_message", "returning because processor service is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
                     this.syncStatusService.setProcessorInFailed();
                 }
             }
         }
 
         catch (Exception e){
-            analyticsService.errorEvent("HAGRID_PROCESSOR_SERVICE",  "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.errorLogEvent("HAGRID_PROCESSOR_SERVICE",  "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "uuid", uuid, "namespace" ,namespace.getNamespace());
             this.syncStatusService.setProcessorInFailed();
         }
 
@@ -171,13 +167,17 @@ public class ProcessorService implements Callable<Void> {
         mainThreadMdcCopy = MDC.getCopyOfContextMap();
         this.processTaskTracker = new ProcessTaskTracker();
 
+        this.innerJoinService.configure(this.syncServiceContainer, this.bloomFilter);
+        this.leftJoinService.configure(this.syncServiceContainer, this.bloomFilter);
+        this.noopJoinService.configure(this.syncServiceContainer, this.bloomFilter);
+
     }
 
     public void run() throws Exception {
         String threadName = "ProcessorService" + "_" + Thread.currentThread().getName();
         Thread.currentThread().setName(threadName);
 
-        analyticsService.debugEvent("HAGRID_PROCESSOR_SERVICE", "action", "started");
+        analyticsService.debugLogEvent("HAGRID_PROCESSOR_SERVICE", "action", "started");
 
         this.jsonIndexService = infraService.getJsonIndexService();
 

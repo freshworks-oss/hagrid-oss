@@ -45,7 +45,7 @@ public class TestAnalyticsService {
         AnalyticsService analyticsService = new AnalyticsService(null, null);
 
         try{
-            analyticsService.debugEvent("SOME_DEBUG_EVENT", "method", "method_name");
+            analyticsService.debugLogEvent("SOME_DEBUG_EVENT", "method", "method_name");
             assertThat(true, is(false));
         }
         catch (Exception e){
@@ -53,7 +53,7 @@ public class TestAnalyticsService {
         }
 
         try{
-            analyticsService.infoEvent("SOME_INFO_EVENT", "method", "method_name");
+            analyticsService.infoLogEvent("SOME_INFO_EVENT", "method", "method_name");
             assertThat(true, is(false));
         }
         catch (Exception e){
@@ -61,7 +61,7 @@ public class TestAnalyticsService {
         }
 
         try{
-            analyticsService.warnEvent("SOME_WARN_EVENT", "method", "method_name");
+            analyticsService.warnLogEvent("SOME_WARN_EVENT", "method", "method_name");
             assertThat(true, is(false));
         }
         catch (Exception e){
@@ -69,7 +69,7 @@ public class TestAnalyticsService {
         }
 
         try{
-            analyticsService.errorEvent("SOME_ERROR_EVENT", "method", "method_name");
+            analyticsService.errorLogEvent("SOME_ERROR_EVENT", "method", "method_name");
             assertThat(true, is(false));
         }
         catch (Exception e){
@@ -95,7 +95,7 @@ public class TestAnalyticsService {
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace = UUID.randomUUID().toString();
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
-            analyticsService.warnEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService.warnLogEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
             assertThat(analyticsService.anyWarnEvent(), is(true));
             assertThat(analyticsService.howManyWarnEvent(), is(1.0));
@@ -106,7 +106,7 @@ public class TestAnalyticsService {
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace = UUID.randomUUID().toString();
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
-            analyticsService.errorEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService.errorLogEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
             assertThat(analyticsService.anyErrorEvent(), is(true));
             assertThat(analyticsService.howManyErrorEvent(), is(1.0));
@@ -124,13 +124,13 @@ public class TestAnalyticsService {
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace = UUID.randomUUID().toString();
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
-            analyticsService.warnEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService.warnLogEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace2 = UUID.randomUUID().toString();
             AnalyticsService analyticsService2 = analyticsFactory.getAnalyticsService(namespace2);
-            analyticsService2.warnEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
-            analyticsService2.warnEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService2.warnLogEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService2.warnLogEvent("warn_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
             assertThat(analyticsService.anyWarnEvent(), is(true));
             assertThat(analyticsService.howManyWarnEvent(), is(1.0));
@@ -146,13 +146,13 @@ public class TestAnalyticsService {
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace = UUID.randomUUID().toString();
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
-            analyticsService.errorEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService.errorLogEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
             analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
             String namespace2 = UUID.randomUUID().toString();
             AnalyticsService analyticsService2 = analyticsFactory.getAnalyticsService(namespace2);
-            analyticsService2.errorEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
-            analyticsService2.errorEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService2.errorLogEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
+            analyticsService2.errorLogEvent("error_event_name", "method_name", "testRightNumberOfDebugEventsAreCaptured");
 
 
             assertThat(analyticsService.anyErrorEvent(), is(true));
@@ -190,7 +190,7 @@ public class TestAnalyticsService {
         analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
         String namespace = UUID.randomUUID().toString();
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
-        analyticsService.infoEvent(eventName, "key", "value");
+        analyticsService.infoLogEvent(eventName, "key", "value");
 
         assertFalse(listAppender.list.isEmpty(), "No log events were captured.");
 

@@ -6,6 +6,9 @@ import com.freshworks.core.processor.AbstractBean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.context.annotation.Conditional;
 
 @Getter
@@ -23,6 +26,7 @@ public class FbComment extends AbstractBean {
     @Override
     public void transform() {
 
-        // this.user_id = "1000";
+        int randomId = 1000;
+        this.user_id = String.valueOf(randomId);
     }
 }

@@ -11,6 +11,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.processor.Annotations.FreshJoin;
+import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 import com.google.common.hash.BloomFilter;
 
@@ -22,22 +26,36 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractJoinService {
 
     BloomFilter<String> bloomFilter;
+    SyncServiceContainer syncServiceContainer;
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
 
-    public void configure(BloomFilter<String> bloomFilter){
+    public void configure(SyncServiceContainer syncServiceContainer, BloomFilter<String> bloomFilter){
+        this.syncServiceContainer = syncServiceContainer;
+        this.analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        Namespace namespaceService = syncServiceContainer.getBean(Namespace.class);
+        String namespace = namespaceService.getNamespace();
+        this.analyticsService = this.analyticsFactory.getAnalyticsService(namespace);
         this.bloomFilter = bloomFilter;
     }
 
 
-    public List<HashMap<String, AbstractAsset>> lookupStagingArea(InfraDbKeyValue abstractKeyValue, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception {
+    public List<HashMap<String, AbstractAsset>> lookupStagingArea(String lookupTraceId, InfraDbKeyValue abstractKeyValue, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception {
 
         List<HashMap<String, AbstractAsset>> returnMap = new ArrayList<>();
 //        This is case when abstract asset is related to left class.
         ObjectMapper objectMapper = new ObjectMapper();
         if(freshJoin.leftClass().getName().contains(abstractAsset.getClass().getName())){
-            String fieldValue = JoinUtility.getLookupFieldValueOfLeftClass(abstractAsset, freshJoin);
-            abstractKeyValue.putList(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_left",objectMapper.writeValueAsString(abstractAsset));
-            bloomFilter.put(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_left");
 
+            String fieldValue = JoinUtility.getLookupFieldValueOfLeftClass(abstractAsset, freshJoin);
+
+            this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Performing Lookup" , "lookup_trace_id", lookupTraceId , "left_or_right", "left class", "incoming_asset", abstractAsset.getClass().getName(), "lookup_key" , fieldValue , "lookup_name" , freshJoin.uniqueJoinName());
+
+            // long start = System.currentTimeMillis();
+            abstractKeyValue.putList(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_left",objectMapper.writeValueAsString(abstractAsset));
+            // System.out.println("Time taken to put key is " + (System.currentTimeMillis() - start));
+
+            bloomFilter.put(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_left");
             Boolean doesRightLookupExists = bloomFilter.mightContain(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_right");
             List<String> listOfAllAbstractAssets = new ArrayList<>();
             if(Boolean.TRUE.equals(doesRightLookupExists)) {
@@ -53,22 +71,16 @@ public abstract class AbstractJoinService {
                 }
                 return returnMap;
             }
-            else{
-
-                // If look up is not found then send partial so that LeftJoin can make asset and publish it 
-                HashMap<String, AbstractAsset> map = new HashMap<>();
-                map.put(abstractAsset.getClass().getName(), abstractAsset);
-                returnMap.add(map);
-                return returnMap;
-            }
         }
 
         // This is the case when abstract bean is related to the right class, hence we need to perform the lookup now
         else if(freshJoin.rightClass().getName().contains(abstractAsset.getClass().getName())){
+
             String fieldValue = JoinUtility.getLookupFieldValueOfRightClass(abstractAsset, freshJoin);
+
+            this.analyticsService.debugLogEvent("HAGRID_JOIN_SERVICE", "_message", "Performing Lookup" ,"lookup_trace_id", lookupTraceId, "left_or_right", "right class", "incoming_asset", abstractAsset.getClass().getName(), "lookup_key" , fieldValue , "lookup_name" , freshJoin.uniqueJoinName());
             abstractKeyValue.putList(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_right",objectMapper.writeValueAsString(abstractAsset));
             bloomFilter.put(freshJoin.uniqueJoinName() + "/" + fieldValue +  "_right");
-
 
             Boolean doesLeftLookupExists = bloomFilter.mightContain(freshJoin.uniqueJoinName() + "/" +fieldValue + "_left");
             List<String> listOfAllAbstractAssets = new ArrayList<>();
@@ -88,10 +100,6 @@ public abstract class AbstractJoinService {
                 }
                 return returnMap;
             }
-            else{
-                // Else do not publish this asset as we do not support RIGHT JOIN
-            }
-
         }
 
         // This is the case when the abstract bean is the left class BUT not the child node like Application, ServicePrinciple ( assume, mention in join)
@@ -105,7 +113,7 @@ public abstract class AbstractJoinService {
     }
 
 
-    public abstract List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, List<String> assetAssetDependencyList, FreshJoin freshJoin) throws Exception;
+    public abstract List<AbstractAsset> getNonPrimitiveAsset(InfraDbKeyValue abstractKeyValue, String assetName, AbstractAsset abstractAsset, FreshJoin freshJoin) throws Exception;
 
     public abstract AbstractAsset getPrimitiveAsset(String assetName, AbstractBean abstractBean, List<String> assetBeanDependencyList) throws Exception;
 

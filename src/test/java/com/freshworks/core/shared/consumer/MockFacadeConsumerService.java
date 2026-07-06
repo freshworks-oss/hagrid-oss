@@ -4,7 +4,10 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.data.four_five_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,12 +15,15 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import org.mockito.Mockito;
 
 @Component
 public class MockFacadeConsumerService implements MockFacadeInterface {
 
-    @SpyBean
-    ConsumerService consumerServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    ConsumerService consumerService;
 
     ReturnableMockTypeList<List<AbstractAsset>> getAssetByAssetType;
 
@@ -69,6 +75,8 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
 
     @Override
     public ConsumerService build() throws Exception {
+        consumerService = applicationContext.getBean(ConsumerService.class);
+        ConsumerService consumerServiceSpy = Mockito.spy(consumerService);
         doNothing().when(consumerServiceSpy).configure(any());
         doAnswer(getAssetByAssetType.answer()).when(consumerServiceSpy).getAssetByAssetType(any());
         doAnswer(streamAssetByAssetType.answer()).when(consumerServiceSpy).streamAssetByAssetType(any(), any());

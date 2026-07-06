@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.infra.h2;
+package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.Namespace;
@@ -32,14 +32,14 @@ import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.h2")
-public class TestH2DbService {
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+public class TestNitriteDbService {
 
     @Autowired
     ApplicationContext applicationContext;
 
     @Autowired
-    MockFacadeH2ClientFactory mockFacadeH2ClientFactory;
+    MockFacadeNitriteClientFactory mockFacadeH2ClientFactory;
 
     @Autowired
     MockFacadeInfraConfigService mockFacadeInfraConfigService;
@@ -48,7 +48,7 @@ public class TestH2DbService {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
     @Autowired
-    MockFacadeH2DbService mockFacadeH2DbService;
+    MockFacadeNitriteDbService mockFacadeNitriteDbService;
 
 
     @BeforeEach
@@ -57,7 +57,7 @@ public class TestH2DbService {
 
         mockFacadeInfraConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
-        mockFacadeH2DbService.configure().build();
+        mockFacadeNitriteDbService.configure().build();
         mockFacadeH2ClientFactory.configure().build();
     }
 
@@ -81,7 +81,7 @@ public class TestH2DbService {
             syncServiceContainer.add(infraConfigService);
 
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                             .build();
 
@@ -110,7 +110,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -138,7 +138,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -170,7 +170,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -200,7 +200,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -231,7 +231,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -260,13 +260,13 @@ public class TestH2DbService {
             syncServiceContainer.add(namespaceService, Namespace.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getH2DataPath("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here")
-                    .getH2DatabaseType("file")
+                    .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here")
+                    .getNitriteDatabaseType("file")
                     .build();
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -303,13 +303,14 @@ public class TestH2DbService {
             syncServiceContainer.add(namespaceService, Namespace.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getH2DataPath("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here")
-                    .getH2DatabaseType("file")
+                    .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getNitriteDatabaseType("file")
                     .build();
+
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -366,7 +367,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -385,7 +386,7 @@ public class TestH2DbService {
             InfraConfigService infraConfigService2 = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService2).configure(any());
             infraConfigService2.configure(syncServiceContainer2);
-            InfraService infraService2 = mockFacadeH2DbService
+            InfraService infraService2 = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer2)
                     .build();
 
@@ -414,7 +415,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -435,7 +436,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService2).configure(any());
             infraConfigService2.configure(syncServiceContainer2);
 
-            InfraService infraService2 = mockFacadeH2DbService
+            InfraService infraService2 = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer2)
                     .build();
 
@@ -464,7 +465,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeH2DbService
+            InfraService infraService = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer)
                     .build();
 
@@ -485,7 +486,7 @@ public class TestH2DbService {
             doCallRealMethod().when(infraConfigService2).configure(any());
             infraConfigService2.configure(syncServiceContainer2);
 
-            InfraService infraService2 = mockFacadeH2DbService
+            InfraService infraService2 = mockFacadeNitriteDbService
                     .syncServiceContainer(syncServiceContainer2)
                     .build();
 

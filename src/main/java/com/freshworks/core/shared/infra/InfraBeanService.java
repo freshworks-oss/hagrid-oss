@@ -1,8 +1,8 @@
 package com.freshworks.core.shared.infra;
 
 import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.infra.h2.H2DbService;
 import com.freshworks.core.shared.infra.inmemory.InmemoryService;
+import com.freshworks.core.shared.infra.nitrite.NitriteService;
 import com.freshworks.core.shared.infra.persistent.MongoService;
 import com.freshworks.core.shared.infra.redis.RedisService;
 import org.springframework.stereotype.Component;
@@ -28,8 +28,8 @@ public class InfraBeanService {
 
         }
 
-        else if (infraConfigService.getInfraType().equals("h2")){
-            infraService = new H2DbService();
+        else if (infraConfigService.getInfraType().equals("nitrite")){
+            infraService = new NitriteService();
             return infraService;
         }
         else{

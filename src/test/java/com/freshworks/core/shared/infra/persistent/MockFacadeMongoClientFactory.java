@@ -1,23 +1,19 @@
 package com.freshworks.core.shared.infra.persistent;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
+import com.freshworks.core.MockFacadeInterface;
 
 @Component
 public class MockFacadeMongoClientFactory implements MockFacadeInterface {
 
+    @Autowired
+    ApplicationContext applicationContext;
 
-    @SpyBean
-    MongoClientFactory mongoClientFactorySpy;
+    MongoClientFactory mongoClientFactory;
 //
 //    @Autowired
 //    MockFacadeMongoClient mockFacadeMongoClient;
@@ -51,6 +47,8 @@ public class MockFacadeMongoClientFactory implements MockFacadeInterface {
     @Override
     public MongoClientFactory build() throws Exception {
 
+        mongoClientFactory = applicationContext.getBean(MongoClientFactory.class);
+        MongoClientFactory mongoClientFactorySpy = Mockito.spy(mongoClientFactory);
 //        doAnswer(getMongoClientObject.answer()).when(mongoClientFactorySpy).getMongoClientObject(any());
 //        doAnswer(doesClientExists.answer()).when(mongoClientFactorySpy).doesClientExists();
 

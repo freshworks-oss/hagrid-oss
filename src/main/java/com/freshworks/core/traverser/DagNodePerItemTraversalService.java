@@ -119,7 +119,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     public Void call() throws Exception {
 
         try{
-            analyticsService.infoEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStepName, "_message", "DagNodePerItemTraversal started", "uuid", uuid,  "namespace" ,namespace.getNamespace());
+            analyticsService.infoLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStepName, "_message", "DagNodePerItemTraversal started", "uuid", uuid,  "namespace" ,namespace.getNamespace());
             currentNode.relationshipIncrementTotalItemsCount(parentNode);
 
             long threadId = Thread.currentThread().threadId();
@@ -135,7 +135,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
             else{
                 currentNode.relationshipIncrementSuccessItemsCount(parentNode);
-                analyticsService.infoEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStepName, "_message", "returning because step is completed", "uuid", uuid,  "namespace" ,namespace.getNamespace());
+                analyticsService.infoLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStepName, "_message", "returning because step is completed", "uuid", uuid,  "namespace" ,namespace.getNamespace());
             }
 
             return null;
@@ -149,9 +149,17 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
             // Is it because this catch is running on different thread than try block
             // So as of now, we are missing traceId, spanId etc in below logs. but it is coming in log in try block.
 
-            analyticsService.errorEvent("HAGRID_DAG_NODE_PER_ITEM", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "step", this.abstractStep.getClass().getName(),"namespace" ,namespace.getNamespace(), "uuid", uuid);
+            analyticsService.errorLogEvent("HAGRID_DAG_NODE_PER_ITEM", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "step", this.abstractStep.getClass().getName(),"namespace" ,namespace.getNamespace(), "uuid", uuid);
             currentNode.relationshipIncrementFailedItemsCount(parentNode);
             return null;
+        }
+
+        catch(Error e){
+
+            analyticsService.errorLogEvent("HAGRID_DAG_NODE_PER_ITEM", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "step", this.abstractStep.getClass().getName(),"namespace" ,namespace.getNamespace(), "uuid", uuid);
+            currentNode.relationshipIncrementFailedItemsCount(parentNode);
+            return null;
+
         }
 
         finally {
@@ -202,7 +210,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected void setupHttp(HttpAbstractStep abstractStep, JsonNode parentNodeData, ImmutableMap<String, String> baggageMap) throws Exception {
 
         abstractStep.setup(baggageMap, parentNodeData);
-        analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "setup", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "setup", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         if(Boolean.TRUE.equals(isThreadInterrupted())){
             throw new InterruptedException("Thread is interrupted in step setupHttp method");
@@ -211,7 +219,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
     protected void setupNonHttp(NonHttpAbstractStep abstractStep, JsonNode parentNodeData, ImmutableMap<String, String> baggageMap) throws Exception {
         abstractStep.setupNonHttp(baggageMap, parentNodeData);
-        analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "setup", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "setup", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         if(Boolean.TRUE.equals(isThreadInterrupted())){
             throw new InterruptedException("Thread is interrupted in step setupNonHttp method");
@@ -223,7 +231,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         HttpRequestResponse httpRequestResponse = abstractStep.startSync(parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && httpRequestResponse != null){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSyncHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSyncHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return httpRequestResponse;
         }
 
@@ -246,7 +254,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && requestResponseContainer != null){
 
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSyncNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSyncNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return requestResponseContainer;
         }
 
@@ -276,7 +284,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
                 httpClientService.execute(namespace.getNamespace(), requestResponse);
                 long stopTime = System.currentTimeMillis();
                 long diff = stopTime - startTime;
-                analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "executeHttp", "uuid", uuid, "namespace" ,namespace.getNamespace(), "uri", requestResponse.getRequest().getRequestUri(), "execute_time_taken_ms", diff);
+                analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "executeHttp", "uuid", uuid, "namespace" ,namespace.getNamespace(), "uri", requestResponse.getRequest().getRequestUri(), "execute_time_taken_ms", diff);
                 return null;
             }
             catch (Exception e){
@@ -317,7 +325,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
             }
             long stopTime = System.currentTimeMillis();
             long diff = stopTime - startTime;
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "executeNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace(), "command", requestResponse.getRequest(), "execute_time_taken_ms", diff);
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "executeNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace(), "command", requestResponse.getRequest(), "execute_time_taken_ms", diff);
             return null;
         });
 
@@ -339,7 +347,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         boolean x = abstractStep.isValidResponse(httpRequestResponse, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return x;
         }
 
@@ -357,7 +365,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         boolean x = abstractStep.isValidResponseNonHttp(requestResponseContainer, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSync", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "startSync", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return x;
         }
 
@@ -375,7 +383,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         DagTraversalService.TraverseAction action =  abstractStep.handleInvalidResponse(httpRequestResponse, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && action != null){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "handleInValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "handleInValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return action;
         }
 
@@ -399,7 +407,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         DagTraversalService.TraverseAction traverseAction =  abstractStep.handleInValidResponseNonHttp(httpRequestResponse, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && traverseAction != null){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "handleInValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "handleInValidResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return traverseAction;
         }
         else if (Boolean.TRUE.equals(isThreadInterrupted())){
@@ -421,7 +429,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         StepDataBeanMapping stepDataBeanMapping = abstractStep.parseSyncResponse(httpRequestResponse, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && stepDataBeanMapping != null){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "parseSyncResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "parseSyncResponseHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return stepDataBeanMapping;
         }
 
@@ -441,7 +449,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         StepDataBeanMapping stepDataBeanMapping = abstractStep.parseSyncResponseNonHttp(requestResponseContainer, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted()) && stepDataBeanMapping != null){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "parseSyncResponseNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "parseSyncResponseNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return stepDataBeanMapping;
         }
 
@@ -461,7 +469,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected void filterHttp(HttpAbstractStep abstractStep, StepDataBeanMapping stepDataBeanMapping, JsonNode parentNodeData) throws Exception {
 
         abstractStep.filterResponse(stepDataBeanMapping, parentNodeData);
-        analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         if(Boolean.TRUE.equals(isThreadInterrupted())){
             throw new InterruptedException("Thread is interrupted in step filterHttp method");
@@ -472,7 +480,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected void filterNonHttp(NonHttpAbstractStep abstractStep, StepDataBeanMapping StepDataBeanMapping, JsonNode parentNodeData) throws Exception {
 
         abstractStep.filterResponseNonHttp(StepDataBeanMapping, parentNodeData);
-        analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         if(Boolean.TRUE.equals(isThreadInterrupted())){
             throw new InterruptedException("Thread is interrupted in step filterNonHttp method");
@@ -485,7 +493,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         boolean x = abstractStep.isSyncComplete(httpRequestResponse, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isSyncCompleteHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isSyncCompleteHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return x;
         }
 
@@ -503,7 +511,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         boolean x = abstractStep.isSyncCompleteNonHttp(requestResponseContainer, parentNodeData);
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isSyncCompleteHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "isSyncCompleteHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return x;
         }
 
@@ -542,7 +550,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected boolean  handleAbortTransactionActionHttp() throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleAbortTransactionActionHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleAbortTransactionActionHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return true;
         }
 
@@ -553,7 +561,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected boolean handleAbortTransactionActionNonHttp() throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleAbortTransactionActionNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleAbortTransactionActionNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return true;
         }
 
@@ -564,7 +572,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected long handleHoldAndRetryActionHttp(DagTraversalService.TraverseAction traverseAction) throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleHoldAndRetryActionHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleHoldAndRetryActionHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return traverseAction.waitTimeInMilliseconds;
         }
         throw new InterruptedException("Thread is interrupted before calling handleHoldAndRetryActionHttp method");
@@ -573,7 +581,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected long handleHoldAndRetryActionNonHttp(DagTraversalService.TraverseAction traverseAction) throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleHoldAndRetryActionNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleHoldAndRetryActionNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return traverseAction.waitTimeInMilliseconds;
         }
 
@@ -583,7 +591,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected HttpRequestResponse handleRetryWithNewRequest(DagTraversalService.TraverseAction traverseAction) throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleRetryWithNewRequest", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "handleRetryWithNewRequest", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return traverseAction.requestResponse;
         }
 
@@ -594,7 +602,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected HttpRequestResponse handleRetryWithNewRequestNonHttp(DagTraversalService.TraverseAction traverseAction) throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleRetryWithNewRequestNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "handleRetryWithNewRequestNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return traverseAction.requestResponse;
         }
 
@@ -605,7 +613,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected boolean abortCurrentParentAndReTryWithNewParentHttp() throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "abortCurrentParentAndReTryWithNewParentHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", httpAbstractStep.getClass().getName(), "command", "abortCurrentParentAndReTryWithNewParentHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return true;
         }
 
@@ -615,7 +623,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     protected boolean abortCurrentParentAndReTryWithNewParentNonHttp() throws InterruptedException {
 
         if(Boolean.FALSE.equals(isThreadInterrupted())){
-            analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "abortCurrentParentAndReTryWithNewParentNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
+            analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", nonHttpAbstractStep.getClass().getName(), "command", "abortCurrentParentAndReTryWithNewParentNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
             return true;
         }
 
@@ -883,7 +891,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
                     // Here save this as well so that it can be used to process its child
 
                     String s = objectMapper.writeValueAsString(abstractBean);
-                    analyticsService.meterCounter("HAGRID_BEAN_IS_PUBLISHED");
+                    analyticsService.meterCounter("HAGRID_BEAN_IS_PUBLISHED", "bean_name", abstractBean.getClass().getName());
                     saveInProcessorQueue.add(s);
 
                     if(isPassToChildNodes){
@@ -913,7 +921,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
                 processorQueue.add(saveInProcessorQueue);
                 long endTime = System.currentTimeMillis();
                 long diff = endTime - currentTime;
-                analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "save_into_process_queue", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", saveInProcessorQueue.size(), "execute_time_taken_ms", diff);
+                analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "save_into_process_queue", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", saveInProcessorQueue.size(), "execute_time_taken_ms", diff);
                 return null;
             }
 
@@ -938,7 +946,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
                 node.saveSyncResult(saveAsParentList);
                 long endTime = System.currentTimeMillis();
                 long diff = endTime - currentTime;
-                analyticsService.debugEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "save_into_node_list", "uuid", uuid, "namespace" , namespace.getNamespace(), "list_size", saveAsParentList.size(), "execute_time_taken_ms", diff);
+                analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "save_into_node_list", "uuid", uuid, "namespace" , namespace.getNamespace(), "list_size", saveAsParentList.size(), "execute_time_taken_ms", diff);
                 return null;
             }
 

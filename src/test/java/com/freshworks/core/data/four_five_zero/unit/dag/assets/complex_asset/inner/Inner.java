@@ -15,5 +15,10 @@ public class Inner extends AbstractAsset{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'transform'");
     }
+
+
+    public void setData(Outer outer, Usage usage){
+        
+    }
     
 }

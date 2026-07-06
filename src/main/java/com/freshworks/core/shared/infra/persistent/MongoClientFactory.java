@@ -104,36 +104,36 @@ public class MongoClientFactory {
                         public void connectionPoolCreated(ConnectionPoolCreatedEvent event) {
 
                             ConnectionPoolSettings connectionPoolSettings = event.getSettings();
-                            analyticsService.infoEvent("HAGRID_INFRA_MONGO_MAX_CONNECTION",  "max_connection" ,connectionPoolSettings.getMaxSize());
-                            analyticsService.infoEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION", "min_connection", connectionPoolSettings.getMinSize());
-                            analyticsService.infoEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION",  "max_connection_idle_time", connectionPoolSettings.getMaxConnectionIdleTime(TimeUnit.SECONDS));
-                            analyticsService.infoEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION", "max_connecting_time", connectionPoolSettings.getMaxConnecting());
+                            analyticsService.infoLogEvent("HAGRID_INFRA_MONGO_MAX_CONNECTION",  "max_connection" ,connectionPoolSettings.getMaxSize());
+                            analyticsService.infoLogEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION", "min_connection", connectionPoolSettings.getMinSize());
+                            analyticsService.infoLogEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION",  "max_connection_idle_time", connectionPoolSettings.getMaxConnectionIdleTime(TimeUnit.SECONDS));
+                            analyticsService.infoLogEvent("HAGRID_INFRA_MONGO_MIN_CONNECTION", "max_connecting_time", connectionPoolSettings.getMaxConnecting());
                         }
 
                         @Override
                         public void connectionCheckedOut(ConnectionCheckedOutEvent event) {
                             // Track checked out connections
                             analyticsService.meterCounter("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_out");
-                            analyticsService.debugEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_out");
+                            analyticsService.debugLogEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_out");
                         }
 
                         @Override
                         public void connectionCheckedIn(ConnectionCheckedInEvent event) {
                             // Track checked in connections
                             analyticsService.meterCounter("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_in");
-                            analyticsService.debugEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_in");
+                            analyticsService.debugLogEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "checked_in");
                         }
 
                         @Override
                         public void connectionCreated(ConnectionCreatedEvent event) {
                             analyticsService.meterCounter("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_created");
-                            analyticsService.debugEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_created");
+                            analyticsService.debugLogEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_created");
                         }
 
                         @Override
                         public void connectionClosed(ConnectionClosedEvent event) {
                             analyticsService.meterCounter("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_closed");
-                            analyticsService.debugEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_closed");
+                            analyticsService.debugLogEvent("HAGRID_INFRA_MONGO_CONNECTION_EVENT", "event", "connection_closed");
                         }
 
                         // Implement other methods as needed
