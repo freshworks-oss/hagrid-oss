@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-
-{% block site_meta %}
-{{ super() }}
-<meta property="og:title" content="{{ page.title }}">
-<meta property="og:description" content="{{ page.summary }}">
-<meta property="og:image" content="{{ config.site_url }}/assets/images/Hagrid%20Producer%20Consumer%20Design.png">
-<meta property="og:url" content="{{ config.site_url }}/{{ page.url }}">
-{% endblock %}

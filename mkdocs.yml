@@ -38,7 +38,10 @@ markdown_extensions:
 plugins:
   - search
   - include-markdown
-  - glightbox
+  - panzoom:
+      key: "ctrl" # default alt
+      full_screen: true
+      initial_zoom_level: 1.5 
   - d2
   
 nav:

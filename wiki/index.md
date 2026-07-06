@@ -1,39 +1,53 @@
-```mermaid
-flowchart LR
+```d2
+direction: right
+third_party: third party server
 
- thp["third-party"]
+traverser_module: Travervser Module: \nFetches data from third party{
+      direction: down
 
- subgraph traverser-module ["Traverser Module Logic to fetch data"]
-      direction TB
+      fbUser: fbUser API 
+      fbPost: fbPost API 
+      fbComment: fbComment API 
 
-      N1["fbUser"]
-      N2["fbPost"]
-      N3["fbComment"]
+      fbUser --> fbPost
+      fbPost --> fbComment
+}
 
-      N1 --> N2
-      N2 --> N3
- end
+third_party --> traverser_module
 
- thp --> |traverse third-party|traverser-module
- traverser-module --> pq["processor_queue"]
+processor_module: Processor Module: \nTransformation Layer on fetched data{
+      
+      processor_queue: data from traverser module 
+      processor1: processor number 1
+      processor2: processor number 2 
+      processor3: processor number 3
 
- subgraph processor-module ["Processor Module transform data into desired output"]
+      processor_queue --> processor1
+      processor_queue --> processor2
+      processor_queue --> processor3
+}
 
-      pq --> proc1["processor1"]
-      pq --> proc2["processor2"]
-      pq --> proc3["processor3"]
+traverser_module --> processor_module.processor_queue
 
-      class proc0 disable;
-      classDef disable display:none;
- end
+consumer_module: Consumer Module: \nConsume Transformed Data by Business{
+      
+      publisher_list: data after transformation
+      consumer_service: consume fetched and transformed data
 
- subgraph consumer-layer ["Using Consumer Service consume data by business"]
-      proc1 --> pbl["publisher-list"]
-      proc2 --> pbl["publisher-list"]
-      proc3 --> pbl["publisher-list"]
-      pbl --> cons["consumer service"]
- end
- 
+      publisher_list --> consumer_service
+}
+
+processor_module.processor1 --> consumer_module.publisher_list 
+processor_module.processor2 --> consumer_module.publisher_list 
+processor_module.processor3 --> consumer_module.publisher_list 
+
+
+User: Connector APP {
+      icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+}
+
+consumer_module.consumer_service --> User
+
 ```
 
 # Welcome
@@ -88,17 +102,16 @@ Developers can identify this information easily from the documentation of the we
 
 For `facebook` example, we can assume DAG will look like this. 
 
-```mermaid
-flowchart TD
+```d2
+      fbUser: fbUser API 
+      fbPost: fbPost API 
+      fbComment: fbComment API 
+      fbCommunity: fbCommunity API 
 
-      A["fbUser"]
-      B["fbCommunity"]
-      C["fbPost"]
-      D["fbComment"]
 
-      A --> B
-      A --> C
-      C --> D
+      fbUser --> fbPost
+      fbPost --> fbComment
+      fbUser --> fbCommunity
 
 ```
 
@@ -114,21 +127,24 @@ Another example, say you want to develop a connector to fetch data from `mysql` 
 
 Dag to fetch the `tables and Records` from `mysql` may look like this
 
-```mermaid
-flowchart TD
 
-      A["Databases"]
-      B["Permissions"]
-      C["Tables"]
-      D["Records"]
-      E["Permissions"]
 
-      A --> B
-      A --> C
-      C --> D
-      C --> E
+```d2
+
+      database: database 
+      permission: permission
+      table: table
+      record: record
+      table_permission: table permission 
+
+
+      database --> table
+      database --> permission 
+      table --> record 
+      table --> table_permission
 
 ```
+
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism
 

@@ -33,21 +33,20 @@ So basically, we are going to run Hagrid on our local computer and it will conne
 Architecture would be something like this 
 
 
-``` mermaid
-flowchart BT
-    A[Hagrid] -->|1. fetch-data| C
+``` d2
+    direction: right    
+    docker: docker-container{
+        prometheus: prometheus
+        grafanna: grafanna
+        django-app: django-app
+    }
 
-        subgraph B[Docker-container]
-            C[django-app]
-            D[prometheus] 
-            E[grafanna]
-        end
-    
-    D -->|2. scrap metrics| A
-    E --> |3. visualisation| D
-    E --> |4. localhost:9091| M[Browser]
+    hagrid --> docker.django-app : Fetches data
+    docker.prometheus --> hagrid: scan metrics 
+    docker.grafanna --> docker.prometheus: scan metrics
+    docker.grafanna --> browser : localhost:9091
+
 ```
-
 
 After this you should be able to access following services 
 
