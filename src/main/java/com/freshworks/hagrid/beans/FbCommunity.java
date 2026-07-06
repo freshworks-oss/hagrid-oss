@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Conditional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbCommunity extends AbstractBean {
 
+    String user_id;
     String community_id;
     String community_title;
     String community_description;

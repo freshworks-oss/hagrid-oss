@@ -2,6 +2,8 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -26,12 +28,19 @@ import java.net.URISyntaxException;
 
 
 @Slf4j
+
+// Using FreshHierarchy, you can create complex DAGs like below .. 
+// @FreshHierarchy(parentClass = {FbUser.class, FbCommunity.class}, rateLimit = 800, duration = 1, ignore = false)
+
+// Creating simple DAG
 @FreshHierarchy(parentClass = {FbUser.class, FbCommunity.class}, rateLimit = 800, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
 public class FbPost extends HttpAbstractStep {
 
-    int numberOfPostsEachPage = 100;
+    // Below is the custom logic written to fetch data from our hypothetical fb database 
+    
+    int numberOfPostsEachPage = 5;
     int numberOfPostPagination = 1;
     long waitBetweenPostPaginationInMs = 0;
 
@@ -57,13 +66,13 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "startSync");
         try{
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
@@ -82,7 +91,7 @@ public class FbPost extends HttpAbstractStep {
 
             httpRequestResponse.setRequest(httpRequest);
 
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             count = count + 1;
             return httpRequestResponse;
@@ -102,8 +111,8 @@ public class FbPost extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
 
@@ -134,7 +143,7 @@ public class FbPost extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -145,14 +154,14 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isSyncComplete");
 
         if(count < numberOfPostPagination){
             return false;
@@ -164,8 +173,8 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -173,7 +182,22 @@ public class FbPost extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("posts"));
+            JsonNode postData = jsonNode.get("body").get("data").get("posts");
+
+            String userId = jsonNode.get("body").get("data").get("user_id").asText();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+
+            for(JsonNode d : postData){
+                ObjectNode o = objectMapper.createObjectNode();
+                o.put("user_id", userId);
+                o.put("post_id", d.get("post_id").asText());
+                o.put("post_title", d.get("post_title").asText());
+                o.put("post_text", d.get("post_text").asText());
+
+                arrayNode.add(o);
+            }
+
+            stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
             stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbPost.class);
             return stepDataBeanMapping;
         }
@@ -186,6 +210,6 @@ public class FbPost extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "closeSync");
     }
 }

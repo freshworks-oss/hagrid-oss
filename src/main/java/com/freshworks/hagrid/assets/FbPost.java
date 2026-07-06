@@ -18,12 +18,14 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FbPost extends AbstractAsset {
 
+    String user_id;
     String post_id;
     String post_title;
     String post_text;
 
     public void setBatchFromBean(com.freshworks.hagrid.beans.FbPost post){
-
+        
+        user_id = post.getUser_id();
         post_id = post.getPost_id();
         post_title = post.getPost_title();
         post_text = post.getPost_text();
@@ -31,6 +33,5 @@ public class FbPost extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating post asset");
     }
 }
