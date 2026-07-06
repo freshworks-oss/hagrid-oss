@@ -2,6 +2,8 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -25,15 +27,17 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
+import javax.management.ObjectName;
+
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
 public class FbCommunity extends HttpAbstractStep {
 
-
+    // Below is the custom logic written to fetch data from our hypothetical fb database    
     int numberOfCommunitiesEachPage = 5;
-    int numberOfCommunityPagination = 5;
+    int numberOfCommunityPagination = 1;
     long waitBetweenCommunityPaginationInMs = 0;
 
     int count = 0;
@@ -161,7 +165,21 @@ public class FbCommunity extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
+            JsonNode communityData = jsonNode.get("body").get("data").get("communities");
+            String userId = jsonNode.get("body").get("data").get("user_id").asText();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+
+            for(JsonNode d : communityData){
+                ObjectNode o = objectMapper.createObjectNode();
+                o.put("user_id", userId);
+                o.put("community_id", d.get("community_id").asText());
+                o.put("community_title", d.get("community_title").asText());
+                o.put("community_description", d.get("community_description").asText());
+
+                arrayNode.add(o);
+            }
+            
+            stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
             stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }

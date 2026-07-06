@@ -2,6 +2,8 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -26,13 +28,20 @@ import java.net.URISyntaxException;
 
 
 @Slf4j
+
+// Using FreshHierarchy, you can create complex DAGs like below .. 
+// @FreshHierarchy(parentClass = {FbUser.class, FbCommunity.class}, rateLimit = 800, duration = 1, ignore = false)
+
+// Creating simple DAG
 @FreshHierarchy(parentClass = {FbUser.class, FbCommunity.class}, rateLimit = 800, duration = 1, ignore = false)
 @Component
 @Scope("prototype")
 public class FbPost extends HttpAbstractStep {
 
+    // Below is the custom logic written to fetch data from our hypothetical fb database 
+    
     int numberOfPostsEachPage = 5;
-    int numberOfPostPagination = 5;
+    int numberOfPostPagination = 1;
     long waitBetweenPostPaginationInMs = 0;
 
     int count = 0;
@@ -173,7 +182,22 @@ public class FbPost extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("posts"));
+            JsonNode postData = jsonNode.get("body").get("data").get("posts");
+
+            String userId = jsonNode.get("body").get("data").get("user_id").asText();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+
+            for(JsonNode d : postData){
+                ObjectNode o = objectMapper.createObjectNode();
+                o.put("user_id", userId);
+                o.put("post_id", d.get("post_id").asText());
+                o.put("post_title", d.get("post_title").asText());
+                o.put("post_text", d.get("post_text").asText());
+
+                arrayNode.add(o);
+            }
+
+            stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
             stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbPost.class);
             return stepDataBeanMapping;
         }

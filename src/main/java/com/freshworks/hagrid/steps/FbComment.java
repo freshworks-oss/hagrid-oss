@@ -2,6 +2,8 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -31,8 +33,9 @@ import java.net.URISyntaxException;
 @Scope("prototype")
 public class FbComment extends HttpAbstractStep {
 
-    int numberOfCommentsEachPage = 4;
-    int numberOfCommentPagination = 3;
+    // Below is the custom logic written to fetch data from our hypothetical fb database 
+    int numberOfCommentsEachPage = 5;
+    int numberOfCommentPagination = 1;
     long waitBetweenCommentPaginationInMs = 0;
 
     int count = 0;
@@ -178,7 +181,24 @@ public class FbComment extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("comments"));
+            JsonNode commentsData = jsonNode.get("body").get("data").get("comments");
+
+            String userId = jsonNode.get("body").get("data").get("user_id").asText();
+            String postId = jsonNode.get("body").get("data").get("post_id").asText();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+
+            for(JsonNode d : commentsData){
+                ObjectNode o = objectMapper.createObjectNode();
+                o.put("user_id", userId);
+                o.put("post_id", postId);
+                o.put("comment_id", d.get("comment_id").asText());
+                o.put("comment_title", d.get("comment_title").asText());
+                o.put("comment_text", d.get("comment_text").asText());
+
+                arrayNode.add(o);
+            }
+
+            stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
             stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbComment.class);
             return stepDataBeanMapping;
         }

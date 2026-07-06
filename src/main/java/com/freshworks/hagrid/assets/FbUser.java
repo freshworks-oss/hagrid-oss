@@ -16,20 +16,17 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FbUser extends AbstractAsset {
 
-    String userId;
-    String userName;
+    String user_id;
+    String user_name;
 
-    public void setBatchFromBean(com.freshworks.hagrid.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.beans.FbUser user){
 
-        userId = dummy.getUser_id();
-        userName = dummy.getUser_name();
+        user_id = user.getUser_id();
+        user_name = user.getUser_name();
     }
 
 
     @Override
     public void transform() {
-
-        // Simulating a case to perform join on userId to create non primitive asset FbUserComment.java
-        this.userId = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
     }
 }

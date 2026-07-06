@@ -18,13 +18,16 @@ import org.springframework.context.annotation.Conditional;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FbComment extends AbstractAsset {
 
-    String userId;
+    String user_id;
+    String post_id;
     String comment_id;
     String comment_title;
     String comment_text;
 
     public void setBatchFromBean(com.freshworks.hagrid.beans.FbComment comment){
 
+        user_id = comment.getUser_id();
+        post_id = comment.getPost_id();
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();
         comment_text = comment.getComment_text();
@@ -32,9 +35,6 @@ public class FbComment extends AbstractAsset {
 
     @Override
     public void transform() {
-
-        // Simulating a case to perform join on userId to create non primitive asset FbUserComment.java
-        this.userId = String.valueOf(ThreadLocalRandom.current().nextInt(0, 100));
     }
 
 }

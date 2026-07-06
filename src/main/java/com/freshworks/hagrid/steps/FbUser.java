@@ -29,7 +29,8 @@ import java.util.Objects;
 @Scope("prototype")
 public class FbUser extends HttpAbstractStep {
 
-    int numberOfUsersEachPage = 10;
+    // Below is the custom logic written to fetch data from our hypothetical fb database 
+    int numberOfUsersEachPage = 1;
     int numberOfUserPagination = 1;
     long waitBetweenUserPaginationInMs = 0;
 
