@@ -1,4 +1,7 @@
-<!DOCTYPE html><html lang="en" class="no-js"><head>
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
     
 
       <meta charset="utf-8">
@@ -43,11 +46,15 @@
       
         
         
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/panzoom.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/mkdocs_d2_plugin.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -55,17 +62,8 @@
 
     
     
-  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
-            html.glightbox-open { overflow: initial; height: 100%; }
-            .gslide-title { margin-top: 0px; user-select: text; }
-            .gslide-desc { color: #666; user-select: text; }
-            .gslide-image img { background: white; }
-            .gscrollbar-fixer { padding-right: 15px; }
-            .gdesc-inner { font-size: 0.75rem; }
-            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
-            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
-            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
-        </style></head>
+  <meta name="panzoom-theme" content="material">
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     <body dir="ltr">
@@ -98,7 +96,7 @@
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -126,29 +124,29 @@
       
         <label class="md-header__button md-icon" for="__search">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         </label>
         <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
             
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
           </a>
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
@@ -156,7 +154,7 @@
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -252,7 +250,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../versions/4.5.0/" class="md-tabs__link">
+        <a href="../../versions/4.6.0/" class="md-tabs__link">
           
   
   
@@ -315,7 +313,7 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -334,7 +332,7 @@
     Hagrid By Freshworks
   </label>
   
-  <ul class="md-nav__list" data-md-scrollfix="">
+  <ul class="md-nav__list" data-md-scrollfix>
     
       
       
@@ -427,7 +425,7 @@
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
   <a href="#pre-requisite" class="md-nav__link">
@@ -477,7 +475,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -507,7 +505,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -730,7 +728,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -760,7 +758,35 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../versions/4.6.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.6.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -815,7 +841,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -845,7 +871,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1012,7 +1038,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -1042,7 +1068,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1199,7 +1225,7 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1215,7 +1241,7 @@
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
   <a href="#pre-requisite" class="md-nav__link">
@@ -1267,52 +1293,172 @@
 <h2 id="get-started">Get Started</h2>
 <p>With every released version of Hagrid, we release its <code>initializer</code> i.e fully functional code which would use that version of Hagrid. Main idea was to make it easy for developers to understand the new features added in this release. This idea is taken from <code>spring initializer</code> </p>
 <p>So now, go to Hagrid repository at <a href="https://github.com/freshworks-oss/hagrid-oss">hagrid-repo</a>, switch to branch <code>hagrid/initializer</code> branch</p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/hagrid_branches_display.png" data-desc-position="bottom"><img alt="display_list_of_branches" src="../../assets/images/setup/hagrid_branches_display.png"></a></p>
+<p><img alt="display_list_of_branches" src="../../assets/images/setup/hagrid_branches_display.png" /></p>
 <p>Checkout that branch on your local like below </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/init_branch_checkout.png" data-desc-position="bottom"><img alt="checkout_screenshot" src="../../assets/images/setup/init_branch_checkout.png"></a></p>
+<p><img alt="checkout_screenshot" src="../../assets/images/setup/init_branch_checkout.png" /></p>
 <p>Next, look at the directory <code>docker-setup-for-testing</code>. This directory contains following containers </p>
 <ol>
 <li><code>Django</code> - It acts as third-party server which has dummy APIs to simulate <code>facebook</code> api case</li>
 <li><code>Grafana</code> AND <code>Prometheus</code> - It is used to view metrics that Hagrid generated while fetching data from third-party.</li>
-<li><code>Hagrid</code> - This container checkout branches that are passed via <code>docker-compose.yml</code> and run test cases on that branch.<ol>
-<li>For <code>playgound</code> set up we <strong>DO NOT NEED</strong> this container. Hence <strong>we will scale it down to 0</strong> </li>
-<li>We need this container only during development of <code>Hagrid</code> framework and branch testing. </li>
 </ol>
-</li>
-<li><code>mongodb</code> - Hagrid internally uses two kind of storage to store beans and assets <ol>
-<li><code>persistent</code> - Which means Hagrid should use <code>mongodb</code> as its infra layer to store intermediate data i.e <code>beans</code> . Use <code>persistent</code> when your connector is going to fetch huge amount of data.  </li>
-<li><code>inmemory</code> -  Which means Hagrid should use <code>RAM</code> as its infra layer to store intermediate data i.e <code>beans</code>. Use <code>immemory</code> when your connector fetches very small amount of data.</li>
-<li>For this playground set up we will use <code>persistent</code> i.e <code>mongoDb</code> container to store data</li>
-</ol>
-</li>
-</ol>
-<p>So basically, we are going to run Hagrid on our local computer and it will connect with <code>django</code> , <code>grafana</code> , <code>prometheus</code> and <code>mongodb</code> inside docker. </p>
+<p>So basically, we are going to run Hagrid on our local computer and it will connect with <code>django</code> , <code>grafana</code> , <code>prometheus</code> inside docker. </p>
 <p>Architecture would be something like this </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/docker-setup.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/docker-setup.png"></a></p>
-<p>As you can see Hagrid should be able to connect to <code>mongodb</code> and <code>django</code> service running inside dockers, hence we need to modify <code>/etc/hosts</code> file to reflect below </p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>127.0.0.1   localhost mongodb django
-</span></code></pre></div>
-<p>Once this is done, then launch docker container except <code>hagrid</code> container like this </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/docker_launch_command.png" data-desc-position="bottom"><img alt="docker_launch_setup" src="../../assets/images/setup/docker_launch_command.png"></a></p>
+<div class="panzoom-box" data-key="ctrl" id="panzoom0" oncontextmenu="return false;">
+    
+    <nav class="panzoom-nav">
+    <button class="panzoom-info panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+    </svg>
+</button><button class="panzoom-reset panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M125.7 160l50.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L48 224c-17.7 0-32-14.3-32-32L16 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"></path>
+    </svg>
+</button><button class="panzoom-max panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"></path>
+    </svg>
+</button><button class="panzoom-min panzoom-button panzoom-hidden">
+    <svg class="panzoom-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 320c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"></path>
+    </svg>
+</button>
+    </nav>
+    <div class="d2"><svg data-d2-version="0.7.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 1383 505" role="img" aria-label="Diagram"><svg class="d2-6c828a090fae4ad8be64ebb1a7cbbfb4 d2-svg" width="1383" height="505" viewBox="-64 -85 1383 505"><rect x="-64.000000" y="-85.000000" width="1383.000000" height="505.000000" rx="0.000000" fill="#FFFFFF" class=" fill-N7" stroke-width="0" /><style type="text/css">
+.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .text {
+	font-family: "d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-regular";
+}
+@font-face {
+	font-family: d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-regular;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA1gAAoAAAAAFKAAAguFAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgXd/Vo2NtYXAAAAFUAAAAggAAAJ4CiQK4Z2x5ZgAAAdgAAAb/AAAJfFUDEUloZWFkAAAI2AAAADYAAAA2G4Ue32hoZWEAAAkQAAAAJAAAACQKhAXjaG10eAAACTQAAACDAAAAhDcxBnBsb2NhAAAJuAAAAEQAAABEKcQsLG1heHAAAAn8AAAAIAAAACAAOQD2bmFtZQAAChwAAAMjAAAIFAbDVU1wb3N0AAANQAAAAB0AAAAg/9EAMgADAgkBkAAFAAACigJYAAAASwKKAlgAAAFeADIBIwAAAgsFAwMEAwICBGAAAvcAAAADAAAAAAAAAABBREJPAEAAIP//Au7/BgAAA9gBESAAAZ8AAAAAAeYClAAAACAAA3icXMy5bcIAGEDhz0duJ3EcbihYAAlKGMB7sAFCQuzBBMAcLOOOjhF+hEte+RUPiUyCQu6ASimTmppZWKlt7OwjaG1uqba2fVg0cYtrNHGJc5zi2J6eS0wMDI2MpTK5F6/evPvw6Uvh249fpT+Vfx1dPX3uAAAA//8BAAD//xzoGTIAAHicXJV9bBt3/cc/37Pjixu7ztU+n+346e6aOz/FTnw+n1M/XJOc0ySNY9dJ1KZd04fkV/c3SMUCrJSOdaKDVqhAhfofSHTakLY/JjQmlSGEhIqGwtMQ0rStFNAkJDMx/gDLQmMjd+jOjnH463s62d/35/P6vD/vgwFYA8BE7B6YwAoOOAQkgEDQxCjN8ywuCZLEUiaJRwS+hv6g3kVoPmPOZs0T0x9OX7txA516Fru3++kjzzcab65fvap+vfmBmkZvfQAITgOgt7G7YDXuI2lSIFniNPqi+ujjj7G7s3+aVX8PABhktDZ6DbXAB4cBKIYTM1kpw3EsY8H5bFZIu0mC5VmLhU9nJdFiIV3uh8UT3/w2EY/EFgJhZuPIWk3BTcwJN1tir11I2+anaqtEKMeGXZPu6NYZ9Z0j/tg0E7rlKKSio4BBXWujT7AdcEIYYIDheBZnCYHEO1ouQ0jMGPqk242izHzYhE/XMboaOXcxf262UM2XQ0fZsGyjA2ls5+GpAP/Vp5afLpUbp2sbTFjzUwAACJJaG30ftcBvqOht6QIUbrSmtyGksxJlsaBDRy8Xpj5VGi97Y2QqkCjzyzPMEfdhumYrbNfq2wWGyjo9qdXcciPgkgK0ziyltdGjvR46zIzLeVHYgyWJPaGPzlzJX5BipbB5WcFN/kXv0UJoMsjL3KztK9eqny0Ffcs/3s1N+qPlGdVPpZZzJzcAM+r/JWqBB0L7OiBdFpx271Vvog1UiJp6siRvSmf/D2HqGwMnZ9n8SCBU/RUyy5PCCVtxu1rbLj1z2e61Vp4giawriLiFStXgFARAMvZ2x3esKImZLieWIQ3PnJ+eLs9TseFDI36l0UAvlgYqCyetuGxbr8yoZwHABGNaGP0NtWACilDpuUjk+g7jUoFk3caMWYbvzKA7c9PezEmX29l5Zhmu85t/rn2Gow95GaeHT69MuA7bX9kkqPFammfsh0Yn1ldXC1cWY8VCPF4oZmdXhNTKQXrY5zn+viKHJt3moYg/lLSbXUpcXIrhA/KwGMosRomhERcVlIpjiyn0miyKhYIoyurtIsf4zGZnjOSTBps6AHoX2wGXzqbnUYIlOv4k6nUTW0lXjtUT46P5UWzn4SadunBW/TWKKiVuVL0PmgZlAHgde4BxEAAACwSfAQBN097TePiB8T7UeX8deppNbAdshiYhOAXcyfI4WT9h+u2ZF390+htnsB01iOBn6h//+uRz3f9obXgP2wFHhz0hED17v5KM1g9azTg+NOi2TYrYpd17TgKhktnc0cL+gVpAG1qU0JnSvi7x3llXcFN4MZ6THdxS4vh8PZHMKvVEKqug5iybmkhEM3utH1fvd489hqjVZdjV6Geo4CZ2qQfRuGwfw+4u/B21wAEj+3Zhf16QLjdy5Buy3MgXLsnypYJcqcilpaXuHhe267XtgtJYXrl8eWW5AUYWCegT1Oru8X+rMxzK8RTp7M8ivVK6Gl+/mD+XY2YY7KoRRfJhuvQb7PWcP3LrqfrTpaBv9SVk+Z8s0hmsoxYQfQy6SdQB4J2LBqhhm8sRmvGi5qlk9sCc2ZwuqTud//u1NrqJWhAz5stLxvqLGY7jk1hvX7sI3FQQ0xv4XWadjYaV+Pg4LYww07G16tiSP+LNhpPx4PgIq4xFqzbeL3npsZCXoQ7YaTGar4apjNMT81MBcshOS0l+OmLoe7Q2KmNXgOr6ixUlSTDCoeezD5eKc4sHyjdv0jF70DbsStlOzyF7aeD27Rm1NTZhNZfwIeOu41obvYWauh/2eZXoRuf7lbnl+DiXZ3QuzKLtwlmUUd9VSnwcram+xci4Xg8A9gA1Dd+aBKfbrSOVnH1PJtbEcfp1uOm7t1bmBg/i5sFh6/HaopUYNA868GNLX96ctTqs5sHhAwpqqn9hZhhmhkHevicfGmCV0dEyq/4bMEhobfQm9jUY2qOQ6Vql33//Or+1df7c1ta5nKLkcuWy7dX7L7z88gv3X52+cefO9et37twwGFQB0A+xZ40d1z8ZYjYr6QFT/dbnElM++XkFvSMOUsO7P1fA+EZHtDb6qaEdAXB2eBnzdvbckJUMz/Yvxufz+fCx0OBcMTl1Sqj4ki4pqOddsBapb2RWBXlzsnwF/aQ0Hxk7e6Gy+xHvz1D+zBcucYmNi8UnMsrtxnPfOWZkFUxpbXgDPcZ4fU/Q/4NFPwFBFB4jB/KBCUASBTLafCzLXb/DS6ipv9czrF5HTdUHSPsFtgAS9gCGAIg+gp5QyOMJhbCFgNcTDHq8AQBk5OP3ULObaXue1+1iCbtH7YTVYz/sqRceDQ6UTANCAgvs/nnhFKBOrbCta/RP6UtelvV6WNbGjgRYNjDCwn8AAAD//wEAAP//fw7/PAAAAQAAAAILhR8pC51fDzz1AAMD6AAAAADYXaChAAAAAN1mLzb+Ov7bCG8DyAAAAAMAAgAAAAAAAAABAAAD2P7vAAAImP46/joIbwABAAAAAAAAAAAAAAAAAAAAIXicHMwhrsJQGAXhOf/bRMVL0wQEDVAMCQqBQCFIjgPWxCrYTDFoVgFcU4q6pNjJ5IszB1rQg6N6llFjtTQxZaEXjcaU6plHhenY8s53PTEZ/61xjHCUv986YV34lymiYhc3CiVmSuyVmPBhoxU1HYZ8HayhfQEAAP//AQAA///QxSC/AAAAACwALABAAHgArADaAQwBQAFiAc4B8AH8AggCIgI+AnACkgK+AvIDEgNSA3gDmgPUA/oEEgRSBF4EagR2BIwEqAS+AAEAAAAhAIwADABmAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyU3U4bVxSFPwfbbVQ1FxWKyA06l22VjN0IogSuTAmKVYRTj9Mfqao0eMY/Yjwz8gxQqj5Ar/sWfYtc9Tn6EFWvq7O8DTaqFIEQsM6cvfdZZ6+1D7DJv2xQqz8E/mr+YLjGdnPP8AMeNZ8a3uC48bfh+kpMg7jxm+EmXzb6hj/iff0Pwx+zU//Z8EO26keGP+F5fdPwpxuOfww/Yof3C1yDl/xuuMYWheEHbPKT4Q0eYzVrdR7TNtzgM7YNN9kGBkypSJmSMcYxYsqYc+YklIQkzJkyIiHG0aVDSqWvGZGQY/y/XyNCKuZEqjihwpESkhJRMrGKvyor561OHGk1t70OFRMiTpVxRkSGI2dMTkbCmepUVBTs0aJFyVB8CypKAkqmpATkzBnToscRxwyYMKXEcaRKnllIzoiKSyKd7yzCd2ZIQkZprM7JiMXTiV+i7C7HOHoUil2tfLxW4SmO75TtueWK/YpAv26F2fq5SzYRF+pnqq6k2rmUghPt+nM7fCtcsYe7V3/WmXy4R7H+V6p8yrn0j6VUJiYZzm3RIZSDQvcEx4HWXUJ15Hu6DHhDj3cMtO7Qp0+HEwZ0ea3cHn0cX9PjhENldIUXe0dyzAk/4viGrmJ87cT6s1As4RcKc3cpjnPdY0ahnnvmge6a6IZ3V9jPUL7mjlI5Q82Rj3TSL9OcRYzNFYUYztTLpTdK619sjpjpLl7bm30/DRc2e8spviLXDHu3Ljh55RaMPqRqcMszl/oJiIjJOVXEkJwZLSquxPstEeekOA7VvTeakorOdY4/50ouSZiJQZdMdeYU+huZb0LjPlzzvbO3JFa+Z3p2fav7nOLUqxuN3ql7y73QupysKNAyVfMVNw3FNTPvJ5qpVf6hcku9bjnP6JNI9VQ3uP0OPCegzQ677DPROUPtXNgb0dY70eYV++rBGYmiRnJ1YhV2CXjBLru84sVazQ6HHNBj/w4cF1k9Dnh9a2ddp2UVZ3X+FJu2+DqeXa9e3luvz+/gyy80UTcvY1/a+G5fWLUb/58QMfNc3NbqndwTgv8AAAD//wEAAP//B1tMMAB4nGJgZgCD/+cYjBiwAAAAAAD//wEAAP//LwECAwAAAA==");
+}
+.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .text-bold {
+	font-family: "d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-bold";
+}
+@font-face {
+	font-family: d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-bold;
+	src: url("data:application/font-woff;base64,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");
+}
+.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .text-italic {
+	font-family: "d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-italic";
+}
+@font-face {
+	font-family: d2-6c828a090fae4ad8be64ebb1a7cbbfb4-font-italic;
+	src: url("data:application/font-woff;base64,d09GRgABAAAAAA2IAAoAAAAAFUwAARhRAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAAA9AAAAGAAAABgW1SVeGNtYXAAAAFUAAAAggAAAJ4CiQK4Z2x5ZgAAAdgAAAcjAAAKCJwWf65oZWFkAAAI/AAAADYAAAA2G7Ur2mhoZWEAAAk0AAAAJAAAACQLeAjFaG10eAAACVgAAACEAAAAhDWsAvZsb2NhAAAJ3AAAAEQAAABEK4guOG1heHAAAAogAAAAIAAAACAAOQD2bmFtZQAACkAAAAMmAAAIMgntVzNwb3N0AAANaAAAACAAAAAg/8YAMgADAeEBkAAFAAACigJY//EASwKKAlgARAFeADIBIwAAAgsFAwMEAwkCBCAAAHcAAAADAAAAAAAAAABBREJPAAEAIP//Au7/BgAAA9gBESAAAZMAAAAAAeYClAAAACAAA3icXMy5bcIAGEDhz0duJ3EcbihYAAlKGMB7sAFCQuzBBMAcLOOOjhF+hEte+RUPiUyCQu6ASimTmppZWKlt7OwjaG1uqba2fVg0cYtrNHGJc5zi2J6eS0wMDI2MpTK5F6/evPvw6Uvh249fpT+Vfx1dPX3uAAAA//8BAAD//xzoGTIAAHicfJZbbNvm3cb/70uZjGXZlkSJtBRJtEiJtCVKtkhJtGPrZB0sH5SzHDeJnTj5GiT90jVZuhPSLFk2FEGGBhnQm+1mHbYBHYLdpFe76YBiQIUNKXYRbC265GJrvSFZsUwQurWYxYGUEsu52A1BkND/8OPzPK+gD0IA+Cv4TSCgH4bBCW4AlQ4ShKppAkuokiRQlCbRNBW6jhrXf2QpHv107K0vZM4y/51fLP395B385tZ5dG3t6tX2sRsvvnjk8eN2BP3hMQAAAgEA2/Ft6DdrUkFKpQRC+C56abD9l9g/B5/M4tuFT+bafwTAIOkt9G/UBJfxK5YXU8ksVhWGVTWVEDSBJCUlrWmiKPBD2O1i3skvy4vrqpRxWOjsRm6XRVh1ivtCslvxhYopLmE7Vq9867g6Fsy0vdXwRD4+8ZHIRxbWlFzGmA0Dp7fQE9wAt0GA5UVJoARapSg1nVYVxu0awpKSxamkKPAkRTHMIynjIFy5WzWJwaHDMbN9KlRMBSbH+QNC3KXaxoIZ3Hj3pD96dMVonY8srKnZTCT8V5EHBGG9he6iJvh2bEcZC5Gk28WoSlpjSfLDff8n1zZS8iwTo0X/5Ep6es9omuG9NduZtdKl+gTvmWTdpQvFuYrXobjCnV0kvYWlnl222f1veHuchF2s3e7S2xt+np40euLdrann8WFzl1+jJngh3NuPcbtIKkgyT3ch1HQ6lTQ3/GTlXGzp+KRWCNj62r/pHy1G/NNswH/ghzomnONCat320kb5wkE5vl/xqUO5/WGPQ3VzKDwwMuhLcHVAEAVAb+D7wBpaEnLY/ExdfpQprGg9N1CwD+/NeCPO3dbdjuD4Lscp2+k6enu678DiocEBjbIq0UPZ9qrBDOkh1ERN4CDe+f5aZ26NJIWd6iNJYge9O4kVIeQrj2UXhzzi4YnM/ujC8YSYdRB07gx9aVo4wEeZhE8oqIGJP4n+FMsv58+K8kq9+OoLiqFH4sQZFIxGfi/y45XVyZmZjlc4APQhboDH2K9HhxQh0AZGY02Cu1WbtFvGD8rZ1K7s8qzFUvVV42XceJwRJgpTXKj9WyS7RgaXIvH227pu1IQv8V0sgh8ASAhUAUDX9e/pEvzLfM51npe3Z/gMN8BmzkAYc9CCRFHcrdpJ/MXqe1/bu3bBixttP0K/a3/62VcvAwJZb8GXuAFOg2IqqdEGMLerK4GXC+Tl2hWEHARJIStjyzk8+P+3fkD1E06EZyyWZ33xI9SESGf3zupsFwC5g0AvjI0cZREPiXsSfROr4UzaYsnWMhbLvLsqlw02FaYaLaPNhVBCG5PVwpQj4Orls323zR81YaR3hufxGx3HD8Z30Dc7PA//mS/Rx6gJwwb/bZ90wsX0Rtf89/ety4vryr4T8tJ6JHZATSvGxXb2WPlSPd655uculObmixdKcxWjtv65rqInqNnxPNUz8RAWzDSj6B35Zb2ZI4lwPW5aXxFnaezkft6bX/fwO3ku1jU+d/bHCHUDTPxbOLitj9dQE+w9jFhKfMpmwOJfjnncu+3e0DKXQZtrcqa/tCs3074HSP+P3kJXUBOkXrelkqIkiqlkr5ndLoY1o4T8aWLNM8nmxUhmfCo+LS/I8UVfnFaDYiI9mk1OHrQlx0RuLC54Jc6bHY8WwqHAmMsb4wKik5+VY6WwMfOs3kKr+Pyz3E1rRnqoZmL05O6v8kkLmp4fWA4Vdl+2XZkmfPyQd8Bhn7DlYsPeQeSc7nv99Wz7kdMZCFj7NGrYqD2lt9A/0Kbh2ae1t9VPd6P3zjNlVv3zcnnZOKzGDtvmNAdHo3T7Pu0xJINW295FQe1wrgDg99EmBAEMFzIMq6aNgtt3hECIoiSQJEWcE5btCCHL8G77tSUHxsgy5LVfrT44MWQ+9Q9/HW22/8yXeL7Eo0DPnRdZhWooVBXanwOGiN5CH+Cb4DC6srzYE+o9R6EZgA1lPhxZOJlSKqHxhRMJqZj0y3Hzaps6nX3hJ6/N7zmdPfrW5UqmdPFGqXikfPFGae4IIPACoGv42zAAoGoqLWhpTSVUyjv4/ZMXrXVt5tXrtjx6qNj4rffyhn/segu9j2/CMMgAdOdbpZNd29CmilQlnX4a2aaKzHnfSCoj+wU0o4RnQ/Zk2ZUczSorucHgoWClrq3PaPuisf0vo19qBX5igLWV6xOLbW4yOL6nePlgWFjdmzuX107lNn72jTkzL4HVW9BAD7AEo5BHF4GE0e7/m4fIijxAAGiaSgm2jwcf9uQ53EObxjsjS7mN2im02faa7+bxEtzFdw0OtDl4J+i+SQcE1uUX8BLLeIIjjGcUkJnVH6BNGAagtk8pU2cJVnB4rC67L2h9pfbKUPEja/80SSWiOLT1oLICyJz7Bpw3+rA9fSqMR/IxI2Gbj/HKfsYjw38BAAD//wEAAP//tgoIeAAAAQAAAAEYUY0UieFfDzz1AAED6AAAAADYXaDMAAAAAN1mLzf+vf7dCB0DyQACAAMAAgAAAAAAAAABAAAD2P7vAAAIQP69/bwIHQPoAML/0QAAAAAAAAAAAAAAIQJ0ACQAyAAAAdkAIwIZACcCGAAfAbMAJQIXACcB4QAlARoAKwITAAECCwAfAO0AHwDu/4QB3AAfAPgALAMfAB8CDQAfAgMAJwIX//YBVgAfAZL//AFFADwCEAA4AsMARgHgACoB4AAaAeAAEADyABcBKwAjAO0AHwAAAEcA7v+EAPIAFwAAAC4ALgBEAHwAtADiARoBVAF8AcQB7gH6AgYCIAJCAoQCrgLcAxYDNANwA54DygQEBDYETgSSBJ4ErAS6BNAE7gUEAAEAAAAhAIwADABmAAcAAQAAAAAAAAAAAAAAAAAEAAN4nJyU204bVxSGPwfbbXq6qFBEbtC+TKVkTKMQJeHKlKCMinDqcXqQqkqDPT6I8czIM5iSJ+h136Jvkas+Rp+i6nW1fy+DHUVBIAT8e/Y6/Gutf21gk//YoFa/C/zdnBuusd382fAdvmgeGd5gv/mZ4ToPG/8YbjBovDXc5EGja/gT3tX/NPwpT+q/Gb7LVv3Q8Oc8rm8a/nLD8a/hr3jCuwWuwTP+MFxji8LwHTb51fAG97CYtTr32DHc4Gu2DTfZBnpMqEiZkDHCMWTCiDNmJJREJMyYMCRhgCOkTUqlrxmxkGP0wa8xERUzYkUcU+FIiUiJKRlbxLfyynmtjEOdZnbXpmJMzIk8TonJcOSMyMlIOFWcioqCF7RoUdIX34KKkoCSCSkBOTNGtOhwyBE9xkwocRwqkmcWkTOk4pxY+Z1Z+M70ScgojdUZGQPxdOKXyDvkCEeHQrarkY/WIjzE8aO8Pbdctt8S6NetMFvPu2QTM1c/U3Ul1c25JjjWrc/b5gfhihe4W/Vnncn1PRrof6XIJ5xp/gNNKhOTDOe2aBNJQZG7j2Nf55BIHfmJkB6v6PCGns5tunRpc0yPkJfy7dDF8R0djjmQRyi8uDuUYo75Bcf3hLLxsRPrz2JiCb9TmLpLcZypjimFeu6ZB6o1UYU3n7DfoXxNHaV8+tojb+k0v0x7FjMyVRRiOFUvl9oorX8DU8RUtfjZXt37bZjb7i23+IJcO+zVuuDkJ7dgdN1Ug/c0c66fgJgBOSey6JMzpUXFhXi/JuaMFMeBuvdKW1LRvvTxeS6kkoSpGIRkijOj0N/YdBMZ9/6a7p29JQP5e6anl1XdJotTr65m9EbdW95F1uVkZQItm2q+oqa+uGam/UQ7tco/km+p1y3nEaHiLnb7Q6/ADs/ZZY+xsvR1M7+886+Et9hTB05JZDWUpn0NjwnYJeApu+zynKfv9XLJxhkft8ZnNX+bA/bpsHdtNQvbDvu8XIv28cx/ie2O6nE8ujw9u/U0H9xAtd9o367eza4m56cxt2hX23FMzNRzcVurNbn7BP8DAAD//wEAAP//cqFRQAAAAAMAAP/1AAD/zgAyAAAAAAAAAAAAAAAAAAAAAAAAAAA=");
+}</style><style type="text/css">.shape {
+  shape-rendering: geometricPrecision;
+  stroke-linejoin: round;
+}
+.connection {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.blend {
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N1{fill:#0A0F25;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N2{fill:#676C7E;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N3{fill:#9499AB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N4{fill:#CFD2DD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N5{fill:#DEE1EB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N6{fill:#EEF1F8;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-N7{fill:#FFFFFF;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B1{fill:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B2{fill:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B3{fill:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B4{fill:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B5{fill:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-B6{fill:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-AA2{fill:#4A6FF3;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-AA4{fill:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-AA5{fill:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-AB4{fill:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .fill-AB5{fill:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N1{stroke:#0A0F25;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N2{stroke:#676C7E;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N3{stroke:#9499AB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N4{stroke:#CFD2DD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N5{stroke:#DEE1EB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N6{stroke:#EEF1F8;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-N7{stroke:#FFFFFF;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B1{stroke:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B2{stroke:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B3{stroke:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B4{stroke:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B5{stroke:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-B6{stroke:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-AA2{stroke:#4A6FF3;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-AA4{stroke:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-AA5{stroke:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-AB4{stroke:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .stroke-AB5{stroke:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N1{background-color:#0A0F25;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N2{background-color:#676C7E;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N3{background-color:#9499AB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N4{background-color:#CFD2DD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N5{background-color:#DEE1EB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N6{background-color:#EEF1F8;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-N7{background-color:#FFFFFF;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B1{background-color:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B2{background-color:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B3{background-color:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B4{background-color:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B5{background-color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-B6{background-color:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-AA2{background-color:#4A6FF3;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-AA4{background-color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-AA5{background-color:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-AB4{background-color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .background-color-AB5{background-color:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N1{color:#0A0F25;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N2{color:#676C7E;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N3{color:#9499AB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N4{color:#CFD2DD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N5{color:#DEE1EB;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N6{color:#EEF1F8;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-N7{color:#FFFFFF;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B1{color:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B2{color:#0D32B2;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B3{color:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B4{color:#E3E9FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B5{color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-B6{color:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-AA2{color:#4A6FF3;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-AA4{color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-AA5{color:#F7F8FE;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-AB4{color:#EDF0FD;}
+		.d2-6c828a090fae4ad8be64ebb1a7cbbfb4 .color-AB5{color:#F7F8FE;}.appendix text.text{fill:#0A0F25}.md{--color-fg-default:#0A0F25;--color-fg-muted:#676C7E;--color-fg-subtle:#9499AB;--color-canvas-default:#FFFFFF;--color-canvas-subtle:#EEF1F8;--color-border-default:#0D32B2;--color-border-muted:#0D32B2;--color-neutral-muted:#EEF1F8;--color-accent-fg:#0D32B2;--color-accent-emphasis:#0D32B2;--color-attention-subtle:#676C7E;--color-danger-fg:red;}.sketch-overlay-B1{fill:url(#streaks-darker-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:lighten}.sketch-overlay-B2{fill:url(#streaks-darker-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:lighten}.sketch-overlay-B3{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-B4{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-B5{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-B6{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-AA2{fill:url(#streaks-dark-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:overlay}.sketch-overlay-AA4{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-AA5{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-AB4{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-AB5{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-N1{fill:url(#streaks-darker-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:lighten}.sketch-overlay-N2{fill:url(#streaks-dark-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:overlay}.sketch-overlay-N3{fill:url(#streaks-normal-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:color-burn}.sketch-overlay-N4{fill:url(#streaks-normal-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:color-burn}.sketch-overlay-N5{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-N6{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.sketch-overlay-N7{fill:url(#streaks-bright-d2-6c828a090fae4ad8be64ebb1a7cbbfb4);mix-blend-mode:darken}.light-code{display: block}.dark-code{display: none}</style><g class="ZG9ja2Vy"><g class="shape"><rect x="37.000000" y="56.000000" width="1181.000000" height="147.000000" stroke="#0D32B2" fill="#E3E9FD" class=" stroke-B1 fill-B4" style="stroke-width:2;" /></g><text x="627.500000" y="43.000000" fill="#0A0F25" class="text fill-N1" style="text-anchor:middle;font-size:28px">docker-container</text></g><g class="aGFncmlk"><g class="shape"><rect x="753.000000" y="253.000000" width="90.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="798.000000" y="291.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">hagrid</text></g><g class="YnJvd3Nlcg=="><g class="shape"><rect x="418.000000" y="253.000000" width="104.000000" height="66.000000" stroke="#0D32B2" fill="#F7F8FE" class=" stroke-B1 fill-B6" style="stroke-width:2;" /></g><text x="470.000000" y="291.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">browser</text></g><g class="ZG9ja2VyLnByb21ldGhldXM="><g class="shape"><rect x="404.000000" y="86.000000" width="131.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="469.500000" y="124.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">prometheus</text></g><g class="ZG9ja2VyLmdyYWZhbm5h"><g class="shape"><rect x="67.000000" y="107.000000" width="109.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="121.500000" y="145.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">grafanna</text></g><g class="ZG9ja2VyLmRqYW5nby1hcHA="><g class="shape"><rect x="1062.000000" y="86.000000" width="126.000000" height="66.000000" stroke="#0D32B2" fill="#EDF0FD" class=" stroke-B1 fill-B5" style="stroke-width:2;" /></g><text x="1125.000000" y="124.500000" fill="#0A0F25" class="text-bold fill-N1" style="text-anchor:middle;font-size:16px">django-app</text></g><g class="KGhhZ3JpZCAtJmd0OyBkb2NrZXIuZGphbmdvLWFwcClbMF0="><marker id="mk-d2-6c828a090fae4ad8be64ebb1a7cbbfb4-3488378134" markerWidth="10.000000" markerHeight="12.000000" refX="7.000000" refY="6.000000" viewBox="0.000000 0.000000 10.000000 12.000000" orient="auto" markerUnits="userSpaceOnUse"> <polygon points="0.000000,0.000000 10.000000,6.000000 0.000000,12.000000" fill="#0D32B2" class="connection fill-B1" stroke-width="2" /> </marker><path d="M 829.981370 251.033945 C 927.723999 145.699997 974.500000 119.000000 1058.500000 119.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-6c828a090fae4ad8be64ebb1a7cbbfb4-3488378134)" mask="url(#d2-6c828a090fae4ad8be64ebb1a7cbbfb4)" /><text x="926.500000" y="153.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">Fetches data</text></g><g class="KGRvY2tlci5wcm9tZXRoZXVzIC0mZ3Q7IGhhZ3JpZClbMF0="><path d="M 537.000000 119.000000 C 622.200012 119.000000 668.695007 145.699997 764.760941 249.563492" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-6c828a090fae4ad8be64ebb1a7cbbfb4-3488378134)" mask="url(#d2-6c828a090fae4ad8be64ebb1a7cbbfb4)" /><text x="670.000000" y="153.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">scan metrics</text></g><g class="ZG9ja2VyLihncmFmYW5uYSAtJmd0OyBwcm9tZXRoZXVzKVswXQ=="><path d="M 177.985087 132.756217 C 267.200012 121.800003 312.799988 119.000000 400.000000 119.000000" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-6c828a090fae4ad8be64ebb1a7cbbfb4-3488378134)" mask="url(#d2-6c828a090fae4ad8be64ebb1a7cbbfb4)" /><text x="290.000000" y="126.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">scan metrics</text></g><g class="KGRvY2tlci5ncmFmYW5uYSAtJmd0OyBicm93c2VyKVswXQ=="><path d="M 177.985087 146.993783 C 267.200012 157.949997 316.403015 179.100006 418.732348 250.217222" stroke="#0D32B2" fill="none" class="connection stroke-B1" style="stroke-width:2;" marker-end="url(#mk-d2-6c828a090fae4ad8be64ebb1a7cbbfb4-3488378134)" mask="url(#d2-6c828a090fae4ad8be64ebb1a7cbbfb4)" /><text x="309.000000" y="181.000000" fill="#676C7E" class="text-italic fill-N2" style="text-anchor:middle;font-size:16px">localhost:9091</text></g><mask id="d2-6c828a090fae4ad8be64ebb1a7cbbfb4" maskUnits="userSpaceOnUse" x="-64" y="-85" width="1383" height="505">
+<rect x="-64" y="-85" width="1383" height="505" fill="white" />
+<rect x="882.000000" y="137.000000" width="89" height="21" fill="black" />
+<rect x="626.000000" y="137.000000" width="88" height="21" fill="black" />
+<rect x="246.000000" y="110.000000" width="88" height="21" fill="black" />
+<rect x="260.000000" y="165.000000" width="98" height="21" fill="black" />
+</mask></svg></svg></div> 
+    <div class="panzoom-info-box panzoom-info-box-bottom panzoom-hidden">
+Hold "Ctrl" to enable pan &amp; zoom
+</div>
+</div>
 <p>After this you should be able to access following services </p>
 <p>Access <code>Grafana</code> on  <code>http://localhost:9091</code> </p>
 <ol>
 <li>Username would be <code>admin</code></li>
 <li>Password would be <code>amit</code> - You can change it from <code>docker-compose.yml</code> that comes along with Hagrid intializer</li>
 </ol>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/grafana_launch.png" data-desc-position="bottom"><img alt="grafana_launch" src="../../assets/images/setup/grafana_launch.png"></a></p>
+<p><img alt="grafana_launch" src="../../assets/images/setup/grafana_launch.png" /></p>
 <p>After login to granfa, you may not be seeing the dashboard <code>performance testing</code> out of the box. </p>
 <p>If so then please import the dashboard from this json <a href="https://github.com/freshworks-oss/hagrid-oss/blob/main/src/main/resources/grafana_dashboard.json">grafana Dashboard json</a></p>
 <p>We have already set <code>prometheus</code> to scan metrics from <code>host.docker.internal:8080</code> in <code>docker-compose.yml</code> </p>
 <p>Once above metric setup is ready then next is to run Hagrid like below </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/start_hagrid.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/start_hagrid.png"></a></p>
+<p><img alt="alt text" src="../../assets/images/setup/start_hagrid.png" /></p>
 <p>Hagrid in progress </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/hagrid_in_progress.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/hagrid_in_progress.png"></a></p>
+<p><img alt="alt text" src="../../assets/images/setup/hagrid_in_progress.png" /></p>
 <p>Hagrid logs </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/Hagrid-logs.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/Hagrid-logs.png"></a></p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/Hagrid-Logs_details.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/Hagrid-Logs_details.png"></a></p>
+<p><img alt="alt text" src="../../assets/images/setup/Hagrid-logs.png" /></p>
+<p><img alt="alt text" src="../../assets/images/setup/Hagrid-Logs_details.png" /></p>
 <p>Checkout grafana metrics </p>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/setup/grafana_metrics.png" data-desc-position="bottom"><img alt="alt text" src="../../assets/images/setup/grafana_metrics.png"></a></p>
+<p><img alt="alt text" src="../../assets/images/setup/grafana_metrics.png" /></p>
 <p><strong>Note</strong>
 If you are still facing any kind of issue, please send your query at <code>user-hagrid@googlegroups.com</code> so that any one from community can answer. </p>
 
@@ -1373,8 +1519,10 @@ If you are still facing any kind of issue, please send your query at <code>user-
       
         <script src="../../assets/javascript/github-issue.js"></script>
       
+        <script src="../../assets/javascripts/panzoom.min.js"></script>
+      
+        <script src="../../assets/javascripts/zoompan.js"></script>
+      
     
-  
-<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
-document$.subscribe(()=>{ lightbox.reload(); });
-</script></body></html>
+  </body>
+</html>

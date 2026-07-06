@@ -1,4 +1,7 @@
-<!DOCTYPE html><html lang="en" class="no-js"><head>
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
     
 
       <meta charset="utf-8">
@@ -39,11 +42,15 @@
       
         
         
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/panzoom.css">
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/mkdocs_d2_plugin.css">
     
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -51,17 +58,8 @@
 
     
     
-  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
-            html.glightbox-open { overflow: initial; height: 100%; }
-            .gslide-title { margin-top: 0px; user-select: text; }
-            .gslide-desc { color: #666; user-select: text; }
-            .gslide-image img { background: white; }
-            .gscrollbar-fixer { padding-right: 15px; }
-            .gdesc-inner { font-size: 0.75rem; }
-            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
-            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
-            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
-        </style></head>
+  <meta name="panzoom-theme" content="material">
+<meta name="panzoom-data" content='{"selectors": [".mermaid", ".d2"], "initial_zoom_level": 1.0}'> </head>
   
   
     <body dir="ltr">
@@ -94,7 +92,7 @@
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -122,29 +120,29 @@
       
         <label class="md-header__button md-icon" for="__search">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         </label>
         <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required="">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
-          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard="" data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
             
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
           </a>
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
@@ -152,7 +150,7 @@
       
     </form>
     <div class="md-search__output">
-      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix="">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
             Initializing search
@@ -246,7 +244,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../versions/4.5.0/" class="md-tabs__link">
+        <a href="../../versions/4.6.0/" class="md-tabs__link">
           
   
   
@@ -309,7 +307,7 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -328,7 +326,7 @@
     Hagrid By Freshworks
   </label>
   
-  <ul class="md-nav__list" data-md-scrollfix="">
+  <ul class="md-nav__list" data-md-scrollfix>
     
       
       
@@ -402,7 +400,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
@@ -432,7 +430,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -655,7 +653,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
         
           
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
@@ -685,7 +683,35 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../versions/4.6.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    4.6.0
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -740,7 +766,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
@@ -770,7 +796,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -937,7 +963,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
         
           
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
@@ -967,7 +993,7 @@
   
 
           </label>
-          <ul class="md-nav__list" data-md-scrollfix="">
+          <ul class="md-nav__list" data-md-scrollfix>
             
               
                 
@@ -1124,7 +1150,7 @@
             
             
               
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -1140,7 +1166,7 @@
       <span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
   <a href="#abstract" class="md-nav__link">
@@ -1654,7 +1680,7 @@ I can simply have a method <code>setFromBean(com.freshworks.Beans.BeanA beanA)</
 <p>I propose following specifications to make this feature work </p>
 <h3 id="product-specification">Product Specification</h3>
 <p>New asset definition will look like below. </p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w"> </span><span class="nd">@FreshJoin</span><span class="p">(</span><span class="err">'</span><span class="n">rightClass</span><span class="err">'</span><span class="o">=</span><span class="w"> </span><span class="n">AssetA</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">rightClassFieldName</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">'</span><span class="n">id</span><span class="err">'</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">leftClass</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AssetB</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">leftClassFieldName</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">'</span><span class="n">user_id</span><span class="err">'</span><span class="p">)</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="w"> </span><span class="nd">@FreshJoin</span><span class="p">(</span><span class="err">&#39;</span><span class="n">rightClass</span><span class="err">&#39;</span><span class="o">=</span><span class="w"> </span><span class="n">AssetA</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">rightClassFieldName</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">id</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">leftClass</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AssetB</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">leftClassFieldName</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">user_id</span><span class="err">&#39;</span><span class="p">)</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">combinedAsset</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractAsset</span><span class="p">{</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
@@ -1698,7 +1724,7 @@ I can simply have a method <code>setFromBean(com.freshworks.Beans.BeanA beanA)</
 </span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>
 </span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">     </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">transform</span><span class="p">(){</span>
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">       </span><span class="k">this</span><span class="p">.</span><span class="na">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"_"</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">"_;</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">       </span><span class="k">this</span><span class="p">.</span><span class="na">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;_&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;_;</span>
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="s">     }</span>
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="s">  }</span>
 </span></code></pre></div>
@@ -1720,7 +1746,7 @@ I can simply have a method <code>setFromBean(com.freshworks.Beans.BeanA beanA)</
 <p>In above use case, I have created two primitive assets <code>AssetA</code> and <code>AssetB</code>. </p>
 <h3 id="non-primitive-asset-usecase">Non Primitive Asset Usecase</h3>
 <p>Non primitive asset usecases are the cases where an asset is created by the combination of two or more other assets</p>
-<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w"> </span><span class="nd">@FreshJoin</span><span class="p">(</span><span class="err">'</span><span class="n">rightClass</span><span class="err">'</span><span class="o">=</span><span class="w"> </span><span class="n">AssetA</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">rightClassFieldName</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">'</span><span class="n">id</span><span class="err">'</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">leftClass</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AssetB</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">'</span><span class="n">leftClassFieldName</span><span class="err">'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">'</span><span class="n">user_id</span><span class="err">'</span><span class="p">)</span>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="w"> </span><span class="nd">@FreshJoin</span><span class="p">(</span><span class="err">&#39;</span><span class="n">rightClass</span><span class="err">&#39;</span><span class="o">=</span><span class="w"> </span><span class="n">AssetA</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">rightClassFieldName</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">id</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">leftClass</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AssetB</span><span class="p">.</span><span class="na">class</span><span class="p">,</span><span class="w"> </span><span class="err">&#39;</span><span class="n">leftClassFieldName</span><span class="err">&#39;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">&#39;</span><span class="n">user_id</span><span class="err">&#39;</span><span class="p">)</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">combinedAsset</span><span class="w"> </span><span class="kd">extends</span><span class="w"> </span><span class="n">AbstractAsset</span><span class="p">{</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">     </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
@@ -1779,11 +1805,36 @@ I can simply have a method <code>setFromBean(com.freshworks.Beans.BeanA beanA)</
 </span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24" href="#__codelineno-4-24"></a><span class="w">            </span><span class="p">}</span>
 </span></code></pre></div>
 <p>Hence the creation of the assets from bean say <code>bean1</code> will follow this protocol </p>
-<pre class="mermaid"><code>  flowchart TD 
+<div class="panzoom-box" data-key="ctrl" id="panzoom0" oncontextmenu="return false;">
+    
+    <nav class="panzoom-nav">
+    <button class="panzoom-info panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M464 256A208 208 0 1 0 48 256a208 208 0 1 0 416 0zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zm169.8-90.7c7.9-22.3 29.1-37.3 52.8-37.3l58.3 0c34.9 0 63.1 28.3 63.1 63.1c0 22.6-12.1 43.5-31.7 54.8L280 264.4c-.2 13-10.9 23.6-24 23.6c-13.3 0-24-10.7-24-24l0-13.5c0-8.6 4.6-16.5 12.1-20.8l44.3-25.4c4.7-2.7 7.6-7.7 7.6-13.1c0-8.4-6.8-15.1-15.1-15.1l-58.3 0c-3.4 0-6.4 2.1-7.5 5.3l-.4 1.2c-4.4 12.5-18.2 19-30.6 14.6s-19-18.2-14.6-30.6l.4-1.2zM224 352a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+    </svg>
+</button><button class="panzoom-reset panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M125.7 160l50.3 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L48 224c-17.7 0-32-14.3-32-32L16 64c0-17.7 14.3-32 32-32s32 14.3 32 32l0 51.2L97.6 97.6c87.5-87.5 229.3-87.5 316.8 0s87.5 229.3 0 316.8s-229.3 87.5-316.8 0c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0c62.5 62.5 163.8 62.5 226.3 0s62.5-163.8 0-226.3s-163.8-62.5-226.3 0L125.7 160z"></path>
+    </svg>
+</button><button class="panzoom-max panzoom-button">
+    <svg class="panzoom-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M32 32C14.3 32 0 46.3 0 64l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L32 32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96z"></path>
+    </svg>
+</button><button class="panzoom-min panzoom-button panzoom-hidden">
+    <svg class="panzoom-icon" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+        <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 64-64 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l96 0c17.7 0 32-14.3 32-32l0-96zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32l64 0 0 64c0 17.7 14.3 32 32 32s32-14.3 32-32l0-96c0-17.7-14.3-32-32-32l-96 0zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32l96 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0 0-64zM320 320c-17.7 0-32 14.3-32 32l0 96c0 17.7 14.3 32 32 32s32-14.3 32-32l0-64 64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0z"></path>
+    </svg>
+</button>
+    </nav>
+    <pre class="mermaid"><code>  flowchart TD 
     B[Bean 1] --&gt; A1[A1]
     B --&gt; A2[A2]
     A1 --&gt; A11[A11]
-    A2 --&gt; A21[A21]</code></pre>
+    A2 --&gt; A21[A21]</code></pre> 
+    <div class="panzoom-info-box panzoom-info-box-bottom panzoom-hidden">
+Hold "Ctrl" to enable pan &amp; zoom
+</div>
+</div>
 <p>In the above diagram, following process is being demonstrated</p>
 <ol>
 <li>Bean <code>bean 1</code> will generate two assets <code>A1</code> and <code>A2</code>. These assets will be <code>appended</code> to the <code>abstractAssetList</code></li>
@@ -1804,17 +1855,17 @@ I can simply have a method <code>setFromBean(com.freshworks.Beans.BeanA beanA)</
 <h3 id="technical-impact">Technical Impact</h3>
 <p>There would be impact on <code>Processor</code> Module of Hagrid. In <code>Processor Module</code> , we have to do following things 
 1. Introduce a new service <code>AssetAssetDependencyService</code> which will contains mapping for dependency of assets to assets. Basically this dependency is like <code>AssetBeanDependencyService</code> . 
-2. Changes in <code>ProcessorTask.java</code> service to create <code>non primitive assets</code> for a given <code>primitive asset</code>.<br>
+2. Changes in <code>ProcessorTask.java</code> service to create <code>non primitive assets</code> for a given <code>primitive asset</code>.<br />
 3. Changes in <code>AbstractJoinService</code> , <code>LeftJoinService</code> and <code>InnerJoinService</code> to create <code>non primitive assets</code> from a given <code>asset</code>. </p>
 <h3 id="performance-impact">Performance Impact</h3>
 <p>I have done the performance testing with this feature and results seems good with no performance impact on the Hagrid. </p>
 <p>Here are the screenshots of the same. </p>
 <h4 id="screenshot-for-rate-of-bean-vs-asset">Screenshot for Rate of Bean vs Asset</h4>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/dsr/18/beans_vs_assets_rate.png" data-desc-position="bottom"><img alt="Rate of Bean vs Asset" src="../../assets/images/dsr/18/beans_vs_assets_rate.png"></a></p>
+<p><img alt="Rate of Bean vs Asset" src="../../assets/images/dsr/18/beans_vs_assets_rate.png" /></p>
 <h4 id="screenshot-for-jvm-deadlock">Screenshot for JVM Deadlock</h4>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/dsr/18/jvm_deadlock.png" data-desc-position="bottom"><img alt="JVM Deadlock" src="../../assets/images/dsr/18/jvm_deadlock.png"></a></p>
+<p><img alt="JVM Deadlock" src="../../assets/images/dsr/18/jvm_deadlock.png" /></p>
 <h4 id="screenshot-for-cpu-usage">Screenshot for CPU Usage</h4>
-<p><a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="../../assets/images/dsr/18/jvm_cpu_usage.png" data-desc-position="bottom"><img alt="JVM CPU Usage" src="../../assets/images/dsr/18/jvm_cpu_usage.png"></a></p>
+<p><img alt="JVM CPU Usage" src="../../assets/images/dsr/18/jvm_cpu_usage.png" /></p>
 <h3 id="documentation-impact">Documentation Impact</h3>
 <p>We need to change at the following areas in documentation </p>
 <h4 id="use-case">Use Case</h4>
@@ -1912,8 +1963,10 @@ We can achieve the same with this alternative however it has many caveats
       
         <script src="../../assets/javascript/github-issue.js"></script>
       
+        <script src="../../assets/javascripts/panzoom.min.js"></script>
+      
+        <script src="../../assets/javascripts/zoompan.js"></script>
+      
     
-  
-<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
-document$.subscribe(()=>{ lightbox.reload(); });
-</script></body></html>
+  </body>
+</html>

@@ -1,5 +1,54 @@
-![Hero Image](./assets/images/Hagrid%20Producer%20Consumer%20Design.png)
+```d2
+direction: right
+third_party: third party server
 
+traverser_module: Travervser Module: \nFetches data from third party{
+      direction: down
+
+      fbUser: fbUser API 
+      fbPost: fbPost API 
+      fbComment: fbComment API 
+
+      fbUser --> fbPost
+      fbPost --> fbComment
+}
+
+third_party --> traverser_module
+
+processor_module: Processor Module: \nTransformation Layer on fetched data{
+      
+      processor_queue: data from traverser module 
+      processor1: processor number 1
+      processor2: processor number 2 
+      processor3: processor number 3
+
+      processor_queue --> processor1
+      processor_queue --> processor2
+      processor_queue --> processor3
+}
+
+traverser_module --> processor_module.processor_queue
+
+consumer_module: Consumer Module: \nConsume Transformed Data by Business{
+      
+      publisher_list: data after transformation
+      consumer_service: consume fetched and transformed data
+
+      publisher_list --> consumer_service
+}
+
+processor_module.processor1 --> consumer_module.publisher_list 
+processor_module.processor2 --> consumer_module.publisher_list 
+processor_module.processor3 --> consumer_module.publisher_list 
+
+
+User: Connector APP {
+      icon: https://icons.terrastruct.com/essentials%2F359-users.svg
+}
+
+consumer_module.consumer_service --> User
+
+```
 
 # Welcome
 
@@ -53,7 +102,18 @@ Developers can identify this information easily from the documentation of the we
 
 For `facebook` example, we can assume DAG will look like this. 
 
-![fb_dag.png](custom_theme/assets/images/fb_dag.png)
+```d2
+      fbUser: fbUser API 
+      fbPost: fbPost API 
+      fbComment: fbComment API 
+      fbCommunity: fbCommunity API 
+
+
+      fbUser --> fbPost
+      fbPost --> fbComment
+      fbUser --> fbCommunity
+
+```
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism 
 
@@ -67,7 +127,23 @@ Another example, say you want to develop a connector to fetch data from `mysql` 
 
 Dag to fetch the `tables and Records` from `mysql` may look like this
 
-![mysql_dag.png](custom_theme/assets/images/mysql_dag.png)
+
+
+```d2
+
+      database: database 
+      permission: permission
+      table: table
+      record: record
+      table_permission: table permission 
+
+
+      database --> table
+      database --> permission 
+      table --> record 
+      table --> table_permission
+
+```
 
 
 As per above `DAG`, we want to develop a connector which should follow this traversing mechanism
