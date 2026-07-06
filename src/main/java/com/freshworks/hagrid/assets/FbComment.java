@@ -11,6 +11,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.context.annotation.Conditional;
 
+/**
+ * FbComment is primitive asset as it is created from FbComment bean
+ */
+
 @NoArgsConstructor
 @Getter
 @Setter

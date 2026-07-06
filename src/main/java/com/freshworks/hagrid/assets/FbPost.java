@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * FbPost is primitive asset as it is created from FbPost bean
+ */
+
 @NoArgsConstructor
 @Getter
 @Setter

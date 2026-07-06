@@ -7,6 +7,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * FbCommunity is primitive asset as it is created from FbCommunity bean
+ */
+
 @NoArgsConstructor
 @Getter
 @Setter

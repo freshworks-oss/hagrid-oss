@@ -28,6 +28,5 @@ public class FbPost extends AbstractBean {
 
     @Override
     public void transform() {
-
     }
 }
