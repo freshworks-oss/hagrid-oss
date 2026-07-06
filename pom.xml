@@ -6,7 +6,7 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>hagrid-pom</artifactId>
-    <version>4.5.0</version>
+    <version>4.6.0</version>
     <packaging>pom</packaging>
     <name>Hagrid External Pom</name>
     <description>Use this POM to include latest hagrid and all its dependencies</description>
@@ -14,7 +14,7 @@
     <parent>
         <groupId>com.freshworks</groupId>
         <artifactId>internal-pom</artifactId>
-        <version>spring-3.3.1-v8</version>
+        <version>spring-4.0.1</version>
     </parent>
 
     <url>https://github.com/freshworks-oss/hagrid-oss/tree/parent-pom</url>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.freshworks</groupId>
             <artifactId>Hagrid</artifactId>
-            <version>4.5.0</version>
+            <version>4.6.0</version>
         </dependency>
     </dependencies>
 
@@ -103,7 +103,7 @@
                     <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.4.0</version>
+                <version>0.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>maven-central</publishingServerId>
