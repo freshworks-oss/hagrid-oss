@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Conditional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbPost extends AbstractBean {
 
+    String user_id;
     String post_id;
     String post_title;
     String post_text;

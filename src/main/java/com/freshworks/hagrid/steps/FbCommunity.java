@@ -2,6 +2,8 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -25,15 +27,17 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
+import javax.management.ObjectName;
+
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
 public class FbCommunity extends HttpAbstractStep {
 
-
-    int numberOfCommunitiesEachPage = 100;
-    int numberOfCommunityPagination = 10;
+    // Below is the custom logic written to fetch data from our hypothetical fb database    
+    int numberOfCommunitiesEachPage = 5;
+    int numberOfCommunityPagination = 1;
     long waitBetweenCommunityPaginationInMs = 0;
 
     int count = 0;
@@ -52,7 +56,7 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
         
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "setup");
         if(baggageMap.containsKey("numberOfCommunitiesEachPage")){
             numberOfCommunitiesEachPage = Integer.parseInt(baggageMap.get("numberOfCommunitiesEachPage"));
             numberOfCommunityPagination = Integer.parseInt(baggageMap.get("numberOfCommunityPagination"));
@@ -62,13 +66,13 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "startSync");
         try{
             JsonNode userData = parentJsonObject[0];
             String userId = userData.get("user_id").asText();
@@ -77,7 +81,7 @@ public class FbCommunity extends HttpAbstractStep {
             httpRequest.initGet("http://django:3000/user_communities?how_many=" + numberOfCommunitiesEachPage + "&user_id=" + userId);
             httpRequestResponse.setRequest(httpRequest);
 
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             count = count + 1;
             return httpRequestResponse;
@@ -97,8 +101,8 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             JsonNode userData = parentJsonObject[0];
             String userId = userData.get("user_id").asText();
@@ -121,7 +125,7 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -132,15 +136,15 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isSyncComplete");
 
         if(count < numberOfCommunityPagination){
             return false;
@@ -152,8 +156,8 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -161,7 +165,21 @@ public class FbCommunity extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
+            JsonNode communityData = jsonNode.get("body").get("data").get("communities");
+            String userId = jsonNode.get("body").get("data").get("user_id").asText();
+            ArrayNode arrayNode = objectMapper.createArrayNode();
+
+            for(JsonNode d : communityData){
+                ObjectNode o = objectMapper.createObjectNode();
+                o.put("user_id", userId);
+                o.put("community_id", d.get("community_id").asText());
+                o.put("community_title", d.get("community_title").asText());
+                o.put("community_description", d.get("community_description").asText());
+
+                arrayNode.add(o);
+            }
+            
+            stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
             stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }
@@ -173,6 +191,6 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "closeSync");
     }
 }

@@ -1,5 +1,7 @@
 package com.freshworks.hagrid.assets;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.processor.AbstractAsset;
@@ -14,18 +16,17 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class FbUser extends AbstractAsset {
 
-    String userId;
-    String userName;
+    String user_id;
+    String user_name;
 
-    public void setBatchFromBean(com.freshworks.hagrid.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.beans.FbUser user){
 
-        userId = dummy.getUser_id();
-        userName = dummy.getUser_name();
+        user_id = user.getUser_id();
+        user_name = user.getUser_name();
     }
 
 
     @Override
     public void transform() {
-//        System.out.println("Creating user asset");
     }
 }

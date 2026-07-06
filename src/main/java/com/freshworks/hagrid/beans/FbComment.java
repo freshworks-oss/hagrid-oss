@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Conditional;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FbComment extends AbstractBean {
 
+    String user_id;
+    String post_id;
     String comment_id;
     String comment_text;
     String comment_title;

@@ -29,7 +29,8 @@ import java.util.Objects;
 @Scope("prototype")
 public class FbUser extends HttpAbstractStep {
 
-    int numberOfUsersEachPage = 100;
+    // Below is the custom logic written to fetch data from our hypothetical fb database 
+    int numberOfUsersEachPage = 1;
     int numberOfUserPagination = 1;
     long waitBetweenUserPaginationInMs = 0;
 
@@ -57,20 +58,20 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "startSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "startSync");
         try{
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
             httpRequest.initGet("http://django:3000/users?how_many=" + numberOfUsersEachPage);
             httpRequestResponse.setRequest(httpRequest);
 
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             count = count + 1;
             return httpRequestResponse;
@@ -90,8 +91,8 @@ public class FbUser extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
@@ -112,7 +113,7 @@ public class FbUser extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -123,15 +124,15 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "handleInvalidResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         DagTraversalService.TraverseAction traverseAction = new DagTraversalService.TraverseAction();
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "isSyncComplete");
 
         if(count < numberOfUserPagination){
             return false;
@@ -143,8 +144,8 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "parseSyncResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -164,6 +165,6 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("METHOD_CALLED", "name", "closeSync");
     }
 }
