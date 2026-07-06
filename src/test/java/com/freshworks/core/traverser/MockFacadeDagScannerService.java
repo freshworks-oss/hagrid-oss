@@ -4,10 +4,11 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestApplication;
 import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestServicePrinciple;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.stereotype.Component;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+import org.mockito.Mockito;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,8 +19,10 @@ import static org.mockito.Mockito.doAnswer;
 @Component
 public class MockFacadeDagScannerService implements MockFacadeInterface {
 
-    @SpyBean
-    DagScannerService dagScannerServiceSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    DagScannerService dagScannerService;
 
     @Autowired
     MockFacadeDagNode mockFacadeDagNode;
@@ -69,6 +72,8 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
     @Override
     public DagScannerService build() throws Exception {
 
+        dagScannerService = applicationContext.getBean(DagScannerService.class);
+        DagScannerService dagScannerServiceSpy = Mockito.spy(dagScannerService);
         doAnswer(scanner.answer()).when(dagScannerServiceSpy).scanner(any(), any());
         doAnswer(getSteps.answer()).when(dagScannerServiceSpy).getSteps(any(), anyString());
         doAnswer(createDAG.answer()).when(dagScannerServiceSpy).createDAG(any(), any(), any());

@@ -52,12 +52,18 @@ public class AssetAssetDependencyService {
             Set<Class<?>> assets = reflections.get(SubTypes.of(AbstractAsset.class)
                     .asClass());
 
-            for (Class<?> asset : assets) {
+            for (Class<?> assetClass : assets) {
 
-                List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(asset), assetPath);
+                FreshJoin freshJoin = assetClass.getAnnotation(FreshJoin.class);
+
+                if(freshJoin == null){
+                    continue;
+                }
+
+                List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(assetClass), assetPath);
                 for (String dependent :
                         dependentClassList) {
-                    connectorConfigItemTable.put(asset.getName(), dependent);
+                    connectorConfigItemTable.put(assetClass.getName(), dependent);
                 }
             }
             ImmutableListMultimap<String, String> s = ImmutableListMultimap.copyOf(connectorConfigItemTable);

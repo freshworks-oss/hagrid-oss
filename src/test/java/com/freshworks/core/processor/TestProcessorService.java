@@ -1,15 +1,26 @@
 package com.freshworks.core.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.data.four_five_zero.unit.fb.beans.FbUser;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.Namespace;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.consumer.MockFacadeConsumerService;
 import com.freshworks.core.shared.executor.SharedExecutorService;
+import com.freshworks.core.shared.infra.InfraConfigService;
+import com.freshworks.core.shared.infra.InfraDbList;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbQueue;
 import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
 import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbQueue;
 import com.freshworks.core.shared.infra.persistent.MongoDbQueue;
 import com.freshworks.core.shared.sync.SyncStatusService;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimap;
 import org.hamcrest.Matchers;
@@ -39,10 +50,24 @@ public class TestProcessorService {
     MockFacadeMongoDbService mockFacadeMongoDbService;
 
     @Autowired
+    MockFacadeNitriteDbService mockFacadeNitriteDbService;
+
+    @Autowired
     MockFacadeMongodbQueue mockFacadeMongodbQueue;
 
     @Autowired
+    MockFacadeNitritedbQueue mockFacadeNitritedbQueue;
+
+    @Autowired
+    MockFacadeNitritedbList mockFacadeNitritedbList;
+
+    MockFacadeConsumerService mockFacadeConsumerService;
+
+    @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
+
+    @Autowired
+    MockFacadeInfraConfigService mockFacadeInfraConfigService;
 
     @Autowired
     MockFacadeProcessorConfigService mockFacadeProcessorConfigService;
@@ -63,8 +88,12 @@ public class TestProcessorService {
 
         mockFacadeProcessorService.configure().build();
         mockFacadeMongoDbService.configure().build();
+        mockFacadeNitriteDbService.configure().build();
         mockFacadeMongodbQueue.configure().build();
+        mockFacadeNitritedbQueue.configure().build();
+        mockFacadeNitritedbList.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
+        mockFacadeInfraConfigService.configure().build();
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeAssetBeanDependencyService.configure().build();
         mockFacadeAssetAssetDependencyService.configure().build();

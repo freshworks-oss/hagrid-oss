@@ -753,7 +753,6 @@ public class DagNode implements AutoCloseable {
             nodeLock.lock();
 
             int numberOfWaitingThreads = nodeLock.getWaitQueueLength(nodeSyncDataChangedCondition);
-            System.out.println("Number of waiting threads are " + numberOfWaitingThreads);
             // As a safe side, wake up all threads
             nodeSyncDataChangedCondition.signalAll();
         }

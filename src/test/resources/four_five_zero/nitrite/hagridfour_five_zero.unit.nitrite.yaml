@@ -34,9 +34,9 @@ configuration:
 
 
     infra:
-      infra_type: "h2"
-      h2_data_path: "/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-4.0.0-alpha/database/unit-test-file"
-      h2_database_type: "tcp"
+      infra_type: "nitrite"
+      nitrite_data_path: "/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database"
+      nitrite_database_type: "file"
       environment: "development"
       persistent:
         development:

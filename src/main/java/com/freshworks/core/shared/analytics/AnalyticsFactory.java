@@ -63,6 +63,11 @@ public class AnalyticsFactory {
     }
 
     public void destroy(String namespace){
+        AnalyticsService analyticsService = singletonHashMap.get(namespace);
+        analyticsService.destroy();
+
+        // Remove analytics service from the factory
         singletonHashMap.remove(namespace);
+
     }
 }

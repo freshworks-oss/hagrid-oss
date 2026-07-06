@@ -5,8 +5,8 @@
     "name": "cej34wrm9upsd4gasd",
     "namespace": "default",
     "uid": "2b2371e6-9118-4464-8770-8ec7641decc9",
-    "resourceVersion": "1780913006694017",
-    "generation": 17,
+    "resourceVersion": "1782458571140004",
+    "generation": 21,
     "creationTimestamp": "2026-05-22T08:47:45Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "2"
@@ -16,7 +16,7 @@
       "grafana.app/folder": "",
       "grafana.app/saved-from-ui": "Grafana v13.0.1+security-01 (9bbe672d)",
       "grafana.app/updatedBy": "user:dfmt6z8brw3cwe",
-      "grafana.app/updatedTimestamp": "2026-06-08T10:03:26Z"
+      "grafana.app/updatedTimestamp": "2026-06-26T07:22:51Z"
     }
   },
   "spec": {
@@ -784,7 +784,7 @@
                       "options": {
                         "mode": "exclude",
                         "names": [
-                          "publisher_list"
+                          "steps.FbComment"
                         ],
                         "prefix": "All except:",
                         "readOnly": true
@@ -1339,180 +1339,6 @@
           }
         }
       },
-      "panel-23": {
-        "kind": "Panel",
-        "spec": {
-          "id": 23,
-          "title": "Mongodb Connection Events",
-          "description": "",
-          "links": [],
-          "data": {
-            "kind": "QueryGroup",
-            "spec": {
-              "queries": [
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "efmtdrmilimm8b"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "HAGRID_INFRA_MONGO_CONNECTION_EVENT_total{event=\"checked_in\"}",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "legendFormat": "checked-in",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Connection Checked In",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "efmtdrmilimm8b"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "HAGRID_INFRA_MONGO_CONNECTION_EVENT_total{event=\"checked_out\"}",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "checked_out",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Connection Checked Out",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "efmtdrmilimm8b"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "HAGRID_INFRA_MONGO_CONNECTION_EVENT_total{event=\"connection_created\"}",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "connection_added",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Connection Created",
-                    "hidden": false
-                  }
-                }
-              ],
-              "transformations": [],
-              "queryOptions": {}
-            }
-          },
-          "vizConfig": {
-            "kind": "VizConfig",
-            "group": "timeseries",
-            "version": "13.0.1+security-01",
-            "spec": {
-              "options": {
-                "annotations": {
-                  "clustering": -1,
-                  "multiLane": false
-                },
-                "legend": {
-                  "calcs": [],
-                  "displayMode": "list",
-                  "placement": "bottom",
-                  "showLegend": true
-                },
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
-                }
-              },
-              "fieldConfig": {
-                "defaults": {
-                  "thresholds": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "value": 0,
-                        "color": "green"
-                      },
-                      {
-                        "value": 80,
-                        "color": "red"
-                      }
-                    ]
-                  },
-                  "color": {
-                    "mode": "palette-classic"
-                  },
-                  "custom": {
-                    "axisBorderShow": false,
-                    "axisCenteredZero": false,
-                    "axisColorMode": "text",
-                    "axisLabel": "",
-                    "axisPlacement": "auto",
-                    "barAlignment": 0,
-                    "barWidthFactor": 0.6,
-                    "drawStyle": "line",
-                    "fillOpacity": 0,
-                    "gradientMode": "none",
-                    "hideFrom": {
-                      "legend": false,
-                      "tooltip": false,
-                      "viz": false
-                    },
-                    "insertNulls": false,
-                    "lineInterpolation": "linear",
-                    "lineWidth": 1,
-                    "pointSize": 5,
-                    "scaleDistribution": {
-                      "type": "linear"
-                    },
-                    "showPoints": "auto",
-                    "showValues": false,
-                    "spanNulls": false,
-                    "stacking": {
-                      "group": "A",
-                      "mode": "none"
-                    },
-                    "thresholdsStyle": {
-                      "mode": "off"
-                    }
-                  }
-                },
-                "overrides": []
-              }
-            }
-          }
-        }
-      },
       "panel-24": {
         "kind": "Panel",
         "spec": {
@@ -1742,7 +1568,7 @@
         "kind": "Panel",
         "spec": {
           "id": 25,
-          "title": "H2 Connection Events",
+          "title": "Infra Collection Size",
           "description": "",
           "links": [],
           "data": {
@@ -1757,176 +1583,17 @@
                       "group": "prometheus",
                       "version": "v0",
                       "datasource": {
-                        "name": "bes2u2n15cxz4f"
+                        "name": "efmtdrmilimm8b"
                       },
                       "spec": {
-                        "disableTextWrap": false,
                         "editorMode": "builder",
-                        "expr": "hikaricp_connections",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "legendFormat": "total_connections",
-                        "range": true,
-                        "useBackend": false
+                        "expr": "infra_collection_size",
+                        "interval": "",
+                        "legendFormat": "{{name}}",
+                        "range": true
                       }
                     },
-                    "refId": "Hikari Total Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_active",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "active_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Active Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_idle",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "idle_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Idle Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_max",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "max_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Max Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_min",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "min_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Minimum Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_pending",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "pending_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Pending Connections",
-                    "hidden": false
-                  }
-                },
-                {
-                  "kind": "PanelQuery",
-                  "spec": {
-                    "query": {
-                      "kind": "DataQuery",
-                      "group": "prometheus",
-                      "version": "v0",
-                      "datasource": {
-                        "name": "bes2u2n15cxz4f"
-                      },
-                      "spec": {
-                        "disableTextWrap": false,
-                        "editorMode": "builder",
-                        "expr": "hikaricp_connections_timeout_total",
-                        "fullMetaSearch": false,
-                        "includeNullMetadata": true,
-                        "instant": false,
-                        "legendFormat": "timeout_connections",
-                        "range": true,
-                        "useBackend": false
-                      }
-                    },
-                    "refId": "Hikari Timeout Connections",
+                    "refId": "A",
                     "hidden": false
                   }
                 }
@@ -2494,19 +2161,6 @@
                       "spec": {
                         "x": 12,
                         "y": 0,
-                        "width": 12,
-                        "height": 8,
-                        "element": {
-                          "kind": "ElementReference",
-                          "name": "panel-23"
-                        }
-                      }
-                    },
-                    {
-                      "kind": "GridLayoutItem",
-                      "spec": {
-                        "x": 0,
-                        "y": 8,
                         "width": 12,
                         "height": 8,
                         "element": {

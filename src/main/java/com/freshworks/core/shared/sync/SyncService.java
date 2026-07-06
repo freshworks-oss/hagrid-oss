@@ -203,8 +203,6 @@ public class SyncService {
         this.processorExecutorService = syncServiceContainer.getBean(ProcessorExecutorService.class);
         this.nodeCycleService = syncServiceContainer.getBean(NodeCycleService.class);
         
-        System.out.println("I am from sync service");
-
         Namespace namespace = syncServiceContainer.getBean(Namespace.class);
         traverserExecutorService.submit(namespace.getNamespace(), this.dagTraversalService);
         traverserExecutorService.submit(namespace.getNamespace(), this.nodeCycleService);
@@ -232,7 +230,7 @@ public class SyncService {
     public void shutdown() throws Exception {
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
-        analyticsService.warnEvent("HAGRID_SYNC_SERVICE", "namespace", namespace, "_message", "this method MUST NOT be called from any of the step methods. For shutting down Sync from steps method, please call interruptSync method of SyncService class");
+        analyticsService.warnLogEvent("HAGRID_SYNC_SERVICE", "namespace", namespace, "_message", "this method MUST NOT be called from any of the step methods. For shutting down Sync from steps method, please call interruptSync method of SyncService class");
 
         // This will interrupt the threads of both processor and traverser
         dagTraversalService.interruptSync();

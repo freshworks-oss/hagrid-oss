@@ -58,7 +58,7 @@ public class DagNodeTraversalService implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        analyticsService.infoEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "DagNodeTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.infoLogEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "DagNodeTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         DagNode dagNode = node;
         try(dagNode){
@@ -79,20 +79,20 @@ public class DagNodeTraversalService implements Callable<Void> {
                 // It is success case
                 if((node.getTotalFailedItems() == 0)  && (node.getTotalItemsSynced() == node.getTotalSuccessfulItems())){
                     node.setNodeSuccessful();
-                    analyticsService.infoEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "returning because node is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "returning because node is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
 
                 // It is failure case
                 else if((node.getTotalFailedItems() > 0) && (node.getTotalItemsSynced() == node.getTotalSuccessfulItems() + node.getTotalFailedItems())){
                     node.setNodeFailed();
-                    analyticsService.warnEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "returning because node is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.warnLogEvent("HAGRID_DAG_NODE", "node", node.getName(), "_message", "returning because node is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
 
                 // It is illegal state case
                 else{
                     String errorMessage = "For node " + node.getName() + " total perNodeItems are not equal to total failed and total successful. " +
                             "total per node items is " + node.getTotalItemsSynced() + " total success items are " + node.getTotalSuccessfulItems() + " total failed items are " + node.getTotalFailedItems();
-                    analyticsService.errorEvent("HAGRID_DAG_NODE", "node" , node.getName(), "_message" , errorMessage);
+                    analyticsService.errorLogEvent("HAGRID_DAG_NODE", "node" , node.getName(), "_message" , errorMessage);
                     throw new IllegalStateException(errorMessage);
 
                 }
@@ -102,7 +102,7 @@ public class DagNodeTraversalService implements Callable<Void> {
         catch (Exception e){
 
             node.setNodeFailed();
-            analyticsService.errorEvent("HAGRID_DAG_NODE", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e),"node", node.getName(), "uuid", uuid, "namespace" , namespace.getNamespace());
+            analyticsService.errorLogEvent("HAGRID_DAG_NODE", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e),"node", node.getName(), "uuid", uuid, "namespace" , namespace.getNamespace());
             dagNodePhaser.arriveAndDeregister();
         }
 

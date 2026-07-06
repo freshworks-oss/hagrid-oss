@@ -1,26 +1,28 @@
 package com.freshworks.core.processor;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
-
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 
-@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
+
+import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.shared.analytics.AnalyticsService;
+
+
 @Component
 public class MockFacadeProcessorService implements MockFacadeInterface {
 
+    @Autowired
+    ApplicationContext applicationContext;
 
     ReturnableMockTypeList<AnalyticsService> analyticsService;
     
-    @SpyBean
-    ProcessorService processorServiceSpy;
+    ProcessorService processorService;
 
     @Override
     public MockFacadeProcessorService configure(){
@@ -31,6 +33,9 @@ public class MockFacadeProcessorService implements MockFacadeInterface {
 
     @Override
     public ProcessorService build() throws Exception {
+
+        processorService = applicationContext.getBean(ProcessorService.class);
+        ProcessorService processorServiceSpy = Mockito.spy(processorService);
 
         doNothing().when(processorServiceSpy).run();
         doNothing().when(processorServiceSpy).configure(anyString(), any(), any(), any(), any(), any(), any(),any());

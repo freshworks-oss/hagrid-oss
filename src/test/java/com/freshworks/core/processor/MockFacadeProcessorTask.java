@@ -2,22 +2,26 @@ package com.freshworks.core.processor;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
-
+import org.mockito.Mockito;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 
-@Profile("!(four_five_zero.performance.inmemory | four_five_zero.performance.persistent)") 
 @Component
 public class MockFacadeProcessorTask implements MockFacadeInterface {
 
-    @SpyBean
-    ProcessorTaskService processorTaskSpy;
+    @Autowired
+    ApplicationContext applicationContext;
+
+    ProcessorTaskService processorTask;
 
     ReturnableMockTypeList<Boolean> isAssetDependsOnThisBean;
     ReturnableMockTypeList<List<String>> getAssetBeanDependencyList;
@@ -53,7 +57,8 @@ public class MockFacadeProcessorTask implements MockFacadeInterface {
 
     @Override
     public Object build() throws Exception {
-
+        processorTask = applicationContext.getBean(ProcessorTaskService.class);
+        ProcessorTaskService processorTaskSpy = Mockito.spy(processorTask);
         doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
         doNothing().when(processorTaskSpy).processBeanForAsset(anyString());
         return processorTaskSpy;

@@ -56,7 +56,7 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "setup");
         if(baggageMap.containsKey("numberOfCommunitiesEachPage")){
             numberOfCommunitiesEachPage = Integer.parseInt(baggageMap.get("numberOfCommunitiesEachPage"));
             numberOfCommunityPagination = Integer.parseInt(baggageMap.get("numberOfCommunityPagination"));
@@ -67,14 +67,14 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "startSync");
-        analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "startSync");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
         try{
 
             JsonNode userData = parentJsonObject[0];
@@ -91,7 +91,7 @@ public class FbCommunity extends HttpAbstractStep {
 
             httpRequestResponse.setRequest(httpRequest);
 
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED");
 
             count = count + 1;
             return httpRequestResponse;
@@ -111,8 +111,8 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");
-            analyticsService.infoEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
+            analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");
+            analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED","api-name", "fbcommunity");
 
             JsonNode userData = parentJsonObject[0];
             String userId = userData.get("user_id").asText();
@@ -135,7 +135,7 @@ public class FbCommunity extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isValidResponse");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
             return true;
         }
@@ -146,14 +146,14 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "handleInvalidResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_INVALID_RESPONSE");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "handleInvalidResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         return null;
     }
 
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "isSyncComplete");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "isSyncComplete");
 
         if(count < numberOfCommunityPagination){
             return false;
@@ -165,8 +165,8 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "parseSyncResponse");
-        analyticsService.infoEvent("THIRD_PARTY_API_RESPONSE");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "parseSyncResponse");
+        analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
             ObjectMapper objectMapper = new ObjectMapper();
 
@@ -187,6 +187,6 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "closeSync");
     }
 }

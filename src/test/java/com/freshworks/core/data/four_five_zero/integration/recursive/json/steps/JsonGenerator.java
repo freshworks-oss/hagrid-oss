@@ -53,13 +53,13 @@ public class JsonGenerator extends NonHttpAbstractStep {
 
     @Override
     public void setupNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "setup");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "setup");
 
     }
 
     @Override
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "shouldProceedWithParentObject");
         return true;
     }
 
@@ -177,6 +177,6 @@ public class JsonGenerator extends NonHttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoEvent("STEP_METHOD_CALLED", "name", "closeSync");
+        analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "closeSync");
     }
 }

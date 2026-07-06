@@ -55,7 +55,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
     @Override
     public Void call() throws Exception {
 
-        analyticsService.infoEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName(), "parentNode" , parentNode.getName(),  "_message", "DagNodePerParentTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
+        analyticsService.infoLogEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName(), "parentNode" , parentNode.getName(),  "_message", "DagNodePerParentTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
 
         try{
             MDC.setContextMap(mainThreadMdcCopy);
@@ -74,20 +74,20 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
                 // It is success case
                 if((node.getRelationshipFailedItemsCount(parentNode) == 0)  && (node.getRelationshipTotalItemsCount(parentNode) == node.getRelationshipSuccessfulItemsCount(parentNode))){
                     node.setRelationshipSuccessful(parentNode);
-                    analyticsService.infoEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName(),  "parent" , parentNode.getName() , "_message", "returning because node is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.infoLogEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName(),  "parent" , parentNode.getName() , "_message", "returning because node is completed", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
 
                 // It is failure case
                 else if((node.getRelationshipFailedItemsCount(parentNode) > 0) && (node.getRelationshipTotalItemsCount(parentNode) == node.getRelationshipSuccessfulItemsCount(parentNode) + node.getRelationshipFailedItemsCount(parentNode))){
                     node.setRelationshipFailed(parentNode);
-                    analyticsService.warnEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName() ,  "parent" , parentNode.getName(), "_message", "returning because node is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.warnLogEvent("HAGRID_DAG_NODE_PER_PARENT", "node", node.getName() ,  "parent" , parentNode.getName(), "_message", "returning because node is completed with errors", "uuid", uuid, "namespace" ,namespace.getNamespace());
                 }
 
                 // It is illegal state case
                 else{
                     String errorMessage = "For node " + node.getName() + " and parent " + parentNode.getName() + " total perNodeItems are not equal to total failed and total successful. " +
                             "total per node items is " + node.getRelationshipTotalItemsCount(parentNode) + " total success items are " + node.getRelationshipSuccessfulItemsCount(parentNode) + " total failed items are " + node.getRelationshipFailedItemsCount(parentNode);
-                    analyticsService.errorEvent("HAGRID_DAG_NODE_PER_PARENT", "node" , node.getName(), "parent" , parentNode.getName() ,"_message" , errorMessage, "uuid", uuid, "namespace" ,namespace.getNamespace());
+                    analyticsService.errorLogEvent("HAGRID_DAG_NODE_PER_PARENT", "node" , node.getName(), "parent" , parentNode.getName() ,"_message" , errorMessage, "uuid", uuid, "namespace" ,namespace.getNamespace());
                     throw new IllegalStateException(errorMessage);
 
                 }
@@ -97,7 +97,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
 
         catch(Exception e){
             node.setRelationshipFailed(parentNode);
-            analyticsService.errorEvent("HAGRID_DAG_NODE_PER_PARENT", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "node", this.node.getName(), "parent" , this.parentNode.getName() , "namespace" ,namespace.getNamespace(), "uuid", uuid, "stacktrace", Throwables.getStackTraceAsString(e));
+            analyticsService.errorLogEvent("HAGRID_DAG_NODE_PER_PARENT", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "node", this.node.getName(), "parent" , this.parentNode.getName() , "namespace" ,namespace.getNamespace(), "uuid", uuid, "stacktrace", Throwables.getStackTraceAsString(e));
             dagNodePerParentPhaser.arriveAndDeregister();
         }
 

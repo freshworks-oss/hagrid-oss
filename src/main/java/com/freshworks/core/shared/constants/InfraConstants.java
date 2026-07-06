@@ -5,9 +5,8 @@ public class InfraConstants {
     public static String INFRA_PATH = "/configuration/core/infra";
 
     public static String INFRA_TYPE = "/infra_type";
-    public static String H2_HOST_ADDRESS = "/h2_host_address";
-    public static String H2_DATA_PATH = "/h2_data_path";
-    public static String H2_DATABASE_TYPE = "/h2_database_type";
+    public static String Nitrite_DATA_PATH = "/nitrite_data_path";
+    public static String Nitrite_DATABASE_TYPE = "/nitrite_database_type";
 
     public static String ENVIRONMENT = "/environment";
 
