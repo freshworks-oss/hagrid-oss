@@ -41,9 +41,9 @@ plugins:
   - panzoom:
       key: "ctrl" # default alt
       full_screen: true
-      initial_zoom_level: 1.5 
   - d2
-  
+  - glightbox
+
 nav:
   - "Home": index.md
 
