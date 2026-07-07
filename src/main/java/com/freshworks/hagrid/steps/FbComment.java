@@ -35,7 +35,7 @@ public class FbComment extends HttpAbstractStep {
 
     // Below is the custom logic written to fetch data from our hypothetical fb database 
     int numberOfCommentsEachPage = 5;
-    int numberOfCommentPagination = 1;
+    int numberOfCommentPagination = 10;
     long waitBetweenCommentPaginationInMs = 0;
 
     int count = 0;

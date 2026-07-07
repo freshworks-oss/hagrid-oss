@@ -36,7 +36,7 @@ import javax.management.ObjectName;
 public class FbCommunity extends HttpAbstractStep {
 
     // Below is the custom logic written to fetch data from our hypothetical fb database    
-    int numberOfCommunitiesEachPage = 5;
+    int numberOfCommunitiesEachPage = 50;
     int numberOfCommunityPagination = 1;
     long waitBetweenCommunityPaginationInMs = 0;
 

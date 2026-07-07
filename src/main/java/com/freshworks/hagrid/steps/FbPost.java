@@ -41,7 +41,7 @@ public class FbPost extends HttpAbstractStep {
     // Below is the custom logic written to fetch data from our hypothetical fb database 
     
     int numberOfPostsEachPage = 5;
-    int numberOfPostPagination = 1;
+    int numberOfPostPagination = 10;
     long waitBetweenPostPaginationInMs = 0;
 
     int count = 0;
