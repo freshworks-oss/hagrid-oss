@@ -55,9 +55,9 @@ consumer_module.consumer_service --> User
 ## Reach out to the community via Google Groups. 
 If you have any question, need clarification or any feature idea, please mail at 
 
-1. `user-hagrid@googlegroups.com` with your topic and get answers, ideas and suggestions from community members
-2. Or just Subscribe to this group by sending an email at `user-hagrid+subscribe@googlegroups.com` for receiving any future communication.
-3. Or to unsubscribe to this group by sending an email at `user-hagrid+unsubscribe@googlegroups.com`
+1. `users-hagrid@googlegroups.com` with your topic and get answers, ideas and suggestions from community members
+2. Or just Subscribe to this group by sending an email at `users-hagrid+subscribe@googlegroups.com` for receiving any future communication.
+3. Or to unsubscribe to this group by sending an email at `users-hagrid+unsubscribe@googlegroups.com`
 
 ## Introduction
 
@@ -340,7 +340,7 @@ With this basic idea of how Hagrid works, here I would like to summarize few thi
 
 With the basic understanding of `Hagrid`, next move to [Set up](setup/playground.md) to set up a playground so that we can do practical with `Hagrid` framework and understand its working better. 
 
-Please reach out to the community for any suggestions and questions at [community-email](mailto:user-hagrid@googlegroups.com)
+Please reach out to the community for any suggestions and questions at [community-email](mailto:users-hagrid@googlegroups.com)
 
 
 

@@ -90,7 +90,7 @@ Checkout grafana metrics
 
 
 **Note**
-If you are still facing any kind of issue, please send your query at `user-hagrid@googlegroups.com` so that any one from community can answer. 
+If you are still facing any kind of issue, please send your query at `users-hagrid@googlegroups.com` so that any one from community can answer. 
 
 
 
