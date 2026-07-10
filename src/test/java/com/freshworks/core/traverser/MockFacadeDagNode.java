@@ -7,8 +7,9 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 import com.freshworks.core.shared.infra.InfraDbList;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbKeyValue;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbKeyValue;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,11 +41,11 @@ public class MockFacadeDagNode implements MockFacadeInterface {
 
     ReturnableMockTypeList<InfraDbList> infraDbList = new ReturnableMockTypeList<>();
     @Autowired
-    MockFacadeMongodbList mockFacadeMongodbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
     ReturnableMockTypeList<InfraDbKeyValue> infraDbKeyValue = new ReturnableMockTypeList<>();
     @Autowired
-    MockFacadeMongodbKeyValue mockFacadeMongodbKeyValue;
+    MockFacadeNitritedbKeyValue mockFacadeNitriteKeyValue;
 
     ReturnableMockTypeList<Boolean> hasMoreData;
 
@@ -70,8 +71,8 @@ public class MockFacadeDagNode implements MockFacadeInterface {
         DagNode parentNodeValue = null;
 
         parentList.add(c);
-        infraDbList.add(mockFacadeMongodbList.configure().build());
-        infraDbKeyValue.add(mockFacadeMongodbKeyValue.configure().build());
+        infraDbList.add(mockFacadeNitritedbList.configure().build());
+        infraDbKeyValue.add(mockFacadeNitriteKeyValue.configure().build());
         hasMoreData.add(false);
         List<String> s = new ArrayList<>();
         s.add("{\"name\":\"amit\"}");

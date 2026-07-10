@@ -63,9 +63,7 @@ public class MockFacadeSyncService implements MockFacadeInterface {
     public SyncService build() throws Exception {
         syncService = applicationContext.getBean(SyncService.class);
         SyncService syncServiceSpy = Mockito.spy(syncService);
-        doAnswer(initSyncServiceContainer.answer()).when(syncServiceSpy).initSyncServiceContainer(anyString(), any(), any());
-        doNothing().when(syncServiceSpy).startSync(any(SyncServiceContainer.class));
-        doAnswer(startSync.answer()).when(syncServiceSpy).startSync(any(), anyString(), any());
+        doAnswer(startSync.answer()).when(syncServiceSpy).startSync(any(), anyString(), any(), any());
         doNothing().when(syncServiceSpy).shutdown();
         return syncServiceSpy;
     }

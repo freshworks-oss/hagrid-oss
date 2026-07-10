@@ -124,16 +124,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         InfraConfigService infraConfigServiceSpy = Mockito.spy(infraConfigService);
 
         doNothing().when(infraConfigServiceSpy).configure(any());
-        doAnswer(getDatabaseUserName.answer()).when(infraConfigServiceSpy).getDatabaseUserName();
-        doAnswer(getDatabasePassword.answer()).when(infraConfigServiceSpy).getDatabasePassword();
-        doAnswer(getDatabaseAuthDb.answer()).when(infraConfigServiceSpy).getDatabaseAuthDb();
-        doAnswer(getDatabaseHost.answer()).when(infraConfigServiceSpy).getDatabaseHost();
-        doAnswer(getAdditionalParams.answer()).when(infraConfigServiceSpy).getAdditionalParams();
-        doAnswer(getDatabasePort.answer()).when(infraConfigServiceSpy).getDatabasePort();
         doAnswer(getInfraType.answer()).when(infraConfigServiceSpy).getInfraDbType();
         doAnswer(getNitriteDataPath.answer()).when(infraConfigServiceSpy).getInfraDbLocation();
         doAnswer(getNitriteDatabaseType.answer()).when(infraConfigServiceSpy).getInfraDbType();
-        doAnswer(getConnectionString.answer()).when(infraConfigServiceSpy).getConnectionString();
 
         return infraConfigServiceSpy;
     }

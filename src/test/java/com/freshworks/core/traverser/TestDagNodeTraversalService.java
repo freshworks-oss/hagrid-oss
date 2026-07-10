@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -21,10 +21,10 @@ public class TestDagNodeTraversalService {
     MockFacadeDagNodeTraversal mockFacadeDagNodeTraversal;
 
     @Autowired
-    MockFacadeMongoDbService mockFacadeMongoDbService;
+    MockFacadeNitriteDbService mockFacadeNitriteDbService;
 
     @Autowired
-    MockFacadeMongodbList mockFacadeMongodbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
     @Autowired
     MockFacadeTraverseConfigService mockFacadeTraverseConfigService;
@@ -42,8 +42,8 @@ public class TestDagNodeTraversalService {
     public void Mock() throws Exception {
 
         mockFacadeDagNodeTraversal.configure().build();
-        mockFacadeMongoDbService.configure().build();
-        mockFacadeMongodbList.configure().build();
+        mockFacadeNitriteDbService.configure().build();
+        mockFacadeNitritedbList.configure().build();
         mockFacadeTraverseConfigService.configure().build();
         dagNodeMockFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();

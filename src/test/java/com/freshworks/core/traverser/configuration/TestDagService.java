@@ -3,6 +3,8 @@ package com.freshworks.core.traverser.configuration;
 import com.freshworks.core.data.five_zero_zero.unit.dag.steps.*;
 import com.freshworks.core.data.five_zero_zero.unit.dag.steps.loop.StepA;
 import com.freshworks.core.traverser.DagNode;
+import com.freshworks.core.traverser.DagScannerService;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ import static org.hamcrest.Matchers.not;
 public class TestDagService {
 
     @Autowired
-    DagService dagInitialisation;
+    DagScannerService dagInitialisation;
 
 
     @Test

@@ -77,9 +77,6 @@ public class TestDagService {
     @Test
     public void testDagIsCreatedSuccessfully() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
         assertThat(this.dagNode, is(notNullValue()));
@@ -88,9 +85,6 @@ public class TestDagService {
 
     @Test
     public void testDagIsCorrectWhenSomeStepsAreDropped() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
@@ -108,9 +102,6 @@ public class TestDagService {
     @Test
     public void testDagIsCorrectWhenSomeStepsAreDroppedInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
-
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
         DagNode nodeToDrop = this.dagNode.find(stepB.getName());
@@ -127,9 +118,6 @@ public class TestDagService {
     @Test
     public void testDagIsCorrectWhenSomeStepsAreStaticallyIgnored() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
-
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
         assertThat(this.dagNode.find(testIgnored.getName()), is(nullValue()));
@@ -139,8 +127,6 @@ public class TestDagService {
     @Test
     public void testDagIsCorrectWithRightHierarchy() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
 
@@ -177,8 +163,6 @@ public class TestDagService {
     @Test
     public void testDagIsCorrectWithRightHierarchyWithRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        String stepPath = "com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop";
-        doReturn(stepPath).when(traverseConfigService).getStepLocation();
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
 

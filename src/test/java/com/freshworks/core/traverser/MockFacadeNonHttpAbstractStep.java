@@ -1,24 +1,19 @@
 package com.freshworks.core.traverser;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+
+import java.net.URISyntaxException;
+
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.traverser.exception.StepFailedException;
 import com.freshworks.core.traverser.net.MockFacadeRequestResponseContainer;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
-import com.google.common.base.Preconditions;
-import org.mockito.Mockito;
-import org.mockito.internal.stubbing.answers.ReturnsElementsOf;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import java.net.URISyntaxException;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @Component
 public class MockFacadeNonHttpAbstractStep implements MockFacadeInterface {

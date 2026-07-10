@@ -75,8 +75,7 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
         dagScannerService = applicationContext.getBean(DagScannerService.class);
         DagScannerService dagScannerServiceSpy = Mockito.spy(dagScannerService);
         doAnswer(scanner.answer()).when(dagScannerServiceSpy).scanner(any(), any());
-        doAnswer(getSteps.answer()).when(dagScannerServiceSpy).getSteps(any(), anyString());
-        doAnswer(createDAG.answer()).when(dagScannerServiceSpy).createDAG(any(), any(), any());
+        doAnswer(createDAG.answer()).when(dagScannerServiceSpy).createDAG(any(), any());
         return dagScannerServiceSpy;
     }
 }

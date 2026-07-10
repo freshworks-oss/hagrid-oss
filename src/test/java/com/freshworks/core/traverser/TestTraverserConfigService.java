@@ -57,20 +57,6 @@ public class TestTraverserConfigService{
 
     }
 
-    @Test
-    public void testCorrectStepLocationPickedUp() throws Exception {
-        TraverseConfigService traverseConfigService = mockTraverseConfigService.build();
-        doCallRealMethod().when(traverseConfigService).getStepLocation();
-        assertThat(traverseConfigService.getStepLocation(), is("com.freshworks.core.data."+ releaseVersion + ".unit.fb.steps"));
-    }
-
-    @Test
-    public void testCorrectBeanLocationPickedUp() throws Exception {
-        TraverseConfigService traverseConfigService = mockTraverseConfigService.build();
-        doCallRealMethod().when(traverseConfigService).getBeanLocation();
-        assertThat(traverseConfigService.getBeanLocation(), is("com.freshworks.core.data." + releaseVersion + ".unit.fb.beans"));
-    }
-
 
     @Test
     public void testTraverseWhenLoadedConfigureRateLimitViaFreshHierarchyAnnotation() throws Exception {

@@ -102,12 +102,6 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
         traverseConfigServiceSpy.configure(syncServiceContainer.next());
         doNothing().when(traverseConfigServiceSpy).configure(any());
         doAnswer(getTraverserThreadCount.answer()).when(traverseConfigServiceSpy).getTraverserThreadCount();
-        doNothing().when(traverseConfigServiceSpy).setTraverserThreadCount(anyInt());
-        doAnswer(getStepLocation.answer()).when(traverseConfigServiceSpy).getStepLocation();
-        doNothing().when(traverseConfigServiceSpy).setStepLocation(anyString());
-        doAnswer(getBeanLocation.answer()).when(traverseConfigServiceSpy).getBeanLocation();
-        doNothing().when(traverseConfigServiceSpy).setBeanLocation(anyString());
-        doNothing().when(traverseConfigServiceSpy).setRateLimitForStep(any(), anyInt(), anyInt());
         doAnswer(getRateLimitForStep.answer()).when(traverseConfigServiceSpy).getRateLimitForStep(any());
 
         return traverseConfigServiceSpy;

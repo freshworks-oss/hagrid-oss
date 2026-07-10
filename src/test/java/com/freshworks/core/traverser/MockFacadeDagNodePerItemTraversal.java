@@ -10,7 +10,7 @@ import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraDbQueue;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbQueue;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.exception.StepFailedException;
 import com.freshworks.core.traverser.net.MockFacadeRequestResponseContainer;
@@ -53,7 +53,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<InfraDbQueue> processorQueue = new ReturnableMockTypeList<>();
     @Autowired
-    private MockFacadeMongodbQueue mockFacadeMongodbQueue;
+    private MockFacadeNitritedbQueue mockFacadeNitritedbQueue;
 
     ReturnableMockTypeList<TraverseConfigService> traverseConfigService = new ReturnableMockTypeList<>();
 
@@ -148,7 +148,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
         parentNodeData.add(objectNode);
 
         waitUntilAllPerItemTraversalIsDonePhaser.add(simpleMockUtility.mockPhaser());
-        processorQueue.add(mockFacadeMongodbQueue.configure().build());
+        processorQueue.add(mockFacadeNitritedbQueue.configure().build());
 
         traverseConfigService.add(simpleMockUtility.mockTraverseConfigService());
 

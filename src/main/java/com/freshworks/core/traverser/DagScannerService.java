@@ -91,16 +91,6 @@ public class DagScannerService {
     }
 
 
-    protected Set<Class<? extends AbstractStep>> getSteps(List<AbstractStep> abstractStepList) throws IOException {
-        Set<Class<? extends AbstractStep>> result = new HashSet<>();
-        
-        for(AbstractStep abstractStep : abstractStepList){
-            result.add(abstractStep.getClass());
-        }
-
-        return result;
-    }
-
     protected Set<Class<? extends DagNode>> getNodes(Reflections reflections, String nodePath) throws IOException {
         Set<Class<? extends DagNode>> result = new HashSet<>();
         Set<Class<?>> set = reflections.get(SubTypes.of(DagNode.class).asClass());
@@ -119,7 +109,11 @@ public class DagScannerService {
         HashMap<String, DagNode> nodeNameWithNodeObjectMap = new HashMap<>();
         DagNode root = new DagNode(ParentStep.class.getName());
 
-        Set<Class<? extends AbstractStep>> steps = getSteps(abstractStepList);
+        Set<Class<? extends AbstractStep>> steps = new HashSet<>();
+        
+        for(AbstractStep abstractStep : abstractStepList){
+            steps.add(abstractStep.getClass());
+        }
 
         // Go through each step
         for(Class<? extends AbstractStep> clazz : steps) {
@@ -256,7 +250,7 @@ public class DagScannerService {
         }
     }
 
-    protected DagNode cloneDag(DagNode rootNode) throws Exception{
+    public DagNode cloneDag(DagNode rootNode) throws Exception{
         return DagNode.cloneDag(rootNode);
     }
 
