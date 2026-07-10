@@ -1,7 +1,7 @@
 package com.freshworks.core.traverser.configuration;
 
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.*;
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.loop.StepA;
+import com.freshworks.core.data.five_zero_zero.unit.dag.steps.*;
+import com.freshworks.core.data.five_zero_zero.unit.dag.steps.loop.StepA;
 import com.freshworks.core.traverser.DagNode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;

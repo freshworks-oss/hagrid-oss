@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.rocksdb.RocksDBModule;
-import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,11 +45,11 @@ public class NitriteFactory {
                         return nitriteDb;
                     }
 
-                    String NitriteType = infraConfigService.getNitriteDatabaseType();
+                    String NitriteType = infraConfigService.getInfraDbType();
                     if(NitriteType.equalsIgnoreCase("file")){
   
                         nitriteDb = Nitrite.builder()
-                        .loadModule(new RocksDBModule(infraConfigService.getNitriteDataPath()))
+                        .loadModule(new RocksDBModule(infraConfigService.getInfraDbLocation()))
                         .openOrCreate();
 
                         return nitriteDb;

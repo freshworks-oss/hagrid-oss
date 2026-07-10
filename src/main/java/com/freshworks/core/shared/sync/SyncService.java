@@ -1,13 +1,18 @@
 package com.freshworks.core.shared.sync;
 
+import java.util.concurrent.Phaser;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.processor.AssetAssetDependencyService;
 import com.freshworks.core.processor.AssetBeanDependencyService;
 import com.freshworks.core.processor.ProcessorConfigService;
 import com.freshworks.core.processor.ProcessorExecutorService;
 import com.freshworks.core.processor.ProcessorService;
-import com.freshworks.core.shared.Annotations.BetaRelease;
-import com.freshworks.core.shared.Annotations.Retire;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -17,18 +22,17 @@ import com.freshworks.core.shared.infra.InfraBeanService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.synchronizers.GlobalNamespaceService;
-import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.configuration.DagService;
+import com.freshworks.core.traverser.AbstractStep;
+import com.freshworks.core.traverser.DagNode;
+import com.freshworks.core.traverser.DagScannerService;
+import com.freshworks.core.traverser.DagTraversalService;
+import com.freshworks.core.traverser.NodeCycleService;
+import com.freshworks.core.traverser.TraverseConfigService;
+import com.freshworks.core.traverser.TraverserExecutorService;
 import com.freshworks.core.traverser.net.http.HttpClientService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
 import com.google.common.collect.ImmutableMap;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
-import java.util.concurrent.Phaser;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Component
@@ -54,15 +58,13 @@ public class SyncService {
 
     InfraService infraService;
 
-    JsonQueryService jsonQueryService;
-
     InfraConfigService infraConfigService;
 
     SyncStatusService syncStatusService;
 
     SyncServiceContainer syncServiceContainer;
 
-    DagService dagService;
+    DagScannerService dagScannerService;
 
     AssetBeanDependencyService assetBeanDependencyService;
 
@@ -76,7 +78,7 @@ public class SyncService {
 
     HttpClientService httpClientService;
 
-    Namespace namespace;
+    NamespaceService namespace;
 
     AnalyticsFactory analyticsFactory;
 
@@ -85,12 +87,24 @@ public class SyncService {
         this.applicationContext = applicationContext;
     }
 
+    public SyncServiceContainer startSync(Class<? extends AbstractStep> stepClass, String infraNameSpace, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception {
 
 
-    // TODO: When I try to set the step location, bean location dynamically ( i.e just before running the startSync), I am not able to do that using this method
-    // TODO: It is because, this method configure root node, everything based on steplocation from hagrid.yml
-    // TODO: After this, even if I change the stepLocation in travserserConfig, it wont have any effect
-    public SyncServiceContainer initSyncServiceContainer(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap) throws Exception{
+        this.syncServiceContainer = initSyncServiceContainer(infraNameSpace, stepClass, baggageMap, connectorConfiguration);
+
+        this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
+        this.processorExecutorService = syncServiceContainer.getBean(ProcessorExecutorService.class);
+        this.nodeCycleService = syncServiceContainer.getBean(NodeCycleService.class);
+        
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
+        traverserExecutorService.submit(namespace.getNamespace(), this.dagTraversalService);
+        traverserExecutorService.submit(namespace.getNamespace(), this.nodeCycleService);
+        processorExecutorService.submit(namespace.getNamespace(), this.processorService);
+
+        return syncServiceContainer;
+    }
+
+    protected SyncServiceContainer initSyncServiceContainer(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
@@ -98,6 +112,8 @@ public class SyncService {
         this.syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
         this.syncServiceContainer.add(this);
 
+        // Add Connector Configuration Object 
+        this.syncServiceContainer.add(connectorConfiguration);
 
         // Add unique Identifier
         this.singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
@@ -105,13 +121,13 @@ public class SyncService {
 
 
         // Init namespace
-        this.namespace = applicationContext.getBean(Namespace.class);
+        this.namespace = applicationContext.getBean(NamespaceService.class);
         this.namespace.setNamespace(infraNameSpace);
-        this.syncServiceContainer.add(this.namespace, Namespace.class);
+        this.syncServiceContainer.add(this.namespace, NamespaceService.class);
 
 
         // Analytics Factory
-        this.analyticsFactory   = applicationContext.getBean(AnalyticsFactory.class);
+        this.analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
         this.syncServiceContainer.add(this.analyticsFactory, AnalyticsFactory.class);
 
 
@@ -126,7 +142,7 @@ public class SyncService {
         this.infraConfigService.configure(syncServiceContainer);
 
         InfraBeanService infraBeanService = syncServiceContainer.getBean(InfraBeanService.class);
-        this.infraService = infraBeanService.getInfraService(infraConfigService);
+        this.infraService = infraBeanService.getInfraService(infraConfigService, connectorConfiguration);
         this.infraService.configure(syncServiceContainer, infraConfigService);
         this.syncServiceContainer.add(this.infraService, InfraService.class);
 
@@ -139,8 +155,8 @@ public class SyncService {
         this.traverseConfigService.configure(syncServiceContainer);
         this.syncServiceContainer.add(this.traverseConfigService, TraverseConfigService.class);
 
-        this.dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = this.dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
+        this.dagScannerService = applicationContext.getBean(DagScannerService.class);
+        DagNode rootNode = this.dagScannerService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
         syncServiceContainer.add(rootNode, DagNode.class);
 
 
@@ -170,6 +186,7 @@ public class SyncService {
         this.syncServiceContainer.add(processorConfigService, ProcessorConfigService.class);
 
         this.assetBeanDependencyService = applicationContext.getBean(AssetBeanDependencyService.class);
+        this.assetBeanDependencyService.configure(syncServiceContainer);
         this.syncServiceContainer.add(assetBeanDependencyService, AssetBeanDependencyService.class);
 
         this.assetAssetDependencyService = applicationContext.getBean(AssetAssetDependencyService.class);
@@ -179,7 +196,6 @@ public class SyncService {
         this.processorService = applicationContext.getBean(ProcessorService.class);
         this.processorService.configure(parentProcessorServicePath, new Phaser(), syncServiceContainer, assetBeanDependencyService, assetAssetDependencyService, infraService, syncStatusService, processorConfigService);
         this.syncServiceContainer.add(this.processorService, ProcessorService.class);
-
 
 
         // Init Consumer Module
@@ -197,28 +213,6 @@ public class SyncService {
         return this.syncServiceContainer;
     }
 
-    public void startSync(SyncServiceContainer syncServiceContainer) throws  Exception{
-
-        this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
-        this.processorExecutorService = syncServiceContainer.getBean(ProcessorExecutorService.class);
-        this.nodeCycleService = syncServiceContainer.getBean(NodeCycleService.class);
-        
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
-        traverserExecutorService.submit(namespace.getNamespace(), this.dagTraversalService);
-        traverserExecutorService.submit(namespace.getNamespace(), this.nodeCycleService);
-        processorExecutorService.submit(namespace.getNamespace(), this.processorService);
-
-    }
-
-    public SyncServiceContainer startSync(Class<? extends AbstractStep> stepClass, String infraNameSpace, ImmutableMap<String, String> baggageMap) throws Exception {
-
-
-        this.syncServiceContainer = initSyncServiceContainer(infraNameSpace, stepClass, baggageMap);
-        startSync(syncServiceContainer);
-        return syncServiceContainer;
-    }
-
-    @BetaRelease(sourceVersion = "4.0.0", useCase = "Abort Sync by interrupting threads", message = "this is in beta and under testing")
     public void interruptSync() throws Exception {
 
         // This will interrupt the threads of both processor and traverser
@@ -226,7 +220,6 @@ public class SyncService {
         processorService.interruptSync();
     }
 
-    @BetaRelease(sourceVersion = "4.0.0", useCase = "shutdown sync gracefully", message = "this is in beta and under testing")
     public void shutdown() throws Exception {
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 

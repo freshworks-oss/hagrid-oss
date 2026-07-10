@@ -1,18 +1,14 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.freshindex.NamespaceService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.dizitart.no2.Nitrite;
-import org.h2.tools.Server;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -53,12 +49,11 @@ public class NitriteService implements InfraService {
 
     }
 
-
     @Override
     public void configure(SyncServiceContainer syncServiceContainer, InfraConfigService infraConfigService) throws Exception {
         this.syncServiceContainer = syncServiceContainer;
         this.infraConfigService = infraConfigService;
-        this.namespace = syncServiceContainer.getBean(Namespace.class).getNamespace();
+        this.namespace = syncServiceContainer.getBean(NamespaceService.class).getNamespace();
         nitriteFactory = syncServiceContainer.getBean(NitriteFactory.class);
         this.nitriteDb = nitriteFactory.getNitriteClient(this.namespace,infraConfigService);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
@@ -81,35 +76,6 @@ public class NitriteService implements InfraService {
 
         return nitriteDbQueue;
     }
-
-    @Override
-    public JsonIndexService getJsonIndexService() throws Exception{
-
-        JsonIndexService jsonIndexService = syncServiceContainer.getBean(JsonIndexService.class);
-        jsonIndexService.configure(this.namespace);
-        return  jsonIndexService;
-    }
-
-    @Override
-    public JsonQueryService getJsonQueryService() throws Exception{
-        JsonQueryService jsonQueryService = syncServiceContainer.getBean(JsonQueryService.class);
-        jsonQueryService.configure(this.namespace);
-        return  jsonQueryService;
-    }
-
-    @Override
-    public NamespaceService getNamespaceService() throws Exception{
-
-        NamespaceService namespaceService = syncServiceContainer.getBean(NamespaceService.class);
-        return namespaceService;
-    }
-
-    @Override
-    public void destroyFreshIndex() throws Exception{
-
-        getNamespaceService().clearnNamespace(this.namespace);
-    }
-
 
     public NitriteDbList getPublisherList() throws Exception{
 
@@ -185,10 +151,6 @@ public class NitriteService implements InfraService {
             persistentQueueSingletonMap.remove(this.namespace);
             persistentListSingletonMap.remove(this.namespace);
             persistentKeyValueSingletonMap.remove(this.namespace);
-
-
-            // We need to clear the freshIndex as well.
-            destroyFreshIndex();
 
             if(Boolean.FALSE.equals(nitriteDb.isClosed())){
                 nitriteDb.close();

@@ -5,8 +5,6 @@ package com.freshworks.core.traverser;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 
 import java.util.HashMap;
@@ -19,9 +17,9 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 
 
 @SpringBootTest
@@ -100,26 +98,19 @@ public class TestTraverserConfigService{
                 .syncServiceContainer(syncServiceContainer)
                 .build();
 
-        doCallRealMethod().when(traverseConfigService).setRateLimitForStep(any(), anyInt(), anyInt());
         doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any());
-        doCallRealMethod().when(traverseConfigService).setStepLocation(anyString());
 
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps");
-        JsonNode stepRateLimitNode = traverseConfigService.getRateLimitForStep(c);
+        StepRateLimitObject stepRateLimitNode = traverseConfigService.getRateLimitForStep(c);
 
-        assertThat(stepRateLimitNode.has("api_count"), is(true));
-        assertThat(stepRateLimitNode.get("api_count").asInt(), is(20));
-        assertThat(stepRateLimitNode.has("seconds"), is(true));
-        assertThat(stepRateLimitNode.get("seconds").asInt(), is(100));
+        assertThat(stepRateLimitNode.getNumberOfApiCalls(), is(20));
+        assertThat(stepRateLimitNode.getDurationInSeconds(), is(100));
 
 
     
         stepRateLimitNode = traverseConfigService.getRateLimitForStep(sc);
 
-        assertThat(stepRateLimitNode.has("api_count"), is(true));
-        assertThat(stepRateLimitNode.get("api_count").asInt(), is(800));
-        assertThat(stepRateLimitNode.has("seconds"), is(true));
-        assertThat(stepRateLimitNode.get("seconds").asInt(), is(1));
+        assertThat(stepRateLimitNode.getNumberOfApiCalls(), is(800));
+        assertThat(stepRateLimitNode.getDurationInSeconds(), is(1));
 
 
     }

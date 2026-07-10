@@ -27,14 +27,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
 import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
-import com.freshworks.core.shared.infra.persistent.MongoDbList;
 import com.google.common.collect.ImmutableMap;
 
 import io.github.bucket4j.Bandwidth;
@@ -91,11 +90,11 @@ public class TestDagNodePerParentTraversalService {
     @Test
     public void testDagNodeTraverserCreatesNewStepObjectWhenStepIsPrototypeForEveryParentObject() throws Exception {
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("random_namespace");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         List<String> data = new ArrayList<>();

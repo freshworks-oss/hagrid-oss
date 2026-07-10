@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.infra.persistent;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -75,15 +75,15 @@ public class TestMongoService {
             String namespace = UUID.randomUUID().toString();
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -108,15 +108,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -141,15 +141,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -177,14 +177,14 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -210,15 +210,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -245,15 +245,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -281,15 +281,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -338,15 +338,15 @@ public class TestMongoService {
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
 
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -364,12 +364,12 @@ public class TestMongoService {
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
             MongoClientFactory mongoClientFactory2 = mockFacadeMongoClientFactory.build();
 
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
 
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             syncServiceContainer.add(mongoClientFactory2, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService2 = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer2)
@@ -395,12 +395,12 @@ public class TestMongoService {
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -417,12 +417,12 @@ public class TestMongoService {
             InfraConfigService infraConfigService2 = mockFacadeInfraConfigService.build();
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
             MongoClientFactory mongoClientFactory2 = mockFacadeMongoClientFactory.build();
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
 
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             syncServiceContainer.add(mongoClientFactory2, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService2 = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer2)
@@ -449,12 +449,12 @@ public class TestMongoService {
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
             MongoClientFactory mongoClientFactory = mockFacadeMongoClientFactory.build();
 
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
 
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             syncServiceContainer.add(mongoClientFactory, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer)
@@ -472,11 +472,11 @@ public class TestMongoService {
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
             MongoClientFactory mongoClientFactory2 = mockFacadeMongoClientFactory.build();
 
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             syncServiceContainer.add(mongoClientFactory2, MongoClientFactory.class);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraService infraService2 = mockFacadeMongoDbService
                     .syncServiceContainer(syncServiceContainer2)

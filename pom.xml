@@ -48,11 +48,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.freshworks</groupId>
-            <artifactId>freshindex</artifactId>
-            <version>1.0.1</version>
-        </dependency>
     </dependencies>
 
     <build>

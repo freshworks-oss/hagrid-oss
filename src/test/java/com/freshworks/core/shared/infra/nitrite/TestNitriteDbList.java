@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -47,11 +47,11 @@ public class TestNitriteDbList {
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -66,11 +66,11 @@ public class TestNitriteDbList {
     public void testAddListMethod() throws Exception{
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb, "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -90,11 +90,11 @@ public class TestNitriteDbList {
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -121,11 +121,11 @@ public class TestNitriteDbList {
     public void testAddAndGetIndexMethod() throws Exception{
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -141,11 +141,11 @@ public class TestNitriteDbList {
     public void testGetByIndexMethod() throws Exception {
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -162,11 +162,11 @@ public class TestNitriteDbList {
     public void testGetByIndexNElementsMethod() throws Exception {
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -190,11 +190,11 @@ public class TestNitriteDbList {
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 
@@ -220,11 +220,11 @@ public class TestNitriteDbList {
     public void testIsEndOfListReachedMethod() throws Exception{
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
 

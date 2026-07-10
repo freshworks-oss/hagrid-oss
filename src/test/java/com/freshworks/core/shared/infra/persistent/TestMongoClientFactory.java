@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.infra.persistent;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.infra.InfraConfigService;
@@ -57,11 +57,11 @@ public class TestMongoClientFactory {
                 .build();
 
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("dummy_namespace");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                         .add(analyticsFactory, AnalyticsFactory.class)
                                 .build();
 

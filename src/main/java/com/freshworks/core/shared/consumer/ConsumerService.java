@@ -6,8 +6,6 @@ import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.freshindex.index.query.Expression;
-import com.freshworks.freshindex.index.query.JsonQueryService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -21,100 +19,87 @@ public class ConsumerService {
 
 
     InfraService infraService;
-
     SyncStatusService syncStatusService;
-
-    JsonQueryService jsonQueryService;
-    public ConsumerService() {
-    }
 
 
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception {
         this.infraService = syncServiceContainer.getBean(InfraService.class);
         this.syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        this.jsonQueryService = infraService.getJsonQueryService();
     }
 
 
-//    public void configure(InfraService infraService, SyncStatusService syncStatusService, JsonQueryService jsonQueryService){
-//        this.infraService = infraService;
-//        this.syncStatusService = syncStatusService;
-//        this.jsonQueryService = jsonQueryService;
-//    }
+    // public <T extends AbstractAsset> List<T> getAssetByAssetType(Class<T> assetClass) throws Exception {
 
+    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
+    //     Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
+    //     return getAbstractAssets(expression, assetClass);
+    // }
 
-    public <T extends AbstractAsset> List<T> getAssetByAssetType(Class<T> assetClass) throws Exception {
+    // public <T extends AbstractAsset> AssetStreamResponse<T> streamAssetByAssetType(Class<T> assetClass, AssetStreamResponse.Token nextToken) throws Exception {
 
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        return getAbstractAssets(expression, assetClass);
-    }
+    //     ObjectMapper objectMapper = new ObjectMapper();
 
-    public <T extends AbstractAsset> AssetStreamResponse<T> streamAssetByAssetType(Class<T> assetClass, AssetStreamResponse.Token nextToken) throws Exception {
+    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
+    //     Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
+    //     List<String> docIdStrList = jsonQueryService.queryAssetByExpression(expression);
+    //     List<String> docIdStrDuplicateList = new ArrayList<>(docIdStrList);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+    //     List<Long> interestedStrList = docIdStrDuplicateList.stream().skip(nextToken.getStart()).limit(nextToken.getCount()).map(Long::parseLong).collect(Collectors.toList());
 
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        List<String> docIdStrList = jsonQueryService.queryAssetByExpression(expression);
-        List<String> docIdStrDuplicateList = new ArrayList<>(docIdStrList);
+    //     List<String> abstractAssetList = infraService.getPublisherList().get(interestedStrList);
 
-        List<Long> interestedStrList = docIdStrDuplicateList.stream().skip(nextToken.getStart()).limit(nextToken.getCount()).map(Long::parseLong).collect(Collectors.toList());
+    //     // Here form the response
+    //     AssetStreamResponse<T> assetStreamResponse = new AssetStreamResponse<T>();
 
-        List<String> abstractAssetList = infraService.getPublisherList().get(interestedStrList);
+    //     List<T> abstractAssetResponseList = abstractAssetList.stream().map(asset -> {
+    //         try {
+    //             return objectMapper.readValue(asset, assetClass);
+    //         } catch (JsonProcessingException e) {
+    //             throw new RuntimeException(e);
+    //         }
+    //     }).collect(Collectors.toList());
 
-        // Here form the response
-        AssetStreamResponse<T> assetStreamResponse = new AssetStreamResponse<T>();
+    //     assetStreamResponse.setAbstractAssetList(abstractAssetResponseList);
 
-        List<T> abstractAssetResponseList = abstractAssetList.stream().map(asset -> {
-            try {
-                return objectMapper.readValue(asset, assetClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
+    //     AssetStreamResponse.Token newNextToken = new AssetStreamResponse.Token();
+    //     newNextToken.setCount(nextToken.getCount());
+    //     newNextToken.setStart(nextToken.getStart() + interestedStrList.size());
+    //     assetStreamResponse.setNextToken(newNextToken);
 
-        assetStreamResponse.setAbstractAssetList(abstractAssetResponseList);
+    //     /**
+    //      *  When hagrid is (completed OR failed) AND (start has reached the last index of the publisher list) then
+    //      *  set the nextToken as null
+    //      */
+    //     if(syncStatusService.getSyncStatus() != 0 && nextToken.getStart() >= docIdStrList.size()){
+    //         assetStreamResponse.setNextToken(null);
+    //     }
 
-        AssetStreamResponse.Token newNextToken = new AssetStreamResponse.Token();
-        newNextToken.setCount(nextToken.getCount());
-        newNextToken.setStart(nextToken.getStart() + interestedStrList.size());
-        assetStreamResponse.setNextToken(newNextToken);
+    //     return assetStreamResponse;
 
-        /**
-         *  When hagrid is (completed OR failed) AND (start has reached the last index of the publisher list) then
-         *  set the nextToken as null
-         */
-        if(syncStatusService.getSyncStatus() != 0 && nextToken.getStart() >= docIdStrList.size()){
-            assetStreamResponse.setNextToken(null);
-        }
+    // }
 
-        return assetStreamResponse;
+    // public <T extends AbstractAsset> List<T> getAssetByAssetTypeAndFilter(Class<T> assetClass, Expression expression) throws Exception {
 
-    }
+    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
+    //     Expression abstractAssetBasedExpression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
+    //     Expression finalExpression = Expression.expressionJoiner().whenLeftExpressionIs(abstractAssetBasedExpression).whenJoinerIsAnd().whenRightExpressionIs(expression).build();
+    //     return getAbstractAssets(finalExpression, assetClass);
+    // }
 
-    public <T extends AbstractAsset> List<T> getAssetByAssetTypeAndFilter(Class<T> assetClass, Expression expression) throws Exception {
+    // private <T extends AbstractAsset> List<T> getAbstractAssets(Expression finalExpression,Class<T> assetClass) throws Exception {
 
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression abstractAssetBasedExpression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        Expression finalExpression = Expression.expressionJoiner().whenLeftExpressionIs(abstractAssetBasedExpression).whenJoinerIsAnd().whenRightExpressionIs(expression).build();
-        return getAbstractAssets(finalExpression, assetClass);
-    }
+    //     ObjectMapper objectMapper = new ObjectMapper();
 
-    private <T extends AbstractAsset> List<T> getAbstractAssets(Expression finalExpression,Class<T> assetClass) throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        List<String> docIdStrList = jsonQueryService.queryAssetByExpression(finalExpression);
-        List<Long> documentIdList =  docIdStrList.stream().map(Long::valueOf).collect(Collectors.toList());
-        List<String> abstractAssetList = infraService.getPublisherList().get(documentIdList);
-        return abstractAssetList.stream().map(asset -> {
-            try {
-                return objectMapper.readValue(asset, assetClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
-    }
+    //     List<String> docIdStrList = jsonQueryService.queryAssetByExpression(finalExpression);
+    //     List<Long> documentIdList =  docIdStrList.stream().map(Long::valueOf).collect(Collectors.toList());
+    //     List<String> abstractAssetList = infraService.getPublisherList().get(documentIdList);
+    //     return abstractAssetList.stream().map(asset -> {
+    //         try {
+    //             return objectMapper.readValue(asset, assetClass);
+    //         } catch (JsonProcessingException e) {
+    //             throw new RuntimeException(e);
+    //         }
+    //     }).collect(Collectors.toList());
+    // }
 
 }

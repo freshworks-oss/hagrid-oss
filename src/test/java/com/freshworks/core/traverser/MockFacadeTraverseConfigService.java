@@ -5,10 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestApplication;
+import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestApplication;
+import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestUser;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.TestUser;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;

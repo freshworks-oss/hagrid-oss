@@ -1,67 +1,71 @@
 package com.freshworks.core.processor;
 
-import com.freshworks.core.shared.Namespace;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Multimap;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import static org.reflections.scanners.Scanners.SubTypes;
 
 @Component
 public class AssetBeanDependencyService {
 
-    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    HashMap<String, ImmutableListMultimap<String, String>> assetBeanDependencyMapByBeanAssetLocation = new HashMap<>();
-    AnalyticsFactory analyticsFactory;
+    @Autowired
+    List<AbstractAsset> assetList;
 
-    public AssetBeanDependencyService(AnalyticsFactory analyticsFactory) {
-        this.analyticsFactory = analyticsFactory;
+    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    ImmutableListMultimap<String, String> assetBeanDependencyMapping;
+    SyncServiceContainer syncServiceContainer;
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
+
+    public void configure(SyncServiceContainer syncServiceContainer) {
+        this.syncServiceContainer = syncServiceContainer;
+        this.analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        NamespaceService namespaceService = syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsService = this.analyticsFactory.getAnalyticsService(namespaceService.getNamespace());
     }
 
     public ImmutableListMultimap<String, String> scanner(String namespace, ProcessorConfigService processorConfigService) throws IOException {
 
         try{
             lock.writeLock().lock();
-            String assetBeanLocation = processorConfigService.getBeanLocation() + "_" + processorConfigService.getAssetLocation();
-            if(assetBeanDependencyMapByBeanAssetLocation.containsKey(assetBeanLocation)){
-                return assetBeanDependencyMapByBeanAssetLocation.get(assetBeanLocation);
+            if(Boolean.FALSE.equals(assetBeanDependencyMapping.isEmpty())){
+                return assetBeanDependencyMapping;
             }
 
             Multimap<String, String> connectorConfigItemTable = ArrayListMultimap.create();
-            String assetPath = processorConfigService.getAssetLocation();
-            String beanPath = processorConfigService.getBeanLocation();
 
-//            Creation of the config item table for the given config item and connector.
-//            As of now we have just Software class
+            Set<Class<?>> assetSet = new HashSet<>();
 
-            Reflections reflections = new Reflections(new ConfigurationBuilder()
-                    .setUrls(ClasspathHelper.forPackage(assetPath)));
+            for(AbstractAsset asset : assetList){
+                assetSet.add(asset.getClass());                
+            }
 
 
-            Set<Class<?>> assets = reflections.get(SubTypes.of(AbstractAsset.class)
-                    .asClass());
-
-            for (Class<?> asset : assets) {
-                List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(asset), beanPath);
+            for (Class<?> asset : assetSet) {
+                List<String> dependentClassList = findDependencyOfAsset(ProcessorUtility.getAllSetters(asset));
                 for (String dependent :
                         dependentClassList) {
                     connectorConfigItemTable.put(asset.getName(), dependent);
                 }
             }
-            ImmutableListMultimap<String, String> s = ImmutableListMultimap.copyOf(connectorConfigItemTable);
-            assetBeanDependencyMapByBeanAssetLocation.put(assetBeanLocation, s);
-            return s;
+            assetBeanDependencyMapping = ImmutableListMultimap.copyOf(connectorConfigItemTable);
+            return assetBeanDependencyMapping;
         }
 
         finally {
@@ -69,7 +73,7 @@ public class AssetBeanDependencyService {
         }
     }
 
-    public List<String> findDependencyOfAsset(List<Method> setterMethodList, String beanPath){
+    public List<String> findDependencyOfAsset(List<Method> setterMethodList){
 
         ArrayList<String> dependents = new ArrayList<>();
 
@@ -88,7 +92,7 @@ public class AssetBeanDependencyService {
             String x = c.getName();
 
             // Here do not add any dependency of the assets which is of primitive type like setName(String s), setNumber(ArrayList x)
-            if(x.contains(beanPath)){
+            if(AbstractBean.class.isAssignableFrom(c)){
                 dependents.add(x);
             }
         }

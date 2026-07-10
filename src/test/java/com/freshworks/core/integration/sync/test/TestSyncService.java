@@ -1,9 +1,9 @@
 package com.freshworks.core.integration.sync.test;
 
-import com.freshworks.core.data.four_five_zero.integration.fb.assets.complex_asset.FbUserComment;
-import com.freshworks.core.data.four_five_zero.integration.fb.assets.FbUser;
-import com.freshworks.core.data.four_five_zero.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
-import com.freshworks.core.data.four_five_zero.integration.recursive.contextual.assets.PublishedAsset;
+import com.freshworks.core.data.five_zero_zero.integration.fb.assets.FbUser;
+import com.freshworks.core.data.five_zero_zero.integration.fb.assets.complex_asset.FbUserComment;
+import com.freshworks.core.data.five_zero_zero.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
+import com.freshworks.core.data.five_zero_zero.integration.recursive.contextual.assets.PublishedAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.sync.SyncService;

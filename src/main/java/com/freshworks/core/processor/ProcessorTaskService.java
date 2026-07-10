@@ -4,13 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.Annotations.FreshAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.processor.joins.AbstractJoinService;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
-import com.freshworks.freshindex.index.JsonIndexService;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableListMultimap;
@@ -47,8 +46,6 @@ public class ProcessorTaskService implements Callable<Void> {
 
     ProcessorExecutorService processorExecutorService;
 
-    JsonIndexService jsonIndexService;
-
     InfraService infraService;
 
     ImmutableListMultimap<String, String> assetBeanDependencyMap;
@@ -67,7 +64,6 @@ public class ProcessorTaskService implements Callable<Void> {
     SyncStatusService syncStatusService;
 
     ObjectMapper objectMapper = new ObjectMapper();
-    ObjectMapper freshIndexObjectMapper;
 
     Map<String, String> mainThreadMdcCopy;
 
@@ -77,7 +73,7 @@ public class ProcessorTaskService implements Callable<Void> {
 
     List<String> itemList;
 
-    Namespace namespace;
+    NamespaceService namespace;
 
     MeterRegistry meterRegistry;
 
@@ -93,9 +89,8 @@ public class ProcessorTaskService implements Callable<Void> {
     public void configure(String parentPath, List<String> s, SyncServiceContainer syncServiceContainer,
             AnalyticsService analyticsService, ImmutableListMultimap<String, String> assetBeanDependencyMap, ImmutableListMultimap<String, String> assetAssetDependencyMap,
             ProcessorConfigService processorConfigService, BloomFilter<String> bloomFilter, InfraService infraService,
-            JsonIndexService jsonIndexService, AbstractJoinService noopJoinService, AbstractJoinService leftJoinService,
-            AbstractJoinService innerJoinService, SyncStatusService syncStatusService,
-            ObjectMapper freshIndexObjectMapper, Phaser phaser,
+            AbstractJoinService noopJoinService, AbstractJoinService leftJoinService,
+            AbstractJoinService innerJoinService, SyncStatusService syncStatusService,Phaser phaser,
             ProcessorService.ProcessTaskTracker processTaskTracker) {
 
         uuid = parentPath + "/" + UUID.randomUUID();
@@ -104,17 +99,15 @@ public class ProcessorTaskService implements Callable<Void> {
         this.processorConfigService = processorConfigService;
         this.bloomFilter = bloomFilter;
         this.infraService = infraService;
-        this.jsonIndexService = jsonIndexService;
         this.noopJoinService = noopJoinService;
         this.leftJoinService = leftJoinService;
         this.innerJoinService = innerJoinService;
         this.syncStatusService = syncStatusService;
-        this.freshIndexObjectMapper = freshIndexObjectMapper;
         this.assetBeanDependencyMap = assetBeanDependencyMap;
         this.assetAssetDependencyMap = assetAssetDependencyMap;
         this.syncServiceContainer = syncServiceContainer;
         this.meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
-        this.namespace = this.syncServiceContainer.getBean(Namespace.class);
+        this.namespace = this.syncServiceContainer.getBean(NamespaceService.class);
         this.serviceTree = this.syncServiceContainer.getBean(ServiceTree.class);
         this.phaser = phaser;
         this.itemList = s;
@@ -155,7 +148,7 @@ public class ProcessorTaskService implements Callable<Void> {
                 }
             }
             // Publish abstract assets of all items received by this process task
-            ProcessorUtility.publishAbstractAsset(uuid, assetsReadyToBePublishedList, infraService, jsonIndexService, namespace, analyticsService, freshIndexObjectMapper, meterRegistry);
+            ProcessorUtility.publishAbstractAsset(uuid, assetsReadyToBePublishedList, infraService, namespace, analyticsService, meterRegistry);
 
             if (Thread.interrupted()) {
 

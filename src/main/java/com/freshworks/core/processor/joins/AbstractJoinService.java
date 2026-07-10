@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.processor.Annotations.FreshJoin;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -33,7 +33,7 @@ public abstract class AbstractJoinService {
     public void configure(SyncServiceContainer syncServiceContainer, BloomFilter<String> bloomFilter){
         this.syncServiceContainer = syncServiceContainer;
         this.analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        Namespace namespaceService = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespaceService = syncServiceContainer.getBean(NamespaceService.class);
         String namespace = namespaceService.getNamespace();
         this.analyticsService = this.analyticsFactory.getAnalyticsService(namespace);
         this.bloomFilter = bloomFilter;

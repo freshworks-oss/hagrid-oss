@@ -1,7 +1,7 @@
 package com.freshworks.core.integration.traverser.test;
 
 import com.freshworks.core.processor.MockFacadeProcessorService;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraBeanService;
@@ -75,7 +75,7 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -143,7 +143,7 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -223,7 +223,7 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 

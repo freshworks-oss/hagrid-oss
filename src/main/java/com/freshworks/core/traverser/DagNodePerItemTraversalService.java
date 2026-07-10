@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.processor.AbstractBean;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -63,7 +63,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
     InfraDbQueue processorQueue;
 
-    Namespace namespace;
+    NamespaceService namespace;
     TraverseConfigService traverseConfigService;
 
     InfraConfigService infraConfigService;
@@ -109,7 +109,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         this.rateLimitBucket = rateLimitBucket;
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
         mainThreadMdcCopy = MDC.getCopyOfContextMap();

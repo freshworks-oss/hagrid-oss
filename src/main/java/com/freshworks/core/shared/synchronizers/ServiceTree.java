@@ -1,6 +1,6 @@
 package com.freshworks.core.shared.synchronizers;
 
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -30,7 +30,7 @@ public class ServiceTree {
 
     public void configure(SyncServiceContainer syncServiceContainer){
         this.syncServiceContainer = syncServiceContainer;
-        Namespace namespaceService = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespaceService = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespaceService.getNamespace());
     }

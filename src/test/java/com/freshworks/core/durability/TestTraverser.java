@@ -2,7 +2,7 @@ package com.freshworks.core.durability;
 
 
 import com.freshworks.core.processor.MockFacadeProcessorService;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -73,7 +73,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -171,7 +171,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -267,7 +267,7 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -364,7 +364,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -465,7 +465,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -564,7 +564,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -664,7 +664,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -764,7 +764,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -865,7 +865,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -966,7 +966,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -1067,7 +1067,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -1168,7 +1168,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -1271,7 +1271,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -1374,7 +1374,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 
@@ -1478,7 +1478,7 @@ public class TestTraverser {
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(namespaceStr);
         syncServiceContainer.add(namespace);
 

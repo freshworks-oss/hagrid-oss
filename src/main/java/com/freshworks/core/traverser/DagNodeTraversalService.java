@@ -2,11 +2,12 @@ package com.freshworks.core.traverser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +39,7 @@ public class DagNodeTraversalService implements Callable<Void> {
     AnalyticsService analyticsService;
     ObjectMapper objectMapper = new ObjectMapper();
     Bucket rateLimitBucket = null;
-    Namespace namespace;
+    NamespaceService namespace;
 
     TraverserExecutorService traverserExecutorService;
     DagNode node;
@@ -127,7 +128,7 @@ public class DagNodeTraversalService implements Callable<Void> {
         this.traverseConfigService = traverseConfigService;
         this.topNodeOfThisSubTree = topNodeOfThisSubTree;
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
@@ -150,10 +151,10 @@ public class DagNodeTraversalService implements Callable<Void> {
         } else {
 
             AbstractStep step = syncServiceContainer.getBean(node.getName());
-            JsonNode jsonNode = this.traverseConfigService.getRateLimitForStep(step.getClass());
+            StepRateLimitObject jsonNode = this.traverseConfigService.getRateLimitForStep(step.getClass());
             List<DagNode> parentNodeList = new ArrayList<>();
-            int rateLimit = jsonNode.get("api_count").asInt();
-            int rateLimitDuration = jsonNode.get("seconds").asInt();
+            int rateLimit = jsonNode.getNumberOfApiCalls();
+            int rateLimitDuration = jsonNode.getDurationInSeconds();
             rateLimitBucket = Bucket.builder().addLimit(Bandwidth.simple(rateLimit, Duration.ofSeconds(rateLimitDuration))).build();
             Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore = new Semaphore(rateLimit);
 

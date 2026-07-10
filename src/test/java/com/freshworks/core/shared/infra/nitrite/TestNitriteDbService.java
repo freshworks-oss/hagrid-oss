@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.*;
 import com.freshworks.freshindex.NamespaceService;
@@ -69,10 +69,10 @@ public class TestNitriteDbService {
         public void testInfraServiceReturnSameProcessorQueueEverytime() throws Exception {
 
             String namespace = UUID.randomUUID().toString();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
@@ -102,9 +102,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -131,9 +131,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
@@ -162,9 +162,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -192,9 +192,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -223,9 +223,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -255,9 +255,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
                     .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here")
@@ -298,9 +298,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
                     .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database/")
@@ -359,9 +359,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -379,9 +379,9 @@ public class TestNitriteDbService {
 
             String namespace2 = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService2 = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService2).configure(any());
@@ -407,9 +407,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -428,9 +428,9 @@ public class TestNitriteDbService {
 
             String namespace2 = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService2 = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService2).configure(any());
@@ -458,9 +458,9 @@ public class TestNitriteDbService {
 
             String namespace = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            Namespace namespaceService = applicationContext.getBean(Namespace.class);
+            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
             InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService).configure(any());
             infraConfigService.configure(syncServiceContainer);
@@ -478,9 +478,9 @@ public class TestNitriteDbService {
 
             String namespace2 = UUID.randomUUID().toString();
             SyncServiceContainer syncServiceContainer2 = mockFacadeSyncServiceContainer.build();
-            namespaceService = applicationContext.getBean(Namespace.class);
+            namespaceService = applicationContext.getBean(NamespaceService.class);
             namespaceService.setNamespace(namespace2);
-            syncServiceContainer.add(namespaceService, Namespace.class);
+            syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService2 = mockFacadeInfraConfigService.build();
             doCallRealMethod().when(infraConfigService2).configure(any());

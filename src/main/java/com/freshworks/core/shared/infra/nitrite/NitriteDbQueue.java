@@ -28,7 +28,7 @@ import org.dizitart.no2.repository.Cursor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -84,7 +84,7 @@ public class NitriteDbQueue implements InfraDbQueue {
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
         MeterRegistry meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
         timer = meterRegistry.timer(queueName + ".execution.time");
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }

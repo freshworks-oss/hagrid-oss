@@ -94,8 +94,8 @@ public class SimpleMockUtility {
         return ImmutableMap.<String, String>builder().put("namespace","namespace").build();
     }
 
-    public Namespace mockNamespace(String namespace){
-        Namespace namespaceObj = Mockito.mock(Namespace.class);
+    public NamespaceService mockNamespace(String namespace){
+        NamespaceService namespaceObj = Mockito.mock(NamespaceService.class);
         when(namespaceObj.getNamespace()).thenReturn(namespace);
         return namespaceObj;
     }

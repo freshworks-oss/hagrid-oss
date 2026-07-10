@@ -2,7 +2,7 @@ package com.freshworks.core.shared.consumer;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.four_five_zero.unit.fb.assets.FbComment;
+import com.freshworks.core.data.five_zero_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
 
 import org.springframework.beans.factory.annotation.Autowired;

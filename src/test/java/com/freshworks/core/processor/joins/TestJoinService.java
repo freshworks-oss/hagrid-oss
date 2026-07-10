@@ -22,7 +22,7 @@ import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.processor.MockFacadeAssetAssetDependencyService;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -34,11 +34,11 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.freshworks.core.TestUtility;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUsageAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUserAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUsageBean;
+import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.FbUsageAsset;
+import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.FbUserAsset;
+import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
+import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
+import com.freshworks.core.data.five_zero_zero.unit.processor.joins.beans.FbUsageBean;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
@@ -141,12 +141,12 @@ public class TestJoinService {
 
         InmemoryService inMemoryService = new InmemoryService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -155,9 +155,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -204,12 +201,12 @@ public class TestJoinService {
 
         InmemoryService inMemoryService = new InmemoryService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -218,9 +215,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = innerJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAssetInnerJoin.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -260,12 +254,12 @@ public class TestJoinService {
     
         InmemoryService inMemoryService = new InmemoryService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -321,12 +315,12 @@ public class TestJoinService {
     
         InmemoryService inMemoryService = new InmemoryService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -335,9 +329,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -408,12 +399,12 @@ public class TestJoinService {
     
         InmemoryService inMemoryService = new InmemoryService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -422,9 +413,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = innerJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAssetInnerJoin.getClass().getName(), fbUserAsset, freshJoin);
         assertThat(joinAssetData.size(), Matchers.is(0));

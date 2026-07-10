@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraDbQueue;
@@ -129,7 +129,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<Boolean> abortCurrentParentAndReTryWithNewParentNonHttp = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<Namespace> namespace = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<NamespaceService> namespace = new ReturnableMockTypeList<>();
 
     @Autowired
     private SimpleMockUtility simpleMockUtility;
@@ -214,7 +214,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
     }
 
 
-    public MockFacadeDagNodePerItemTraversal namespace(Namespace... namespace) {
+    public MockFacadeDagNodePerItemTraversal namespace(NamespaceService... namespace) {
         this.namespace.clear();
         this.namespace.add(namespace);
         return this;

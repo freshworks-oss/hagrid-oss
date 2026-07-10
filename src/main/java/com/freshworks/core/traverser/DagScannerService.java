@@ -1,21 +1,31 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.traverser.Annotations.CustomDagNode;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.reflections.Reflections;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.springframework.stereotype.Component;
+import static org.reflections.scanners.Scanners.SubTypes;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import static org.reflections.scanners.Scanners.SubTypes;
+import org.reflections.Reflections;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.freshworks.core.shared.NamespaceService;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.traverser.Annotations.CustomDagNode;
+import com.freshworks.core.traverser.Annotations.FreshHierarchy;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Getter
@@ -23,39 +33,71 @@ import static org.reflections.scanners.Scanners.SubTypes;
 @Slf4j
 public class DagScannerService {
 
+    @Autowired
+    List<AbstractStep> abstractStepList;
+    SyncServiceContainer syncServiceContainer;
+
+    ReentrantReadWriteLock.WriteLock uniqueScan = new ReentrantReadWriteLock().writeLock();
+    DagNode rootNode = null;
+    AnalyticsFactory analyticsFactory;
+    NamespaceService namespaceService;
+    AnalyticsService analyticsService;
+
+    @Autowired
+    public DagScannerService(SyncServiceContainer serviceContainer){
+        this.syncServiceContainer = syncServiceContainer;
+        this.namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
+    }
+
+    public DagNode dagScanner(String namespace, TraverseConfigService traverseConfigService, InfraService infraService) throws Exception {
+
+        try{
+            uniqueScan.lock();
+            // If Dag for the given stepLocation already exists then do not create it again
+            if(rootNode != null){
+                DagNode clonedDagNode = cloneDag(rootNode);
+                init(clonedDagNode.preOrder(), infraService);
+                return clonedDagNode.preOrder().get(0);
+            }
+
+            AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
+            rootNode = scanner(traverseConfigService, analyticsService);
+            DagNode clonedDagNode = cloneDag(rootNode);
+            init(clonedDagNode.preOrder(), infraService);
+            return clonedDagNode.preOrder().get(0);
+
+        }
+
+        finally {
+            uniqueScan.unlock();
+        }
+    }
+
+
     public DagNode scanner(TraverseConfigService traverseConfigService, AnalyticsService analyticsService) throws ClassNotFoundException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        HashMap<String, String> dagNodeShortNameTempStorage = new HashMap<>();
-        String stepPath = traverseConfigService.getStepLocation();
-//      Creation of the DAG for the given connector
-        Reflections  reflectionForSteps = new Reflections(new ConfigurationBuilder()
-                .setUrls(ClasspathHelper.forPackage(stepPath)));
-
-        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
-        DagNode treeNode =   createDAG(reflectionForSteps, stepPath, analyticsService);
+        List<String> dagNodeShortNameTempStorage = new ArrayList();
+        DagNode treeNode =   createDAG(abstractStepList, analyticsService);
 
         List<DagNode> nodeList = treeNode.preOrder();
 
         for (DagNode node : nodeList) {
-            String dagShortName = generateShortName(node.getName(), stepPath, dagNodeShortNameTempStorage);
+            String dagShortName = generateShortName(node.getName(), dagNodeShortNameTempStorage);
             node.setShortName(dagShortName);
         }
 
-        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath);
         return  treeNode;
     }
 
 
-    protected Set<Class<?>> getSteps(Reflections reflections, String stepPath) throws IOException {
-        Set<Class<?>> result = new HashSet<>();
-        Set<Class<?>> set = reflections.get(SubTypes.of(AbstractStep.class).asClass());
-        for (Class<?> clazz : set)
-        {
-         if (clazz.getName().contains(stepPath))
-            {
-                result.add(clazz);
-            }
+    protected Set<Class<? extends AbstractStep>> getSteps(List<AbstractStep> abstractStepList) throws IOException {
+        Set<Class<? extends AbstractStep>> result = new HashSet<>();
+        
+        for(AbstractStep abstractStep : abstractStepList){
+            result.add(abstractStep.getClass());
         }
+
         return result;
     }
 
@@ -72,93 +114,15 @@ public class DagScannerService {
         return result;
     }
 
-    // TODO: Create a DAG which consider FreshJoin as well to decide which child should be left and which one should be right
-//    protected DagNode createDAG(Reflections reflections, String stepPath, AnalyticsService analyticsService) throws ClassNotFoundException, IOException {
-//
-//        HashMap<String, DagNode> branchMap = new HashMap<>();
-//
-//        DagNode root = new DagNode(ParentStep.class.getName());
-//        analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", ParentStep.class.getName());
-//
-//        Set<Class<?>> steps =
-//                getSteps(reflections, stepPath);
-//
-//        for (Class<?> step: steps) {
-//
-//            if(step.getName().equals(ParentStep.class.getName())){
-//                continue;
-//            }
-//            Class<?> parentClass = getParentClass(step);
-//
-//            if(parentClass != null){
-//                if ( branchMap.containsKey(parentClass.getName())){
-//                    branchMap.get(parentClass.getName()).add(new DagNode(step.getName()));
-//                }
-//                else{
-//                    DagNode  parent = new DagNode(parentClass.getName());
-//                    parent.add(new DagNode(step.getName()));
-//                    branchMap.put(parent.getName(), parent);
-//                }
-//            }
-//            else{
-//                root.setName(step.getName());
-//            }
-//        }
-//
-//        Iterator<Map.Entry<String , DagNode>> iterator = branchMap.entrySet().iterator();
-//
-//        while(!branchMap.isEmpty()){
-//            if(!iterator.hasNext())
-//                iterator = branchMap.entrySet().iterator();
-//
-//            Map.Entry<String, DagNode> entry = iterator.next();
-//            DagNode node = root.find(entry.getValue().getName());
-//
-//            if(node != null) {
-//                for( DagNode v : entry.getValue().getSubtree()){
-//                    node.add(v);
-//                }
-//                iterator.remove();
-//            }
-//        }
-//
-//        // Here filter the DAG to remove the subtrees where it has ignore true
-//
-//        Iterator<DagNode> it = root.preOrder().iterator();
-//        DagNode node = it.next();
-//        ArrayList<DagNode> nodeArrayList = new ArrayList<>();
-//
-//        while(it.hasNext()){
-//            node = it.next();
-//            if(Boolean.FALSE.equals(node.getName().equals(ParentStep.class.getName()))){
-//                boolean isStepIgnored = isStepIgnored(node.getName());
-//                if(isStepIgnored){
-//                    nodeArrayList.add(node);
-//                }
-//                analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", node.getName());
-//            }
-//        }
-//
-//        for (int i = 0; i < nodeArrayList.size(); i++) {
-//            node = nodeArrayList.get(i);
-//            DagNode parent = node.getParentList();
-//            parent.dropSubtree(nodeArrayList.get(i));
-//            analyticsService.debugEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", node.getName());
-//        }
-//
-//        return root;
-//    }
-
-    protected DagNode createDAG(Reflections stepReflections, String stepPath, AnalyticsService analyticsService) throws ClassNotFoundException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected DagNode createDAG(List<AbstractStep> abstractStepList, AnalyticsService analyticsService) throws ClassNotFoundException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         HashMap<String, DagNode> nodeNameWithNodeObjectMap = new HashMap<>();
         DagNode root = new DagNode(ParentStep.class.getName());
-        analyticsService.debugLogEvent("HAGRID_DAG_SCANNER_SERVICE", "step_path", stepPath, "step", ParentStep.class.getName());
 
-        Set<Class<?>> steps = getSteps(stepReflections, stepPath);
+        Set<Class<? extends AbstractStep>> steps = getSteps(abstractStepList);
 
         // Go through each step
-        for(Class<?> clazz : steps) {
+        for(Class<? extends AbstractStep> clazz : steps) {
 
             if(isStepIgnored(clazz.getName())){
                 continue;
@@ -224,91 +188,54 @@ public class DagScannerService {
         return List.of(freshHierarchy.parentClass());
     }
 
-    public String generateShortName(String name , String stepPath , Map<String, String> shortNameMap) {
+    public String generateShortName(String name, List<String> existingNameList) {
+
+        String newSimpleClassName = "";
+
         if(name.equalsIgnoreCase(ParentStep.class.getName()))
             return "steps.Parent";
-        String replace = name.replace(stepPath, "");
-        String uniqueClassName = replace.substring(1);
-        String duplicateKey = checkForDuplicate(uniqueClassName, shortNameMap);
-        if(!"".equalsIgnoreCase(duplicateKey)){
-            return "steps."+duplicateKey;
-        }
-        String key = generateKey(uniqueClassName, shortNameMap);
-        shortNameMap.put(key , uniqueClassName);
-        return "steps."+ key;
-    }
 
-    public  String generateKey(String input , Map<String, String> shortNameMap) {
-        String[] parts = input.split("\\.");
-        StringBuilder key = new StringBuilder();
-        int[] charsToPick = new int[parts.length];
 
-        // Initialize the number of characters to pick for each part (except the last)
-        for (int i = 0; i < parts.length - 1; i++) {
-            charsToPick[i] = 1; // Start with 1 character
-        }
+        String[] classNameParts = name.split("\\.");
+        String simpleClassName = classNameParts[classNameParts.length - 1];
 
-        boolean uniqueKey = false;
 
-        while (!uniqueKey) {
-            key.setLength(0); // Reset the key builder
+        if(existingNameList.contains(simpleClassName)){
 
-            for (int i = 0; i < parts.length; i++) {
-                if (i < parts.length - 1) {
-                    // Pick the required number of characters from the current part
-                    int pickLength = Math.min(charsToPick[i], parts[i].length());
-                    key.append(parts[i].substring(0, pickLength));
-                } else {
-                    // Append the last part without changes
-                    key.append(parts[i]);
+            String package_name = "";
+            boolean canCreateShortName = false;
+            for(int i = classNameParts.length - 2; i >=0 ; i--){
+
+                if(package_name.equals("")){
+                    package_name = classNameParts[i];
                 }
-                if (i < parts.length - 1) {
-                    key.append("."); // Add a dot between parts
+
+                else{
+                    package_name = classNameParts[i] + "." + package_name;
+                }
+                
+                newSimpleClassName = "steps." + "." + package_name + "." + simpleClassName;
+
+                if(Boolean.FALSE.equals(existingNameList.contains(newSimpleClassName))){
+                    existingNameList.add(newSimpleClassName);
+                    canCreateShortName = true;
+                    break;
                 }
             }
 
-            // Check if the key is already present in the map
-            if (shortNameMap.containsKey(key.toString())) {
-                // Find the first conflicting part
-                String existingValue = shortNameMap.get(key.toString());
-                String[] existingParts = existingValue.split("\\.");
-
-                boolean canExpand = false;
-
-                // Find the first conflicting or differing part
-                for (int i = 0; i < parts.length - 1; i++) {
-                    if (charsToPick[i] < parts[i].length()) {
-                        if (parts[i].equals(existingParts[i]) || !parts[i].equals(existingParts[i])) {
-                            charsToPick[i]++;
-                            canExpand = true;
-                            break; // Adjust the first conflicting/differing part
-                        }
-                    }
-                }
-
-                // If no part can expand further, throw an exception
-                if (!canExpand) {
-                    throw new IllegalStateException("Unable to generate a unique key for input: " + input);
-                }
-            } else {
-                uniqueKey = true;
+            if(Boolean.FALSE.equals(canCreateShortName)){
+                throw new IllegalStateException("Unable to create short names of the steps. It should not happen as short form is created using packages. Check code here");
             }
+
+            return newSimpleClassName;
         }
 
-        return key.toString();
-    }
+        else{
 
-    private String checkForDuplicate(String input , Map<String,String> shortNameMap) {
-
-        if (shortNameMap.containsValue(input)) {
-            for (Map.Entry<String, String> entry : shortNameMap.entrySet()) {
-                if (entry.getValue().equals(input)) {
-                    return entry.getKey(); // Return the existing key for the input
-                }
-            }
+            newSimpleClassName = "steps." + simpleClassName;
+            existingNameList.add(newSimpleClassName);
+            return newSimpleClassName;
         }
-
-        return "";
     }
 
     private DagNode getCustomNodeObject(Class<?> clazz) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -320,6 +247,17 @@ public class DagScannerService {
             return customDagNodeClazz.getConstructor(String.class).newInstance(clazz.getName());
         }
         return null;
+    }
+
+    private void init(List<DagNode> dagNodeList, InfraService infraService) throws Exception{
+
+        for (DagNode node : dagNodeList) {
+            node.configInfra(infraService.getInfraDbList(node.getShortName()), infraService.getKeyValue());
+        }
+    }
+
+    protected DagNode cloneDag(DagNode rootNode) throws Exception{
+        return DagNode.cloneDag(rootNode);
     }
 
 }

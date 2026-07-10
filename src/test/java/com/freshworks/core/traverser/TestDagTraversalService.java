@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.executor.SharedExecutorService;
@@ -102,7 +102,7 @@ public class TestDagTraversalService {
         parentNode.addChild(childNode2);
 
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("dummy_name_space");
 
         SyncStatusService syncStatusService = mockFacadeSyncStatusService.build();
@@ -114,7 +114,7 @@ public class TestDagTraversalService {
                 .add(syncStatusService, SyncStatusService.class)
                 .add(infraConfigService, InfraConfigService.class)
                 .add(mongoService, InfraService.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .add(traverserExecutorService, TraverserExecutorService.class)
                 .build();
 

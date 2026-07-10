@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.infra.inmemory;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsJPA;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -57,10 +57,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                             .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -75,10 +75,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -94,10 +94,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -114,10 +114,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -134,10 +134,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -154,10 +154,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -173,10 +173,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -193,10 +193,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -213,10 +213,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
 
@@ -254,10 +254,10 @@ public class TestInMemoryService {
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
 
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure( syncServiceContainer, infraConfigService);
             InfraDbQueue processorQueue1 = infraService.getProcessorQueue();
@@ -265,10 +265,10 @@ public class TestInMemoryService {
 
             InfraService infraService2 = new InmemoryService();
             namespace = "some_another_random_namespace";
-            namespaceService = new Namespace();
+            namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService2.configure(syncServiceContainer, infraConfigService);
             InfraDbQueue processorQueue2 = infraService2.getProcessorQueue();
@@ -281,10 +281,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure( syncServiceContainer, infraConfigService);
             InfraDbList publisherList1 = infraService.getPublisherList();
@@ -292,10 +292,10 @@ public class TestInMemoryService {
 
             InfraService infraService2 = new InmemoryService();
             namespace = "some_another_random_namespace";
-            namespaceService = new Namespace();
+            namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService2.configure(syncServiceContainer, infraConfigService);
             InfraDbList publisherList2 = infraService2.getPublisherList();
@@ -308,10 +308,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
             InfraDbKeyValue keyValue1 = infraService.getKeyValue();
@@ -319,10 +319,10 @@ public class TestInMemoryService {
 
             InfraService infraService2 = new InmemoryService();
             namespace = "some_another_random_namespace";
-            namespaceService = new Namespace();
+            namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService2.configure(syncServiceContainer, infraConfigService);
             InfraDbKeyValue keyValue2 = infraService2.getKeyValue();
@@ -345,10 +345,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure( syncServiceContainer, infraConfigService);
             InfraDbList list1 = infraService.getInfraDbList("same-list-name");
@@ -356,10 +356,10 @@ public class TestInMemoryService {
 
             InfraService infraService2 = new InmemoryService();
             namespace = "some_another_random_namespace";
-            namespaceService = new Namespace();
+            namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService2.configure(syncServiceContainer, infraConfigService);
             InfraDbList list2 = infraService2.getInfraDbList("same-list-name");
@@ -373,10 +373,10 @@ public class TestInMemoryService {
 
             InfraService infraService = new InmemoryService();
             String namespace = "some_random_namespace";
-            Namespace namespaceService = new Namespace();
+            NamespaceService namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             infraService.configure(syncServiceContainer, infraConfigService);
             InfraDbQueue processorQueue = infraService.getProcessorQueue();
@@ -386,10 +386,10 @@ public class TestInMemoryService {
             // Create infra from another service
             InfraService anotherInfraService2 = new InmemoryService();
             namespace = "some_another_random_namespace";
-            namespaceService = new Namespace();
+            namespaceService = new NamespaceService();
             namespaceService.setNamespace(namespace);
             syncServiceContainer = mockFacadeSyncServiceContainer
-                    .add(namespaceService, Namespace.class)
+                    .add(namespaceService, NamespaceService.class)
                     .build();
             anotherInfraService2.configure(syncServiceContainer, infraConfigService);
             InfraDbQueue anotherProcessorQueue = anotherInfraService2.getProcessorQueue();

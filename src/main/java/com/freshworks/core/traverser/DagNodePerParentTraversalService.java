@@ -1,7 +1,7 @@
 package com.freshworks.core.traverser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -36,7 +36,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
     SyncServiceContainer syncServiceContainer;
     ObjectMapper objectMapper = new ObjectMapper();
     Bucket rateLimitBucket = null;
-    Namespace namespace;
+    NamespaceService namespace;
     DagNode node;
     DagNode parentNode;
     TraverserExecutorService traverserExecutorService;
@@ -122,7 +122,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         this.infraService = infraService;
         this.traverseConfigService = traverseConfigService;
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);

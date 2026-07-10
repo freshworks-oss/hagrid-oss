@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.freshworks.core.data.four_five_zero.unit.fb.assets.FbComment;
+import com.freshworks.core.data.five_zero_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.FreshIndexBeanSerializeModifier;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
@@ -101,7 +101,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -202,7 +202,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -309,7 +309,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -417,7 +417,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -550,7 +550,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 
@@ -680,7 +680,7 @@ public class TestConsumerService {
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("consumer_" + UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
 

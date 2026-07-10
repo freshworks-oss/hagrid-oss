@@ -22,7 +22,7 @@ import org.dizitart.no2.index.IndexType;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -66,7 +66,7 @@ public class NitriteDbList implements InfraDbList {
     @Override
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
 
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }

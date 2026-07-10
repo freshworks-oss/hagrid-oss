@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.infra.InfraConfigService;
@@ -58,7 +58,7 @@ public class TestNitriteClientFactory {
                 .getInfraType("nitrite")
                 .build();
 
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("dummy_namespace");
 
         Nitrite mongoClient1  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);

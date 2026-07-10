@@ -1,6 +1,6 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import org.hibernate.annotations.Array;
 import org.junit.jupiter.api.Test;

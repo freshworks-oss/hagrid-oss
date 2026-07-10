@@ -1,9 +1,9 @@
 package com.freshworks.core.processor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.four_five_zero.unit.fb.beans.FbUser;
+import com.freshworks.core.data.five_zero_zero.unit.fb.beans.FbUser;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.MockFacadeConsumerService;
 import com.freshworks.core.shared.executor.SharedExecutorService;
@@ -102,7 +102,7 @@ public class TestProcessorService {
     @Test
     public void testWhenAllDataIsProcessedThenMarkStatusAsSuccessful() throws Exception {
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("integrated_test");
 
         List<String> returnedPolledItems = new ArrayList<>();
@@ -115,7 +115,7 @@ public class TestProcessorService {
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(mongoInfraService, InfraService.class)
                 .add(syncStatusService, SyncStatusService.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         AssetBeanDependencyService assetBeanDependencyService = mockFacadeAssetBeanDependencyService

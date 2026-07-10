@@ -1,13 +1,10 @@
 package com.freshworks.core.processor;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.Annotations.FreshJoin;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -88,7 +85,7 @@ public class ProcessorUtility {
     
     // TODO: This method need to optimise for insertion into freshIndex and
     // addAndGetIndex
-    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService, JsonIndexService jsonIndexService, Namespace namespace, AnalyticsService analyticsService, ObjectMapper freshIndexObjectMapper, MeterRegistry meterRegistry) throws Exception {
+    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService,  NamespaceService namespace, AnalyticsService analyticsService, MeterRegistry meterRegistry) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -99,14 +96,10 @@ public class ProcessorUtility {
             try {
                 if (!assetsReadyToBePublishedList.isEmpty()) {
                     List<String> assetsReadyToBePublishedListInPublisherQueue = new ArrayList<>();
-                    List<JsonNode> assetsReadyToBePublishedListInFreshIndex = new ArrayList<>();
 
                     for (AbstractAsset abstractAsset : assetsReadyToBePublishedList) {
                         assetsReadyToBePublishedListInPublisherQueue
                                 .add(objectMapper.writeValueAsString(abstractAsset));
-                        String s = freshIndexObjectMapper.writeValueAsString(abstractAsset);
-                        JsonNode j = objectMapper.readTree(s);
-                        assetsReadyToBePublishedListInFreshIndex.add(j);
                     }
 
                     long currentTime = System.currentTimeMillis();
@@ -124,9 +117,6 @@ public class ProcessorUtility {
                     for (Long id : documentIdList) {
                         documentIdListString.add(id.toString());
                     }
-
-                    jsonIndexService.indexJsonStringBulk(assetsReadyToBePublishedListInFreshIndex,
-                            documentIdListString);
                     assetsReadyToBePublishedList.clear();
                     return null;
                 } else {

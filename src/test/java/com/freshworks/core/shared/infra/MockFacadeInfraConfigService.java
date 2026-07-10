@@ -130,9 +130,9 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         doAnswer(getDatabaseHost.answer()).when(infraConfigServiceSpy).getDatabaseHost();
         doAnswer(getAdditionalParams.answer()).when(infraConfigServiceSpy).getAdditionalParams();
         doAnswer(getDatabasePort.answer()).when(infraConfigServiceSpy).getDatabasePort();
-        doAnswer(getInfraType.answer()).when(infraConfigServiceSpy).getInfraType();
-        doAnswer(getNitriteDataPath.answer()).when(infraConfigServiceSpy).getNitriteDataPath();
-        doAnswer(getNitriteDatabaseType.answer()).when(infraConfigServiceSpy).getNitriteDatabaseType();
+        doAnswer(getInfraType.answer()).when(infraConfigServiceSpy).getInfraDbType();
+        doAnswer(getNitriteDataPath.answer()).when(infraConfigServiceSpy).getInfraDbLocation();
+        doAnswer(getNitriteDatabaseType.answer()).when(infraConfigServiceSpy).getInfraDbType();
         doAnswer(getConnectionString.answer()).when(infraConfigServiceSpy).getConnectionString();
 
         return infraConfigServiceSpy;
