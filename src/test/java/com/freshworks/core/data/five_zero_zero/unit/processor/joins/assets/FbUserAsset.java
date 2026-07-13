@@ -1,5 +1,7 @@
 package com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets;
 
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.data.five_zero_zero.unit.processor.joins.beans.FbUserBean;
 import com.freshworks.core.processor.AbstractAsset;
 
@@ -10,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Component
 public class FbUserAsset extends AbstractAsset{
 
     String userId;

@@ -16,6 +16,8 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 100)
-@Component
+@Component("unit_fb_step_fbUser")
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)
 public class FbUser extends HttpAbstractStep {

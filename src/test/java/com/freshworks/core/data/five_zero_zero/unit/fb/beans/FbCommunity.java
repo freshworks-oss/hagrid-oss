@@ -6,10 +6,13 @@ import com.freshworks.core.processor.AbstractBean;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
+@Component("unit_fb_bean_fbCommunity")
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Conditional(CustomRegExConditionComparator.class)

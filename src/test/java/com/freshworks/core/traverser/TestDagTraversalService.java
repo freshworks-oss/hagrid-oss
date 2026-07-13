@@ -22,7 +22,7 @@ import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
 import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +38,7 @@ public class TestDagTraversalService {
     MockFacadeDagNode mockFacadeDagNode;
 
     @Autowired
-    MockFacadeMongoDbService mongoDbServiceFacade;
+    MockFacadeNitriteDbService nitriteDbServiceFacade;
 
     @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
@@ -53,8 +53,6 @@ public class TestDagTraversalService {
     DagTraversalService dagTraversalService;
 
     TraverserExecutorService traverserExecutorService;
-    @Autowired
-    private MockFacadeMongoDbService mockFacadeMongoDbService;
 
     String releaseVersion;
 
@@ -67,7 +65,7 @@ public class TestDagTraversalService {
         releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNode.configure().build();
-        mongoDbServiceFacade.configure().build();
+        nitriteDbServiceFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
         mockFacadeSyncStatusService.configure().build();
         mockFacadeInfraConfigService.configure().build();
@@ -107,13 +105,13 @@ public class TestDagTraversalService {
 
         SyncStatusService syncStatusService = mockFacadeSyncStatusService.build();
         InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
-        InfraService mongoService = mockFacadeMongoDbService.build();
+        InfraService nitriteService = nitriteDbServiceFacade.build();
         traverserExecutorService = traverserMockUtility.mockTraverserExecutorService();
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(syncStatusService, SyncStatusService.class)
                 .add(infraConfigService, InfraConfigService.class)
-                .add(mongoService, InfraService.class)
+                .add(nitriteService, InfraService.class)
                 .add(namespace, NamespaceService.class)
                 .add(traverserExecutorService, TraverserExecutorService.class)
                 .build();

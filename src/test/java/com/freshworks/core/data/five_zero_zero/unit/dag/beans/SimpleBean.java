@@ -5,9 +5,11 @@ import com.freshworks.core.processor.AbstractBean;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Data
+@Component("unit_dag_bean_SimpleBean")
 @Conditional(CustomRegExConditionComparator.class)
 public class SimpleBean extends AbstractBean {
 

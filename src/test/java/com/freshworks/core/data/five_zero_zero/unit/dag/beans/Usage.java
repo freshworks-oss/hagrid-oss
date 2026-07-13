@@ -5,8 +5,10 @@ import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.shared.SyncServiceContainer;
 import lombok.Data;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 @Data
+@Component("unit_dag_bean_Usage")
 @Conditional(CustomRegExConditionComparator.class)
 public class Usage extends AbstractBean {
 

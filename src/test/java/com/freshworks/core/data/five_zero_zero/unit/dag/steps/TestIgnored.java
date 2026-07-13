@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1, ignore = true)
-@Component
+@Component("unit_dag_step_TestIgnored")
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)
 public class TestIgnored extends HttpAbstractStep {

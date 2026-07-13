@@ -1,5 +1,7 @@
 package com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.non_primitive_assets;
 
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.FbUsageAsset;
 import com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets.FbUserAsset;
 import com.freshworks.core.processor.AbstractAsset;
@@ -13,7 +15,7 @@ import lombok.Setter;
 
 
 @FreshJoin(rightClass = FbUsageAsset.class, uniqueJoinName = "usage_user_left_join", join_type = JOIN_TYPE.LEFT_JOIN,rightClassFieldName = "userId", leftClass = FbUserAsset.class , leftClassFieldName = "userId")
-
+@Component
 @NoArgsConstructor
 @Getter
 @Setter

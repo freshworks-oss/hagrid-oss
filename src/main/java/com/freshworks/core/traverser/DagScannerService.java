@@ -43,12 +43,12 @@ public class DagScannerService {
     NamespaceService namespaceService;
     AnalyticsService analyticsService;
 
-    @Autowired
-    public DagScannerService(SyncServiceContainer serviceContainer){
+    public void configure(SyncServiceContainer serviceContainer){
         this.syncServiceContainer = syncServiceContainer;
         this.namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
     }
+
 
     public DagNode dagScanner(String namespace, TraverseConfigService traverseConfigService, InfraService infraService) throws Exception {
 

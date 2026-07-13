@@ -1,17 +1,15 @@
 package com.freshworks.core.traverser;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.net.URISyntaxException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.freshworks.core.traverser.Annotations.FreshHierarchy;
+import com.google.common.collect.ImmutableMap;
 
 @Component
 @Scope("prototype")
+@FreshHierarchy(parentClass = ParentStep.class)
 public class MockNonHttpAbstractStep extends NonHttpAbstractStep{
 
     public MockNonHttpAbstractStep configure(){
@@ -50,10 +48,6 @@ public class MockNonHttpAbstractStep extends NonHttpAbstractStep{
         return null;
     }
 
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
-    }
 
     @Override
     public RequestResponseContainer getNextSyncRequestNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws Exception {

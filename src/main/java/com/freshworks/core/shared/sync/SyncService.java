@@ -156,6 +156,7 @@ public class SyncService {
         this.syncServiceContainer.add(this.traverseConfigService, TraverseConfigService.class);
 
         this.dagScannerService = applicationContext.getBean(DagScannerService.class);
+        this.dagScannerService.configure(syncServiceContainer);
         DagNode rootNode = this.dagScannerService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
         syncServiceContainer.add(rootNode, DagNode.class);
 

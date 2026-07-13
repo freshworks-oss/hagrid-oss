@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
-@Component
+@Component("unit_fb_step_fbCommunity")
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)
 public class FbCommunity extends HttpAbstractStep {

@@ -1,5 +1,7 @@
 package com.freshworks.core.data.five_zero_zero.unit.dag.assets.complex_asset.inner.inner_most;
 
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.data.five_zero_zero.unit.dag.assets.Usage;
 import com.freshworks.core.data.five_zero_zero.unit.dag.assets.complex_asset.inner.Inner;
 import com.freshworks.core.processor.AbstractAsset;
@@ -11,7 +13,7 @@ import lombok.Setter;
 @FreshJoin(leftClass = Inner.class, leftClassFieldName = "id", 
     rightClass = Usage.class, rightClassFieldName = "usage", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN, uniqueJoinName = "inner_app_usage_join" )
     
-
+@Component("unit_dag_asset_InnerMost")
 public class InnerMost extends AbstractAsset{
 
     @Override

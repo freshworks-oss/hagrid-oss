@@ -1,6 +1,7 @@
 package com.freshworks.core.traverser;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 import com.freshworks.core.traverser.exception.StepFailedException;
 import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
@@ -12,6 +13,7 @@ import java.net.URISyntaxException;
 
 @Component
 @Scope("prototype")
+@FreshHierarchy(parentClass = ParentStep.class)
 public class MockHttpAbstractStep extends HttpAbstractStep{
 
     public MockHttpAbstractStep configure(){
@@ -35,10 +37,6 @@ public class MockHttpAbstractStep extends HttpAbstractStep{
         return null;
     }
 
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-    }
 
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {

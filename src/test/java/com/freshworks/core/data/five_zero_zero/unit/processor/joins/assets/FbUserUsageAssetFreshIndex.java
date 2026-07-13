@@ -1,5 +1,7 @@
 package com.freshworks.core.data.five_zero_zero.unit.processor.joins.assets;
 
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.data.five_zero_zero.unit.processor.joins.beans.FbUsageBean;
 import com.freshworks.core.data.five_zero_zero.unit.processor.joins.beans.FbUserBean;
 import com.freshworks.core.processor.AbstractAsset;
@@ -15,6 +17,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Component
 public class FbUserUsageAssetFreshIndex extends AbstractAsset{
     
     @FreshIndex

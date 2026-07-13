@@ -11,10 +11,6 @@ import com.freshworks.core.shared.infra.nitrite.NitriteDbKeyValue;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbQueue;
 import com.freshworks.core.shared.infra.nitrite.NitriteService;
-import com.freshworks.core.shared.infra.persistent.MongoService;
-import com.freshworks.freshindex.NamespaceService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
 import com.google.common.base.Preconditions;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,12 +53,6 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
 
     ReturnableMockTypeList<NitriteDbQueue> getProcessorQueue = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<JsonIndexService> getJsonIndexService = new ReturnableMockTypeList<>();
-
-    ReturnableMockTypeList<JsonQueryService> getJsonQueryService = new ReturnableMockTypeList<>();
-
-    ReturnableMockTypeList<NamespaceService> getNamespaceService = new ReturnableMockTypeList<>();
-
     ReturnableMockTypeList<NitriteDbList> getPublisherList = new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<NitriteDbKeyValue> getKeyValue = new ReturnableMockTypeList<>();
@@ -80,9 +70,6 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
         syncServiceContainer.add(mockFacadeSyncServiceContainer.configure().build());
         infraConfigService.add(mockFacadeInfraConfigService.configure().build());
         getProcessorQueue.add(mockFacadeNitriteDbQueue.configure().build());
-        getJsonIndexService.add(Mockito.mock(JsonIndexService.class));
-        getJsonQueryService.add(Mockito.mock(JsonQueryService.class));
-        getNamespaceService.add(Mockito.mock(NamespaceService.class));
         getPublisherList.add(mockFacadeNitritedbList.configure().build());
         getKeyValue.add(mockFacadeNitriteKeyValue.configure().build());
         getInfraDbListGivenName.add(mockFacadeNitritedbList.configure().build());
@@ -97,26 +84,6 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
         this.getProcessorQueue.add(getProcessorQueue);
         return this;
     }
-
-    public MockFacadeNitriteDbService getJsonIndexService(JsonIndexService... getJsonIndexService) {
-        this.getJsonIndexService.clear();
-        this.getJsonIndexService.add(getJsonIndexService);
-        return this;
-    }
-
-
-    public MockFacadeNitriteDbService getJsonQueryService(JsonQueryService... getJsonQueryService) {
-        this.getJsonQueryService.clear();
-        this.getJsonQueryService.add(getJsonQueryService);
-        return this;
-    }
-
-    public MockFacadeNitriteDbService getNamespaceService(NamespaceService... getNamespaceService) {
-        this.getNamespaceService.clear();
-        this.getNamespaceService.add(getNamespaceService);
-        return this;
-    }
-
 
     public MockFacadeNitriteDbService getPublisherList(NitriteDbList... getPublisherList) {
         this.getPublisherList.clear();
@@ -172,12 +139,6 @@ public class MockFacadeNitriteDbService implements MockFacadeInterface {
         doNothing().when(nitriteDbService).configure(any(), any());
 
         doAnswer(getProcessorQueue.answer()).when(nitriteDbService).getProcessorQueue();
-
-        doAnswer(getJsonIndexService.answer()).when(nitriteDbService).getJsonIndexService();
-
-        doAnswer(getJsonQueryService.answer()).when(nitriteDbService).getJsonQueryService();
-
-        doAnswer(getNamespaceService.answer()).when(nitriteDbService).getNamespaceService();
 
         doAnswer(getPublisherList.answer()).when(nitriteDbService).getPublisherList();
 

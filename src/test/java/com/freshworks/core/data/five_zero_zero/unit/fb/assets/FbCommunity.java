@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@Component("unit_fb_asset_fbCommunity")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Conditional(CustomRegExConditionComparator.class)

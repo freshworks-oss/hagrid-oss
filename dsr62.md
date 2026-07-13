@@ -12,7 +12,6 @@ We are proposing refinements in three categories
 ### Runtime Configuration 
 We are planning to remove the need separate `Hagrid.yml` and allow developer to provide Hagrid configuration at run time. We are planning to undetake following items in this category
 1. Runtime configuration of `step location`
-   1. Scan whole project directory and look for classes which are extending `AbstractStep` or its sub-classes 
 2. Runtme configuration of `bean location`
    1. Scan whole project directory and look for classes which are extending `AbstractBean` or its sub-classes 
 3. Runtime configuration of `asset location`
@@ -80,6 +79,13 @@ Detailed technical description of the proposed solution, including APIs, interfa
 
 ## Use Cases
 Examples of how the specification will be used in real-world scenarios.
+
+Following changes need to be made 
+1. From now onwards, all steps, beans and assets must be annotated with @Component and @Scope("prototype") annotation
+   1. This will remove the need of step_path, bean_path and asset_path as hagrid will use spring container to fetch all beans of type List<AbstractStep> to calculate DAG and List<AbstractAsset> to calculate assetBeanDependency
+2. Can dynamically pass connector Configuration in one of the startSync method
+3. Removal of `filter` method from `abstractStep`
+4. Unified startSync method 
 
 ## Design Overview
 High-level architecture and design principles. Key components and their interactions.

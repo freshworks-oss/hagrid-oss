@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 @Slf4j
 @FreshHierarchy(parentClass = TestApplication.class, rateLimit = 5, duration = 10)
-@Component
+@Component("unit_dag_step_TestUsage")
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)
 public class TestUsage extends HttpAbstractStep {

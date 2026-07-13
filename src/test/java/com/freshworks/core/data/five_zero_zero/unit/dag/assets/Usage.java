@@ -5,9 +5,11 @@ import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import lombok.Data;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.stereotype.Component;
 
 @Data
 @Conditional(CustomRegExConditionComparator.class)
+@Component("unit_dag_asset_Usage")
 public class Usage extends AbstractAsset {
 
     String usage;

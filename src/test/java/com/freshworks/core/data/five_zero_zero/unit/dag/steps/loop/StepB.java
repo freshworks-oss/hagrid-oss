@@ -21,7 +21,7 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = {StepA.class, StepC.class}, rateLimit = 20, duration = 100)
-@Component
+@Component("unit_dag_step_StepB")
 @Scope("prototype")
 @Conditional(CustomRegExConditionComparator.class)
 public class StepB extends HttpAbstractStep {
