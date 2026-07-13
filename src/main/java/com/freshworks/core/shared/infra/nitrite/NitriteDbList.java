@@ -16,15 +16,19 @@ import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.filters.FluentFilter;
+import org.dizitart.no2.filters.NitriteFilter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.infra.InfraDbCursorResponse;
 import com.freshworks.core.shared.infra.InfraDbList;
 
 import lombok.Getter;
@@ -197,10 +201,6 @@ public class NitriteDbList implements InfraDbList {
         return returnList;
     }
 
-    @Override
-    public void deRegisterPublisher() throws Exception{
-
-    }
 
     @Override
     public long size() {
@@ -238,6 +238,8 @@ public class NitriteDbList implements InfraDbList {
         }
     }
 
+
+    
 
     private void insert(long listIndex, String item) throws Exception{
         
@@ -338,5 +340,27 @@ public class NitriteDbList implements InfraDbList {
         else{
             return false;
         }
+    }
+
+    @Override
+    public InfraDbCursorResponse filter(NitriteFilter filter) throws Exception {
+        
+        FindOptions findOptions = new FindOptions();
+        DocumentCursor documentCursor;
+        if (filter != null){
+            documentCursor = this.nitriteCollection.find(filter, findOptions);
+        }
+        else{
+            documentCursor = this.nitriteCollection.find();
+        }
+        
+        NitriteCursorResponse nitriteCursorResponse = new NitriteCursorResponse(documentCursor);
+        return nitriteCursorResponse;
+    }
+
+    @Override
+    public void removePublisher() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removePublisher'");
     }
 }

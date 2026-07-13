@@ -4,6 +4,7 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.data.five_zero_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.shared.infra.InfraDbCursorResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -27,7 +28,7 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
 
     ReturnableMockTypeList<List<AbstractAsset>> getAssetByAssetType;
 
-    ReturnableMockTypeList<AssetStreamResponse<AbstractAsset>> streamAssetByAssetType;
+    ReturnableMockTypeList<InfraDbCursorResponse<AbstractAsset>> streamAssetByAssetType;
 
     ReturnableMockTypeList<List<AbstractAsset>> getAssetByAssetTypeAndFilter;
 
@@ -44,8 +45,8 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
         getAssetByAssetType.add(assetList);
         getAssetByAssetTypeAndFilter.add(assetList);
 
-        AssetStreamResponse<AbstractAsset> assetStreamResponse = new AssetStreamResponse<>();
-        AssetStreamResponse.Token token = new AssetStreamResponse.Token();
+        InfraDbCursorResponse<AbstractAsset> assetStreamResponse = new InfraDbCursorResponse<>();
+        InfraDbCursorResponse.Token token = new InfraDbCursorResponse.Token();
         token.setStart(0);
         token.setCount(1);
         assetStreamResponse.setAbstractAssetList(assetList);
@@ -61,7 +62,7 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeConsumerService streamAssetByAssetType(AssetStreamResponse<AbstractAsset>... assetStreamResponse) {
+    public MockFacadeConsumerService streamAssetByAssetType(InfraDbCursorResponse<AbstractAsset>... assetStreamResponse) {
         this.streamAssetByAssetType.clear();
         this.streamAssetByAssetType.add(assetStreamResponse);
         return this;

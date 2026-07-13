@@ -1,11 +1,17 @@
 package com.freshworks.core.shared.consumer;
 
+import com.esotericsoftware.kryo.kryo5.util.ObjectMap;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.infra.InfraDbCursorResponse;
+import com.freshworks.core.shared.infra.InfraDbList;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
+
+import org.dizitart.no2.filters.NitriteFilter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -20,20 +26,45 @@ public class ConsumerService {
 
     InfraService infraService;
     SyncStatusService syncStatusService;
+    InfraDbList infraDbList;
 
 
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception {
         this.infraService = syncServiceContainer.getBean(InfraService.class);
+        this.infraDbList = this.infraService.getPublisherList();
         this.syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
     }
 
 
-    // public <T extends AbstractAsset> List<T> getAssetByAssetType(Class<T> assetClass) throws Exception {
+    public InfraDbCursorResponse getCursorForAssetFilter(NitriteFilter filter) throws Exception{
 
-    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-    //     Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-    //     return getAbstractAssets(expression, assetClass);
-    // }
+        return this.infraDbList.filter(filter);
+    }
+
+    public <T extends AbstractAsset> List<T> getAssetForGivenCursor(InfraDbCursorResponse infraDbCursorResponse, Class<T> assetClass, int numberOfDocs) throws Exception {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<String> sList = infraDbCursorResponse.getNext(numberOfDocs);
+
+        List<T> returnableList = new ArrayList<>();
+
+        for(int i=0; i<sList.size(); i++){
+
+            T x = objectMapper.readValue(sList.get(i), new TypeReference<T>() {});
+            returnableList.add(x);
+        }
+
+        return returnableList;
+    }
+
+    public boolean hasCursorNext(InfraDbCursorResponse infraDbCursorResponse){
+
+        return infraDbCursorResponse.hasMore();
+    }
+
+
+
 
     // public <T extends AbstractAsset> AssetStreamResponse<T> streamAssetByAssetType(Class<T> assetClass, AssetStreamResponse.Token nextToken) throws Exception {
 

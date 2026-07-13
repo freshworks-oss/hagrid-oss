@@ -20,9 +20,6 @@ public interface InfraDbQueue {
 
     public boolean hasMoreData() throws Exception;
 
-    public void attachPublisher() throws Exception;
-
-    //TODO : Deregister publisher will help to notify the consumer that data is done
     public void removePublisher() throws Exception;
 
     public Boolean isEmpty() throws Exception;

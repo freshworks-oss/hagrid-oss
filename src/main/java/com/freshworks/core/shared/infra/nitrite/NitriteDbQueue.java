@@ -219,10 +219,6 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     }
 
-    @Override
-    public void attachPublisher() throws Exception{
-
-    }
 
     @Override
     public void removePublisher() throws Exception{
