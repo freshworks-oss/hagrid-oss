@@ -8,7 +8,7 @@ public interface InfraDbKeyValue {
 
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception;
 
-    public void put(String key, String value) throws Exception;
+    public void set(String key, String value) throws Exception;
     public String get(String key) throws Exception;
 
     public void putList(String key, List<String> value) throws Exception;

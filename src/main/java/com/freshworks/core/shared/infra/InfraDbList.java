@@ -18,8 +18,8 @@ public interface InfraDbList {
     // Add a single string and get its index 
     public  Long addAndGetIndex(String s) throws Exception;
 
-    // Add a list of strings and get their indexes
-    public  List<Long> addAndGetIndexBulk(List<String> sList) throws Exception;
+    // Add a list of strings and get number of inserted documents
+    public  Long addBulk(List<String> sList) throws Exception;
 
     // Get a string added at index index
     public String get(int index) throws Exception;

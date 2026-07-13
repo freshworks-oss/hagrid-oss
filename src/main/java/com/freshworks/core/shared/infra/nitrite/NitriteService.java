@@ -1,19 +1,17 @@
 package com.freshworks.core.shared.infra.nitrite;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.dizitart.no2.Nitrite;
+
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.zaxxer.hikari.HikariDataSource;
-
-import org.dizitart.no2.Nitrite;
-
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 
 public class NitriteService implements InfraService {

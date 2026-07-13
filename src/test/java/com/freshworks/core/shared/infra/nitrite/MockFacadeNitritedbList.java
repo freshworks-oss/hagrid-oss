@@ -30,7 +30,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
 
     ReturnableMockTypeList<Long> addAndGetIndex = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<List<Long>> addAndGetIndexBulk = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<Long> addBulk = new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<String> get = new ReturnableMockTypeList<>();
 
@@ -53,7 +53,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         listName.add("dummy_list");
         namespace.add("dummy_namespace");
         addAndGetIndex.add(1000L);
-        addAndGetIndexBulk.add(Lists.newArrayList(100L,20L,3L,4000L));
+        addBulk.add(100L);
         get.add("{\"name\":\"amit\"}");
         getNFromStartIndex.add(Lists.newArrayList("{\"name\":\"amit\"}"));
         getGivenDocList.add(Lists.newArrayList("1","2","3"));
@@ -67,9 +67,9 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeNitritedbList addAndGetIndexBulk(List<Long>... addAndGetIndexBulk ){
-        this.addAndGetIndexBulk.clear();
-        this.addAndGetIndexBulk.add(addAndGetIndexBulk);
+    public MockFacadeNitritedbList addAndGetIndexBulk(Long... addBulk ){
+        this.addBulk.clear();
+        this.addBulk.add(addBulk);
         return this;
     }
 
@@ -125,7 +125,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
 
         doAnswer(addAndGetIndex.answer()).when(nitriteDbList).addAndGetIndex(anyString());
 
-        doAnswer(addAndGetIndexBulk.answer()).when(nitriteDbList).addAndGetIndexBulk(anyList());
+        doAnswer(addBulk.answer()).when(nitriteDbList).addBulk(anyList());
 
         doNothing().when(nitriteDbList).add(any(ArrayList.class));
 

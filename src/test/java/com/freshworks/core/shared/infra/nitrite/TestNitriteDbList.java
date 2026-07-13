@@ -86,7 +86,7 @@ public class TestNitriteDbList {
     }
 
     @Test
-    public void testAddAndGetIndexBulkMethod() throws Exception{
+    public void testAddBulkMethod() throws Exception{
 
         NitriteDbList nitriteDbList = new NitriteDbList(nitriteDb,  "some_name_space","some_name");
 
@@ -107,12 +107,8 @@ public class TestNitriteDbList {
             list.add(s);
         }
 
-        List<Long> longList = nitriteDbList.addAndGetIndexBulk(list);
-        assertThat(longList.size(), is(100));
-
-        for(int i=0; i<100; i++){
-            assertThat(longList.get(i), is(Long.valueOf(i)));
-        }
+        Long longList = nitriteDbList.addBulk(list);
+        assertThat(longList, is(100L));
 
         nitriteDbList.delete();
     }

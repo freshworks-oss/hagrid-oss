@@ -19,7 +19,6 @@ import org.dizitart.no2.collection.NitriteCollection;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.shared.NamespaceService;
@@ -106,11 +105,11 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public List<Long> addAndGetIndexBulk(List<String> s) throws Exception{
+    public Long addBulk(List<String> s) throws Exception{
 
         List<Long> documentIds = new ArrayList<>();
         if(s.isEmpty()){
-            return  documentIds;
+            return  0L;
         }
 
         try{
@@ -121,7 +120,7 @@ public class NitriteDbList implements InfraDbList {
                 insert(currentIndex, ss);
                 documentIds.add(currentIndex);
             }
-            return documentIds;
+            return Long.valueOf(documentIds.size());
         }
 
         finally {

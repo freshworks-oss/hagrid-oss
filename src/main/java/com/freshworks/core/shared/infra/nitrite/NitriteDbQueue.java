@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,12 +18,9 @@ import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
-import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
-import org.dizitart.no2.repository.Cursor;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.shared.NamespaceService;
@@ -44,6 +39,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 public class NitriteDbQueue implements InfraDbQueue {
+
+    // -100 means they are not yet attached i.e no message is published nor consumed
+    // 0 means they are attached i.e. in progress 
+    // 1 means they are done i.e publisher is done publishing and consumer is done consuming.  
 
     int publisherAttached = -100;
     int consumerAttached = -100;
@@ -92,6 +91,7 @@ public class NitriteDbQueue implements InfraDbQueue {
     @Override
     public void add(String s) throws Exception{
 
+        // As soon as single message is published, publisher marked as attached
         publisherAttached = 0;
         s = s.replaceAll("\\.", "ENCODE_DOT");
         try{
@@ -112,7 +112,10 @@ public class NitriteDbQueue implements InfraDbQueue {
     @Override
     public void add(List<String> s) throws Exception{
 
+        // As soon as single message is published, publisher marked as attached
         publisherAttached = 0;
+
+
         if(s.isEmpty()){
             return;
         }
@@ -138,6 +141,8 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public String poll() throws Exception{
+
+        // As soon as single message is consumed, consumer marked as attached
         consumerAttached = 0;
         try{
             queuePollLock.lock();
@@ -159,6 +164,8 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public List<String> poll(int n) throws Exception{
+
+        // As soon as single message is consumed, consumer marked as attached
         consumerAttached = 0;
 
         try{
@@ -189,6 +196,7 @@ public class NitriteDbQueue implements InfraDbQueue {
 
         try{
             hasMoreDataLock.lock();
+
             // It means that child so far has consumed less data than parent has fetched already
             if(this.popIndex < this.queueIndex.get()){
                 return true;
