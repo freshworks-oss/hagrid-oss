@@ -1,7 +1,5 @@
 package com.freshworks.core.shared.consumer;
 
-import com.esotericsoftware.kryo.kryo5.util.ObjectMap;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
@@ -16,8 +14,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.TreeMap;
+import java.util.UUID;
 
 @Component
 @Scope(value="prototype")
@@ -27,6 +27,7 @@ public class ConsumerService {
     InfraService infraService;
     SyncStatusService syncStatusService;
     InfraDbList infraDbList;
+    HashMap<Integer, TreeMap<String, String>> cursorDocumentMapping = new HashMap<>();
 
 
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception {
@@ -38,99 +39,80 @@ public class ConsumerService {
 
     public InfraDbCursorResponse getCursorForAssetFilter(NitriteFilter filter) throws Exception{
 
-        return this.infraDbList.filter(filter);
+        InfraDbCursorResponse infraDbCursorResponse = this.infraDbList.filter(filter);
+        cursorDocumentMapping.put(infraDbCursorResponse.hashCode(), new TreeMap<>());
+        return infraDbCursorResponse;
     }
 
     public <T extends AbstractAsset> List<T> getAssetForGivenCursor(InfraDbCursorResponse infraDbCursorResponse, Class<T> assetClass, int numberOfDocs) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
+        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
+
 
         List<String> sList = infraDbCursorResponse.getNext(numberOfDocs);
 
         List<T> returnableList = new ArrayList<>();
 
         for(int i=0; i<sList.size(); i++){
-
             T x = objectMapper.readValue(sList.get(i), new TypeReference<T>() {});
-            returnableList.add(x);
+            
+            // Return this result only when it is not returned
+            if(Boolean.FALSE.equals(map.containsKey(x.getUuid()))){
+                map.put(x.getUuid(), UUID.randomUUID().toString());
+                returnableList.add(x);
+            }
+            
         }
 
         return returnableList;
     }
 
-    public boolean hasCursorNext(InfraDbCursorResponse infraDbCursorResponse){
+    public boolean hasCursorNext(InfraDbCursorResponse infraDbCursorResponse, long waitForDurationInSeconds) throws Exception{
 
-        return infraDbCursorResponse.hasMore();
+        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
+        if(infraDbCursorResponse.hasMore()){
+            // It means there is data to be consumed from existing cursor
+            return true;
+        }
+        else if(syncStatusService.getSyncStatus() == 0){
+
+            if(waitForDurationInSeconds == 0 ){
+                // If duration is 0 then wait for alteast 10 seconds
+                Thread.sleep(10 * 1000);
+            }
+            else{
+                Thread.sleep(waitForDurationInSeconds * 1000);
+            }
+            
+
+            // It means data has been consumed from previous cursor but sync is still in progress 
+            NitriteFilter nitriteFilter = infraDbCursorResponse.getFilterQuery();
+            infraDbCursorResponse = this.infraDbList.filter(nitriteFilter);
+            return true;
+        }
+        else{
+
+            // It means data has been consumed from previously constructured cursor and sync is either failed
+            // or successful
+
+            if(map.keySet().size() < infraDbCursorResponse.docSize() ){
+
+                // It means that some more that has been added after sync is completed and last cursor is created
+                // Create another cursor to consume remaining data
+
+                NitriteFilter nitriteFilter = infraDbCursorResponse.getFilterQuery();
+                infraDbCursorResponse = this.infraDbList.filter(nitriteFilter);
+                return true;
+            }
+
+            else{
+                // It means all data has been consumed
+                cursorDocumentMapping.remove(infraDbCursorResponse.hashCode());
+                return false;
+            }
+            
+        }
     }
-
-
-
-
-    // public <T extends AbstractAsset> AssetStreamResponse<T> streamAssetByAssetType(Class<T> assetClass, AssetStreamResponse.Token nextToken) throws Exception {
-
-    //     ObjectMapper objectMapper = new ObjectMapper();
-
-    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-    //     Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-    //     List<String> docIdStrList = jsonQueryService.queryAssetByExpression(expression);
-    //     List<String> docIdStrDuplicateList = new ArrayList<>(docIdStrList);
-
-    //     List<Long> interestedStrList = docIdStrDuplicateList.stream().skip(nextToken.getStart()).limit(nextToken.getCount()).map(Long::parseLong).collect(Collectors.toList());
-
-    //     List<String> abstractAssetList = infraService.getPublisherList().get(interestedStrList);
-
-    //     // Here form the response
-    //     AssetStreamResponse<T> assetStreamResponse = new AssetStreamResponse<T>();
-
-    //     List<T> abstractAssetResponseList = abstractAssetList.stream().map(asset -> {
-    //         try {
-    //             return objectMapper.readValue(asset, assetClass);
-    //         } catch (JsonProcessingException e) {
-    //             throw new RuntimeException(e);
-    //         }
-    //     }).collect(Collectors.toList());
-
-    //     assetStreamResponse.setAbstractAssetList(abstractAssetResponseList);
-
-    //     AssetStreamResponse.Token newNextToken = new AssetStreamResponse.Token();
-    //     newNextToken.setCount(nextToken.getCount());
-    //     newNextToken.setStart(nextToken.getStart() + interestedStrList.size());
-    //     assetStreamResponse.setNextToken(newNextToken);
-
-    //     /**
-    //      *  When hagrid is (completed OR failed) AND (start has reached the last index of the publisher list) then
-    //      *  set the nextToken as null
-    //      */
-    //     if(syncStatusService.getSyncStatus() != 0 && nextToken.getStart() >= docIdStrList.size()){
-    //         assetStreamResponse.setNextToken(null);
-    //     }
-
-    //     return assetStreamResponse;
-
-    // }
-
-    // public <T extends AbstractAsset> List<T> getAssetByAssetTypeAndFilter(Class<T> assetClass, Expression expression) throws Exception {
-
-    //     String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-    //     Expression abstractAssetBasedExpression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-    //     Expression finalExpression = Expression.expressionJoiner().whenLeftExpressionIs(abstractAssetBasedExpression).whenJoinerIsAnd().whenRightExpressionIs(expression).build();
-    //     return getAbstractAssets(finalExpression, assetClass);
-    // }
-
-    // private <T extends AbstractAsset> List<T> getAbstractAssets(Expression finalExpression,Class<T> assetClass) throws Exception {
-
-    //     ObjectMapper objectMapper = new ObjectMapper();
-
-    //     List<String> docIdStrList = jsonQueryService.queryAssetByExpression(finalExpression);
-    //     List<Long> documentIdList =  docIdStrList.stream().map(Long::valueOf).collect(Collectors.toList());
-    //     List<String> abstractAssetList = infraService.getPublisherList().get(documentIdList);
-    //     return abstractAssetList.stream().map(asset -> {
-    //         try {
-    //             return objectMapper.readValue(asset, assetClass);
-    //         } catch (JsonProcessingException e) {
-    //             throw new RuntimeException(e);
-    //         }
-    //     }).collect(Collectors.toList());
-    // }
 
 }

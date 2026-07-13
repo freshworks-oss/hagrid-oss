@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
+import org.dizitart.no2.filters.NitriteFilter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,8 +15,10 @@ public class NitriteCursorResponse implements InfraDbCursorResponse{
     ObjectMapper objectMapper = new ObjectMapper();
 
     DocumentCursor documentCursor;
+    NitriteFilter nitriteFilter;
 
-    public NitriteCursorResponse(DocumentCursor documentCursor){
+    public NitriteCursorResponse(NitriteFilter nitriteFilter, DocumentCursor documentCursor){
+        this.nitriteFilter = nitriteFilter;
         this.documentCursor = documentCursor;
     }
     
@@ -44,6 +47,16 @@ public class NitriteCursorResponse implements InfraDbCursorResponse{
 
         return returnList;
 
+    }
+
+    @Override
+    public NitriteFilter getFilterQuery() {
+        
+    }
+
+    @Override
+    public long docSize() {
+        return documentCursor.size();
     }
 
 }

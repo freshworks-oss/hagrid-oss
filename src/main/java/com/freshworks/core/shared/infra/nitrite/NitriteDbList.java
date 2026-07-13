@@ -354,7 +354,7 @@ public class NitriteDbList implements InfraDbList {
             documentCursor = this.nitriteCollection.find();
         }
         
-        NitriteCursorResponse nitriteCursorResponse = new NitriteCursorResponse(documentCursor);
+        NitriteCursorResponse nitriteCursorResponse = new NitriteCursorResponse(filter, documentCursor);
         return nitriteCursorResponse;
     }
 
