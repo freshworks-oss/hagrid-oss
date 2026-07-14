@@ -7,12 +7,12 @@ import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraBeanService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.shared.sync.SyncService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
 import com.freshworks.core.shared.synchronizers.GlobalNamespaceService;
 import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.configuration.DagService;
 import com.freshworks.core.traverser.net.http.HttpClientService;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matchers;
@@ -35,8 +35,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.TimeUnit;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.HttpResponse.response;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureObservability
@@ -44,6 +43,9 @@ import static org.mockserver.model.HttpResponse.response;
 public class TestTraverser {
 
     static String infraType;
+
+    @Autowired
+    ConnectorConfiguration connectorConfiguration;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -86,7 +88,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -98,7 +100,7 @@ public class TestTraverser {
 //        syncServiceContainer.add(httpClientService);
 
 
-        DagService dagService = applicationContext.getBean(DagService.class);
+        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -157,7 +159,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -168,7 +170,7 @@ public class TestTraverser {
         HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
         syncServiceContainer.add(httpClientService);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
+        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -237,7 +239,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -248,7 +250,7 @@ public class TestTraverser {
         HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
         syncServiceContainer.add(httpClientService);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
+        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -294,7 +296,7 @@ public class TestTraverser {
         SyncService syncService = applicationContext.getBean(SyncService.class);
         String namespace = UUID.randomUUID().toString();
 
-        SyncServiceContainer syncServiceContainer = syncService.startSync( ParentStep.class,namespace,null);
+        SyncServiceContainer syncServiceContainer = syncService.startSync( ParentStep.class,namespace,null, connectorConfiguration);
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         System.out.println("Sync is done");

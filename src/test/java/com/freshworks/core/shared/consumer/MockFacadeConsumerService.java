@@ -4,10 +4,10 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.data.five_zero_zero.unit.fb.assets.FbComment;
 import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.shared.infra.InfraDbCursorResponse;
+import com.freshworks.core.shared.infra.InfraDbCursor;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbCursor;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import org.mockito.Mockito;
 
@@ -24,64 +25,64 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
     @Autowired
     ApplicationContext applicationContext;
 
+    @Autowired
+    MockFacadeNitriteDbCursor mockFacadeNitriteDbCursor;
+
+    @Autowired
     ConsumerService consumerService;
 
-    ReturnableMockTypeList<List<AbstractAsset>> getAssetByAssetType;
+    ReturnableMockTypeList<InfraDbCursor> initAssetCursor;
 
-    ReturnableMockTypeList<InfraDbCursorResponse<AbstractAsset>> streamAssetByAssetType;
+    ReturnableMockTypeList<List<AbstractAsset>> getAssetListForGivenCursor;
 
-    ReturnableMockTypeList<List<AbstractAsset>> getAssetByAssetTypeAndFilter;
-
+    ReturnableMockTypeList<Boolean> hasNextForAGivenCusor;
 
 
     @Override
-    public MockFacadeConsumerService configure(){
+    public MockFacadeConsumerService configure() throws Exception{
+
         reset();
+        initAssetCursor.add(mockFacadeNitriteDbCursor.configure().build());
+
         List<AbstractAsset> assetList = new ArrayList<>();
         FbComment fbComment = new FbComment();
         fbComment.setComment_id("1");
         fbComment.setComment_text("This is comment text");
         assetList.add(fbComment);
-        getAssetByAssetType.add(assetList);
-        getAssetByAssetTypeAndFilter.add(assetList);
+        getAssetListForGivenCursor.add(assetList);
 
-        InfraDbCursorResponse<AbstractAsset> assetStreamResponse = new InfraDbCursorResponse<>();
-        InfraDbCursorResponse.Token token = new InfraDbCursorResponse.Token();
-        token.setStart(0);
-        token.setCount(1);
-        assetStreamResponse.setAbstractAssetList(assetList);
-        assetStreamResponse.setNextToken(token);
-        streamAssetByAssetType.add(assetStreamResponse);
+        hasNextForAGivenCusor.add(false);
 
         return this;
     }
 
-    public MockFacadeConsumerService getAssetByAssetType(List<AbstractAsset>... assetList) {
-        this.getAssetByAssetType.clear();
-        this.getAssetByAssetType.add(assetList);
+    public MockFacadeConsumerService initAssetCursor(InfraDbCursor... initAssetCursor) {
+        this.initAssetCursor.clear();
+        this.initAssetCursor.add(initAssetCursor);
         return this;
     }
 
-    public MockFacadeConsumerService streamAssetByAssetType(InfraDbCursorResponse<AbstractAsset>... assetStreamResponse) {
-        this.streamAssetByAssetType.clear();
-        this.streamAssetByAssetType.add(assetStreamResponse);
+    public MockFacadeConsumerService getAssetListForGivenCursor(List<AbstractAsset>... getAssetListForGivenCursor) {
+        this.getAssetListForGivenCursor.clear();
+        this.getAssetListForGivenCursor.add(getAssetListForGivenCursor);
         return this;
     }
 
-    public MockFacadeConsumerService getAssetByAssetTypeAndFilter(List<AbstractAsset>... assetList) {
-        this.getAssetByAssetTypeAndFilter.clear();
-        this.getAssetByAssetTypeAndFilter.add(assetList);
+    public MockFacadeConsumerService hasNextForAGivenCusor(Boolean... hasNextForAGivenCusor) {
+        this.hasNextForAGivenCusor.clear();
+        this.hasNextForAGivenCusor.add(hasNextForAGivenCusor);
         return this;
     }
+
 
     @Override
     public ConsumerService build() throws Exception {
         consumerService = applicationContext.getBean(ConsumerService.class);
         ConsumerService consumerServiceSpy = Mockito.spy(consumerService);
         doNothing().when(consumerServiceSpy).configure(any());
-        // doAnswer(getAssetByAssetType.answer()).when(consumerServiceSpy).getAssetByAssetType(any());
-        // doAnswer(streamAssetByAssetType.answer()).when(consumerServiceSpy).streamAssetByAssetType(any(), any());
-        // doAnswer(getAssetByAssetTypeAndFilter.answer()).when(consumerServiceSpy).getAssetByAssetTypeAndFilter(any(), any());
+        doAnswer(initAssetCursor.answer()).when(consumerServiceSpy).initAssetCursor(any());
+        doAnswer(getAssetListForGivenCursor.answer()).when(consumerServiceSpy).getAssetListForGivenCursor(any(), any(), anyInt());
+        doAnswer(hasNextForAGivenCusor.answer()).when(consumerServiceSpy).hasNextForAGivenCusor(any(), any());
 
         return consumerServiceSpy;
     }

@@ -16,19 +16,17 @@ import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
-import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.filters.NitriteFilter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraDbCursorResponse;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 import com.freshworks.core.shared.infra.InfraDbList;
 
 import lombok.Getter;
@@ -343,7 +341,7 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public InfraDbCursorResponse filter(NitriteFilter filter) throws Exception {
+    public InfraDbCursor filter(NitriteFilter filter) throws Exception {
         
         FindOptions findOptions = new FindOptions();
         DocumentCursor documentCursor;
@@ -354,7 +352,7 @@ public class NitriteDbList implements InfraDbList {
             documentCursor = this.nitriteCollection.find();
         }
         
-        NitriteCursorResponse nitriteCursorResponse = new NitriteCursorResponse(filter, documentCursor);
+        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(this, filter, documentCursor);
         return nitriteCursorResponse;
     }
 

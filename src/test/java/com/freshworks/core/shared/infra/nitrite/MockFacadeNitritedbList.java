@@ -2,6 +2,7 @@ package com.freshworks.core.shared.infra.nitrite;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
@@ -10,6 +11,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.rocksdb.RocksDBModule;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -18,11 +20,15 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @Component
 public class MockFacadeNitritedbList implements MockFacadeInterface {
 
     Nitrite nitriteDb;
+
+    @Autowired
+    MockFacadeNitriteDbCursor mockFacadeNitriteDbCursor;
 
     ReturnableMockTypeList<String> listName;
     
@@ -36,6 +42,8 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
 
     ReturnableMockTypeList<List<String>> getNFromStartIndex = new ReturnableMockTypeList<>();
 
+    ReturnableMockTypeList<InfraDbCursor> filter = new ReturnableMockTypeList<>();
+
     ReturnableMockTypeList<List<String>> getGivenDocList = new ReturnableMockTypeList<>();
 
 
@@ -43,7 +51,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
 
 
     @Override
-    public MockFacadeNitritedbList configure(){
+    public MockFacadeNitritedbList configure() throws Exception{
 
         reset();
 
@@ -57,6 +65,9 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         get.add("{\"name\":\"amit\"}");
         getNFromStartIndex.add(Lists.newArrayList("{\"name\":\"amit\"}"));
         getGivenDocList.add(Lists.newArrayList("1","2","3"));
+
+        NitriteDbCursor nitriteDbCursor = mockFacadeNitriteDbCursor.configure().build();
+        filter.add(nitriteDbCursor);
         return this;
     }
 
@@ -115,6 +126,12 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         return this;
     }
 
+    public MockFacadeNitritedbList filter(NitriteDbCursor... nitriteDbCursor){
+        this.filter.clear();;
+        this.filter.add(nitriteDbCursor);
+        return this;
+    }
+
     @Override
     public NitriteDbList build() throws Exception {
 
@@ -136,6 +153,8 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
         doAnswer(getGivenDocList.answer()).when(nitriteDbList).get(anyList());
 
         doAnswer(isEndOfListReached.answer()).when(nitriteDbList).isEndOfListReached(anyInt());
+
+        doAnswer(filter.answer()).when(nitriteDbList).filter(any());
         
         return nitriteDbList;
     }

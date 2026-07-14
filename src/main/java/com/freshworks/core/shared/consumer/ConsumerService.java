@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.infra.InfraDbCursorResponse;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 import com.freshworks.core.shared.infra.InfraDbList;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
@@ -37,14 +37,14 @@ public class ConsumerService {
     }
 
 
-    public InfraDbCursorResponse getCursorForAssetFilter(NitriteFilter filter) throws Exception{
+    public InfraDbCursor initAssetCursor(NitriteFilter filter) throws Exception{
 
-        InfraDbCursorResponse infraDbCursorResponse = this.infraDbList.filter(filter);
+        InfraDbCursor infraDbCursorResponse = this.infraDbList.filter(filter);
         cursorDocumentMapping.put(infraDbCursorResponse.hashCode(), new TreeMap<>());
         return infraDbCursorResponse;
     }
 
-    public <T extends AbstractAsset> List<T> getAssetForGivenCursor(InfraDbCursorResponse infraDbCursorResponse, Class<T> assetClass, int numberOfDocs) throws Exception {
+    public <T extends AbstractAsset> List<T> getAssetListForGivenCursor(InfraDbCursor infraDbCursorResponse, Class<T> assetClass, int numberOfDocs) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
         TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
@@ -68,7 +68,7 @@ public class ConsumerService {
         return returnableList;
     }
 
-    public boolean hasCursorNext(InfraDbCursorResponse infraDbCursorResponse, long waitForDurationInSeconds) throws Exception{
+    public boolean hasNextForAGivenCusor(InfraDbCursor infraDbCursorResponse, long waitForDurationInSeconds) throws Exception{
 
         TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
         if(infraDbCursorResponse.hasMore()){
@@ -86,28 +86,27 @@ public class ConsumerService {
             }
             
 
-            // It means data has been consumed from previous cursor but sync is still in progress 
-            NitriteFilter nitriteFilter = infraDbCursorResponse.getFilterQuery();
-            infraDbCursorResponse = this.infraDbList.filter(nitriteFilter);
+            // It means data has been consumed from existing cursor but sync is still in progress. 
+            // So there could be new data available. Hence referesh it
+            infraDbCursorResponse.refresh();
             return true;
         }
         else{
 
             // It means data has been consumed from previously constructured cursor and sync is either failed
-            // or successful
+            // or successful i.e. not in inprogress
 
             if(map.keySet().size() < infraDbCursorResponse.docSize() ){
 
                 // It means that some more that has been added after sync is completed and last cursor is created
                 // Create another cursor to consume remaining data
 
-                NitriteFilter nitriteFilter = infraDbCursorResponse.getFilterQuery();
-                infraDbCursorResponse = this.infraDbList.filter(nitriteFilter);
+                infraDbCursorResponse.refresh();
                 return true;
             }
 
             else{
-                // It means all data has been consumed
+                // It means all data has been consumed, remove the state maintaince of the cusor
                 cursorDocumentMapping.remove(infraDbCursorResponse.hashCode());
                 return false;
             }

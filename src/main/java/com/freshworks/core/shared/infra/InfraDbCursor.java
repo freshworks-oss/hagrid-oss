@@ -2,11 +2,10 @@ package com.freshworks.core.shared.infra;
 
 import java.util.List;
 
-import org.dizitart.no2.filters.NitriteFilter;
 
-public interface InfraDbCursorResponse{
+public interface InfraDbCursor{
 
-    public NitriteFilter getFilterQuery();
+    public void refresh();
 
     public boolean hasMore();
 
