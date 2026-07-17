@@ -14,7 +14,7 @@ import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.sync.SyncService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.ParentStep;
-import com.freshworks.hagrid.assets.FbNonPrimitiveAsset;
+import com.freshworks.hagrid.assets.FbUser;
 import com.google.common.collect.ImmutableMap;
 
 @Component
@@ -56,19 +56,20 @@ public class Initialization {
             token.setStart(0);
 
             // Keep consuming until sync is in progress ( i.e 0 ) or failed ( i.e -1)
-            while(syncStatusService.getSyncStatus() == 0){
+            while(syncStatusService.getSyncStatus() != 1 && syncStatusService.getSyncStatus() != -1){
 
-                AssetStreamResponse<FbNonPrimitiveAsset> fbUserStreamResponse = consumerService.streamAssetByAssetType(FbNonPrimitiveAsset.class, token);
-                List<FbNonPrimitiveAsset> fbAssetList = fbUserStreamResponse.getAbstractAssetList();
+                AssetStreamResponse<FbUser> fbUserStreamResponse = consumerService.streamAssetByAssetType(FbUser.class, token);
+                List<FbUser> fbAssetList = fbUserStreamResponse.getAbstractAssetList();
 
-                for( FbNonPrimitiveAsset fbAsset : fbAssetList){
-                    System.out.println("fetched asset is " + fbAsset.getUser_id() + " "  + fbAsset.getComment_id() + " " + fbAsset.getCommunity_id());
+                for( FbUser fbAsset : fbAssetList){
+                    System.out.println("fetched asset is " + fbAsset.getUser_id());
                 }
 
                 token = fbUserStreamResponse.getNextToken();
 
                 if(token == null){
                     // It means that Hagrid has been completed and all data is consumed
+                    System.out.println("I am breaking out of loop");
                     break;
                 }
             }
@@ -81,9 +82,9 @@ public class Initialization {
             // Mindful here, this method returns all assets at once. 
 
 
-            // List<FbNonPrimitiveAsset> listOfAllFbNonPrimitiveAsset = consumerService.getAssetByAssetType(FbNonPrimitiveAsset.class);
+            // List<FbUser> listofFbUserAsset = consumerService.getAssetByAssetType(FbUser.class);
 
-            // for( FbNonPrimitiveAsset fbAsset : listOfAllFbNonPrimitiveAsset){
+            // for( FbUser fbAsset : listofFbUserAsset){
             //         System.out.println("fetched asset is " + fbAsset);
             // }
             

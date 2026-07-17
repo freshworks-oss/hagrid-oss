@@ -32,7 +32,6 @@ public class FbNonPrimitiveAsset extends AbstractAsset {
     @Override
     public void transform() {
         
-        System.out.println("generated with " + this.user_id + " commentId " + this.comment_id + " community_id " + this.community_id);
     }
     
 }
