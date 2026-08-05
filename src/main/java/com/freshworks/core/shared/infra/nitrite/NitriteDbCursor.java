@@ -28,37 +28,23 @@ public class NitriteDbCursor implements InfraDbCursor{
     }
     
     @Override
-    public boolean hasMore() {
+    public boolean hasNext() {
         
         return documentCursor.size() > 0;
     }
 
     @Override
-    public List<String> getNext(int n) {
+    public String getNext() throws Exception{
         
-        int i = 0;
-        List<String> returnList = new ArrayList<>();
-
-        for(Document doc : documentCursor){
-
-            if(i < 100){
-                returnList.add(objectMapper.writeValueAsString(doc));
-                i = i + 1;
-            }
-            else{
-                break;
-            }
-        }
-
-        return returnList;
+        return objectMapper.writeValueAsString(this.documentCursor.firstOrNull());
 
     }
 
     @Override
-    public void refresh() {
+    public void refresh() throws Exception{
         
-         NitriteDbCursor nitriteCursorResponse = (NitriteDbCursor)this.nitriteDbList.filter(nitriteFilter);
-         this.documentCursor = nitriteCursorResponse.getDocumentCursor();
+         NitriteDbCursor nitriteCursor = (NitriteDbCursor)this.nitriteDbList.filter(nitriteFilter);
+         this.documentCursor = nitriteCursor.getDocumentCursor();
     }
 
     @Override

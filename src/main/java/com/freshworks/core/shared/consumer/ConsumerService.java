@@ -39,56 +39,62 @@ public class ConsumerService {
 
     public InfraDbCursor initAssetCursor(NitriteFilter filter) throws Exception{
 
-        InfraDbCursor infraDbCursorResponse = this.infraDbList.filter(filter);
-        cursorDocumentMapping.put(infraDbCursorResponse.hashCode(), new TreeMap<>());
-        return infraDbCursorResponse;
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(filter);
+        cursorDocumentMapping.put(infraDbCursor.hashCode(), new TreeMap<>());
+        return infraDbCursor;
     }
 
-    public <T extends AbstractAsset> List<T> getAssetListForGivenCursor(InfraDbCursor infraDbCursorResponse, Class<T> assetClass, int numberOfDocs) throws Exception {
+    public InfraDbCursor initAssetCursor() throws Exception{
+
+        return initAssetCursor(null);
+    }
+
+    public <T extends AbstractAsset> List<T> getAssetListForGivenCursor(InfraDbCursor infraDbCursor, Class<T> assetClass, int numberOfDocs) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
-        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
-
-
-        List<String> sList = infraDbCursorResponse.getNext(numberOfDocs);
+        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursor.hashCode());
 
         List<T> returnableList = new ArrayList<>();
 
-        for(int i=0; i<sList.size(); i++){
-            T x = objectMapper.readValue(sList.get(i), new TypeReference<T>() {});
+        while(infraDbCursor.hasNext()){
+            T x = objectMapper.readValue(infraDbCursor.getNext(), new TypeReference<T>() {});
             
             // Return this result only when it is not returned
             if(Boolean.FALSE.equals(map.containsKey(x.getUuid()))){
                 map.put(x.getUuid(), UUID.randomUUID().toString());
                 returnableList.add(x);
+
+                if(returnableList.size() >= numberOfDocs){
+                    // break out of the loop
+                    break;
+                }
             }
-            
         }
 
         return returnableList;
     }
 
-    public boolean hasNextForAGivenCusor(InfraDbCursor infraDbCursorResponse, long waitForDurationInSeconds) throws Exception{
+    public boolean hasNextForAGivenCusor(InfraDbCursor infraDbCursor, long waitForDurationInMs) throws Exception{
 
-        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursorResponse.hashCode());
-        if(infraDbCursorResponse.hasMore()){
+        TreeMap<String, String> map = cursorDocumentMapping.get(infraDbCursor.hashCode());
+        if(infraDbCursor.hasNext()){
             // It means there is data to be consumed from existing cursor
             return true;
         }
         else if(syncStatusService.getSyncStatus() == 0){
 
-            if(waitForDurationInSeconds == 0 ){
-                // If duration is 0 then wait for alteast 10 seconds
-                Thread.sleep(10 * 1000);
+            if(waitForDurationInMs == 0 ){
+                // If duration is 0 then wait for alteast 1 second
+                Thread.sleep(1000);
             }
             else{
-                Thread.sleep(waitForDurationInSeconds * 1000);
+                Thread.sleep(waitForDurationInMs);
             }
             
 
             // It means data has been consumed from existing cursor but sync is still in progress. 
             // So there could be new data available. Hence referesh it
-            infraDbCursorResponse.refresh();
+            infraDbCursor.refresh();
             return true;
         }
         else{
@@ -96,18 +102,18 @@ public class ConsumerService {
             // It means data has been consumed from previously constructured cursor and sync is either failed
             // or successful i.e. not in inprogress
 
-            if(map.keySet().size() < infraDbCursorResponse.docSize() ){
+            if(map.keySet().size() < infraDbCursor.docSize() ){
 
                 // It means that some more that has been added after sync is completed and last cursor is created
                 // Create another cursor to consume remaining data
 
-                infraDbCursorResponse.refresh();
+                infraDbCursor.refresh();
                 return true;
             }
 
             else{
                 // It means all data has been consumed, remove the state maintaince of the cusor
-                cursorDocumentMapping.remove(infraDbCursorResponse.hashCode());
+                cursorDocumentMapping.remove(infraDbCursor.hashCode());
                 return false;
             }
             

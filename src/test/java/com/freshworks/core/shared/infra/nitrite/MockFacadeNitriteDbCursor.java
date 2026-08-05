@@ -78,7 +78,7 @@ public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
         NitriteDbCursor nitriteDbCursor = new NitriteDbCursor(nitriteDbList, nitriteFilter, documentCursor);
         nitriteDbCursor = Mockito.spy(nitriteDbCursor);
 
-        doAnswer(hasMore.answer()).when(nitriteDbCursor).hasMore();
+        doAnswer(hasMore.answer()).when(nitriteDbCursor).hasNext();
         doAnswer(getNext.answer()).when(nitriteDbCursor).getNext(anyInt());
         doAnswer(docSize.answer()).when(nitriteDbCursor).docSize();
 

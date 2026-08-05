@@ -5,11 +5,11 @@ import java.util.List;
 
 public interface InfraDbCursor{
 
-    public void refresh();
+    public void refresh() throws Exception;
 
-    public boolean hasMore();
+    public boolean hasNext();
 
     public long docSize();
 
-    public List<String> getNext(int numberOfDocs);
+    public String getNext() throws Exception;
 }
