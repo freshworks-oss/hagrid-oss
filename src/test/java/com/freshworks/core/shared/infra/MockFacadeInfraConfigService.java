@@ -51,7 +51,7 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         getAdditionalParams.add("dummy-additional-param=dummy-additional-value");
         getDatabasePort.add(27017);
         getInfraType.add("persistent");
-        getNitriteDataPath.add("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database");
+        getNitriteDataPath.add("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database");
         getNitriteDatabaseType.add("file");
         getConnectionString.add("");
 
@@ -123,7 +123,6 @@ public class MockFacadeInfraConfigService implements MockFacadeInterface {
         infraConfigService = applicationContext.getBean(InfraConfigService.class);
         InfraConfigService infraConfigServiceSpy = Mockito.spy(infraConfigService);
 
-        doNothing().when(infraConfigServiceSpy).configure(any());
         doAnswer(getInfraType.answer()).when(infraConfigServiceSpy).getInfraDbType();
         doAnswer(getNitriteDataPath.answer()).when(infraConfigServiceSpy).getInfraDbLocation();
         doAnswer(getNitriteDatabaseType.answer()).when(infraConfigServiceSpy).getInfraDbType();

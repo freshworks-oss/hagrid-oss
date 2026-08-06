@@ -1,20 +1,19 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 
 import java.util.List;
 
-import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.DocumentCursor;
-import org.dizitart.no2.collection.NitriteCollection;
 import org.dizitart.no2.filters.NitriteFilter;
 import org.mockito.Mockito;
+import org.springframework.stereotype.Component;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.google.inject.internal.util.Lists;
 
+@Component
 public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
 
     ReturnableMockTypeList<Boolean> hasMore = new ReturnableMockTypeList<>();
@@ -79,7 +78,7 @@ public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
         nitriteDbCursor = Mockito.spy(nitriteDbCursor);
 
         doAnswer(hasMore.answer()).when(nitriteDbCursor).hasNext();
-        doAnswer(getNext.answer()).when(nitriteDbCursor).getNext(anyInt());
+        doAnswer(getNext.answer()).when(nitriteDbCursor).getNext();
         doAnswer(docSize.answer()).when(nitriteDbCursor).docSize();
 
 

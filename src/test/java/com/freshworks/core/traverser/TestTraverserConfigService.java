@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 
 
@@ -51,9 +52,19 @@ public class TestTraverserConfigService{
     @Test
     public void testCorrectTraverserThreadCountPickedUp() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+        connectorConfiguration.setTraverserThreadCount(100);
+
         TraverseConfigService traverseConfigService = mockTraverseConfigService.build();
+
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
+                .build();
+        syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
+
+        traverseConfigService.configure(syncServiceContainer);
+
         doCallRealMethod().when(traverseConfigService).getTraverserThreadCount();
-        assertThat(traverseConfigService.getTraverserThreadCount(), is(1));
+        assertThat(traverseConfigService.getTraverserThreadCount(), is(100));
 
     }
 
@@ -80,9 +91,14 @@ public class TestTraverserConfigService{
                 .hagridManagedBeans(hagridManagedSyncServiceContainer)
                 .build();
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+        syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
+
+
         TraverseConfigService traverseConfigService = mockTraverseConfigService
-                .syncServiceContainer(syncServiceContainer)
                 .build();
+
+        traverseConfigService.configure(syncServiceContainer);
 
         doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any());
 

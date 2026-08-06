@@ -9,6 +9,7 @@ import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestApplication;
 import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestUser;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,36 +30,20 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
 
     @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
-    ReturnableMockTypeList<SyncServiceContainer> syncServiceContainer;
 
-    ReturnableMockTypeList<Integer> getTraverserThreadCount;
-    ReturnableMockTypeList<String> getStepLocation;
-    ReturnableMockTypeList<String> getBeanLocation;
-    ReturnableMockTypeList<JsonNode> getRateLimitForStep;
+    ReturnableMockTypeList<Integer> getTraverserThreadCount = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<StepRateLimitObject> getRateLimitForStep = new ReturnableMockTypeList<>();;
 
     @Override
     public MockFacadeTraverseConfigService configure(){
         reset();
 
-        ObjectMapper mapper = new ObjectMapper();
         getTraverserThreadCount.add(1);
-        getStepLocation.add("com.freshworks.core.data.dag.steps");
-        getBeanLocation.add("com.freshworks.core.data.dag.beans");
-
-        ObjectNode rateLimitObjectNode = mapper.createObjectNode();
-        ObjectNode stepObjectNode = mapper.createObjectNode();
-        ObjectNode rateLimitNode = mapper.createObjectNode();
-        rateLimitNode.put("api_count", 100);
-        rateLimitNode.put("seconds", 20);
-        stepObjectNode.put(TestUser.class.getName(), rateLimitNode);
-        rateLimitObjectNode.put("rateLimit", stepObjectNode);
-        getRateLimitForStep.add(rateLimitObjectNode);
-
-        DagNode dagNode = new DagNode(TestApplication.class.getName());
-        HashMap<String, Object> hagridManagedBeans = new HashMap<>();
-        hagridManagedBeans.put(DagNode.class.getName(), dagNode);
-        syncServiceContainer.add(mockFacadeSyncServiceContainer.configure().hagridManagedBeans(hagridManagedBeans).build());
-
+        StepRateLimitObject stepRateLimitObject = new StepRateLimitObject();
+        stepRateLimitObject.setDurationInSeconds(1);
+        stepRateLimitObject.setNumberOfApiCalls(100);
+        getRateLimitForStep.add(stepRateLimitObject);
+        
         return this;
     }
 
@@ -69,38 +54,18 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeTraverseConfigService getStepLocation(String... getStepLocation){
-        this.getStepLocation.clear();
-        this.getStepLocation.add(getStepLocation);
-        return this;
-    }
-
-    public MockFacadeTraverseConfigService getBeanLocation(String... getBeanLocation){
-        this.getBeanLocation.clear();
-        this.getBeanLocation.add(getBeanLocation);
-        return this;
-    }
-
-    public MockFacadeTraverseConfigService getRateLimitForStep(JsonNode... jsonNodes){
+    public MockFacadeTraverseConfigService getRateLimitForStep(StepRateLimitObject... stepRateLimitObject){
         this.getRateLimitForStep.clear();
-        this.getRateLimitForStep.add(jsonNodes);
+        this.getRateLimitForStep.add(stepRateLimitObject);
         return this;
     }
 
-
-    public MockFacadeTraverseConfigService syncServiceContainer(SyncServiceContainer... syncServiceContainer){
-        this.syncServiceContainer.clear();
-        this.syncServiceContainer.add(syncServiceContainer);
-        return this;
-    }
 
     @Override
     public TraverseConfigService build() throws Exception {
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
         TraverseConfigService traverseConfigServiceSpy = Mockito.spy(traverseConfigService);
-        traverseConfigServiceSpy.configure(syncServiceContainer.next());
-        doNothing().when(traverseConfigServiceSpy).configure(any());
         doAnswer(getTraverserThreadCount.answer()).when(traverseConfigServiceSpy).getTraverserThreadCount();
         doAnswer(getRateLimitForStep.answer()).when(traverseConfigServiceSpy).getRateLimitForStep(any());
 

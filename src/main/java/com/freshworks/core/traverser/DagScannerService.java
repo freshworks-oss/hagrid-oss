@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -268,50 +269,29 @@ public class DagScannerService {
 
     private void trimDagNodes(DagNode rootNode, List<AbstractStep> allowedAbstractStep){
 
-        List<String> nodeNames = new ArrayList();
+        List<DagNode> nodesToDrop = new ArrayList<>();
+        List<String> allowedSteps = new ArrayList<>();
 
-        for(AbstractStep step: allowedAbstractStep){
-            nodeNames.add(step.getClass().getName());
+        for(AbstractStep step : allowedAbstractStep){
+            allowedSteps.add(step.getClass().getName());
         }
 
-        if(Boolean.FALSE.equals(nodeNames.isEmpty())){
+        Iterator<DagNode> it = rootNode.preOrder().iterator();
 
-            traverse(rootNode, nodeNames);
-        }
-    }
+        while(it.hasNext()){
 
-    private void traverse(DagNode node, List<String> allowedAbstractStep){
+            DagNode node = it.next();
 
-        if(node == null){
-            
-        }
+            if(Boolean.FALSE.equals(node.getName().equalsIgnoreCase(ParentStep.class.getName())) && Boolean.FALSE.equals(allowedSteps.contains(node.getName()))){
 
-        else {
-
-            if(Boolean.FALSE.equals(allowedAbstractStep.contains(node.getName()))){
-
-                LinkedHashMap<DagNode, Relationship> childLinkedHashMap = node.getChildrenRelationshipMap();
-
-                Set<DagNode> childNodeList = childLinkedHashMap.keySet();
-
-                // Here loop through all child nodes and remove them if they are not present in the list
-                for(DagNode childNode: childNodeList){
-
-                    // If node is Not parent step and it is not present in allowed then remove it
-                    if(Boolean.FALSE.equals(childNode.getName().equals(ParentStep.class.getName())) 
-                            && Boolean.FALSE.equals(allowedAbstractStep.contains(childNode.getName()))){
-
-                        childLinkedHashMap.remove(childNode);
-                    }
-                }
-
-                childNodeList = childLinkedHashMap.keySet();
-                for(DagNode childNode: childNodeList){
-
-                    traverse(childNode, allowedAbstractStep);
-                }
+                nodesToDrop.add(node);
             }
         }
-    }
+        
+        for(DagNode node: nodesToDrop){
 
+            // Drop the sub-tree
+            rootNode.dropSubtree(node);
+        }
+    }
 }
