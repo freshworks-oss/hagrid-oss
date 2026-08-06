@@ -13,6 +13,7 @@ import java.util.function.ToDoubleFunction;
 
 import com.freshworks.core.shared.Annotations.AlphaRelease;
 import com.freshworks.core.shared.Annotations.BetaRelease;
+import com.freshworks.core.shared.analytics.AppEventService.APP_EVENT;
 import com.google.common.base.Preconditions;
 
 import io.micrometer.core.instrument.Gauge;
@@ -33,6 +34,7 @@ public class AnalyticsService {
     ConcurrentHashMap<String, AtomicLong> appEventsMap = new ConcurrentHashMap<>();
 
     MeterRegistry meterRegistry;
+    AppEventService appEventService;
 
     AnalyticsUtility analyticsUtility;
     HashMap<String, List<Consumer<Map<String, Object>>>> consumerHashMap = new HashMap<>();
@@ -44,9 +46,10 @@ public class AnalyticsService {
     boolean shouldPrintSummaryOnDestroy = true;
 
 
-    protected AnalyticsService( MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility) {
+    protected AnalyticsService( MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility, AppEventService appEventService) {
         this.meterRegistry = meterRegistry;
         this.analyticsUtility = analyticsUtility;
+        this.appEventService = appEventService;
     }
 
     protected void configure(String namespace, Boolean shouldPassTagsToMeterRegistry){
@@ -161,27 +164,33 @@ public class AnalyticsService {
      * @param eventName
      * @param tags
      */
-    public void appEvent(String eventName, Object... tags){
+    public void appEvent(APP_EVENT eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
         Map<String, Object> s = analyticsUtility.processTagListIntoMap(tags);
         s.put(NAMESPACE_KEY, namespace);
 
+        // validate app event
+        if(Boolean.FALSE.equals(appEventService.validate(eventName, s))){
+
+            System.out.println("WARNING: App event name " + eventName + " does not have mandatory params");
+        }
+
         // Here I am firing event to meterRegistry
-        fireMeter(eventName, tags);
+        fireMeter(eventName.name(), tags);
 
         if(appEventsMap.contains(eventName)){
-            AtomicLong count = appEventsMap.get(eventName);
+            AtomicLong count = appEventsMap.get(eventName.name());
             count.incrementAndGet();
         }
         else{
-            appEventsMap.put(eventName, new AtomicLong(0));
+            appEventsMap.put(eventName.name(), new AtomicLong(0));
         }
 
         // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
+        if(consumerHashMap.containsKey(eventName.name())){
+            consumerHashMap.get(eventName.name()).forEach(consumer -> consumer.accept(s));
         }
     }
 
@@ -355,15 +364,15 @@ public class AnalyticsService {
      */
 
     @AlphaRelease(sourceVersion = "3.0.0-beta", targetVersion = "3.1.0", useCase = "Dev can use this to trigger methods based on various events fired from different part of the application. For example - When dev fired an event from asset transform method then call this consumer to consme the asset")
-    public void registerEventCallback(String eventName, Consumer<Map<String, Object>> consumer){
-        if(consumerHashMap.containsKey(eventName)){
-            List<Consumer<Map<String, Object>>> consumers = consumerHashMap.get(eventName);
+    public void registerEventCallback(APP_EVENT eventName, Consumer<Map<String, Object>> consumer){
+        if(consumerHashMap.containsKey(eventName.name())){
+            List<Consumer<Map<String, Object>>> consumers = consumerHashMap.get(eventName.name());
             consumers.add(consumer);
         }
         else{
             List<Consumer<Map<String, Object>>> consumers = new ArrayList<>();
             consumers.add(consumer);
-            consumerHashMap.put(eventName, consumers);
+            consumerHashMap.put(eventName.name(), consumers);
         }
     }
 
@@ -383,7 +392,7 @@ public class AnalyticsService {
             this.meterRegistry.counter(eventName, meterTagList).increment(1);
         }
         else{
-            this.meterRegistry.counter(eventName).increment(1);
+            System.out.println("WARNING: Got event " + eventName + ". Tags are not even count");
         }
     }
 

@@ -7,6 +7,7 @@ import com.freshworks.core.processor.joins.AbstractJoinService;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.analytics.AppEventService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
@@ -83,6 +84,8 @@ public class ProcessorTaskService implements Callable<Void> {
 
     LinkedList<AbstractAsset> abstractAssetList = new LinkedList<>();
 
+    AppEventService appEventService;
+
     public ProcessorTaskService() {
     }
 
@@ -112,6 +115,7 @@ public class ProcessorTaskService implements Callable<Void> {
         this.phaser = phaser;
         this.itemList = s;
         this.processTaskTracker = processTaskTracker;
+        this.appEventService = syncServiceContainer.getBean(AppEventService.class);
 
         mainThreadMdcCopy = MDC.getCopyOfContextMap();
     }
@@ -148,7 +152,7 @@ public class ProcessorTaskService implements Callable<Void> {
                 }
             }
             // Publish abstract assets of all items received by this process task
-            ProcessorUtility.publishAbstractAsset(uuid, assetsReadyToBePublishedList, infraService, namespace, analyticsService, meterRegistry);
+            ProcessorUtility.publishAbstractAsset(uuid, assetsReadyToBePublishedList, infraService, namespace, analyticsService, meterRegistry, appEventService);
 
             if (Thread.interrupted()) {
 

@@ -7,10 +7,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.checkerframework.checker.units.qual.s;
 import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +24,7 @@ import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.traverser.Annotations.CustomDagNode;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 
@@ -42,11 +47,13 @@ public class DagScannerService {
     AnalyticsFactory analyticsFactory;
     NamespaceService namespaceService;
     AnalyticsService analyticsService;
+    ConnectorConfiguration connectorConfiguration;
 
     public void configure(SyncServiceContainer serviceContainer){
         this.syncServiceContainer = syncServiceContainer;
         this.namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
+        this.connectorConfiguration = this.syncServiceContainer.getBean(ConnectorConfiguration.class);
     }
 
 
@@ -57,6 +64,8 @@ public class DagScannerService {
             // If Dag for the given stepLocation already exists then do not create it again
             if(rootNode != null){
                 DagNode clonedDagNode = cloneDag(rootNode);
+                // Below I am removing nodes which are switched Off by the customer
+                trimDagNodes(clonedDagNode, connectorConfiguration.getAllowedAbstractStep());
                 init(clonedDagNode.preOrder(), infraService);
                 return clonedDagNode.preOrder().get(0);
             }
@@ -64,6 +73,9 @@ public class DagScannerService {
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
             rootNode = scanner(traverseConfigService, analyticsService);
             DagNode clonedDagNode = cloneDag(rootNode);
+
+            // Below I am removing nodes which are switched Off by the customer
+            trimDagNodes(clonedDagNode, connectorConfiguration.getAllowedAbstractStep());
             init(clonedDagNode.preOrder(), infraService);
             return clonedDagNode.preOrder().get(0);
 
@@ -252,6 +264,54 @@ public class DagScannerService {
 
     public DagNode cloneDag(DagNode rootNode) throws Exception{
         return DagNode.cloneDag(rootNode);
+    }
+
+    private void trimDagNodes(DagNode rootNode, List<AbstractStep> allowedAbstractStep){
+
+        List<String> nodeNames = new ArrayList();
+
+        for(AbstractStep step: allowedAbstractStep){
+            nodeNames.add(step.getClass().getName());
+        }
+
+        if(Boolean.FALSE.equals(nodeNames.isEmpty())){
+
+            traverse(rootNode, nodeNames);
+        }
+    }
+
+    private void traverse(DagNode node, List<String> allowedAbstractStep){
+
+        if(node == null){
+            
+        }
+
+        else {
+
+            if(Boolean.FALSE.equals(allowedAbstractStep.contains(node.getName()))){
+
+                LinkedHashMap<DagNode, Relationship> childLinkedHashMap = node.getChildrenRelationshipMap();
+
+                Set<DagNode> childNodeList = childLinkedHashMap.keySet();
+
+                // Here loop through all child nodes and remove them if they are not present in the list
+                for(DagNode childNode: childNodeList){
+
+                    // If node is Not parent step and it is not present in allowed then remove it
+                    if(Boolean.FALSE.equals(childNode.getName().equals(ParentStep.class.getName())) 
+                            && Boolean.FALSE.equals(allowedAbstractStep.contains(childNode.getName()))){
+
+                        childLinkedHashMap.remove(childNode);
+                    }
+                }
+
+                childNodeList = childLinkedHashMap.keySet();
+                for(DagNode childNode: childNodeList){
+
+                    traverse(childNode, allowedAbstractStep);
+                }
+            }
+        }
     }
 
 }

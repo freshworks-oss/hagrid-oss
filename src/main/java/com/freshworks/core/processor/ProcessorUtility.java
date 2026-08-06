@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.analytics.AppEventService;
+import com.freshworks.core.shared.analytics.AppEventService.APP_EVENT;
 import com.freshworks.core.shared.infra.InfraService;
 import com.google.common.collect.Multimap;
 
@@ -85,7 +87,7 @@ public class ProcessorUtility {
     
     // TODO: This method need to optimise for insertion into freshIndex and
     // addAndGetIndex
-    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService,  NamespaceService namespace, AnalyticsService analyticsService, MeterRegistry meterRegistry) throws Exception {
+    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService,  NamespaceService namespace, AnalyticsService analyticsService, MeterRegistry meterRegistry, AppEventService appEventService) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -100,6 +102,9 @@ public class ProcessorUtility {
                     for (AbstractAsset abstractAsset : assetsReadyToBePublishedList) {
                         assetsReadyToBePublishedListInPublisherQueue
                                 .add(objectMapper.writeValueAsString(abstractAsset));
+                        
+                        // Here I am firing app event so that any listener on it can receive the asset
+                        analyticsService.appEvent(APP_EVENT.HAGRID_ASSET_PUBLISH_DONE, "name", abstractAsset.getClass().getName(), "asset", abstractAsset);
                     }
 
                     long currentTime = System.currentTimeMillis();
@@ -108,10 +113,10 @@ public class ProcessorUtility {
                             .addBulk(assetsReadyToBePublishedListInPublisherQueue);
                     long endTime = System.currentTimeMillis();
                     long diff = endTime - currentTime;
-                    analyticsService.debugLogEvent("PROCESSOR_UTILITY",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentsInserted.size(), "execute_time_taken_ms", diff);
+                    analyticsService.debugLogEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentsInserted, "execute_time_taken_ms", diff);
 
                     if (documentsInserted != assetsReadyToBePublishedList.size()) {
-                        return "Assets ready to be published are not equal to assets published in publisher list";
+                        analyticsService.errorLogEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentsInserted, "execute_time_taken_ms", diff, "_message", "Unable to publish all assets into infra layer");
                     }
                     
                     assetsReadyToBePublishedList.clear();

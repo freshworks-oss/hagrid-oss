@@ -40,12 +40,6 @@ public class NitriteDbCursor implements InfraDbCursor{
 
     }
 
-    @Override
-    public void refresh() throws Exception{
-        
-         NitriteDbCursor nitriteCursor = (NitriteDbCursor)this.nitriteDbList.filter(nitriteFilter);
-         this.documentCursor = nitriteCursor.getDocumentCursor();
-    }
 
     @Override
     public long docSize() {

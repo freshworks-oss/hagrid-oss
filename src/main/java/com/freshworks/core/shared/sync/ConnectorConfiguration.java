@@ -1,6 +1,8 @@
 package com.freshworks.core.shared.sync;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
@@ -26,6 +28,8 @@ public class ConnectorConfiguration {
     @Setter(AccessLevel.NONE)
     Map<String, StepRateLimitObject> stepRateLimitMap = new HashMap<>();
 
+    List<AbstractStep> allowedAbstractStep = new ArrayList<>();
+
     int processorPollCount = 1000;
     int numberOfParallelProcessor = 20;
 
@@ -40,6 +44,16 @@ public class ConnectorConfiguration {
     public void setStepRateLimit(Class<? extends AbstractStep> stepClass, StepRateLimitObject stepRateLimitObject){
 
         stepRateLimitMap.put(stepClass.getName(), stepRateLimitObject);
+    }
+
+    public void setAllowedSteps(List<AbstractStep> allowedAbstractSteps){
+
+        this.allowedAbstractStep = allowedAbstractSteps;
+    }
+
+    public List<AbstractStep> getAllowedSteps(){
+
+        return this.allowedAbstractStep;
     }
 
     public StepRateLimitObject getStepRateLimit(Class<? extends AbstractStep> stepClass){

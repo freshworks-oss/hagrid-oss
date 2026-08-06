@@ -16,6 +16,7 @@ import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.analytics.AppEventService;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraBeanService;
@@ -82,18 +83,17 @@ public class SyncService {
 
     AnalyticsFactory analyticsFactory;
 
+    AppEventService appEventService;
+
     @Autowired
     public SyncService(ApplicationContext applicationContext){
         this.applicationContext = applicationContext;
     }
 
-    public SyncServiceContainer startSync(Class<? extends AbstractStep> stepClass, String infraNameSpace, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception {
+    public SyncServiceContainer startSync() throws Exception {
 
-
-        this.syncServiceContainer = initSyncServiceContainer(infraNameSpace, stepClass, baggageMap, connectorConfiguration);
-
-        this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
-        this.processorExecutorService = syncServiceContainer.getBean(ProcessorExecutorService.class);
+        this.traverserExecutorService = this.syncServiceContainer.getBean(TraverserExecutorService.class);
+        this.processorExecutorService = this.syncServiceContainer.getBean(ProcessorExecutorService.class);
         this.nodeCycleService = syncServiceContainer.getBean(NodeCycleService.class);
         
         NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
@@ -104,21 +104,23 @@ public class SyncService {
         return syncServiceContainer;
     }
 
-    protected SyncServiceContainer initSyncServiceContainer(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    protected SyncServiceContainer configureSync(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
         // Init the sync container
         this.syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
-        this.syncServiceContainer.add(this);
 
         // Add Connector Configuration Object 
-        this.syncServiceContainer.add(connectorConfiguration);
+        this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 
         // Add unique Identifier
         this.singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
-        this.syncServiceContainer.add(this);
+        this.syncServiceContainer.add(this.singletonUniqueIdentifier, GlobalNamespaceService.class);
 
+        // Add AppEvent Service 
+        this.appEventService = applicationContext.getBean(AppEventService.class);
+        this.syncServiceContainer.add(this.appEventService, AppEventService.class);
 
         // Init namespace
         this.namespace = applicationContext.getBean(NamespaceService.class);

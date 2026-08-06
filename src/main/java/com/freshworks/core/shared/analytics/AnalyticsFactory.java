@@ -18,6 +18,8 @@ public class AnalyticsFactory {
 
     AnalyticsUtility analyticsUtility;
 
+    AppEventService appEventService;
+
     HashMap<String, AnalyticsService> singletonHashMap = new HashMap<>();
 
     ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -25,9 +27,10 @@ public class AnalyticsFactory {
     Boolean shouldPassTagsToMeterRegistry = false;
 
     @Autowired
-    public AnalyticsFactory(MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility) {
+    public AnalyticsFactory(MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility, AppEventService appEventService) {
         this.meterRegistry = meterRegistry;
         this.analyticsUtility = analyticsUtility;
+        this.appEventService = appEventService;
     }
 
     public AnalyticsService getAnalyticsService(String namespace) {
@@ -42,7 +45,7 @@ public class AnalyticsFactory {
             }
             else{
 
-                analyticsService = new AnalyticsService(meterRegistry, analyticsUtility);
+                analyticsService = new AnalyticsService(meterRegistry, analyticsUtility, appEventService);
                 analyticsService.configure(namespace, shouldPassTagsToMeterRegistry);
 
             }
