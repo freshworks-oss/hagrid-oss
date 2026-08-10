@@ -2,8 +2,8 @@ package com.freshworks.core.traverser;
 
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.five_zero_zero.unit.dag.steps.TestServicePrinciple;
+import com.freshworks.core.data.unit.dag.steps.TestApplication;
+import com.freshworks.core.data.unit.dag.steps.TestServicePrinciple;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 
 @Component

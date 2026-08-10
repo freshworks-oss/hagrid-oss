@@ -19,10 +19,9 @@ import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.doReturn;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagService {
 
     @Autowired
@@ -59,17 +58,16 @@ public class TestDagService {
     @BeforeEach
     public void beforeEach() throws Exception {
         
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
-        stepA  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepA");
-        stepB  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepB");
-        stepC  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.loop.StepC");
-        application  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
-        servicePrinciple  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
-        appRoleAssignment  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestAppRoleAssignment");
-        users = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestUser");
-        groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestGroup");
-        usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestUsage");
-        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestIgnored");
+        stepA  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepA");
+        stepB  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepB");
+        stepC  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepC");
+        application  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        servicePrinciple  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
+        appRoleAssignment  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestAppRoleAssignment");
+        users = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestUser");
+        groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestGroup");
+        usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestUsage");
+        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestIgnored");
         
     }
 

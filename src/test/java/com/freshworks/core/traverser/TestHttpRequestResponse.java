@@ -26,7 +26,7 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.freshworks.core.traverser.net.http.HttpResponse;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestHttpRequestResponse {
 
     private static ClientAndServer server;

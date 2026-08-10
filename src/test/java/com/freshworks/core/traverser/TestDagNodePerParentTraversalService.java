@@ -41,7 +41,7 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagNodePerParentTraversalService {
 
 
@@ -76,7 +76,6 @@ public class TestDagNodePerParentTraversalService {
     @BeforeEach
     public void Mock() throws Exception {
 
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNodeTraversal.configure().build();
         mockFacadeNitriteDbService.configure().build();
@@ -85,7 +84,7 @@ public class TestDagNodePerParentTraversalService {
         dagNodeMockFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion  + ".unit.dag.steps.TestApplication");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
     }
 
     @Test

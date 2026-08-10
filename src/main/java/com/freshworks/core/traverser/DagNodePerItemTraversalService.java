@@ -466,27 +466,6 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
     }
 
-    protected void filterHttp(HttpAbstractStep abstractStep, StepDataBeanMapping stepDataBeanMapping, JsonNode parentNodeData) throws Exception {
-
-        abstractStep.filterResponse(stepDataBeanMapping, parentNodeData);
-        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
-
-        if(Boolean.TRUE.equals(isThreadInterrupted())){
-            throw new InterruptedException("Thread is interrupted in step filterHttp method");
-        }
-
-    }
-
-    protected void filterNonHttp(NonHttpAbstractStep abstractStep, StepDataBeanMapping StepDataBeanMapping, JsonNode parentNodeData) throws Exception {
-
-        abstractStep.filterResponseNonHttp(StepDataBeanMapping, parentNodeData);
-        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
-
-        if(Boolean.TRUE.equals(isThreadInterrupted())){
-            throw new InterruptedException("Thread is interrupted in step filterNonHttp method");
-        }
-
-    }
 
     protected boolean isSyncCompleteHttp(HttpAbstractStep abstractStep, HttpRequestResponse httpRequestResponse, JsonNode parentNodeData) throws Exception {
 
@@ -791,14 +770,6 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
             else{
                 stepDataBeanMapping = parseSyncResponseNonHttp(nonHttpAbstractStep, requestResponseContainer, parentNodeData);
                 jNodeList = stepDataBeanMapping.getParseSyncedResponseData();
-            }
-
-
-            if(isHttpBased){
-                filterHttp(httpAbstractStep, stepDataBeanMapping, parentNodeData);
-            }
-            else{
-                filterNonHttp(nonHttpAbstractStep, stepDataBeanMapping, parentNodeData);
             }
 
 

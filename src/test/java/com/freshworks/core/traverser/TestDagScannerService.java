@@ -19,7 +19,7 @@ import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagScannerService {
 
     @Autowired
@@ -45,15 +45,14 @@ public class TestDagScannerService {
     @BeforeEach
     public void beforeEach() throws Exception {
 
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
         mockFacadeDagScannerService.configure().build();
         mockFacadeTraverseConfigService.configure().build();
 
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
-        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestIgnored");
-        testAnotherInner = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.anotherinner.TestAnotherInner");
-        testInnerStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.inner.TestInnerStep");
-        testInnerMost = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.inner.innermost.TestInnerMost");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestIgnored");
+        testAnotherInner = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.anotherinner.TestAnotherInner");
+        testInnerStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.TestInnerStep");
+        testInnerMost = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.innermost.TestInnerMost");
 
     }
 

@@ -102,11 +102,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<StepDataBeanMapping> parseSyncResponseNonHttp = new ReturnableMockTypeList<>();
 
-
-    ReturnableMockTypeList<Boolean> filterHttp = new ReturnableMockTypeList<>();
-
-    ReturnableMockTypeList<Boolean> filterNonHttp = new ReturnableMockTypeList<>();
-
     ReturnableMockTypeList<Optional<Boolean>> isSyncCompleteHttp =  new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<HttpRequestResponse> getNextSyncRequest = new ReturnableMockTypeList<>();
@@ -370,17 +365,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeDagNodePerItemTraversal filterHttp(Boolean... filterHttp){
-        this.filterHttp.clear();
-        this.filterHttp.add(filterHttp);
-        return this;
-    }
-
-    public MockFacadeDagNodePerItemTraversal filterNonHttp(Boolean... filterNonHttp){
-        this.filterNonHttp.clear();
-        this.filterNonHttp.add(filterNonHttp);
-        return this;
-    }
 
     public MockFacadeDagNodePerItemTraversal isSyncCompleteHttp(Optional<Boolean>... isSyncCompleteHttp){
         this.isSyncCompleteHttp.clear();
@@ -486,9 +470,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
         doAnswer(parseSyncResponseHttp.answer()).when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
         doAnswer(parseSyncResponseNonHttp.answer()).when(dagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-
-        doNothing().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
-        doNothing().when(dagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
 
         doAnswer(isSyncCompleteHttp.answer()).when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
         doAnswer(isSyncCompleteNonHttp.answer()).when(dagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());

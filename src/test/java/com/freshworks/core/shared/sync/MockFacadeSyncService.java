@@ -27,16 +27,14 @@ public class MockFacadeSyncService implements MockFacadeInterface {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
     ReturnableMockTypeList<SyncServiceContainer> mockSyncServiceContainer;
 
-    ReturnableMockTypeList<SyncServiceContainer> initSyncServiceContainer;
-    ReturnableMockTypeList<SyncServiceContainer> startSync;
+    ReturnableMockTypeList<SyncServiceContainer> configureSync = new ReturnableMockTypeList<>();
 
 
     @Override
     public MockFacadeSyncService configure() throws Exception {
         reset();
         mockSyncServiceContainer.add(mockFacadeSyncServiceContainer.configure().build());
-        initSyncServiceContainer.add(mockSyncServiceContainer.next());
-        startSync.add(mockSyncServiceContainer.next());
+        configureSync.add(mockSyncServiceContainer.next());
         return this;
     }
 
@@ -47,23 +45,18 @@ public class MockFacadeSyncService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeSyncService initSyncServiceContainer( SyncServiceContainer... syncServiceContainer ) {
-        this.initSyncServiceContainer.clear();
-        this.initSyncServiceContainer.add(syncServiceContainer);
+    public MockFacadeSyncService configureSync( SyncServiceContainer... syncServiceContainer ) {
+        this.configureSync.clear();
+        this.configureSync.add(syncServiceContainer);
         return this;
     }
 
-    public MockFacadeSyncService startSync( SyncServiceContainer... syncServiceContainer ) {
-        this.startSync.clear();
-        this.startSync.add(syncServiceContainer);
-        return this;
-    }
 
     @Override
     public SyncService build() throws Exception {
         syncService = applicationContext.getBean(SyncService.class);
         SyncService syncServiceSpy = Mockito.spy(syncService);
-        doAnswer(startSync.answer()).when(syncServiceSpy).startSync(any(), anyString(), any(), any());
+        doAnswer(configureSync.answer()).when(syncServiceSpy).configureSync(anyString(), any(), any(), any());
         doNothing().when(syncServiceSpy).shutdown();
         return syncServiceSpy;
     }

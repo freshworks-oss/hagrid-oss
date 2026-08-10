@@ -136,7 +136,6 @@ public class MockFacadeNonHttpAbstractStep implements MockFacadeInterface {
         doAnswer(handleInValidResponseNonHttp.answer()).when(abstractStep).handleInValidResponseNonHttp(any(), any());
         doAnswer(isSyncCompleteNonHttp.answer()).when(abstractStep).isSyncCompleteNonHttp(any(), any());
         doAnswer(parseSyncResponseNonHttp.answer()).when(abstractStep).parseSyncResponseNonHttp(any(), any());
-        doNothing().when(abstractStep).filterResponseNonHttp(any(), any());
         doNothing().when(abstractStep).setupNonHttp(any(), any());
 
         return abstractStep;

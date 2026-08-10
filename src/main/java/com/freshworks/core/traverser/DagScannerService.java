@@ -41,6 +41,7 @@ public class DagScannerService {
 
     @Autowired
     List<AbstractStep> abstractStepList;
+
     SyncServiceContainer syncServiceContainer;
 
     ReentrantReadWriteLock.WriteLock uniqueScan = new ReentrantReadWriteLock().writeLock();
@@ -50,9 +51,10 @@ public class DagScannerService {
     AnalyticsService analyticsService;
     ConnectorConfiguration connectorConfiguration;
 
-    public void configure(SyncServiceContainer serviceContainer){
+    public void configure(SyncServiceContainer syncServiceContainer){
         this.syncServiceContainer = syncServiceContainer;
         this.namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsFactory = this.syncServiceContainer.getBean(AnalyticsFactory.class);
         this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
         this.connectorConfiguration = this.syncServiceContainer.getBean(ConnectorConfiguration.class);
     }
@@ -276,22 +278,26 @@ public class DagScannerService {
             allowedSteps.add(step.getClass().getName());
         }
 
-        Iterator<DagNode> it = rootNode.preOrder().iterator();
+        // If allowed steps is not empty then allow only these steps else all steps will be allowed
+        if(Boolean.FALSE.equals(allowedSteps.isEmpty())){
+            
+            Iterator<DagNode> it = rootNode.preOrder().iterator();
 
-        while(it.hasNext()){
+            while(it.hasNext()){
 
-            DagNode node = it.next();
+                DagNode node = it.next();
 
-            if(Boolean.FALSE.equals(node.getName().equalsIgnoreCase(ParentStep.class.getName())) && Boolean.FALSE.equals(allowedSteps.contains(node.getName()))){
+                if(Boolean.FALSE.equals(node.getName().equalsIgnoreCase(ParentStep.class.getName())) && Boolean.FALSE.equals(allowedSteps.contains(node.getName()))){
 
-                nodesToDrop.add(node);
+                    nodesToDrop.add(node);
+                }
             }
-        }
         
-        for(DagNode node: nodesToDrop){
+            for(DagNode node: nodesToDrop){
 
-            // Drop the sub-tree
-            rootNode.dropSubtree(node);
+                // Drop the sub-tree
+                rootNode.dropSubtree(node);
+            }
         }
     }
 }

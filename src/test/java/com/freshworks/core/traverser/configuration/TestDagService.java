@@ -1,7 +1,7 @@
 package com.freshworks.core.traverser.configuration;
 
-import com.freshworks.core.data.five_zero_zero.unit.dag.steps.*;
-import com.freshworks.core.data.five_zero_zero.unit.dag.steps.loop.StepA;
+import com.freshworks.core.data.unit.dag.steps.*;
+import com.freshworks.core.data.unit.dag.steps.loop.StepA;
 import com.freshworks.core.traverser.DagNode;
 import com.freshworks.core.traverser.DagScannerService;
 
@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 @SpringBootTest()
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagService {
 
     @Autowired

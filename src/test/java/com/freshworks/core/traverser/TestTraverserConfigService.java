@@ -13,9 +13,9 @@ import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -24,7 +24,7 @@ import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObjec
 
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@ActiveProfiles(value = "unit")
 public class TestTraverserConfigService{
 
     @Autowired
@@ -36,13 +36,9 @@ public class TestTraverserConfigService{
     @Autowired
     MockFacadeDagNode mockFacadeDagNode;
 
-    String releaseVersion;
-
 
     @BeforeEach
     public void beforeEach() throws Exception {
-
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
         mockTraverseConfigService.configure().build();
         mockFacadeDagNode.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
@@ -72,13 +68,13 @@ public class TestTraverserConfigService{
     @Test
     public void testTraverseWhenLoadedConfigureRateLimitViaFreshHierarchyAnnotation() throws Exception {
 
-        Class<? extends AbstractStep> sc = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
+        Class<? extends AbstractStep> sc = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
 
         DagNode servicePrincipal = mockFacadeDagNode
                 .name(sc)
                 .build();
 
-        Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
+        Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
         DagNode applicationNode = mockFacadeDagNode
                 .name(c)
                 .children(new LinkedHashMap<>(Map.of(servicePrincipal, new Relationship())))

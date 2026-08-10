@@ -28,7 +28,7 @@ import com.freshworks.core.shared.sync.SyncStatusService;
 import com.google.common.collect.ImmutableMap;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagTraversalService {
 
     @Autowired
@@ -62,7 +62,6 @@ public class TestDagTraversalService {
 
     @BeforeEach
     public void beforeEach() throws Exception {
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNode.configure().build();
         nitriteDbServiceFacade.configure().build();
@@ -70,9 +69,9 @@ public class TestDagTraversalService {
         mockFacadeSyncStatusService.configure().build();
         mockFacadeInfraConfigService.configure().build();
 
-        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestAppRoleAssignment");
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
-        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
+        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestAppRoleAssignment");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
     }
 
 

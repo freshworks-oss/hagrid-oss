@@ -11,7 +11,7 @@ import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
 import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagNodeTraversalService {
 
     @Autowired
