@@ -3,6 +3,10 @@ package com.freshworks.core.traverser;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
+import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
+import com.google.common.collect.Lists;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -40,7 +44,7 @@ public class TestDagService {
 
     List<Map<String, String>> stepData = new ArrayList<>();
 
-    DagNode dagNode;
+    DagNode rootNode;
 
     String releaseVersion;
 
@@ -76,39 +80,109 @@ public class TestDagService {
     public void testDagIsCreatedSuccessfully() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
-        assertThat(this.dagNode, is(notNullValue()));
+        this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
+        assertThat(this.rootNode, is(notNullValue()));
     }
 
 
     @Test
-    public void testDagIsCorrectWhenSomeStepsAreDropped() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagServiceWhenPathStartingFromTopNodeAreEnabled() throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
+        enablePath.add(application);
+        enablePath.add(usages);
+
+        connectorConfiguration.addPathToEnable(enablePath);
+
+        this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        DagNode nodeToDrop = this.dagNode.find(appRoleAssignment.getName());
-        this.dagNode.dropSubtree(nodeToDrop);
-        assertThat(this.dagNode.find(appRoleAssignment.getName()), is(nullValue()));
-        assertThat(this.dagNode.find(users.getName()), is(nullValue()));
-        assertThat(this.dagNode.find(groups.getName()), is(nullValue()));
+        this.dagScannerService.enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPath());
+        
+        // Here assert that all relationship should be switched off execept relationship between application and usages
 
-        assertThat(this.dagNode.find(application.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(usages.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(servicePrinciple.getName()), is(notNullValue()));
+        // Validating if dag has application step 
+        List<DagNode> children = this.rootNode.getImmediateChildren();
+
+        for(DagNode node: children){
+
+            if(node.getName().equalsIgnoreCase(application.getName())){
+
+                NodeRelationship nodeRelationship = node.getRelationship(this.rootNode);
+                assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.ON));
+            }
+
+            else{
+
+                NodeRelationship nodeRelationship = node.getRelationship(this.rootNode);
+                assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.OFF));
+            }
+        }
     }
 
     @Test
-    public void testDagIsCorrectWhenSomeStepsAreDroppedInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagServiceWhenPathStartingFromIntermediateNodeAreEnabled() throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
+        enablePath.add(servicePrinciple);
+        enablePath.add(appRoleAssignment);
+        enablePath.add(users);
+
+        connectorConfiguration.addPathToEnable(enablePath);
+
+        this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        DagNode nodeToDrop = this.dagNode.find(stepB.getName());
-        this.dagNode.dropSubtree(nodeToDrop);
-        assertThat(this.dagNode.find(stepB.getName()), is(nullValue()));
+        this.dagScannerService.enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPath());
+        
+        // Here assert that all relationship should be switched off execept relationship between service principle --> app role assignment --> users
 
-        assertThat(this.dagNode.find(ParentStep.class.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(stepA.getName()), is(notNullValue()));
-        assertThat(this.dagNode.find(stepC.getName()), is(notNullValue()));
+        // Validating if dag has application step 
+        List<DagNode> allDagNodeList = this.rootNode.getNodesInDag();
+
+        for(DagNode node: allDagNodeList){
+
+            if(node.getName().equalsIgnoreCase(ParentStep.class.getName())){
+
+                // skip it , do not do anything
+            }
+            else if(node.getName().equalsIgnoreCase(appRoleAssignment.getName())){
+
+                List<NodeRelationship> nodeRelationshipList =  Lists.newArrayList(node.getParentRelationshipMap().values());
+                assertThat(nodeRelationshipList.size(), is(1));
+                assertThat(nodeRelationshipList.get(0).getRelSwitch(), is(REL_SWITCH.ON));
+            }
+
+            else if(node.getName().equalsIgnoreCase(users.getName())){
+
+                List<NodeRelationship> nodeRelationshipList = Lists.newArrayList(node.getParentRelationshipMap().values());
+                assertThat(nodeRelationshipList.size(), is(1));
+                assertThat(nodeRelationshipList.get(0).getRelSwitch(), is(REL_SWITCH.ON));
+            }
+
+            else{
+
+                List<NodeRelationship> nodeRelationshipList = Lists.newArrayList(node.getParentRelationshipMap().values());
+                assertThat(nodeRelationshipList.get(0).getRelSwitch(), is(REL_SWITCH.OFF));
+            }
+        }
+    }
+
+    @Test
+    public void testDagServiceWhenPathStartingFromTopNodeAreEnabledInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+
+        
+
+    }
+
+    @Test
+    public void testDagServiceWhenPathStartingFromIntermediateNodeAreEnabledInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+
+        
 
     }
 
@@ -117,8 +191,8 @@ public class TestDagService {
     public void testDagIsCorrectWhenSomeStepsAreStaticallyIgnored() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
-        assertThat(this.dagNode.find(testIgnored.getName()), is(nullValue()));
+        this.rootNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
+        assertThat(this.rootNode.find(testIgnored.getName()), is(nullValue()));
     }
 
 
@@ -126,59 +200,71 @@ public class TestDagService {
     public void testDagIsCorrectWithRightHierarchy() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
+        this.rootNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
 
-        List<DagNode> children = this.dagNode.getSubtree();
+        // Validating if dag has application step 
+        List<DagNode> children = this.rootNode.getImmediateChildren();
         assertThat(children, hasItem(hasProperty("name", is(application.getName()))));
 
-        DagNode node = this.dagNode.find(application.getName());
-        children = node.getSubtree();
+        // Validating if application node has service principle and usages as child
+        DagNode node = this.rootNode.find(application.getName());
+        children = node.getImmediateChildren();
         assertThat(children, hasItem(hasProperty("name", is(servicePrinciple.getName()))));
         assertThat(children, hasItem(hasProperty("name", is(usages.getName()))));
 
-        node = this.dagNode.find(usages.getName());
-        children = node.getSubtree();
+        // Validating if usages node do not have any child
+        node = this.rootNode.find(usages.getName());
+        children = node.getImmediateChildren();
         assertThat(children, is(empty()));
 
-        node = this.dagNode.find(servicePrinciple.getName());
-        children = node.getSubtree();
+        // Validating if service principle node has appRoleAssignment as child
+        node = this.rootNode.find(servicePrinciple.getName());
+        children = node.getImmediateChildren();
         assertThat(children, hasItem(hasProperty("name", is(appRoleAssignment.getName()))));
 
-        node = this.dagNode.find(appRoleAssignment.getName());
-        children = node.getSubtree();
+        // Validating if app role assignment node has two child users and groups
+        node = this.rootNode.find(appRoleAssignment.getName());
+        children = node.getImmediateChildren();
         assertThat(children, hasItem(hasProperty("name", is(users.getName()))));
         assertThat(children, hasItem(hasProperty("name", is(groups.getName()))));
 
-        node = this.dagNode.find(users.getName());
-        children = node.getSubtree();
+        // Validating if users node has no child
+        node = this.rootNode.find(users.getName());
+        children = node.getImmediateChildren();
         assertThat(children, is(empty()));
 
-        node = this.dagNode.find(groups.getName());
-        children = node.getSubtree();
+        // Validating if groups node has no child
+        node = this.rootNode.find(groups.getName());
+        children = node.getImmediateChildren();
         assertThat(children, is(empty()));
-    }
 
-    @Test
-    public void testDagIsCorrectWithRightHierarchyWithRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
 
-        this.analyticsService = analyticsFactory.getAnalyticsService("abc");
-        this.dagNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
+        // Now validate loop cases 
 
-        List<DagNode> children = this.dagNode.getSubtree();
+        // Validate step A is child of parent 
+        children = this.rootNode.getImmediateChildren();
+        // assertThat(children.size(), is(2));
         assertThat(children, hasItem(hasProperty("name", is(stepA.getName()))));
         assertThat(children, hasItem(hasProperty("name", is(stepC.getName()))));
 
-        DagNode node = this.dagNode.find(stepA.getName());
-        children = node.getSubtree();
+
+        // Validate stepA has stepB as child 
+        node = this.rootNode.find(stepA.getName());
+        children = node.getImmediateChildren();
+        assertThat(children.size(), is(1));
         assertThat(children, hasItem(hasProperty("name", is(stepB.getName()))));
 
-        node = this.dagNode.find(stepB.getName());
-        children = node.getSubtree();
+        // Validate stepB has two children stepA and stepC
+        node = this.rootNode.find(stepB.getName());
+        children = node.getImmediateChildren();
+        assertThat(children.size(), is(2));
         assertThat(children, hasItem(hasProperty("name", is(stepA.getName()))));
         assertThat(children, hasItem(hasProperty("name", is(stepC.getName()))));
 
-        node = this.dagNode.find(stepC.getName());
-        children = node.getSubtree();
+        // Validate stepC has one child stepB
+        node = this.rootNode.find(stepC.getName());
+        children = node.getImmediateChildren();
+        assertThat(children.size(), is(1));
         assertThat(children, hasItem(hasProperty("name", is(stepB.getName()))));
 
     }

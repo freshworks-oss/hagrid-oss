@@ -28,7 +28,7 @@ public class ConnectorConfiguration {
     @Setter(AccessLevel.NONE)
     Map<String, StepRateLimitObject> stepRateLimitMap = new HashMap<>();
 
-    List<List<AbstractStep>> enabledDagPath = new ArrayList<>();
+    List<List<Class< ? extends AbstractStep>>> enabledDagPath = new ArrayList<>();
 
     int processorPollCount = 1000;
     int numberOfParallelProcessor = 20;
@@ -46,12 +46,12 @@ public class ConnectorConfiguration {
         stepRateLimitMap.put(stepClass.getName(), stepRateLimitObject);
     }
 
-    public void setEnabledDagPath(List<AbstractStep> enabledPath){
+    public void addPathToEnable(List<Class<? extends AbstractStep>> enabledPath){
 
         this.enabledDagPath.add(enabledPath);
     }
 
-    public List<List<AbstractStep>> getEnabledDagPathList(){
+    public List<List<Class<? extends AbstractStep>>> getEnabledDagPathList(){
 
         return this.enabledDagPath;
     }

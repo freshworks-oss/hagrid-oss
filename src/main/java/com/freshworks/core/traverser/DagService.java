@@ -29,6 +29,7 @@ import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.traverser.Annotations.CustomDagNode;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
 import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
+import com.google.common.collect.Lists;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -271,18 +272,18 @@ public class DagService {
         return DagNode.cloneDag(rootNode);
     }
 
-    private void enableDisableDagPath(DagNode rootNode, List<List<AbstractStep>> allowedAbstractStep) throws Exception{
+    protected void enableDisableDagPath(DagNode rootNode, List<List<Class<? extends AbstractStep>>> allowedAbstractStep) throws Exception{
 
 
         List<List<String>> allowedStepMultiList = new ArrayList<>();
 
-        for(List<AbstractStep> stepList : allowedAbstractStep){
+        for(List<Class<? extends AbstractStep>> stepList : allowedAbstractStep){
 
             List<String> allowedStepList = new ArrayList<>();
 
-            for(AbstractStep step : stepList){
+            for(Class<? extends AbstractStep> step : stepList){
 
-                allowedStepList.add(step.getClass().getName());
+                allowedStepList.add(step.getName());
             }
 
             allowedStepMultiList.add(allowedStepList);
@@ -292,20 +293,20 @@ public class DagService {
 
         for(List<String> path : allowedStepMultiList){
 
-            markRelationshipFeatureSwitchOn(path);
+            markRelationshipFeatureSwitchOn(rootNode, path);
             switchOffRelationshipWhichAreNotMarked(rootNode);
         }
         
     }
 
-    private void markRelationshipFeatureSwitchOn(List<String> path) throws Exception{
+    protected void markRelationshipFeatureSwitchOn(DagNode rootNode, List<String> path) throws Exception{
 
-
-        for(int i=0; i < path.size(); i++){
 
         // For a given path, we must validate the first node, should be a node, which can be triggered
         // Check below how it is being done
         DagNode parentNode = null;
+
+        for(int i=0; i < path.size(); i++){
 
         if (i == 0){
 
@@ -332,7 +333,7 @@ public class DagService {
         }
     }
 
-    private void switchOffRelationshipWhichAreNotMarked(DagNode rootNode) throws Exception{
+    protected void switchOffRelationshipWhichAreNotMarked(DagNode rootNode) throws Exception{
 
         List<DagNode> allDagNodeList = rootNode.getNodesInDag();
 
@@ -347,7 +348,7 @@ public class DagService {
             else{
 
 
-                List<NodeRelationship> nodeRelationshipList = (List<NodeRelationship>) node.getParentRelationshipMap().values();
+                List<NodeRelationship> nodeRelationshipList = Lists.newArrayList(node.getParentRelationshipMap().values());
 
                 for(NodeRelationship relationship : nodeRelationshipList){
 

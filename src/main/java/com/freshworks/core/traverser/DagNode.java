@@ -494,7 +494,7 @@ public class DagNode implements AutoCloseable {
     // }
 
 
-    public List<DagNode> getSubtree(){
+    public List<DagNode> getImmediateChildren(){
         return new ArrayList<>(this.getChildrenRelationshipMap().keySet());
     }
 
