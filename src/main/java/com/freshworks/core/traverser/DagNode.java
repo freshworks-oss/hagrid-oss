@@ -495,7 +495,22 @@ public class DagNode implements AutoCloseable {
                 for(int i = curr.getChildrenRelationshipMap().keySet().size() - 1; i >= 0; i--)
                 {
                     DagNode childNode =  nodeList.get(i);
-                    // Check if child not been traversed already and currently is not present in stack
+                    // This condition is important to make sure right scan happens
+                    /**
+                     *  Suppose below DAG 
+                     *                  
+                     *              A
+                     *           /     <
+                     *          /       \
+                     *         v         \
+                     *         B <------C
+                     * 
+                     *    A has B and C as child and , C has B and A as child. 
+                     *   in this case, result should be just [A,B,C] ( order does not matter) 
+                     *   preOrderList check is needed to make sure that we are not adding them again 
+                     *   readyToScrapStack check is needed to make sure we have not scanned ( or in the stack already) already
+                     */
+                    
                     if(!preOrderList.contains(childNode) && !readyToScrapStack.contains(childNode)){
                         readyToScrapStack.add(childNode);
                     }

@@ -278,7 +278,7 @@ public class DagScannerService {
             allowedSteps.add(step.getClass().getName());
         }
 
-        // If allowed steps is not empty then allow only these steps else all steps will be allowed
+        // If allowed steps is not empty then allow only these steps else all steps will be allowed, no trimming is needed
         if(Boolean.FALSE.equals(allowedSteps.isEmpty())){
             
             Iterator<DagNode> it = rootNode.preOrder().iterator();
