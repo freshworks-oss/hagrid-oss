@@ -160,7 +160,7 @@ public class DagNodeTraversalService implements Callable<Void> {
 
             /**
              *  This condition is important to make sure a parent node is attached with a node when starting point is this node
-             *  TODO: We may need to add one more condition when in a cycle, a node is such that it has only children but not parent like blow 
+             *  We are adding one more condition when in a cycle, a node is such that it has only children but not parent like blow 
              *                  
              *              ParentStep
              *                |
@@ -179,6 +179,8 @@ public class DagNodeTraversalService implements Callable<Void> {
              * 
              *    In such cases, ideally we should add parentNode to kick start this node
              */
+
+
             if (node.getName().equals(topNodeOfThisSubTree.getName()) || node.getParentRelationshipMap().keySet().size() == 0) {
                 DagNode parentNode = new DagNode(node.getName() + "_parent");
                 parentNode.configInfra(infraService.getInfraDbList(parentNode.getShortName()), infraService.getKeyValue());
