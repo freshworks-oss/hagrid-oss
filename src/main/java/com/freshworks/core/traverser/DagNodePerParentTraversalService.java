@@ -7,6 +7,7 @@ import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
+import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.github.bucket4j.Bucket;
@@ -141,9 +142,24 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         int rateLimitUsed = 0;
 
         node.setRelationshipInProgress(parentNode);
+
+        // TODO: Do we need this, as it should have been happening already in DagNodeTraversalService.
         node.setNodeInProgress();
 
-        while (Boolean.TRUE.equals(parentNode.waitUntilHasMoreData(index, node))  && Boolean.FALSE.equals(Thread.interrupted())) {
+
+        NodeRelationship nodeRelationship = node.getRelationship(parentNode);
+
+        if(nodeRelationship.getRelSwitch() == REL_SWITCH.OFF){
+
+            analyticsService.warnLogEvent("HAGRID_DAG_NODE_PER_PARENT", "_message", "Path is disabled between parent and child node hence skipping.." , "node", this.node.getName(), "parent" , this.parentNode.getName() , "namespace" ,namespace.getNamespace(), "uuid", uuid);
+        }
+        
+        /** 
+         *  Process parent data only when its relationship with parent is switched ON 
+         *  We have provided a feature where developer may switch off some path of the DAG
+         * 
+         * */  
+        while (nodeRelationship.getRelSwitch() == REL_SWITCH.ON &&  Boolean.TRUE.equals(parentNode.waitUntilHasMoreData(index, node))  && Boolean.FALSE.equals(Thread.interrupted())) {
 
             int numberOfPerItemTraverserCanBeLaunched = limitNumberOfConcurrentPerItemTraversalSemaphore.drainPermits();
             List<String> listOfParentItems;

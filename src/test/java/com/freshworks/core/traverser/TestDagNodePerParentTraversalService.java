@@ -118,10 +118,10 @@ public class TestDagNodePerParentTraversalService {
         DagNode nodeToTraverse = dagNodeMockFacade
                 .hasMoreData(true, false)
                 .name(application)
-                .parentList(new LinkedHashMap<>(Map.of(parentNode, new Relationship())))
+                .parentList(new LinkedHashMap<>(Map.of(parentNode, new NodeRelationship())))
                 .build();
 
-        parentNode.setChildrenRelationshipMap(new LinkedHashMap<>(Map.of(nodeToTraverse, new Relationship())));
+        parentNode.setChildrenRelationshipMap(new LinkedHashMap<>(Map.of(nodeToTraverse, new NodeRelationship())));
 
         TraverseConfigService traverseConfigService = mockFacadeTraverseConfigService
                 .build();

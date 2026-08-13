@@ -24,10 +24,10 @@ public class NodesCycle {
         cycleEntryPoints.clear();
         for (DagNode node : nodesInCycle) {
 
-            for(Map.Entry<DagNode, Relationship> entry : node.getParentRelationshipMap().entrySet()) {
+            for(Map.Entry<DagNode, NodeRelationship> entry : node.getParentRelationshipMap().entrySet()) {
 
                 DagNode parent = entry.getKey();
-                Relationship relationship = entry.getValue();
+                NodeRelationship relationship = entry.getValue();
 
                 if(!nodesInCycle.contains(parent)){
                     CycleEntryPoint cycleEntryPoint = new CycleEntryPoint();

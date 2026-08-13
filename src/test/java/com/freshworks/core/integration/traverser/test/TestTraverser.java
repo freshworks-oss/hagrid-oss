@@ -100,7 +100,7 @@ public class TestTraverser {
 //        syncServiceContainer.add(httpClientService);
 
 
-        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
+        DagService dagService = applicationContext.getBean(DagService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -126,7 +126,7 @@ public class TestTraverser {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        CountDownLatch latch = new CountDownLatch(rootNode.preOrder().size());
+        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
         dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
@@ -170,7 +170,7 @@ public class TestTraverser {
         HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
         syncServiceContainer.add(httpClientService);
 
-        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
+        DagService dagService = applicationContext.getBean(DagService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -196,7 +196,7 @@ public class TestTraverser {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        CountDownLatch latch = new CountDownLatch(rootNode.preOrder().size());
+        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
         dagTraversalService.configure("/traverser",rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
@@ -250,7 +250,7 @@ public class TestTraverser {
         HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
         syncServiceContainer.add(httpClientService);
 
-        DagScannerService dagService = applicationContext.getBean(DagScannerService.class);
+        DagService dagService = applicationContext.getBean(DagService.class);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -276,7 +276,7 @@ public class TestTraverser {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        CountDownLatch latch = new CountDownLatch(rootNode.preOrder().size());
+        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
         dagTraversalService.configure("/traverser",rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);

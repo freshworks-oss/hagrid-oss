@@ -28,6 +28,7 @@ import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.traverser.Annotations.CustomDagNode;
 import com.freshworks.core.traverser.Annotations.FreshHierarchy;
+import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @Slf4j
-public class DagScannerService {
+public class DagService {
 
     @Autowired
     List<AbstractStep> abstractStepList;
@@ -67,10 +68,11 @@ public class DagScannerService {
             // If Dag for the given stepLocation already exists then do not create it again
             if(rootNode != null){
                 DagNode clonedDagNode = cloneDag(rootNode);
+
                 // Below I am removing nodes which are switched Off by the customer
-                trimDagNodes(clonedDagNode, connectorConfiguration.getAllowedAbstractStep());
-                init(clonedDagNode.preOrder(), infraService);
-                return clonedDagNode.preOrder().get(0);
+                enableDisableDagPath(clonedDagNode, connectorConfiguration.getEnabledDagPathList());
+                init(clonedDagNode.getNodesInDag(), infraService);
+                return clonedDagNode.getNodesInDag().get(0);
             }
 
             AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace);
@@ -78,9 +80,9 @@ public class DagScannerService {
             DagNode clonedDagNode = cloneDag(rootNode);
 
             // Below I am removing nodes which are switched Off by the customer
-            trimDagNodes(clonedDagNode, connectorConfiguration.getAllowedAbstractStep());
-            init(clonedDagNode.preOrder(), infraService);
-            return clonedDagNode.preOrder().get(0);
+            enableDisableDagPath(clonedDagNode, connectorConfiguration.getEnabledDagPathList());
+            init(clonedDagNode.getNodesInDag(), infraService);
+            return clonedDagNode.getNodesInDag().get(0);
 
         }
 
@@ -95,7 +97,7 @@ public class DagScannerService {
         List<String> dagNodeShortNameTempStorage = new ArrayList();
         DagNode treeNode =   createDAG(abstractStepList, analyticsService);
 
-        List<DagNode> nodeList = treeNode.preOrder();
+        List<DagNode> nodeList = treeNode.getNodesInDag();
 
         for (DagNode node : nodeList) {
             String dagShortName = generateShortName(node.getName(), dagNodeShortNameTempStorage);
@@ -186,7 +188,7 @@ public class DagScannerService {
 
     private static boolean isStepIgnored(String clazzName) throws ClassNotFoundException {
 
-        Class<?> clazz = Class.forName(clazzName, false, DagScannerService.class.getClassLoader());
+        Class<?> clazz = Class.forName(clazzName, false, DagService.class.getClassLoader());
         FreshHierarchy freshHierarchy = clazz.getAnnotation(FreshHierarchy.class);
         return freshHierarchy.ignore();
     }
@@ -269,34 +271,97 @@ public class DagScannerService {
         return DagNode.cloneDag(rootNode);
     }
 
-    private void trimDagNodes(DagNode rootNode, List<AbstractStep> allowedAbstractStep){
+    private void enableDisableDagPath(DagNode rootNode, List<List<AbstractStep>> allowedAbstractStep) throws Exception{
 
-        List<DagNode> nodesToDrop = new ArrayList<>();
-        List<String> allowedSteps = new ArrayList<>();
 
-        for(AbstractStep step : allowedAbstractStep){
-            allowedSteps.add(step.getClass().getName());
+        List<List<String>> allowedStepMultiList = new ArrayList<>();
+
+        for(List<AbstractStep> stepList : allowedAbstractStep){
+
+            List<String> allowedStepList = new ArrayList<>();
+
+            for(AbstractStep step : stepList){
+
+                allowedStepList.add(step.getClass().getName());
+            }
+
+            allowedStepMultiList.add(allowedStepList);
         }
 
-        // If allowed steps is not empty then allow only these steps else all steps will be allowed, no trimming is needed
-        if(Boolean.FALSE.equals(allowedSteps.isEmpty())){
-            
-            Iterator<DagNode> it = rootNode.preOrder().iterator();
+        // Only allowedStepMultiList will be allowed, otherwise all other path would be off 
 
-            while(it.hasNext()){
+        for(List<String> path : allowedStepMultiList){
 
-                DagNode node = it.next();
-
-                if(Boolean.FALSE.equals(node.getName().equalsIgnoreCase(ParentStep.class.getName())) && Boolean.FALSE.equals(allowedSteps.contains(node.getName()))){
-
-                    nodesToDrop.add(node);
-                }
-            }
+            markRelationshipFeatureSwitchOn(path);
+            switchOffRelationshipWhichAreNotMarked(rootNode);
+        }
         
-            for(DagNode node: nodesToDrop){
+    }
 
-                // Drop the sub-tree
-                rootNode.dropSubtree(node);
+    private void markRelationshipFeatureSwitchOn(List<String> path) throws Exception{
+
+
+        for(int i=0; i < path.size(); i++){
+
+        // For a given path, we must validate the first node, should be a node, which can be triggered
+        // Check below how it is being done
+        DagNode parentNode = null;
+
+        if (i == 0){
+
+            // special check for 0th node of the path
+            parentNode = rootNode.find(path.get(0));
+
+            // Check if its parent is ParentStep.class
+            if(parentNode.isInParentList(rootNode)){
+
+                NodeRelationship nodeRelationship = parentNode.getRelationship(rootNode);
+                nodeRelationship.enableFeature("should_be_enabled");
+
+            }
+        }
+
+            // For other nodes in the path 
+            else{
+
+                DagNode chilNode = rootNode.find(path.get(i));
+                NodeRelationship relationshipMap = chilNode.getRelationship(parentNode);
+                relationshipMap.enableFeature("should_be_enabled");
+                parentNode = chilNode;
+            }
+        }
+    }
+
+    private void switchOffRelationshipWhichAreNotMarked(DagNode rootNode) throws Exception{
+
+        List<DagNode> allDagNodeList = rootNode.getNodesInDag();
+
+        for(DagNode node: allDagNodeList){
+
+            
+            if(node.getName().equalsIgnoreCase(ParentStep.class.getName())){
+
+                // Do not do anything as this node is the root Node
+            }
+
+            else{
+
+
+                List<NodeRelationship> nodeRelationshipList = (List<NodeRelationship>) node.getParentRelationshipMap().values();
+
+                for(NodeRelationship relationship : nodeRelationshipList){
+
+                    if(Boolean.FALSE.equals(relationship.hasFeature("should_be_enabled"))){
+
+                        relationship.setRelSwitch(REL_SWITCH.OFF);
+                    }
+
+                    else{
+
+                        // Clear feature flag
+                        relationship.clearFeature("should_be_enabled");
+                    }
+                }
             }
         }
     }

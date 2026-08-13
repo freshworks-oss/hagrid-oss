@@ -158,30 +158,7 @@ public class DagNodeTraversalService implements Callable<Void> {
             rateLimitBucket = Bucket.builder().addLimit(Bandwidth.simple(rateLimit, Duration.ofSeconds(rateLimitDuration))).build();
             Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore = new Semaphore(rateLimit);
 
-            /**
-             *  This condition is important to make sure a parent node is attached with a node when starting point is this node
-             *  We are adding one more condition when in a cycle, a node is such that it has only children but not parent like blow 
-             *                  
-             *              ParentStep
-             *                |
-             *                |
-             *                A 
-             *            /        ^
-             *           /          \
-             *          V            \
-             *          B  <-------  C ( this node is in the focus)
-             * 
-             * 
-             *    A has child B and C and C has child B and A . In this case, 
-             *    1. A will start
-             *    2. B will start and wait for data from A and C 
-             *    3. C is the node which will never start as there is no parent
-             * 
-             *    In such cases, ideally we should add parentNode to kick start this node
-             */
-
-
-            if (node.getName().equals(topNodeOfThisSubTree.getName()) || node.getParentRelationshipMap().keySet().size() == 0) {
+            if (node.getName().equals(topNodeOfThisSubTree.getName())) {
                 DagNode parentNode = new DagNode(node.getName() + "_parent");
                 parentNode.configInfra(infraService.getInfraDbList(parentNode.getShortName()), infraService.getKeyValue());
                 parentNode.setNodeInProgress();

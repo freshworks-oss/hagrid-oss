@@ -9,5 +9,5 @@ public class CycleEntryPoint {
 
     DagNode cycleNode;
     DagNode parentNode;
-    Relationship relationship;
+    NodeRelationship relationship;
 }

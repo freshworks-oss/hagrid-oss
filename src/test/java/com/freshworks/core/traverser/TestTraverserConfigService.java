@@ -77,7 +77,7 @@ public class TestTraverserConfigService{
         Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
         DagNode applicationNode = mockFacadeDagNode
                 .name(c)
-                .children(new LinkedHashMap<>(Map.of(servicePrincipal, new Relationship())))
+                .children(new LinkedHashMap<>(Map.of(servicePrincipal, new NodeRelationship())))
                 .build();
 
         HashMap<String, Object> hagridManagedSyncServiceContainer = new HashMap<>();

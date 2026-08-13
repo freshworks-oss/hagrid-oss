@@ -25,7 +25,7 @@ import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.synchronizers.GlobalNamespaceService;
 import com.freshworks.core.traverser.AbstractStep;
 import com.freshworks.core.traverser.DagNode;
-import com.freshworks.core.traverser.DagScannerService;
+import com.freshworks.core.traverser.DagService;
 import com.freshworks.core.traverser.DagTraversalService;
 import com.freshworks.core.traverser.NodeCycleService;
 import com.freshworks.core.traverser.TraverseConfigService;
@@ -65,7 +65,7 @@ public class SyncService {
 
     SyncServiceContainer syncServiceContainer;
 
-    DagScannerService dagScannerService;
+    DagService dagScannerService;
 
     AssetBeanDependencyService assetBeanDependencyService;
 
@@ -157,7 +157,7 @@ public class SyncService {
         this.traverseConfigService.configure(syncServiceContainer);
         this.syncServiceContainer.add(this.traverseConfigService, TraverseConfigService.class);
 
-        this.dagScannerService = applicationContext.getBean(DagScannerService.class);
+        this.dagScannerService = applicationContext.getBean(DagService.class);
         this.dagScannerService.configure(syncServiceContainer);
         DagNode rootNode = this.dagScannerService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
         syncServiceContainer.add(rootNode, DagNode.class);

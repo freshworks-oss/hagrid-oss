@@ -35,9 +35,9 @@ public class MockFacadeDagNode implements MockFacadeInterface {
 
     ReturnableMockTypeList<JsonNode> data = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<LinkedHashMap<DagNode, Relationship>> children = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<LinkedHashMap<DagNode, NodeRelationship>> children = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<LinkedHashMap<DagNode, Relationship>> parentList = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<LinkedHashMap<DagNode, NodeRelationship>> parentList = new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<InfraDbList> infraDbList = new ReturnableMockTypeList<>();
     @Autowired
@@ -66,7 +66,7 @@ public class MockFacadeDagNode implements MockFacadeInterface {
         objectNode.put("dummy-key", "dummy-value");
         data.add(objectNode);
 
-        LinkedHashMap<DagNode, Relationship> c = new LinkedHashMap<>();
+        LinkedHashMap<DagNode, NodeRelationship> c = new LinkedHashMap<>();
         children.add(c);
         DagNode parentNodeValue = null;
 
@@ -115,13 +115,13 @@ public class MockFacadeDagNode implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeDagNode children(LinkedHashMap<DagNode, Relationship>... children) {
+    public MockFacadeDagNode children(LinkedHashMap<DagNode, NodeRelationship>... children) {
         this.children.clear();
         this.children.add(children);
         return this;
     }
 
-    public MockFacadeDagNode parentList(LinkedHashMap<DagNode, Relationship>... parentList) {
+    public MockFacadeDagNode parentList(LinkedHashMap<DagNode, NodeRelationship>... parentList) {
         this.parentList.clear();
         this.parentList.add(parentList);
         return this;

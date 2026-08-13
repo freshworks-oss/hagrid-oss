@@ -56,7 +56,7 @@ public class TestDagNode {
         dagNode3.addChild(dagNode4);
         dagNode3.addChild(dagNode5);
 
-        List<DagNode> dagNodeList = dagNode1.preOrder();
+        List<DagNode> dagNodeList = dagNode1.getNodesInDag();
 
         assertThat(dagNodeList.size(), is(5));
         assertThat(dagNodeList.get(0), is(dagNode1));
@@ -91,7 +91,7 @@ public class TestDagNode {
         dagNode3.addChild(dagNode6);
         dagNode6.addChild(dagNode5);
 
-        List<DagNode> dagNodeList = dagNode1.preOrder();
+        List<DagNode> dagNodeList = dagNode1.getNodesInDag();
 
         assertThat(dagNodeList.size(), is(6));
         assertThat(dagNodeList.get(0), is(dagNode1));
@@ -129,7 +129,7 @@ public class TestDagNode {
         dagNode6.addChild(dagNode5);
         dagNode5.addChild(dagNode6);
 
-        List<DagNode> dagNodeList = dagNode1.preOrder();
+        List<DagNode> dagNodeList = dagNode1.getNodesInDag();
 
         assertThat(dagNodeList.size(), is(6));
         assertThat(dagNodeList.get(0), is(dagNode1));
@@ -167,7 +167,7 @@ public class TestDagNode {
         dagNode6.addChild(dagNode5);
         dagNode6.addChild(dagNode6);
 
-        List<DagNode> dagNodeList = dagNode1.preOrder();
+        List<DagNode> dagNodeList = dagNode1.getNodesInDag();
 
         assertThat(dagNodeList.size(), is(6));
         assertThat(dagNodeList.get(0), is(dagNode1));
@@ -585,8 +585,8 @@ public class TestDagNode {
         assertThat(dagNode3.getParentRelationshipMap().keySet().size(), is(1));
         assertThat(dagNode3.getChildrenRelationshipMap().keySet().size(), is(2));
 
-        LinkedHashMap<DagNode, Relationship> dagNode1ChildrenRelationship = dagNode1.getChildrenRelationshipMap();
-        for(Map.Entry<DagNode, Relationship> rel : dagNode1ChildrenRelationship.entrySet()){
+        LinkedHashMap<DagNode, NodeRelationship> dagNode1ChildrenRelationship = dagNode1.getChildrenRelationshipMap();
+        for(Map.Entry<DagNode, NodeRelationship> rel : dagNode1ChildrenRelationship.entrySet()){
             assertThat(rel.getKey().getName(), in(Arrays.asList(dagNode2.getName(), dagNode3.getName())));
             assertThat(rel.getValue().getStatus(), is(-100));
             assertThat(rel.getValue().getFailedItemsSynced(), is(0L));
@@ -594,8 +594,8 @@ public class TestDagNode {
             assertThat(rel.getValue().getTotalItemsSynced(), is(0L));
         }
 
-        LinkedHashMap<DagNode, Relationship> dagNode3ChildrenRelationship = dagNode3.getChildrenRelationshipMap();
-        for(Map.Entry<DagNode, Relationship> rel : dagNode3ChildrenRelationship.entrySet()){
+        LinkedHashMap<DagNode, NodeRelationship> dagNode3ChildrenRelationship = dagNode3.getChildrenRelationshipMap();
+        for(Map.Entry<DagNode, NodeRelationship> rel : dagNode3ChildrenRelationship.entrySet()){
             assertThat(rel.getKey().getName(), in(Arrays.asList(dagNode4.getName(), dagNode5.getName())));
             assertThat(rel.getValue().getStatus(), is(-100));
             assertThat(rel.getValue().getFailedItemsSynced(), is(0L));

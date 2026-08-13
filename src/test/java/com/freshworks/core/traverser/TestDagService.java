@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.*;
 public class TestDagService {
 
     @Autowired
-    DagScannerService dagScannerService;
+    DagService dagScannerService;
 
     @Autowired
     AnalyticsFactory analyticsFactory;

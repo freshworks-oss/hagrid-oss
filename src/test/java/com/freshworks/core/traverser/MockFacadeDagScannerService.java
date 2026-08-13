@@ -21,7 +21,7 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
     @Autowired
     ApplicationContext applicationContext;
 
-    DagScannerService dagScannerService;
+    DagService dagScannerService;
 
     @Autowired
     MockFacadeDagNode mockFacadeDagNode;
@@ -69,10 +69,10 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
 
 
     @Override
-    public DagScannerService build() throws Exception {
+    public DagService build() throws Exception {
 
-        dagScannerService = applicationContext.getBean(DagScannerService.class);
-        DagScannerService dagScannerServiceSpy = Mockito.spy(dagScannerService);
+        dagScannerService = applicationContext.getBean(DagService.class);
+        DagService dagScannerServiceSpy = Mockito.spy(dagScannerService);
         doAnswer(scanner.answer()).when(dagScannerServiceSpy).scanner(any(), any());
         doAnswer(createDAG.answer()).when(dagScannerServiceSpy).createDAG(any(), any());
         return dagScannerServiceSpy;

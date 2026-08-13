@@ -60,7 +60,7 @@ public class TestDagScannerService {
     @Test
     public void testCreateDagWithStepsInNestedPackage() throws Exception {
 
-        DagScannerService dagScannerService = mockFacadeDagScannerService.build();
+        DagService dagScannerService = mockFacadeDagScannerService.build();
         doCallRealMethod().when(dagScannerService).createDAG(any(),  any());
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some-random-namespace");

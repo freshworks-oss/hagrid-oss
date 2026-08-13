@@ -132,7 +132,7 @@ public class NodeCycleService implements Callable<Void> {
 
         // Check if all entry points are closed
         for(CycleEntryPoint cycleEntryPoint : nodesCycle.getCycleEntryPoints()){
-            Relationship relationship = cycleEntryPoint.getRelationship();
+            NodeRelationship relationship = cycleEntryPoint.getRelationship();
             if(relationship.getStatus() == 0 || relationship.getStatus() == -100){
                 return false;
             }
