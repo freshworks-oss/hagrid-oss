@@ -103,7 +103,11 @@ public class DagNode implements AutoCloseable {
         return parentRelationshipMap.containsKey(parentNode);
     }
 
-    public NodeRelationship getRelationship(DagNode parentNode) throws IllegalArgumentException{
+    public boolean isInChildList(DagNode childNode){
+        return childrenRelationshipMap.containsKey(childNode);
+    }
+
+    public NodeRelationship getParentRelationship(DagNode parentNode) throws IllegalArgumentException{
 
         if(isInParentList(parentNode)){
 
@@ -112,7 +116,20 @@ public class DagNode implements AutoCloseable {
 
         else{
 
-            throw new IllegalArgumentException("Parent Node " + parentNode.getName() + " is not parent of this child node " + getName());
+            throw new IllegalArgumentException("Parent Node " + parentNode.getName() + " is not parent of this child node " + this.getName());
+        }
+    }
+
+    public NodeRelationship getChildRelationship(DagNode childNode) throws IllegalArgumentException{
+
+        if(isInChildList(childNode)){
+
+            return childrenRelationshipMap.get(childNode);
+        }
+
+        else{
+
+            throw new IllegalArgumentException("Child Node " + childNode.getName() + " is not child of this parent node " + this.getName());
         }
     }
 

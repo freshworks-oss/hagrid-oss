@@ -7,6 +7,8 @@ import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
 import com.google.common.collect.Lists;
 
+import net.datafaker.providers.base.Relationship;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -18,8 +20,10 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -101,7 +105,7 @@ public class TestDagService {
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.dagScannerService.enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPath());
         
-        // Here assert that all relationship should be switched off execept relationship between application and usages
+        // Here assert that all relationship should be switched off execept relationship between parentNode --> application and application ---> usages
 
         // Validating if dag has application step 
         List<DagNode> children = this.rootNode.getImmediateChildren();
@@ -110,13 +114,27 @@ public class TestDagService {
 
             if(node.getName().equalsIgnoreCase(application.getName())){
 
-                NodeRelationship nodeRelationship = node.getRelationship(this.rootNode);
+                NodeRelationship nodeRelationship = node.getParentRelationship(this.rootNode);
                 assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.ON));
+
+                // Assert that relationship between application usages is also enabled
+                List<DagNode> nodeList = Lists.newArrayList(node.getChildrenRelationshipMap().keySet());
+
+                for(DagNode appChild : nodeList){
+
+                    if(appChild.getName().equalsIgnoreCase(usages.getName())){
+
+                        NodeRelationship relationship = appChild.getParentRelationship(node);
+
+                        assertThat(relationship.getRelSwitch(), is(REL_SWITCH.ON));
+                    }
+                }
+                
             }
 
             else{
 
-                NodeRelationship nodeRelationship = node.getRelationship(this.rootNode);
+                NodeRelationship nodeRelationship = node.getParentRelationship(this.rootNode);
                 assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.OFF));
             }
         }
@@ -173,16 +191,119 @@ public class TestDagService {
     }
 
     @Test
-    public void testDagServiceWhenPathStartingFromTopNodeAreEnabledInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagServiceWhenPathStartingFromTopNodeAreEnabledInRecursiveSteps() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
+        enablePath.add(stepA);
+        enablePath.add(stepB);
+
+        connectorConfiguration.addPathToEnable(enablePath);
+
+        this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
+
+        this.analyticsService = analyticsFactory.getAnalyticsService("abc");
+        this.dagScannerService.enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPath());
         
+        // Here assert that all relationship should be switched off execept relationship between parentNode --> application and application ---> usages
 
+        // Validating if dag has application step 
+        List<DagNode> children = this.rootNode.getImmediateChildren();
+
+        for(DagNode node: children){
+
+            if(node.getName().equalsIgnoreCase(stepA.getName())){
+
+                NodeRelationship nodeRelationship = node.getParentRelationship(this.rootNode);
+                assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.ON));
+
+                // Assert that relationship between application usages is also enabled
+                List<DagNode> nodeList = Lists.newArrayList(node.getChildrenRelationshipMap().keySet());
+
+                for(DagNode stepAChild : nodeList){
+
+                    if(stepAChild.getName().equalsIgnoreCase(stepB.getName())){
+
+                        NodeRelationship relationship = stepAChild.getParentRelationship(node);
+
+                        assertThat(relationship.getRelSwitch(), is(REL_SWITCH.ON));
+
+                        NodeRelationship reverseRelationship = node.getParentRelationship(stepAChild);
+
+                        assertThat(reverseRelationship.getRelSwitch(), is(REL_SWITCH.OFF));
+                    }
+                }
+                
+            }
+
+            else{
+
+                NodeRelationship nodeRelationship = node.getParentRelationship(this.rootNode);
+                assertThat(nodeRelationship.getRelSwitch(), is(REL_SWITCH.OFF));
+            }
+        }
     }
 
     @Test
-    public void testDagServiceWhenPathStartingFromIntermediateNodeAreEnabledInRecursiveSteps() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagServiceWhenPathStartingFromIntermediateNodeAreEnabledInRecursiveSteps() throws Exception {
 
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
+        enablePath.add(stepB);
+        enablePath.add(stepC);
+
+        connectorConfiguration.addPathToEnable(enablePath);
+
+        this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
+
+        this.analyticsService = analyticsFactory.getAnalyticsService("abc");
+        this.dagScannerService.enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPath());
         
+        // Here assert that all relationship should be switched off execept relationship between service principle --> app role assignment --> users
+
+        // Validating if dag has application step 
+        List<DagNode> allDagNodeList = this.rootNode.getNodesInDag();
+
+        for(DagNode node: allDagNodeList){
+
+            if(node.getName().equalsIgnoreCase(ParentStep.class.getName())){
+
+                // skip it , do not do anything
+            }
+            else if(node.getName().equalsIgnoreCase(stepC.getName())){
+
+                Set<DagNode> parentNodeSet = node.getParentRelationshipMap().keySet();
+
+                DagNode stepBNode = null;
+                
+                for(DagNode parentNode: parentNodeSet){
+
+                    if(parentNode != this.rootNode){
+                        stepBNode = parentNode;
+                    }
+                }
+
+
+                List<NodeRelationship> nodeRelationshipList =  Lists.newArrayList(node.getParentRelationshipMap().values());
+                assertThat(nodeRelationshipList.size(), is(2));
+
+
+                NodeRelationship nodeRelationship1 = node.getParentRelationship(stepBNode);
+                assertThat(nodeRelationship1.getRelSwitch(), is(REL_SWITCH.ON));
+
+                NodeRelationship nodeRelationship2 = node.getParentRelationship(this.rootNode);
+                assertThat(nodeRelationship2.getRelSwitch(), is(REL_SWITCH.OFF));
+            }
+
+            else{
+
+                List<NodeRelationship> nodeRelationshipList = Lists.newArrayList(node.getParentRelationshipMap().values());
+                assertThat(nodeRelationshipList.get(0).getRelSwitch(), is(REL_SWITCH.OFF));
+            }
+        }
 
     }
 

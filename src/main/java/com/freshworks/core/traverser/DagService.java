@@ -316,7 +316,7 @@ public class DagService {
             // Check if its parent is ParentStep.class
             if(parentNode.isInParentList(rootNode)){
 
-                NodeRelationship nodeRelationship = parentNode.getRelationship(rootNode);
+                NodeRelationship nodeRelationship = parentNode.getParentRelationship(rootNode);
                 nodeRelationship.enableFeature("should_be_enabled");
 
             }
@@ -326,7 +326,7 @@ public class DagService {
             else{
 
                 DagNode chilNode = rootNode.find(path.get(i));
-                NodeRelationship relationshipMap = chilNode.getRelationship(parentNode);
+                NodeRelationship relationshipMap = chilNode.getParentRelationship(parentNode);
                 relationshipMap.enableFeature("should_be_enabled");
                 parentNode = chilNode;
             }

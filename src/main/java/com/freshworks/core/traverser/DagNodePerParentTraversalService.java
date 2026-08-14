@@ -147,7 +147,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         node.setNodeInProgress();
 
 
-        NodeRelationship nodeRelationship = node.getRelationship(parentNode);
+        NodeRelationship nodeRelationship = node.getParentRelationship(parentNode);
 
         if(nodeRelationship.getRelSwitch() == REL_SWITCH.OFF){
 
