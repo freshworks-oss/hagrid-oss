@@ -6,7 +6,7 @@ import com.freshworks.core.data.unit.fb.steps.FbComment;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.sync.ConnectorConfiguration.StepRateLimitObject;
-import com.freshworks.core.traverser.MockFacadeDagScannerService;
+import com.freshworks.core.traverser.MockFacadeDagService;
 import com.freshworks.core.traverser.ParentStep;
 import com.freshworks.core.traverser.TraverseConfigService;
 import com.google.common.collect.ImmutableMap;
@@ -33,7 +33,7 @@ public class TestSyncService {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
     @Autowired
-    MockFacadeDagScannerService mockFacadeDagScannerService;
+    MockFacadeDagService mockFacadeDagScannerService;
 
     
 

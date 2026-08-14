@@ -16,26 +16,26 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 
 @Component
-public class MockFacadeDagScannerService implements MockFacadeInterface {
+public class MockFacadeDagService implements MockFacadeInterface {
 
     @Autowired
     ApplicationContext applicationContext;
 
-    DagService dagScannerService;
+    DagService dagService;
 
     @Autowired
     MockFacadeDagNode mockFacadeDagNode;
 
-    ReturnableMockTypeList<DagNode> scanner;
+    ReturnableMockTypeList<DagNode> scanner = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<Set<Class<?>>> getSteps;
+    ReturnableMockTypeList<Set<Class<?>>> getSteps = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<DagNode> createDAG;
-
-
+    ReturnableMockTypeList<DagNode> createDAG = new ReturnableMockTypeList<>();
 
 
-    public MockFacadeDagScannerService configure() throws Exception {
+
+
+    public MockFacadeDagService configure() throws Exception {
         reset();
 
         DagNode dagNode = mockFacadeDagNode.configure().build();
@@ -49,19 +49,19 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
     }
 
 
-    public MockFacadeDagScannerService scanner(DagNode... scanner){
+    public MockFacadeDagService scanner(DagNode... scanner){
         this.scanner.clear();
         this.scanner.add(scanner);
         return this;
     }
 
-    public MockFacadeDagScannerService getSteps(Set<Class<?>>... getSteps){
+    public MockFacadeDagService getSteps(Set<Class<?>>... getSteps){
         this.getSteps.clear();
         this.getSteps.add(getSteps);
         return this;
     }
 
-    public MockFacadeDagScannerService createDAG(DagNode... nodes){
+    public MockFacadeDagService createDAG(DagNode... nodes){
         this.createDAG.clear();
         this.createDAG.add(nodes);
         return this;
@@ -71,10 +71,10 @@ public class MockFacadeDagScannerService implements MockFacadeInterface {
     @Override
     public DagService build() throws Exception {
 
-        dagScannerService = applicationContext.getBean(DagService.class);
-        DagService dagScannerServiceSpy = Mockito.spy(dagScannerService);
-        doAnswer(scanner.answer()).when(dagScannerServiceSpy).scanner(any(), any());
-        doAnswer(createDAG.answer()).when(dagScannerServiceSpy).createDAG(any(), any());
-        return dagScannerServiceSpy;
+        dagService = applicationContext.getBean(DagService.class);
+        DagService dagServiceSpy = Mockito.spy(dagService);
+        doAnswer(scanner.answer()).when(dagServiceSpy).scanner(any(), any());
+        doAnswer(createDAG.answer()).when(dagServiceSpy).createDAG(any(), any());
+        return dagServiceSpy;
     }
 }

@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import net.datafaker.providers.base.Relationship;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
@@ -27,6 +28,8 @@ import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doCallRealMethod;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
@@ -36,9 +39,15 @@ public class TestDagService {
     DagService dagScannerService;
 
     @Autowired
+    List<AbstractStep> abstractStepList;
+
+    @Autowired
     AnalyticsFactory analyticsFactory;
 
     AnalyticsService analyticsService;
+
+    @Autowired
+    MockFacadeDagService mockFacadeDagScannerService;
 
     @SpyBean
     TraverseConfigService traverseConfigService;
@@ -62,6 +71,9 @@ public class TestDagService {
     Class<? extends AbstractStep> groups;
     Class<? extends AbstractStep> usages;
     Class<? extends AbstractStep> testIgnored;
+    Class<? extends AbstractStep> testAnotherInner;
+    Class<? extends AbstractStep> testInnerStep;
+    Class<? extends AbstractStep> testInnerMost;
 
     @BeforeEach
     public void beforeEach() throws Exception {
@@ -76,6 +88,10 @@ public class TestDagService {
         groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestGroup");
         usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestUsage");
         testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestIgnored");
+
+        testAnotherInner = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.anotherinner.TestAnotherInner");
+        testInnerStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.TestInnerStep");
+        testInnerMost = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.innermost.TestInnerMost");
         
     }
 
@@ -388,5 +404,32 @@ public class TestDagService {
         assertThat(children.size(), is(1));
         assertThat(children, hasItem(hasProperty("name", is(stepB.getName()))));
 
+    }
+
+    @Test
+    public void testCreateDagWithStepsInNestedPackage() throws Exception {
+
+        DagService dagService = mockFacadeDagScannerService.build();
+        doCallRealMethod().when(dagService).createDAG(any(),  any());
+
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some-random-namespace");
+
+        DagNode rootNode = dagService.createDAG(abstractStepList, analyticsService);
+        List<DagNode> children = new ArrayList<>(rootNode.getChildrenRelationshipMap().keySet());
+        assertThat(children, Matchers.hasItem(hasProperty("name", Matchers.equalTo(testInnerStep.getName()))));
+        assertThat(children, Matchers.hasItem(hasProperty("name", Matchers.equalTo(testAnotherInner.getName()))));
+        assertThat(children, Matchers.hasItem(hasProperty("name", Matchers.equalTo(application.getName()))));
+        assertThat(children, Matchers.not(Matchers.hasItem(hasProperty("name", Matchers.equalTo(testIgnored.getName())))));
+
+        for(DagNode node : children){
+
+            if(node.getName().equalsIgnoreCase(testInnerStep.getName())){
+
+                List<DagNode> nestedChildren = new ArrayList<>(node.getChildrenRelationshipMap().keySet());
+
+                assertThat(nestedChildren.size(), Matchers.is(1));
+                assertThat(nestedChildren, Matchers.hasItem(hasProperty("name", Matchers.equalTo(testInnerMost.getName()))));
+            }
+        }
     }
 }
