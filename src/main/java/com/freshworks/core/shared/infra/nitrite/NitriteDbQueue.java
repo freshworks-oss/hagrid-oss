@@ -274,8 +274,11 @@ public class NitriteDbQueue implements InfraDbQueue {
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json 
         Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
+
+        Document subDocument = Document.createDocument(map);
+
         documentMap.put("queue_index", queueIndex);
-        documentMap.put("value", map);
+        documentMap.put("value", subDocument);
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         

@@ -1,13 +1,8 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.NamespaceService;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.analytics.AnalyticsFactory;
-import com.freshworks.core.shared.infra.InfraConfigService;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.persistent.MongoClientFactory;
-import com.mongodb.client.MongoClient;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import org.dizitart.no2.Nitrite;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,12 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import org.dizitart.no2.Nitrite;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.NamespaceService;
+import com.freshworks.core.shared.infra.InfraConfigService;
+import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestNitriteClientFactory {
 
 

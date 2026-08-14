@@ -1,11 +1,11 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
-import org.dizitart.no2.filters.NitriteFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.shared.infra.InfraDbCursor;
@@ -18,25 +18,27 @@ public class NitriteDbCursor implements InfraDbCursor{
     ObjectMapper objectMapper = new ObjectMapper();
 
     DocumentCursor documentCursor;
-    NitriteFilter nitriteFilter;
-    NitriteDbList nitriteDbList;
+    Iterator<Document> cursorIterator;
 
-    public NitriteDbCursor(NitriteDbList nitriteDbList, NitriteFilter nitriteFilter, DocumentCursor documentCursor){
-        this.nitriteDbList = nitriteDbList;
-        this.nitriteFilter = nitriteFilter;
+    public NitriteDbCursor(DocumentCursor documentCursor){
         this.documentCursor = documentCursor;
+        cursorIterator = documentCursor.iterator();
     }
     
     @Override
     public boolean hasNext() {
         
-        return documentCursor.size() > 0;
+        return cursorIterator.hasNext();
     }
 
     @Override
     public String getNext() throws Exception{
         
-        return objectMapper.writeValueAsString(this.documentCursor.firstOrNull());
+        Document document = cursorIterator.next();
+        Object o  = document.get("value");
+        String asset = objectMapper.writeValueAsString(o);
+        asset = asset.replaceAll("ENCODE_DOT", "\\.");
+        return asset;
 
     }
 

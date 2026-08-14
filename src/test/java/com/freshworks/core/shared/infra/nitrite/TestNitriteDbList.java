@@ -18,11 +18,9 @@ import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraConfigService;
-import com.freshworks.core.shared.sync.MockFacadeSyncService;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestNitriteDbList {
 
     Nitrite nitriteDb;

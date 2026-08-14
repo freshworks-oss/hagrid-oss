@@ -7,6 +7,7 @@ import java.util.List;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.filters.NitriteFilter;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.core.MockFacadeInterface;
@@ -16,22 +17,21 @@ import com.google.inject.internal.util.Lists;
 @Component
 public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
 
+
     ReturnableMockTypeList<Boolean> hasMore = new ReturnableMockTypeList<>();
     ReturnableMockTypeList<Long> docSize = new ReturnableMockTypeList<>();
     ReturnableMockTypeList<List<String>> getNext = new ReturnableMockTypeList<>();
     
-    NitriteDbList nitriteDbList;
     DocumentCursor documentCursor;
-    NitriteFilter nitriteFilter;
-
 
     @Override
-    public MockFacadeNitriteDbCursor configure(){
+    public MockFacadeNitriteDbCursor configure() throws Exception{
 
         reset();
         hasMore.add(false);
         docSize.add(10L);
         getNext.add(Lists.newArrayList("{\"name\":\"amit\"}", "{\"name\":\"rahul\"}"));
+        documentCursor = Mockito.mock(DocumentCursor.class);
         return this;
     }
 
@@ -55,18 +55,8 @@ public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeNitriteDbCursor getNitriteDbList(NitriteDbList nitriteDbList){
-        this.nitriteDbList = nitriteDbList;
-        return this;
-    }
-
     public MockFacadeNitriteDbCursor getDocumentCursor(DocumentCursor documentCursor){
         this.documentCursor = documentCursor;
-        return this;
-    }
-
-    public MockFacadeNitriteDbCursor getNitriteFilter(NitriteFilter nitriteFilter){
-        this.nitriteFilter = nitriteFilter;
         return this;
     }
 
@@ -74,7 +64,7 @@ public class MockFacadeNitriteDbCursor implements MockFacadeInterface {
     @Override
     public NitriteDbCursor build() throws Exception {
             
-        NitriteDbCursor nitriteDbCursor = new NitriteDbCursor(nitriteDbList, nitriteFilter, documentCursor);
+        NitriteDbCursor nitriteDbCursor = new NitriteDbCursor(documentCursor);
         nitriteDbCursor = Mockito.spy(nitriteDbCursor);
 
         doAnswer(hasMore.answer()).when(nitriteDbCursor).hasNext();

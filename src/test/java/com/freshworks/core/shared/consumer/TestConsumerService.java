@@ -12,10 +12,12 @@ import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraConfigService;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
 import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
 import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbCursor;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.core.shared.sync.SyncStatusService;
@@ -33,9 +35,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.dizitart.no2.filters.FluentFilter.where;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.nullValue;
@@ -43,7 +47,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doCallRealMethod;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.[a-z]*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestConsumerService {
 
     @Autowired
@@ -95,6 +99,7 @@ public class TestConsumerService {
     @Test
     public void testWhenAssetsOfTypeArePresentInInfraThenGetAssetTypeReturnsAllAssetAtOnce() throws Exception{
 
+        ObjectMapper objectMapper = new ObjectMapper();
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .build();
         NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
@@ -121,7 +126,7 @@ public class TestConsumerService {
                 .namespace(namespace.getNamespace())
                 .build();
 
-        System.out.print("Inserting document in list " + publisherList.getListName() );
+        System.out.println("Inserting document in list " + publisherList.getListName() );
 
         doCallRealMethod().when(publisherList).configure(any());
         doCallRealMethod().when(publisherList).add(anyString());
@@ -129,22 +134,12 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
+        doCallRealMethod().when(publisherList).filter(any());
         publisherList.configure(syncServiceContainer);
-
-
-        JsonIndexService jsonIndexService = applicationContext.getBean(JsonIndexService.class);
-        jsonIndexService.configure(namespace.getNamespace());
-
-        JsonQueryService jsonQueryService = applicationContext.getBean(JsonQueryService.class);
-        jsonQueryService.configure(namespace.getNamespace());
-
-        NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
         InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
-                .getJsonIndexService(jsonIndexService)
-                .getJsonQueryService(jsonQueryService)
-                .getNamespaceService(namespaceService)
+                .getNamespace("abs")
                 .build();
 
         syncServiceContainer.add(nitriteDbService, InfraService.class);
@@ -163,31 +158,31 @@ public class TestConsumerService {
         fbComment3.setComment_id("3");
         fbComment3.setComment_title("This is comment title three");
 
-        Long index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment1));
-        String s = getFreshIndexObjectMapper().writeValueAsString(fbComment1);
-        JsonNode j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
+        publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment1));
+        publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment2));
+        publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment3));
 
-
-        index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment2));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment2);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
-
-        index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment3));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment3);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
 
 
         ConsumerService consumerService = mockFacadeConsumerService
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
-        doCallRealMethod().when(consumerService).getAssetByAssetType(any());
+        doCallRealMethod().when(consumerService).getAssetCursor();
+        doCallRealMethod().when(consumerService).getAssetCursor(any());
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        List<FbComment> fbCommentList = consumerService.getAssetByAssetType(FbComment.class);
+        InfraDbCursor dbCursor = consumerService.getAssetCursor();
+
+        assertThat(dbCursor.docSize(), Matchers.is(3L));
+
+        List<FbComment> fbCommentList = new ArrayList<>();
+
+        while(dbCursor.hasNext()){
+
+                FbComment fbComment = objectMapper.readValue(dbCursor.getNext(), FbComment.class);
+                fbCommentList.add(fbComment);
+        }
 
         assertThat(fbCommentList.size(), Matchers.is(3));
     }
@@ -230,22 +225,15 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
+        doCallRealMethod().when(publisherList).filter(any());
         publisherList.configure(syncServiceContainer);
 
-
-        JsonIndexService jsonIndexService = applicationContext.getBean(JsonIndexService.class);
-        jsonIndexService.configure(namespace.getNamespace());
-
-        JsonQueryService jsonQueryService = applicationContext.getBean(JsonQueryService.class);
-        jsonQueryService.configure(namespace.getNamespace());
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
         InfraService h2DbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
-                .getJsonIndexService(jsonIndexService)
-                .getJsonQueryService(jsonQueryService)
-                .getNamespaceService(namespaceService)
+                .getNamespace("abc")
                 .build();
 
         syncServiceContainer.add(h2DbService, InfraService.class);
@@ -265,38 +253,28 @@ public class TestConsumerService {
         fbComment3.setComment_title("This is comment title three");
 
         Long index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment1));
-        String s = getFreshIndexObjectMapper().writeValueAsString(fbComment1);
-        JsonNode j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
-
 
         index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment2));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment2);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
 
         index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment3));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment3);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
 
 
         ConsumerService consumerService = mockFacadeConsumerService
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
-        doCallRealMethod().when(consumerService).getAssetByAssetTypeAndFilter(any(), any());
+        doCallRealMethod().when(consumerService).getAssetCursor();
+        doCallRealMethod().when(consumerService).getAssetCursor(any());
 
-        Expression expression = Expression.expressionBuilder()
-                        .whenAssetFieldName("$.FbComment.comment_id")
-                                .is()
-                                        .whenAssetFieldValue("1")
-                                                .build();
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        List<FbComment> fbCommentList = consumerService.getAssetByAssetTypeAndFilter(FbComment.class, expression);
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class);
+        assertThat(dbCursor.docSize(), Matchers.is(3L));
 
-        assertThat(fbCommentList.size(), Matchers.is(1));
+        // while(dbCursor.hasNext()){
+        //   System.out.println(dbCursor.getNext());
+        // }
+
     }
 
 
@@ -341,20 +319,11 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).add(anyList());
         publisherList.configure(syncServiceContainer);
 
-
-        JsonIndexService jsonIndexService = applicationContext.getBean(JsonIndexService.class);
-        jsonIndexService.configure(namespace.getNamespace());
-
-        JsonQueryService jsonQueryService = applicationContext.getBean(JsonQueryService.class);
-        jsonQueryService.configure(namespace.getNamespace());
-
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
 
         InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
-                .getJsonIndexService(jsonIndexService)
-                .getJsonQueryService(jsonQueryService)
-                .getNamespaceService(namespaceService)
+                .getNamespace("bs")
                 .build();
 
         syncServiceContainer.add(nitriteDbService, InfraService.class);
@@ -374,20 +343,10 @@ public class TestConsumerService {
         fbComment3.setComment_title("This is comment title three");
 
         Long index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment1));
-        String s = getFreshIndexObjectMapper().writeValueAsString(fbComment1);
-        JsonNode j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
-
 
         index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment2));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment2);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
 
         index = publisherList.addAndGetIndex(objectMapper.writeValueAsString(fbComment3));
-        s = getFreshIndexObjectMapper().writeValueAsString(fbComment3);
-        j = getFreshIndexObjectMapper().readTree(s);
-        jsonIndexService.indexJsonString(j, index.toString());
 
 
         ConsumerService consumerService = mockFacadeConsumerService

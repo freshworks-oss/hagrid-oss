@@ -180,9 +180,11 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
         Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<HashMap<String, Object>>() {});
 
+        Document subDocument = Document.createDocument(valueMap);
+
         Map<String, Object> documentMap = new HashMap<>();        
         documentMap.put("key", key);
-        documentMap.put("value", valueMap);
+        documentMap.put("value", subDocument);
         Document document = Document.createDocument(documentMap);
 
         nitriteCollection.insert(document);

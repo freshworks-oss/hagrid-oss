@@ -22,6 +22,7 @@ import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -241,17 +242,18 @@ public class NitriteDbList implements InfraDbList {
 
     private void insert(long listIndex, String item) throws Exception{
         
-        
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
         }
 
-        
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json  
         Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
+
+        Document subDocument = Document.createDocument(map);
         documentMap.put("list_index", listIndex);
-        documentMap.put("value", map);
+        documentMap.put("value", subDocument);
+
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         
@@ -341,18 +343,24 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public InfraDbCursor filter(NitriteFilter filter) throws Exception {
+    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType) throws Exception {
         
-        FindOptions findOptions = new FindOptions();
         DocumentCursor documentCursor;
-        if (filter != null){
-            documentCursor = this.nitriteCollection.find(filter, findOptions);
+
+        if(assetClassType != null){
+
+            String className = assetClassType.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+
+            NitriteFilter filter = where("value.clazz").eq(className);
+            documentCursor = this.nitriteCollection.find(filter);
         }
+
         else{
             documentCursor = this.nitriteCollection.find();
         }
         
-        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(this, filter, documentCursor);
+        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
         return nitriteCursorResponse;
     }
 

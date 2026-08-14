@@ -3,6 +3,8 @@ package com.freshworks.core.shared.infra;
 import java.util.List;
 
 import org.dizitart.no2.filters.NitriteFilter;
+
+import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 
 public interface InfraDbList {
@@ -30,7 +32,7 @@ public interface InfraDbList {
     // Get list of strings for given ids
     public List<String> get(List<Long> documentIdList) throws Exception;
 
-    public InfraDbCursor filter(NitriteFilter filter) throws Exception;
+    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType) throws Exception;
 
     public long size() throws Exception;
 

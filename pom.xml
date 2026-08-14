@@ -48,6 +48,14 @@
     </properties>
 
     <dependencies>
+
+    <!-- Source: https://mvnrepository.com/artifact/org.dizitart/nitrite -->
+        <dependency>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>5.0.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

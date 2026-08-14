@@ -1,25 +1,17 @@
 package com.freshworks.core.shared.consumer;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.five_zero_zero.unit.fb.assets.FbComment;
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.shared.infra.InfraDbCursor;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbCursor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
-
-import org.dizitart.no2.filters.NitriteFilter;
-import org.mockito.Mockito;
+import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 
 @Component
 public class MockFacadeConsumerService implements MockFacadeInterface {
@@ -28,12 +20,9 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
     ApplicationContext applicationContext;
 
     @Autowired
-    MockFacadeNitriteDbCursor mockFacadeNitriteDbCursor;
-
-    @Autowired
     ConsumerService consumerService;
 
-    ReturnableMockTypeList<InfraDbCursor> getAssetCursor;
+    ReturnableMockTypeList<InfraDbCursor> getAssetCursor = new ReturnableMockTypeList<>();
 
     // ReturnableMockTypeList<List<AbstractAsset>> getAssetListForGivenCursor;
 
@@ -44,8 +33,6 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
     public MockFacadeConsumerService configure() throws Exception{
 
         reset();
-        getAssetCursor.add(mockFacadeNitriteDbCursor.configure().build());
-
         return this;
     }
 

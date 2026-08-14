@@ -1,6 +1,11 @@
 package com.freshworks.core.shared.infra.nitrite;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -152,11 +157,22 @@ public class NitriteService implements InfraService {
 
             if(Boolean.FALSE.equals(nitriteDb.isClosed())){
                 nitriteDb.close();
+
+                if(infraConfigService.getInfraDbType().equalsIgnoreCase("file")){
+                
+                    Path pathToBeDeleted = Paths.get(infraConfigService.getInfraDbLocation());
+                    Files.walk(pathToBeDeleted)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+                    
+                }
             }
             
         }
 
         finally {
+
             schemaDeletionLock.unlock();
         }
     }

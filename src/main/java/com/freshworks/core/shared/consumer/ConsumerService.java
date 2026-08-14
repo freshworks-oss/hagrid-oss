@@ -43,21 +43,29 @@ public class ConsumerService {
     }
 
 
+        /**
+     * Use this method to consume assets when sync is done 
+     * @param filter
+     * @return
+     * @throws Exception
+     */
+    public InfraDbCursor getAssetCursor(Class<? extends AbstractAsset> assetClassType) throws Exception{
+
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType);
+        return infraDbCursor;
+    }
+
+
     /**
      * Use this method to consume assets when sync is done 
      * @param filter
      * @return
      * @throws Exception
      */
-    public InfraDbCursor getAssetCursor(NitriteFilter filter) throws Exception{
-
-        InfraDbCursor infraDbCursor = this.infraDbList.filter(filter);
-        return infraDbCursor;
-    }
-
     public InfraDbCursor getAssetCursor() throws Exception{
 
-        return getAssetCursor(null);
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(null);
+        return infraDbCursor;
     }
 
     /**

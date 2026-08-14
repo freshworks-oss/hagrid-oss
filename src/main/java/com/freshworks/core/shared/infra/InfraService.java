@@ -1,6 +1,5 @@
 package com.freshworks.core.shared.infra;
 
-
 import com.freshworks.core.shared.SyncServiceContainer;
 
 public interface InfraService {

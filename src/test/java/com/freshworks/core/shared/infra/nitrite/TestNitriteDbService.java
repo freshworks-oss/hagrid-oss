@@ -4,9 +4,6 @@ import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.*;
-import com.freshworks.freshindex.NamespaceService;
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -26,13 +23,14 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.in;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.nitrite")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestNitriteDbService {
 
     @Autowired
@@ -175,14 +173,11 @@ public class TestNitriteDbService {
                     .build();
 
             doCallRealMethod().when(infraService).configure(any(), any());
-            doCallRealMethod().when(infraService).getNamespaceService();
+            doCallRealMethod().when(infraService).getNamespace();
 
             infraService.configure(syncServiceContainer, infraConfigService);
 
-            NamespaceService namespaceService1 = infraService.getNamespaceService();
-            NamespaceService namespaceService2 = infraService.getNamespaceService();
-
-            assertThat(namespaceService1, is(Matchers.equalToObject(namespaceService2)));
+            assertThat(infraService.getNamespace(), is(Matchers.equalToObject(infraService.getNamespace())));
 
             infraService.destroy();
         }
@@ -260,7 +255,7 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here")
+                    .getNitriteDataPath("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
                     .getNitriteDatabaseType("file")
                     .build();
             doCallRealMethod().when(infraConfigService).configure(any());
@@ -288,8 +283,8 @@ public class TestNitriteDbService {
 
             // Now destroy the infra
             infraService.destroy();
-            Path path = Paths.get("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/some_database_file_here"  + ".mv.db");
-            assertThat(Files.exists(path), is(true));
+            Path path = Paths.get("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database");
+            assertThat(Files.exists(path), is(false));
         }
 
 
@@ -303,7 +298,7 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getNitriteDataPath("/Users/aaggarwal/Documents/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getNitriteDataPath("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database")
                     .getNitriteDatabaseType("file")
                     .build();
 
@@ -329,6 +324,7 @@ public class TestNitriteDbService {
                 try {
                     infraService.destroy();
                 } catch (Exception e) {
+                    System.out.println("Error are here " + e.getMessage());
                     errors.add(e.getMessage());
                     throw new RuntimeException(e);
                 }
@@ -338,6 +334,7 @@ public class TestNitriteDbService {
                     infraService.destroy();
                 } catch (Exception e) {
                     errors.add(e.getMessage());
+                    System.out.println("Error are here " + e.getMessage());
                     throw new RuntimeException(e);
                 }
             });
