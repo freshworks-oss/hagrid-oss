@@ -154,7 +154,7 @@ public class MockFacadeNitritedbList implements MockFacadeInterface {
 
         doAnswer(isEndOfListReached.answer()).when(nitriteDbList).isEndOfListReached(anyInt());
 
-        doAnswer(filter.answer()).when(nitriteDbList).filter(any());
+        doAnswer(filter.answer()).when(nitriteDbList).filter(any(), any());
         
         return nitriteDbList;
     }

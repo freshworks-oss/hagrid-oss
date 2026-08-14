@@ -242,6 +242,10 @@ public class NitriteDbList implements InfraDbList {
 
     private void insert(long listIndex, String item) throws Exception{
         
+
+        System.out.println("inserting now ");
+
+
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
         }
@@ -343,23 +347,43 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType) throws Exception {
+    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType, NitriteFilter nitriteFilter) throws Exception {
         
+        System.out.println("Called here");
         DocumentCursor documentCursor;
 
-        if(assetClassType != null){
+        if(assetClassType != null && nitriteFilter != null){
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
 
             NitriteFilter filter = where("value.clazz").eq(className);
+
+            nitriteFilter.and(filter);
+
+            documentCursor = this.nitriteCollection.find(nitriteFilter);
+        }
+
+        else if (assetClassType != null && nitriteFilter == null){
+
+            String className = assetClassType.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            NitriteFilter filter = where("value.clazz").eq(className);
+
             documentCursor = this.nitriteCollection.find(filter);
+        }
+
+        else if (assetClassType == null && nitriteFilter != null){
+
+            documentCursor = this.nitriteCollection.find(nitriteFilter);
         }
 
         else{
             documentCursor = this.nitriteCollection.find();
         }
         
+        System.out.println("documents in cursor are");
+        System.out.println(documentCursor.size());
         NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
         return nitriteCursorResponse;
     }

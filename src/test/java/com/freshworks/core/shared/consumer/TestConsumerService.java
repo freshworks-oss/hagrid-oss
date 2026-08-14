@@ -114,7 +114,6 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("nitrite")
-                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
@@ -134,7 +133,7 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
-        doCallRealMethod().when(publisherList).filter(any());
+        doCallRealMethod().when(publisherList).filter(any(), any());
         publisherList.configure(syncServiceContainer);
 
         InfraService nitriteDbService = mockFacadeNitriteDbService
@@ -168,7 +167,7 @@ public class TestConsumerService {
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
         doCallRealMethod().when(consumerService).getAssetCursor();
-        doCallRealMethod().when(consumerService).getAssetCursor(any());
+        doCallRealMethod().when(consumerService).getAssetCursor(any(), any());
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
@@ -205,7 +204,6 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("nitrite")
-                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
@@ -225,7 +223,7 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
-        doCallRealMethod().when(publisherList).filter(any());
+        doCallRealMethod().when(publisherList).filter(any(), any());
         publisherList.configure(syncServiceContainer);
 
 
@@ -263,17 +261,13 @@ public class TestConsumerService {
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
         doCallRealMethod().when(consumerService).getAssetCursor();
-        doCallRealMethod().when(consumerService).getAssetCursor(any());
+        doCallRealMethod().when(consumerService).getAssetCursor(any(), any());
 
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class);
-        assertThat(dbCursor.docSize(), Matchers.is(3L));
-
-        // while(dbCursor.hasNext()){
-        //   System.out.println(dbCursor.getNext());
-        // }
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_id").eq("2"));
+        assertThat(dbCursor.docSize(), Matchers.is(1L));
 
     }
 
@@ -295,7 +289,6 @@ public class TestConsumerService {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService
                 .getInfraType("nitrite")
-                .getNitriteDatabaseType("memory")
                 .build();
         syncServiceContainer.add(infraConfigService);
 
@@ -323,7 +316,7 @@ public class TestConsumerService {
 
         InfraService nitriteDbService = mockFacadeNitriteDbService
                 .getPublisherList(publisherList)
-                .getNamespace("bs")
+                .getNamespace("df")
                 .build();
 
         syncServiceContainer.add(nitriteDbService, InfraService.class);
@@ -352,19 +345,16 @@ public class TestConsumerService {
         ConsumerService consumerService = mockFacadeConsumerService
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
-        doCallRealMethod().when(consumerService).getAssetByAssetTypeAndFilter(any(), any());
-
-        Expression expression = Expression.expressionBuilder()
-                .whenAssetFieldName("$.FbComment.comment_title")
-                .is()
-                .whenAssetFieldValue("This is comment title")
-                .build();
+        doCallRealMethod().when(consumerService).getAssetCursor();
+        doCallRealMethod().when(consumerService).getAssetCursor(any(), any());
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        List<FbComment> fbCommentList = consumerService.getAssetByAssetTypeAndFilter(FbComment.class, expression);
-
-        assertThat(fbCommentList.size(), Matchers.is(2));
+        
+        // Here consume the assets
+        consumerService.configure(syncServiceContainer);
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_title").eq("This is comment title"));
+        assertThat(dbCursor.docSize(), Matchers.is(2L));
     }
 
     @Test
