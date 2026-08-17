@@ -28,7 +28,7 @@ public class AssetBeanDependencyService {
     List<AbstractAsset> assetList;
 
     ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    ImmutableListMultimap<String, String> assetBeanDependencyMapping;
+    ImmutableListMultimap<String, String> assetBeanDependencyMapping = ImmutableListMultimap.copyOf(ArrayListMultimap.create());
     SyncServiceContainer syncServiceContainer;
     AnalyticsFactory analyticsFactory;
     AnalyticsService analyticsService;

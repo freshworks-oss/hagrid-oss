@@ -349,10 +349,16 @@ public class NitriteDbList implements InfraDbList {
     @Override
     public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType, NitriteFilter nitriteFilter) throws Exception {
         
-        System.out.println("Called here");
+        
+        if(assetClassType == null ){
+
+            throw new IllegalArgumentException("asset class type can not be null. Consumer can consume asset by asset type only");
+        }
+
+
         DocumentCursor documentCursor;
 
-        if(assetClassType != null && nitriteFilter != null){
+        if(nitriteFilter != null){
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
@@ -364,7 +370,7 @@ public class NitriteDbList implements InfraDbList {
             documentCursor = this.nitriteCollection.find(nitriteFilter);
         }
 
-        else if (assetClassType != null && nitriteFilter == null){
+        else{
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");

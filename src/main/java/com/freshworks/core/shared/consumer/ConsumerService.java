@@ -62,9 +62,9 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    public InfraDbCursor getAssetCursor() throws Exception{
+    public InfraDbCursor getAssetCursor(Class<? extends AbstractAsset> assetClassType) throws Exception{
 
-        InfraDbCursor infraDbCursor = this.infraDbList.filter(null);
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType, null);
         return infraDbCursor;
     }
 

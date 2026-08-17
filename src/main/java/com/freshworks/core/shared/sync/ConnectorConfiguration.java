@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -34,7 +35,7 @@ public class ConnectorConfiguration {
     int numberOfParallelProcessor = 20;
 
     String infraDbType = "file";
-    String infraDbLocation = "./";
+    String infraDbLocation = "./database_" + UUID.randomUUID().toString();
 
     String analyticsShouldPassTagsToMeterRegistry;
 
