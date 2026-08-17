@@ -12,12 +12,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Profile("performance")
+@Component("fb_bean_fbUser")
 public class FbUser extends AbstractBean {
 
     String user_id;

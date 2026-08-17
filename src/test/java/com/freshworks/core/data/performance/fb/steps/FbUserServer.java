@@ -27,8 +27,8 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 @Slf4j
-@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 50, duration = 1, ignore = true)
-@Component
+@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 50, duration = 1, ignore = false)
+@Component("fb_performance_step_user_server")
 @Scope("prototype")
 @Profile("performance")
 public class FbUserServer extends HttpAbstractStep {
@@ -73,12 +73,6 @@ public class FbUserServer extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-
     }
 
     @Override

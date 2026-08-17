@@ -1,11 +1,11 @@
 package com.freshworks.core.data.performance.fb.assets.non_primitive_assets;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.freshworks.core.data.performance.fb.assets.FbComment;
 import com.freshworks.core.data.performance.fb.assets.FbUser;
 import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.processor.Annotations.FreshAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 
 import lombok.Getter;
@@ -16,7 +16,7 @@ import lombok.Setter;
 @Profile("performance")
 @FreshJoin(leftClass = FbUser.class, leftClassFieldName = "userId", 
         rightClass = FbComment.class, rightClassFieldName = "userId", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN, uniqueJoinName = "fbuser_fbcomment_inner_join")
-// @FreshAsset(ignore = true)
+@Component("fb_asset_fbUserComment")
 public class FbUserComment extends AbstractAsset{
 
     String userId;

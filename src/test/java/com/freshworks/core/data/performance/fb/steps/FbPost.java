@@ -29,7 +29,7 @@ import com.freshworks.core.data.performance.fb.beans.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = {FbUser.class}, rateLimit = 50, duration = 1, ignore = false)
-@Component
+@Component("fb_performance_step_post")
 @Scope("prototype")
 @Profile("performance")
 public class FbPost extends HttpAbstractStep {
@@ -94,11 +94,6 @@ public class FbPost extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-
-    }
-
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
 
     }
 

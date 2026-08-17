@@ -28,7 +28,7 @@ import java.util.Objects;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 50, duration = 1)
-@Component
+@Component("fb_performance_step_user")
 @Scope("prototype")
 @Profile("performance")
 public class FbUser extends HttpAbstractStep {
@@ -85,11 +85,6 @@ public class FbUser extends HttpAbstractStep {
         }
     }
 
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-
-    }
 
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {

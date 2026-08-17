@@ -243,6 +243,47 @@ public class TestSyncService {
 
     }
 
+
+
+    @Test
+    public void testConsumerCallbackRegistrationForStreamingAssets() throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+                .put("numberOfUsersEachPage", "1")
+                .put("numberOfUserPagination", "1")
+                .put("waitBetweenUserPaginationInMs", "0")
+                .put("numberOfPostsEachPage", "10")
+                .put("numberOfPostPagination", "1")
+                .put("waitBetweenPostPaginationInMs", "0")
+                .put("numberOfCommentsEachPage", "1")
+                .put("numberOfCommentPagination", "10")
+                .put("waitBetweenCommentPaginationInMs", "0")
+                .put("numberOfCommunitiesEachPage", "1")
+                .put("numberOfCommunityPagination", "1")
+                .put("waitBetweenCommunityPaginationInMs", "0").build();
+
+        SyncServiceContainer syncServiceContainer = syncService.configureSync( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+
+        consumerService.registerAssetCallback(FbUser.class, asset -> {
+
+            System.out.println(asset.getCreated_at_ms());
+                
+        });
+
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+
+        assertThat(syncStatusService.getSyncStatus() , Matchers.is(1));
+        assertThat(syncStatusService.getTraverser_status() , Matchers.is(1));
+        assertThat(syncStatusService.getProcessor_status() , Matchers.is(1));
+
+    }
+
+
     @Test
     public void testSyncServiceWhenDagIsCyclic() throws Exception {
 

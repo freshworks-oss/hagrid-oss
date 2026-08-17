@@ -19,6 +19,7 @@ import lombok.Setter;
 public abstract class AbstractAsset {
 
     String uuid = UUID.randomUUID().toString();
+    Long created_at_ms = System.currentTimeMillis();
 
     @JsonIgnore
     SyncServiceContainer syncServiceContainer;

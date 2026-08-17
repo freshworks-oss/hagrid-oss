@@ -180,12 +180,12 @@ public class AnalyticsService {
         // Here I am firing event to meterRegistry
         fireMeter(eventName.name(), tags);
 
-        if(appEventsMap.contains(eventName)){
+        AtomicLong previousValue = appEventsMap.putIfAbsent(eventName.name(), new AtomicLong(1));
+
+        if(previousValue != null ){
+
             AtomicLong count = appEventsMap.get(eventName.name());
             count.incrementAndGet();
-        }
-        else{
-            appEventsMap.put(eventName.name(), new AtomicLong(0));
         }
 
         // Here I am making a callback called if this event type is present

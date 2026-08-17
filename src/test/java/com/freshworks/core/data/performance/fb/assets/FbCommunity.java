@@ -1,6 +1,7 @@
 package com.freshworks.core.data.performance.fb.assets;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("performance")
+@Component("fb_asset_fbCommunity")
 public class FbCommunity extends AbstractAsset {
 
     String community_id;

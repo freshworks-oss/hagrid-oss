@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.common.SortOrder;
 import org.dizitart.no2.filters.NitriteFilter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
@@ -63,6 +63,7 @@ public class NitriteDbList implements InfraDbList {
         this.listName = namespace + "_" + listName;
         this.nitriteCollection = nitriteDb.getCollection(this.listName);
         this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.UNIQUE),"list_index");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"value.created_at_ms");
     }
 
     @Override
@@ -241,10 +242,6 @@ public class NitriteDbList implements InfraDbList {
     
 
     private void insert(long listIndex, String item) throws Exception{
-        
-
-        System.out.println("inserting now ");
-
 
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
@@ -357,6 +354,8 @@ public class NitriteDbList implements InfraDbList {
 
 
         DocumentCursor documentCursor;
+        FindOptions options = FindOptions.orderBy("value.created_at_ms", SortOrder.Ascending);
+
 
         if(nitriteFilter != null){
 
@@ -367,7 +366,7 @@ public class NitriteDbList implements InfraDbList {
 
             nitriteFilter.and(filter);
 
-            documentCursor = this.nitriteCollection.find(nitriteFilter);
+            documentCursor = this.nitriteCollection.find(nitriteFilter, options);
         }
 
         else {
@@ -376,11 +375,9 @@ public class NitriteDbList implements InfraDbList {
             className = className.replaceAll("\\.", "ENCODE_DOT");
             NitriteFilter filter = where("value.clazz").eq(className);
 
-            documentCursor = this.nitriteCollection.find(filter);
+            documentCursor = this.nitriteCollection.find(filter, options);
         }
         
-        System.out.println("documents in cursor are");
-        System.out.println(documentCursor.size());
         NitriteDbCursor<T> nitriteCursorResponse = new NitriteDbCursor<T>(documentCursor);
         return nitriteCursorResponse;
     }

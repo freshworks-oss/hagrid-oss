@@ -106,7 +106,6 @@ public class ProcessorUtility {
                         // Here I am firing app event so that any listener on it can receive the asset
                         analyticsService.appEvent(APP_EVENT.HAGRID_ASSET_PUBLISH_DONE, "asset_name", abstractAsset.getClass().getName(), "asset", abstractAsset);
                     }
-
                     long currentTime = System.currentTimeMillis();
 
                     Long documentsInserted = infraService.getPublisherList()
