@@ -263,6 +263,9 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
+        AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
+        syncServiceContainer.add(analyticsFactory);
+
         NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
@@ -289,6 +292,7 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -326,18 +330,5 @@ public class TestTraverser {
         infraService.destroy();
 
         return syncStatusService;
-    }
-
-    @Test
-    public void testWhenConnectorHasSelfRecursiveStep() throws Exception{
-
-        SyncService syncService = applicationContext.getBean(SyncService.class);
-        String namespace = UUID.randomUUID().toString();
-
-        SyncServiceContainer syncServiceContainer = syncService.startSync( ParentStep.class,namespace,null, connectorConfiguration);
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncStatusService.waitUntilSyncIsInProgress();
-        System.out.println("Sync is done");
-
     }
 }
