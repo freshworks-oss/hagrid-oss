@@ -177,6 +177,9 @@ public class TestTraverser {
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
+        AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
+        syncServiceContainer.add(analyticsFactory);
+
         NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
@@ -203,9 +206,11 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncStatusService.configure(syncServiceContainer);
         syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
@@ -238,6 +243,7 @@ public class TestTraverser {
         // Here I am terminating all services running under /traverser
         dagTraversalService.interruptSync();
 
+        syncStatusService.waitUntilSyncIsInProgress();
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
         infraService.destroy();
     }
