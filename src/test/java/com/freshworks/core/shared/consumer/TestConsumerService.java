@@ -1,13 +1,28 @@
 package com.freshworks.core.shared.consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+import static org.dizitart.no2.filters.FluentFilter.where;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import org.dizitart.no2.Nitrite;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.freshworks.core.data.unit.fb.assets.FbComment;
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.processor.FreshIndexBeanSerializeModifier;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -17,34 +32,9 @@ import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
 import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
 import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
-import com.freshworks.core.shared.infra.nitrite.NitriteDbCursor;
 import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.core.shared.sync.SyncStatusService;
-import com.zaxxer.hikari.HikariConfig;
-
-import org.dizitart.no2.Nitrite;
-import org.dizitart.no2.rocksdb.RocksDBModule;
-import org.hamcrest.Matchers;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static org.dizitart.no2.filters.FluentFilter.where;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.in;
-import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doCallRealMethod;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
@@ -171,7 +161,7 @@ public class TestConsumerService {
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class);
+        InfraDbCursor<FbComment> dbCursor = consumerService.getAssetCursor(FbComment.class);
 
         assertThat(dbCursor.docSize(), Matchers.is(3L));
 
@@ -179,7 +169,7 @@ public class TestConsumerService {
 
         while(dbCursor.hasNext()){
 
-                FbComment fbComment = objectMapper.readValue(dbCursor.getNext(), FbComment.class);
+                FbComment fbComment = dbCursor.getNext();
                 fbCommentList.add(fbComment);
         }
 
@@ -266,7 +256,7 @@ public class TestConsumerService {
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_id").eq("2"));
+        InfraDbCursor<FbComment> dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_id").eq("2"));
         assertThat(dbCursor.docSize(), Matchers.is(1L));
 
     }
@@ -354,7 +344,7 @@ public class TestConsumerService {
         
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_title").eq("This is comment title"));
+        InfraDbCursor<FbComment> dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_title").eq("This is comment title"));
         assertThat(dbCursor.docSize(), Matchers.is(2L));
     }
 
