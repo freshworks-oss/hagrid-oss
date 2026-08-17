@@ -26,7 +26,7 @@ import java.util.Map;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
-@Component
+@Component("recursive_contextual_step_token_generator")
 @Scope("prototype")
 @Profile("integration")
 public class TokenGenerator extends NonHttpAbstractStep {

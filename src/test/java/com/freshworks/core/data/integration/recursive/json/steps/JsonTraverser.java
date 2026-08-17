@@ -29,7 +29,7 @@ import java.util.*;
 
 @Slf4j
 @FreshHierarchy(parentClass = {JsonGenerator.class, JsonTraverser.class}, rateLimit = 800, duration = 1)
-@Component
+@Component("recursive_contextual_step_json_traverser")
 @Scope("prototype")
 @Profile("integration")
 public class JsonTraverser extends NonHttpAbstractStep {
@@ -77,11 +77,6 @@ public class JsonTraverser extends NonHttpAbstractStep {
         JsonNode jsonNode = (JsonNode) requestResponseContainer.getRequest();
         requestResponseContainer.setResponse(jsonNode);
         return requestResponseContainer;
-    }
-
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
     }
 
     @Override

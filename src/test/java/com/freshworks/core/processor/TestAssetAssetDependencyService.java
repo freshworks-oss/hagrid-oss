@@ -57,8 +57,6 @@ public class TestAssetAssetDependencyService {
     public void testWhenAssetPathIsOuterThenAllInnerPackageAssetsAreAlsoScanned() throws Exception {
 
         ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
-                .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets")
-                .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.dag.beans")
                 .build();
 
         AssetAssetDependencyService assetAssetDependencyService = mockFacadeAssetAssetDependencyService
@@ -78,8 +76,6 @@ public class TestAssetAssetDependencyService {
     public void testAssetDependencyCorrectlyIdentifyForDeepNonPrimitiveAssets() throws Exception{
 
         ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
-                .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets")
-                .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.dag.beans")
                 .build();
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer

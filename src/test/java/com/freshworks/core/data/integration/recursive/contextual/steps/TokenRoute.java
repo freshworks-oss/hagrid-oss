@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @FreshHierarchy(parentClass = {TokenGenerator.class, TokenAddContext.class}, rateLimit = 800, duration = 1)
-@Component
+@Component("recursive_contextual_step_token_route")
 @Scope("prototype")
 @Profile("integration")
 public class TokenRoute extends NonHttpAbstractStep {

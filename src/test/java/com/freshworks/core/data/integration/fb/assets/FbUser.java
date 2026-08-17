@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
@@ -17,12 +18,13 @@ import org.springframework.context.annotation.Profile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("integration")
+@Component("recursive_contextual_asset_fbUser")
 public class FbUser extends AbstractAsset {
 
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.five_zero_zero.integration.fb.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.core.data.integration.fb.beans.FbUser dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();

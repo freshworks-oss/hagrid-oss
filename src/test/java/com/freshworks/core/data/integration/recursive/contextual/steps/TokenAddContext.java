@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @FreshHierarchy(parentClass = {TokenFilter.class}, rateLimit = 800, duration = 1)
-@Component
+@Component("recursive_contextual_step_add_context")
 @Scope("prototype")
 @Profile("integration")
 public class TokenAddContext extends NonHttpAbstractStep {

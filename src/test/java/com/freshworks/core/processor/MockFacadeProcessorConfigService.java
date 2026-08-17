@@ -20,8 +20,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
     ProcessorConfigService processorConfigService;
     ReturnableMockTypeList<Integer> getProcessorPollCount;
     ReturnableMockTypeList<Integer> getNumberOfParallelProcessor;
-    ReturnableMockTypeList<String> getAssetLocation;
-    ReturnableMockTypeList<String> getBeanLocation;
 
 
     public MockFacadeProcessorConfigService configure(){
@@ -41,19 +39,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
     public MockFacadeProcessorConfigService getNumberOfParallelProcessor(Integer... getNumberOfParallelProcessor){
         this.getNumberOfParallelProcessor.clear();
         this.getNumberOfParallelProcessor.add(getNumberOfParallelProcessor);
-        return this;
-    }
-
-    public MockFacadeProcessorConfigService getAssetLocation(String... getAssetLocation){
-        this.getAssetLocation.clear();
-        this.getAssetLocation.add(getAssetLocation);
-        return this;
-    }
-
-
-    public MockFacadeProcessorConfigService getBeanLocation(String... getBeanLocation){
-        this.getBeanLocation.clear();
-        this.getBeanLocation.add(getBeanLocation);
         return this;
     }
 

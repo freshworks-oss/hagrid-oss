@@ -1,6 +1,7 @@
 package com.freshworks.core.data.integration.fb.assets.complex_asset;
 
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.freshworks.core.data.integration.fb.assets.FbComment;
 import com.freshworks.core.data.integration.fb.assets.FbUser;
@@ -15,6 +16,7 @@ import lombok.Setter;
 @FreshJoin(leftClass = FbUser.class, leftClassFieldName = "userId", 
         rightClass = FbComment.class, rightClassFieldName = "userId", join_type = FreshJoin.JOIN_TYPE.INNER_JOIN, uniqueJoinName = "fbuser_fbcomment_inner_join")
 @Profile("integration")
+@Component("recursive_contextual_asset_fbUserComment")
 public class FbUserComment extends AbstractAsset{
 
     String userId;

@@ -24,9 +24,9 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
-@Component
 @Scope("prototype")
 @Profile("integration")
+@Component("recursive_contextual_step_fbuser")
 public class FbUser extends HttpAbstractStep {
 
     int numberOfUsersEachPage = 100;
@@ -85,11 +85,6 @@ public class FbUser extends HttpAbstractStep {
 
     }
 
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-        
-
-    }
 
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {

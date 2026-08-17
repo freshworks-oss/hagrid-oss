@@ -28,7 +28,7 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
-@Component
+@Component("recursive_contextual_step_json_generator")
 @Scope("prototype")
 @Profile("integration")
 public class JsonGenerator extends NonHttpAbstractStep {
@@ -129,12 +129,6 @@ public class JsonGenerator extends NonHttpAbstractStep {
     @Override
     public RequestResponseContainer executeNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject) throws Exception {
         return currentRequestResponse;
-    }
-
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-        
-
     }
 
     @Override

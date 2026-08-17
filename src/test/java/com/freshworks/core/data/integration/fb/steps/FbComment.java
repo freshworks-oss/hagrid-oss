@@ -26,7 +26,7 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @FreshHierarchy(parentClass = FbPost.class, rateLimit = 800, duration = 1, ignore = false)
-@Component
+@Component("recursive_contextual_step_fbcomment")
 @Scope("prototype")
 public class FbComment extends HttpAbstractStep {
 
