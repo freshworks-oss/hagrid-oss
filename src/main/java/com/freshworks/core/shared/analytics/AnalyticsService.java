@@ -75,11 +75,6 @@ public class AnalyticsService {
         fireMeter(eventName, tags);
 
         numberOfDebugEvents.incrementAndGet();
-
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
@@ -102,10 +97,6 @@ public class AnalyticsService {
 
         numberOfInfoEvents.incrementAndGet();
 
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
 
@@ -128,10 +119,6 @@ public class AnalyticsService {
 
         numberOfWarningEvents.incrementAndGet();
 
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
@@ -152,11 +139,6 @@ public class AnalyticsService {
         fireMeter(eventName, tags);
 
         numberOfErrorEvents.incrementAndGet();
-
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
