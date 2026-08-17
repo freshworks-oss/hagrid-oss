@@ -84,11 +84,6 @@ public class TestSetupException extends HttpAbstractStep {
 
     }
 
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "filterResponse");
-
-    }
 
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {

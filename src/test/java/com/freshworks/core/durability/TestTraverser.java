@@ -13,7 +13,6 @@ import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
 import com.freshworks.core.shared.synchronizers.GlobalNamespaceService;
 import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.configuration.DagService;
 import com.freshworks.core.traverser.net.http.HttpClientService;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matchers;
@@ -84,7 +83,6 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data."+ releaseVersion + ".durability.steps.setup.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
