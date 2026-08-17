@@ -1,10 +1,12 @@
 package com.freshworks.core.shared.infra;
 
-public interface InfraDbCursor{
+import com.freshworks.core.processor.AbstractAsset;
+
+public interface InfraDbCursor<T extends AbstractAsset>{
 
     public boolean hasNext();
 
     public long docSize();
 
-    public String getNext() throws Exception;
+    public T  getNext() throws Exception;
 }

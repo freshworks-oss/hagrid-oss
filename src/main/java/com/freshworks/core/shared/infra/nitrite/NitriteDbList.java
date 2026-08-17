@@ -347,7 +347,7 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType, NitriteFilter nitriteFilter) throws Exception {
+    public <T extends AbstractAsset> NitriteDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception {
         
         
         if(assetClassType == null ){
@@ -381,7 +381,7 @@ public class NitriteDbList implements InfraDbList {
         
         System.out.println("documents in cursor are");
         System.out.println(documentCursor.size());
-        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
+        NitriteDbCursor<T> nitriteCursorResponse = new NitriteDbCursor<T>(documentCursor);
         return nitriteCursorResponse;
     }
 

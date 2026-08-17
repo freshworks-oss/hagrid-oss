@@ -104,7 +104,7 @@ public class ProcessorUtility {
                                 .add(objectMapper.writeValueAsString(abstractAsset));
                         
                         // Here I am firing app event so that any listener on it can receive the asset
-                        analyticsService.appEvent(APP_EVENT.HAGRID_ASSET_PUBLISH_DONE, "name", abstractAsset.getClass().getName(), "asset", abstractAsset);
+                        analyticsService.appEvent(APP_EVENT.HAGRID_ASSET_PUBLISH_DONE, "asset_name", abstractAsset.getClass().getName(), "asset", abstractAsset);
                     }
 
                     long currentTime = System.currentTimeMillis();

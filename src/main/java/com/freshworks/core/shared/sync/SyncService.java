@@ -104,7 +104,7 @@ public class SyncService {
         return syncServiceContainer;
     }
 
-    protected SyncServiceContainer configureSync(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    public SyncServiceContainer configureSync(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 

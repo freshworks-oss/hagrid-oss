@@ -7,13 +7,15 @@ import java.util.Map;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.shared.infra.InfraDbCursor;
 
 import lombok.Getter;
 
 @Getter
-public class NitriteDbCursor implements InfraDbCursor{
+public class NitriteDbCursor<T extends AbstractAsset> implements InfraDbCursor{
 
     ObjectMapper objectMapper = new ObjectMapper();
 
@@ -32,14 +34,13 @@ public class NitriteDbCursor implements InfraDbCursor{
     }
 
     @Override
-    public String getNext() throws Exception{
+    public T getNext() throws Exception{
         
         Document document = cursorIterator.next();
         Object o  = document.get("value");
         String asset = objectMapper.writeValueAsString(o);
         asset = asset.replaceAll("ENCODE_DOT", "\\.");
-        return asset;
-
+        return objectMapper.readValue(asset, new TypeReference<T>() {});
     }
 
 

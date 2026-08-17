@@ -32,7 +32,7 @@ public interface InfraDbList {
     // Get list of strings for given ids
     public List<String> get(List<Long> documentIdList) throws Exception;
 
-    public InfraDbCursor filter(Class<? extends AbstractAsset> assetClassType, NitriteFilter nitriteFilter) throws Exception;
+    public <T extends AbstractAsset> InfraDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception;
 
     public long size() throws Exception;
 

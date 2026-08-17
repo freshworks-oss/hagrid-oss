@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 
 @Slf4j
-@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1, ignore = true)
+@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1, ignore = false)
 @Scope("prototype")
 @Profile("integration")
 @Component("recursive_contextual_step_fbuser")
