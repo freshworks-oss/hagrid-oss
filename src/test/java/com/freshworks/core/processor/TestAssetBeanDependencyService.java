@@ -17,7 +17,7 @@ import static org.mockito.Mockito.doCallRealMethod;
 import java.util.List;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestAssetBeanDependencyService {
 
     @Autowired
@@ -43,9 +43,9 @@ public class TestAssetBeanDependencyService {
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.TestInnerAsset");
-        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.innermost.TestInnerMostAsset");
-        innerMostJoinedAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.inner.innermost.TestInnerMostJoinedAsset");
+        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.TestInnerAsset");
+        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.innermost.TestInnerMostAsset");
+        innerMostJoinedAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.innermost.TestInnerMostJoinedAsset");
     }
 
     @Test
@@ -63,7 +63,7 @@ public class TestAssetBeanDependencyService {
                 .build();
 
         doCallRealMethod().when(assetBeanDependencyService).scanner(anyString(), any());
-        doCallRealMethod().when(assetBeanDependencyService).findDependencyOfAsset(anyList(), any());
+        doCallRealMethod().when(assetBeanDependencyService).findDependencyOfAsset(anyList());
 
         ImmutableListMultimap<String, String> x = assetBeanDependencyService.scanner("some-random-namespace", processorConfigService);
 

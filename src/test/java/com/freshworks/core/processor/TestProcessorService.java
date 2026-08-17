@@ -1,28 +1,14 @@
 package com.freshworks.core.processor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.five_zero_zero.unit.fb.beans.FbUser;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.NamespaceService;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.consumer.MockFacadeConsumerService;
-import com.freshworks.core.shared.executor.SharedExecutorService;
-import com.freshworks.core.shared.infra.InfraConfigService;
-import com.freshworks.core.shared.infra.InfraDbList;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
-import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
-import com.freshworks.core.shared.infra.nitrite.NitriteDbQueue;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbQueue;
-import com.freshworks.core.shared.infra.persistent.MongoDbQueue;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.Multimap;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Phaser;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,30 +16,29 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Phaser;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doCallRealMethod;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.core.shared.NamespaceService;
+import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.consumer.MockFacadeConsumerService;
+import com.freshworks.core.shared.executor.SharedExecutorService;
+import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbQueue;
+import com.freshworks.core.shared.sync.SyncStatusService;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestProcessorService {
 
     @Autowired
     MockFacadeProcessorService mockFacadeProcessorService;
 
     @Autowired
-    MockFacadeMongoDbService mockFacadeMongoDbService;
-
-    @Autowired
     MockFacadeNitriteDbService mockFacadeNitriteDbService;
-
-    @Autowired
-    MockFacadeMongodbQueue mockFacadeMongodbQueue;
 
     @Autowired
     MockFacadeNitritedbQueue mockFacadeNitritedbQueue;
@@ -87,9 +72,7 @@ public class TestProcessorService {
     public void beforeEach() throws Exception {
 
         mockFacadeProcessorService.configure().build();
-        mockFacadeMongoDbService.configure().build();
         mockFacadeNitriteDbService.configure().build();
-        mockFacadeMongodbQueue.configure().build();
         mockFacadeNitritedbQueue.configure().build();
         mockFacadeNitritedbList.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
@@ -106,11 +89,11 @@ public class TestProcessorService {
         namespace.setNamespace("integrated_test");
 
         List<String> returnedPolledItems = new ArrayList<>();
-        MongoDbQueue mongoDbQueue =  mockFacadeMongodbQueue
+        NitriteDbQueue mongoDbQueue =  mockFacadeNitritedbQueue
                 .pollNItems(returnedPolledItems)
                 .hasMoreData(true, false)
                 .build();
-        InfraService mongoInfraService = mockFacadeMongoDbService.getProcessorQueue(mongoDbQueue).build();
+        InfraService mongoInfraService = mockFacadeNitriteDbService.getProcessorQueue(mongoDbQueue).build();
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(mongoInfraService, InfraService.class)

@@ -28,8 +28,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
         reset();
         getProcessorPollCount.add(1);
         getNumberOfParallelProcessor.add(1);
-        getAssetLocation.add("com.freshworks.core.data.fb.assets");
-        getBeanLocation.add("com.freshworks.core.data.fb.beans");
         return this;
     }
 
@@ -66,9 +64,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
         ProcessorConfigService processorConfigServiceSpy = Mockito.spy(processorConfigService);
         
         doAnswer(getProcessorPollCount.answer()).when(processorConfigServiceSpy).getProcessorPollCount();
-        doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
-        doAnswer(getAssetLocation.answer()).when(processorConfigServiceSpy).getAssetLocation();
-        doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
         doAnswer(getNumberOfParallelProcessor.answer()).when(processorConfigServiceSpy).getNumberOfParallelProcessor();
         return processorConfigServiceSpy;
     }

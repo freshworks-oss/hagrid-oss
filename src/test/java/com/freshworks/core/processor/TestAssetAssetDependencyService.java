@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import java.util.List;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestAssetAssetDependencyService {
 
     @Autowired
@@ -48,9 +48,9 @@ public class TestAssetAssetDependencyService {
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        outer = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.complex_asset.Outer");
-        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.complex_asset.inner.Inner");
-        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets.complex_asset.inner.inner_most.InnerMost");
+        outer = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.Outer");
+        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.inner.Inner");
+        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.inner.inner_most.InnerMost");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class TestAssetAssetDependencyService {
                 .build();
 
         doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
-        doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
+        doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList());
 
         ImmutableListMultimap<String, String> x = assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
 
@@ -89,7 +89,7 @@ public class TestAssetAssetDependencyService {
                 .build();
 
         doCallRealMethod().when(assetAssetDependencyService).scanner(anyString(), any());
-        doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList(), any());
+        doCallRealMethod().when(assetAssetDependencyService).findDependencyOfAsset(anyList());
 
         ImmutableListMultimap<String, String> x = assetAssetDependencyService.scanner("some-random-namespace", processorConfigService);
 
