@@ -269,7 +269,7 @@ public class TestSyncService {
 
         consumerService.registerAssetCallback(FbUser.class, asset -> {
 
-            System.out.println(asset.getCreated_at_ms());
+            System.out.println(asset.getUuid());
                 
         });
 

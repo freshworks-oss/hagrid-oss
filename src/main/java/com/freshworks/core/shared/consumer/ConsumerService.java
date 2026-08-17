@@ -79,7 +79,7 @@ public class ConsumerService {
         this.analyticsService.registerEventCallback(AppEventService.APP_EVENT.HAGRID_ASSET_PUBLISH_DONE,
 
             params -> {
-                Object object = params.get("asset_name");
+                Object object = params.get("asset");
                 AbstractAsset asset = objectMapper.convertValue(object, AbstractAsset.class);
                 consumer.accept(asset);
             }
