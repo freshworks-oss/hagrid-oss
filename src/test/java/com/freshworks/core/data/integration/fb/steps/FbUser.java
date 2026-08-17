@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 
 @Slf4j
-@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1, ignore = true)
 @Scope("prototype")
 @Profile("integration")
 @Component("recursive_contextual_step_fbuser")
@@ -152,7 +152,7 @@ public class FbUser extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.five_zero_zero.integration.fb.beans.FbUser.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.integration.fb.beans.FbUser.class);
             return stepDataBeanMapping;
 
         }

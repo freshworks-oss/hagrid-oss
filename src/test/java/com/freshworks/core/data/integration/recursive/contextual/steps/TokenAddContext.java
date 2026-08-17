@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-@FreshHierarchy(parentClass = {TokenFilter.class}, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = {TokenFilter.class}, rateLimit = 800, duration = 1, ignore = false)
 @Component("recursive_contextual_step_add_context")
 @Scope("prototype")
 @Profile("integration")
@@ -77,11 +77,6 @@ public class TokenAddContext extends NonHttpAbstractStep {
 
         requestResponseContainer.setResponse(objectNode);
         return requestResponseContainer;
-    }
-
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
     }
 
     @Override

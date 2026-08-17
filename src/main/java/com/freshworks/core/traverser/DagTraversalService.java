@@ -70,6 +70,7 @@ public class DagTraversalService implements Callable<Void> {
 
         try{
 
+            System.out.println("Calling it from here");
             analyticsService.infoLogEvent("HAGRID_DAG",  "_message", "DagTraversal started", "uuid", uuid, "namespace" ,namespace.getNamespace());
             MDC.setContextMap(mainThreadMdcCopy);
             traverser();

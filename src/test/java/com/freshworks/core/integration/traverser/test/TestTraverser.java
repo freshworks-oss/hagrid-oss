@@ -1,8 +1,19 @@
 package com.freshworks.core.integration.traverser.test;
 
+import com.freshworks.core.data.integration.fb.steps.FbComment;
+import com.freshworks.core.data.integration.fb.steps.FbCommunity;
+import com.freshworks.core.data.integration.fb.steps.FbPost;
+import com.freshworks.core.data.integration.fb.steps.FbUser;
+import com.freshworks.core.data.integration.recursive.contextual.steps.TokenGenerator;
+import com.freshworks.core.data.integration.recursive.contextual.steps.TokenPublisher;
+import com.freshworks.core.data.integration.recursive.contextual.steps.TokenRoute;
+import com.freshworks.core.data.integration.recursive.contextual.steps.TokenTransformation;
+import com.freshworks.core.data.integration.recursive.json.steps.JsonGenerator;
+import com.freshworks.core.data.integration.recursive.json.steps.JsonTraverser;
 import com.freshworks.core.processor.MockFacadeProcessorService;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraBeanService;
 import com.freshworks.core.shared.infra.InfraConfigService;
@@ -29,6 +40,8 @@ import org.springframework.context.ApplicationContext;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Phaser;
@@ -39,7 +52,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureObservability
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.integration\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "integration")
 public class TestTraverser {
 
     static String infraType;
@@ -57,13 +70,6 @@ public class TestTraverser {
 
     @BeforeAll
     public static void beforeAll() throws IOException {
-//        server = ClientAndServer.startClientAndServer(1080);
-
-        infraType = System.getProperty("spring.profiles.active").split("\\.")[2];
-
-        if(infraType.equalsIgnoreCase("h2")){
-            Files.deleteIfExists(Paths.get("/Users/aaggarwal/Documents/hagrid-releases/data/hagrid-3.7.0/database.mv.db"));
-        }
     }
 
 
@@ -75,8 +81,25 @@ public class TestTraverser {
     @Test
     public void testTraverserIsRunningSuccessfully() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        // List<Class<? extends AbstractStep>> enabledPath = new ArrayList<>();
+        // enabledPath.add(TokenGenerator.class);
+        // enabledPath.add(TokenRoute.class);
+        // enabledPath.add(TokenPublisher.class);
+        // connectorConfiguration.addPathToEnable(enabledPath);
+
+        // enabledPath = new ArrayList<>();
+        // enabledPath.add(TokenGenerator.class);
+        // enabledPath.add(TokenRoute.class);
+        // enabledPath.add(TokenTransformation.class);
+        // connectorConfiguration.addPathToEnable(enabledPath);
+
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
+        AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
+        syncServiceContainer.add(analyticsFactory);
+        
         NamespaceService namespace = new NamespaceService();
         namespace.setNamespace(UUID.randomUUID().toString());
         syncServiceContainer.add(namespace);
@@ -84,6 +107,8 @@ public class TestTraverser {
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
+        syncServiceContainer.add(connectorConfiguration);
+
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
@@ -101,6 +126,7 @@ public class TestTraverser {
 
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespace.getNamespace(), traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -112,6 +138,7 @@ public class TestTraverser {
 
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
         DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
+
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("numberOfUsersEachPage", "1")
                 .put("numberOfUserPagination", "1")
@@ -127,9 +154,14 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
+
+        NodeCycleService nodeCycleService = applicationContext.getBean(NodeCycleService.class);
+        nodeCycleService.configure("/traverser", 1000 , namespace, rootNode, analyticsFactory);
+
         dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
+        sharedExecutorService.submit(namespace.getNamespace(), nodeCycleService);
         syncStatusService.waitUntilTraverserIsInProgress();
 
         // TODO: Here I am not handling the situation where what if traverser has failed for any of the parent Item

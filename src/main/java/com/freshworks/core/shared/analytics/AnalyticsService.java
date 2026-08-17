@@ -391,7 +391,7 @@ public class AnalyticsService {
 
             this.meterRegistry.counter(eventName, meterTagList).increment(1);
         }
-        else{
+        else if(s.length %2 != 0){
             System.out.println("WARNING: Got event " + eventName + ". Tags are not even count");
         }
     }

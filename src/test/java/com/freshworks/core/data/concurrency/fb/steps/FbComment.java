@@ -185,7 +185,7 @@ public class FbComment extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("comments"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.five_zero_zero.concurrency.fb.beans.FbComment.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.concurrency.fb.beans.FbComment.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

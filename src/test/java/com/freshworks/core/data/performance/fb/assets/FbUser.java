@@ -20,7 +20,7 @@ public class FbUser extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.five_zero_zero.performance.fb.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbUser dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();

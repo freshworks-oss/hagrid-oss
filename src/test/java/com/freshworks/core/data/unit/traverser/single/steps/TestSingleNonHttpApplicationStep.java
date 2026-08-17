@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import io.micrometer.core.instrument.LongTaskTimer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
+@Profile("unit")
 public class TestSingleNonHttpApplicationStep extends NonHttpAbstractStep {
 
     @Override

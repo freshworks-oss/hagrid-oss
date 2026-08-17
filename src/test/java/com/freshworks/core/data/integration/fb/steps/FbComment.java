@@ -97,12 +97,6 @@ public class FbComment extends HttpAbstractStep {
     }
 
     @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-        JsonNode node = stepDataBeanMapping.getParseSyncedResponseData();
-    }
-
-    @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
 
@@ -174,7 +168,7 @@ public class FbComment extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("comments"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.five_zero_zero.integration.fb.beans.FbComment.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.integration.fb.beans.FbComment.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.net.URISyntaxException;
 
 @Slf4j
-@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = true)
+@FreshHierarchy(parentClass = FbUser.class, rateLimit = 800, duration = 1, ignore = false)
 @Component("recursive_contextual_step_fbcommunity")
 @Scope("prototype")
 @Profile("integration")
@@ -161,7 +161,7 @@ public class FbCommunity extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.five_zero_zero.integration.fb.beans.FbCommunity.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.integration.fb.beans.FbCommunity.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

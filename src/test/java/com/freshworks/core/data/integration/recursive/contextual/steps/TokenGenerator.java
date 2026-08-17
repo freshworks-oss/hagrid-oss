@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1, ignore = false)
 @Component("recursive_contextual_step_token_generator")
 @Scope("prototype")
 @Profile("integration")
@@ -91,12 +91,6 @@ public class TokenGenerator extends NonHttpAbstractStep {
     @Override
     public RequestResponseContainer executeNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject) throws Exception {
         return currentRequestResponse;
-    }
-
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-        
-
     }
 
     @Override

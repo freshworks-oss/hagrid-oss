@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap;
 
 @Component
 @Scope("prototype")
-@FreshHierarchy(parentClass = ParentStep.class)
+@FreshHierarchy(parentClass = ParentStep.class, ignore = true)
 public class MockNonHttpAbstractStep extends NonHttpAbstractStep{
 
     public MockNonHttpAbstractStep configure(){

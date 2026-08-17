@@ -324,7 +324,9 @@ public class DagService {
 
             // For other nodes in the path 
             else{
-
+                
+                System.out.println("Finding node name is " + path.get(i));
+                
                 DagNode chilNode = rootNode.find(path.get(i));
                 NodeRelationship relationshipMap = chilNode.getParentRelationship(parentNode);
                 relationshipMap.enableFeature("should_be_enabled");

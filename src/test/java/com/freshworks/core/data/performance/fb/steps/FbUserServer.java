@@ -125,7 +125,7 @@ public class FbUserServer extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.five_zero_zero.performance.fb.beans.FbUser.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.performance.fb.beans.FbUser.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

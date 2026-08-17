@@ -22,7 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@FreshHierarchy(parentClass = {TokenRoute.class}, rateLimit = 800, duration = 1)
+@FreshHierarchy(parentClass = {TokenRoute.class}, rateLimit = 800, duration = 1, ignore = false)
 @Component("recursive_contextual_step_token_publisher")
 @Scope("prototype")
 @Profile("integration")
@@ -74,11 +74,6 @@ public class TokenPublisher extends NonHttpAbstractStep {
         JsonNode jsonNode = (JsonNode) requestResponseContainer.getRequest();
         requestResponseContainer.setResponse(jsonNode);
         return requestResponseContainer;
-    }
-
-    @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
     }
 
     @Override

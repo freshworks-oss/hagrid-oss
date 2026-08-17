@@ -22,7 +22,7 @@ public class FbCommunity extends AbstractAsset {
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.five_zero_zero.performance.fb.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbCommunity community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

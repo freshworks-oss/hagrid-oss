@@ -19,9 +19,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.five_zero_zero.performance.fb.assets.FbUser;
-import com.freshworks.core.data.five_zero_zero.performance.fb.assets.non_primitive_assets.FbUserComment;
-import com.freshworks.core.data.five_zero_zero.performance.fb.steps.FbUserServer;
+import com.freshworks.core.data.performance.fb.assets.FbUser;
+import com.freshworks.core.data.performance.fb.assets.non_primitive_assets.FbUserComment;
+import com.freshworks.core.data.performance.fb.steps.FbUserServer;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.sync.SyncService;
