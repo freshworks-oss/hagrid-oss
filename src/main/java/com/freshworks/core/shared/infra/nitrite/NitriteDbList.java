@@ -370,22 +370,13 @@ public class NitriteDbList implements InfraDbList {
             documentCursor = this.nitriteCollection.find(nitriteFilter);
         }
 
-        else{
+        else {
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
             NitriteFilter filter = where("value.clazz").eq(className);
 
             documentCursor = this.nitriteCollection.find(filter);
-        }
-
-        else if (assetClassType == null && nitriteFilter != null){
-
-            documentCursor = this.nitriteCollection.find(nitriteFilter);
-        }
-
-        else{
-            documentCursor = this.nitriteCollection.find();
         }
         
         System.out.println("documents in cursor are");

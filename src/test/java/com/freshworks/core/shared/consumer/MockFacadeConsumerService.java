@@ -49,7 +49,7 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
         ConsumerService consumerServiceSpy = Mockito.spy(consumerService);
         doNothing().when(consumerServiceSpy).configure(any());
         doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any(), any());
-        doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor();
+        doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any());
 
         return consumerServiceSpy;
     }
