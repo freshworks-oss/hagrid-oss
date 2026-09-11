@@ -27,7 +27,7 @@ import java.net.URISyntaxException;
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 800, duration = 1)
 @Component
 @Scope("prototype")
-@Profile("durability"))
+@Profile("durability")
 public class TestParseSyncException extends HttpAbstractStep {
 
     private SyncServiceContainer syncServiceContainer;

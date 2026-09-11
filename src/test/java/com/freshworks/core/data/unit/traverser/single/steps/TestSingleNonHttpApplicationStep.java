@@ -47,11 +47,6 @@ public class TestSingleNonHttpApplicationStep extends NonHttpAbstractStep {
     }
 
     @Override
-    public void filterResponseNonHttp(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
-    }
-
-    @Override
     public RequestResponseContainer getNextSyncRequestNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws Exception {
         return null;
     }

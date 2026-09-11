@@ -99,12 +99,6 @@ public class FbComment extends HttpAbstractStep {
     }
 
     @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-
-        JsonNode node = stepDataBeanMapping.getParseSyncedResponseData();
-    }
-
-    @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws Exception {
         try{
 

@@ -4,6 +4,7 @@ import com.freshworks.core.data.concurrency.fb.assets.FbComment;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.shared.sync.SyncService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.DagNode;
@@ -27,13 +28,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureObservability
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.concurrency\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "concurrency")
 public class TestConcurrency {
 
     @Autowired
     ApplicationContext applicationContext;
 
     private SyncServiceContainer longSyncRun(String namespace, boolean shouldFail) throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
         ImmutableMap<String, String> x;
         x = ImmutableMap.<String, String>builder()
                 .put("numberOfUsersEachPage", "100")
@@ -52,14 +56,16 @@ public class TestConcurrency {
 
 
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer(namespace, ParentStep.class, x);
-        syncService.startSync(syncServiceContainer);
+        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        syncService.startSync();
 
         return syncServiceContainer;
     }
 
 
     private SyncServiceContainer lightSyncRun(String namespace, Boolean shouldFail) throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("numberOfUsersEachPage", "1")
@@ -76,8 +82,8 @@ public class TestConcurrency {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer(namespace, ParentStep.class, x);
-        syncService.startSync(syncServiceContainer);
+        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        syncService.startSync();
         return syncServiceContainer;
     }
 
@@ -126,8 +132,9 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
+        
+        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
+        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -198,8 +205,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
+        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
+        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -273,8 +280,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
+        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
+        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -354,7 +361,7 @@ public class TestConcurrency {
         System.out.println("Getting sync1 syncStatys sync completion");
         assertThat(syncStatusService1.getSyncStatus() , Matchers.is(1));
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
+        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
         InfraService infraService1 = s1.getBean(InfraService.class);
         assertThat(infraService1.getProcessorQueue().size(), Matchers.is(10012L));
 

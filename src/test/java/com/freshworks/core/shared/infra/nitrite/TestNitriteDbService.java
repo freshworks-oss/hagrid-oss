@@ -55,7 +55,12 @@ public class TestNitriteDbService {
 
         mockFacadeInfraConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
-        mockFacadeNitriteDbService.configure().build();
+        InfraService nitriteService = mockFacadeNitriteDbService.configure().build();
+
+        // When we configure and build the mockFacadeNitriteDbService then it creates inmemory client
+        // Because there are cases where we want to create file based database , it never happens because nitriteDb 
+        // contains inmemory database already. Hence, we need to destroy the inmemory database in set up
+        nitriteService.destroy();
         mockFacadeH2ClientFactory.configure().build();
     }
 
@@ -255,10 +260,11 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getNitriteDataPath("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
-                    .getNitriteDatabaseType("file")
+                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getInfraType("file")
                     .build();
             doCallRealMethod().when(infraConfigService).configure(any());
+
             infraConfigService.configure(syncServiceContainer);
 
             InfraService infraService = mockFacadeNitriteDbService
@@ -298,8 +304,8 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getNitriteDataPath("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database")
-                    .getNitriteDatabaseType("file")
+                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getInfraType("file")
                     .build();
 
             doCallRealMethod().when(infraConfigService).configure(any());

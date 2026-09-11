@@ -88,12 +88,6 @@ public class FbUser extends HttpAbstractStep {
     }
 
     @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception {
-        
-
-    }
-
-    @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws Exception {
         try{
             analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");

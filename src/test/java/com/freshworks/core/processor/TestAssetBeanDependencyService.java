@@ -52,8 +52,6 @@ public class TestAssetBeanDependencyService {
     public void testWhenAssetPathIsOuterThenAllInnerPackageAssetsAreAlsoScanned() throws Exception {
 
         ProcessorConfigService processorConfigService = mockFacadeProcessorConfigService
-                .getAssetLocation("com.freshworks.core.data." + releaseVersion + ".unit.dag.assets")
-                .getBeanLocation("com.freshworks.core.data."+ releaseVersion + ".unit.dag.beans")
                 .build();
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer

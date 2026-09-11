@@ -10,19 +10,13 @@ import org.springframework.stereotype.Component;
 public class AppEventService {
 
 
-    public enum APP_EVENT{
-        HAGRID_ASSET_PUBLISH_DONE,
-        HAGRID_BEAN_PUBLISH_DONE,
-    }
+    public boolean validate(String event, Map<String, Object> tags){
 
-
-    public boolean validate(APP_EVENT event, Map<String, Object> tags){
-
-        if(event == APP_EVENT.HAGRID_ASSET_PUBLISH_DONE){
+        if(event.equalsIgnoreCase("HAGRID_ASSET_PUBLISH_DONE")){
             return validateHagridAssetPublishDoneEvent(tags);
         }
 
-        if (event == APP_EVENT.HAGRID_BEAN_PUBLISH_DONE){
+        if (event.equalsIgnoreCase("HAGRID_BEAN_PUBLISH_DONE")){
 
             return validateHagridBeanPublishDoneEvent(tags);
         }

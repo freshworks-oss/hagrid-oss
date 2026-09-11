@@ -76,7 +76,7 @@ public class ConsumerService {
     public void registerAssetCallback(Class<? extends AbstractAsset> abstractAsset, Consumer<AbstractAsset> consumer){
 
         ObjectMapper objectMapper = new ObjectMapper();
-        this.analyticsService.registerEventCallback(AppEventService.APP_EVENT.HAGRID_ASSET_PUBLISH_DONE,
+        this.analyticsService.registerEventCallback("HAGRID_ASSET_PUBLISH_DONE",
 
             params -> {
                 Object object = params.get("asset");

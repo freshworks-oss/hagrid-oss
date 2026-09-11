@@ -42,7 +42,7 @@ public class TestAnalyticsService {
     @Test
     public void testConfiguringNamespaceIsMandatory(){
 
-        AnalyticsService analyticsService = new AnalyticsService(null, null);
+        AnalyticsService analyticsService = new AnalyticsService(null, null, new AppEventService());
 
         try{
             analyticsService.debugLogEvent("SOME_DEBUG_EVENT", "method", "method_name");

@@ -9,6 +9,7 @@ import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraBeanService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
 import com.freshworks.core.shared.synchronizers.GlobalNamespaceService;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.durability\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "durability")
 public class TestTraverser {
 
 
@@ -50,9 +51,7 @@ public class TestTraverser {
     @Autowired
     MockFacadeProcessorService mockFacadeProcessorService;
 
-
     private static ClientAndServer server;
-    String releaseVersion;
 
     @BeforeAll
     public static void beforeAll(){
@@ -62,13 +61,12 @@ public class TestTraverser {
     @BeforeEach
     public void beforeEach() throws Exception {
         mockFacadeProcessorService.configure().build();
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
     }
 
     @Test
     public void testWhenTraverserIsShutdownByStepMethodSetupThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
-
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
@@ -89,7 +87,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -136,7 +134,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
                 String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.setup.shutdown.TestSetupShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.setup.shutdown.TestSetupShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("setup")){
@@ -165,6 +163,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodShouldProceedWithParentThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -180,14 +179,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.should_proceed.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -234,7 +232,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.should_proceed.shutdown.TestShouldProceedShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("shouldProceedWithParentObject")){
@@ -262,6 +260,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodShouldProceedWithParentReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
         String namespaceStr = UUID.randomUUID().toString();
@@ -276,14 +275,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.should_proceed.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -330,7 +328,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("shouldProceedWithParentObject")){
@@ -358,6 +356,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodStartSyncThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -373,14 +372,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.start_sync.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -429,7 +427,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.start_sync.shutdown.TestStartSyncShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("startSync")){
@@ -459,6 +457,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodStartSyncReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -474,14 +473,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.start_sync.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -528,7 +526,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.start_sync.null_check.TestStartSyncNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("startSync")){
@@ -558,6 +556,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodIsValidThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -573,14 +572,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_valid.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -627,7 +625,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_valid.shutdown.TestIsValidShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.is_valid.shutdown.TestIsValidShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("isValidResponse")){
@@ -658,6 +656,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodIsValidReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -673,14 +672,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_valid.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -727,7 +725,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_valid.null_check.TestIsValidNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("isValidResponse")){
@@ -758,6 +756,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodHandleInValidThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -773,14 +772,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.handle_invalid.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -827,7 +825,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("handleInvalidResponse")){
@@ -859,6 +857,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodHandleInValidReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -874,14 +873,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.handle_invalid.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -928,7 +926,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("handleInvalidResponse")){
@@ -960,6 +958,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodParseSyncThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -975,14 +974,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.parse_sync.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1029,7 +1027,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.parse_sync.shutdown.TestParseSyncShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("parseSyncResponse")){
@@ -1061,6 +1059,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodParseSyncReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -1076,14 +1075,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.parse_sync.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1130,7 +1128,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data."  + releaseVersion + ".durability.steps.parse_sync.null_check.TestParseSyncNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("parseSyncResponse")){
@@ -1162,6 +1160,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodIsSyncCompleteThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -1177,14 +1176,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data."  + releaseVersion + ".durability.steps.is_complete.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1231,7 +1229,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("isSyncComplete")){
@@ -1265,6 +1263,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodIsSyncCompleteReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -1280,14 +1279,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_complete.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1334,7 +1332,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("isSyncComplete")){
@@ -1368,6 +1366,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserIsShutdownByStepMethodGetNextRequestThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -1383,14 +1382,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.next_request.shutdown");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1437,7 +1435,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.next_request.shutdown.TestGetNextRequestShutdown")){
+            if(step.equals("com.freshworks.core.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("getNextSyncRequest")){
@@ -1472,6 +1470,7 @@ public class TestTraverser {
     @Test
     public void testWhenTraverserStepMethodGetNextRequestReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
@@ -1487,14 +1486,13 @@ public class TestTraverser {
         syncServiceContainer.add(httpClientService);
 
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.setStepLocation("com.freshworks.core.data." + releaseVersion + ".durability.steps.next_request.null_check");
         traverseConfigService.configure(syncServiceContainer);
         syncServiceContainer.add(traverseConfigService);
 
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -1541,7 +1539,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data." + releaseVersion + ".durability.steps.next_request.null_check.TestGetNextRequestNullCheck")){
+            if(step.equals("com.freshworks.core.data.durability.steps.next_request.null_check.TestGetNextRequestNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("getNextSyncRequest")){

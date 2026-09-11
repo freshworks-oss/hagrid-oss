@@ -62,20 +62,6 @@ public class TestUser extends HttpAbstractStep {
     }
 
     @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) {
-
-
-//        Iterator<JsonNode> it = jsonNode.iterator();
-//        while(it.hasNext()){
-//            JsonNode j = it.next();
-//            if(Boolean.FALSE.equals(j.get("displayName").asText().toLowerCase().contains("jamf "))){
-//                it.remove();
-//                metric.increment("total_object_dropped", 1, "step", "application");
-//            }
-//        }
-    }
-
-    @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) {
 
         try{

@@ -5,7 +5,6 @@ import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.analytics.AppEventService;
-import com.freshworks.core.shared.analytics.AppEventService.APP_EVENT;
 import com.freshworks.core.shared.infra.InfraService;
 import com.google.common.collect.Multimap;
 
@@ -104,7 +103,7 @@ public class ProcessorUtility {
                                 .add(objectMapper.writeValueAsString(abstractAsset));
                         
                         // Here I am firing app event so that any listener on it can receive the asset
-                        analyticsService.appEvent(APP_EVENT.HAGRID_ASSET_PUBLISH_DONE, "asset_name", abstractAsset.getClass().getName(), "asset", abstractAsset);
+                        analyticsService.appEvent("HAGRID_ASSET_PUBLISH_DONE", "asset_name", abstractAsset.getClass().getName(), "asset", abstractAsset);
                     }
                     long currentTime = System.currentTimeMillis();
 

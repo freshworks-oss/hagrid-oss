@@ -46,21 +46,15 @@ public class TestNitriteClientFactory {
     public void testSingleNitriteClientIsCreatedForMultipleNitriteService() throws Exception {
 
         InfraConfigService infraConfigService = mockFacadeInfraConfigService.configure()
-                .getDatabaseHost("")
-                .getDatabasePort(0)
-                . getDatabaseAuthDb("admin")
-                .getDatabaseUserName("admin")
-                .getDatabasePassword("admin")
-                .getInfraType("nitrite")
                 .build();
 
         NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("dummy_namespace");
 
-        Nitrite mongoClient1  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
-        Nitrite mongoClient2  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
+        Nitrite nitriteClient1  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
+        Nitrite nitriteClient2  = nitriteClientFactory.getNitriteClient("dummy_namespace",infraConfigService);
 
-        assertThat(mongoClient1, Matchers.equalToObject(mongoClient2));
+        assertThat(nitriteClient1, Matchers.equalToObject(nitriteClient2));
 //
     }
 }

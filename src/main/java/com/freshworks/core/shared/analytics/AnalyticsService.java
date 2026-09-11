@@ -13,7 +13,6 @@ import java.util.function.ToDoubleFunction;
 
 import com.freshworks.core.shared.Annotations.AlphaRelease;
 import com.freshworks.core.shared.Annotations.BetaRelease;
-import com.freshworks.core.shared.analytics.AppEventService.APP_EVENT;
 import com.google.common.base.Preconditions;
 
 import io.micrometer.core.instrument.Gauge;
@@ -146,7 +145,7 @@ public class AnalyticsService {
      * @param eventName
      * @param tags
      */
-    public void appEvent(APP_EVENT eventName, Object... tags){
+    public void appEvent(String eventName, Object... tags){
 
         Preconditions.checkNotNull(namespace, "namespace can not be null. Please configure the analytics service by calling configure method one it");
 
@@ -160,19 +159,19 @@ public class AnalyticsService {
         }
 
         // Here I am firing event to meterRegistry
-        fireMeter(eventName.name(), tags);
+        fireMeter(eventName, tags);
 
-        AtomicLong previousValue = appEventsMap.putIfAbsent(eventName.name(), new AtomicLong(1));
+        AtomicLong previousValue = appEventsMap.putIfAbsent(eventName, new AtomicLong(1));
 
         if(previousValue != null ){
 
-            AtomicLong count = appEventsMap.get(eventName.name());
+            AtomicLong count = appEventsMap.get(eventName);
             count.incrementAndGet();
         }
 
         // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName.name())){
-            consumerHashMap.get(eventName.name()).forEach(consumer -> consumer.accept(s));
+        if(consumerHashMap.containsKey(eventName)){
+            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
         }
     }
 
@@ -346,15 +345,15 @@ public class AnalyticsService {
      */
 
     @AlphaRelease(sourceVersion = "3.0.0-beta", targetVersion = "3.1.0", useCase = "Dev can use this to trigger methods based on various events fired from different part of the application. For example - When dev fired an event from asset transform method then call this consumer to consme the asset")
-    public void registerEventCallback(APP_EVENT eventName, Consumer<Map<String, Object>> consumer){
-        if(consumerHashMap.containsKey(eventName.name())){
-            List<Consumer<Map<String, Object>>> consumers = consumerHashMap.get(eventName.name());
+    public void registerEventCallback(String eventName, Consumer<Map<String, Object>> consumer){
+        if(consumerHashMap.containsKey(eventName)){
+            List<Consumer<Map<String, Object>>> consumers = consumerHashMap.get(eventName);
             consumers.add(consumer);
         }
         else{
             List<Consumer<Map<String, Object>>> consumers = new ArrayList<>();
             consumers.add(consumer);
-            consumerHashMap.put(eventName.name(), consumers);
+            consumerHashMap.put(eventName, consumers);
         }
     }
 

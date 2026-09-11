@@ -60,8 +60,9 @@ public class NitriteFactory {
                         // If I create just one instance of nitrite db then when db get closed after 1st request is completed 
                         // then for second request, db will be found closed which will be problem. 
                         // Like inmemory i.e RAM , everytime new infra is set up, to simulate the same case, I am returning new RAM ( new in memory nitrite db)
-                        return Nitrite.builder()
+                        nitriteDb = Nitrite.builder()
                         .openOrCreate();
+                        return nitriteDb;
                     }
 
                 }
