@@ -6,19 +6,20 @@ import com.freshworks.core.shared.SyncServiceContainer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Profile("durability")
-public class FbPost extends AbstractBean {
+@Component 
+public class FbUserBean extends AbstractBean {
 
-    String post_id;
-    String post_title;
-    String post_text;
-
+    String user_id;
+    String user_name;
     SyncServiceContainer syncServiceContainer;
 
     @Override
@@ -28,6 +29,5 @@ public class FbPost extends AbstractBean {
 
     @Override
     public void transform() {
-
     }
 }

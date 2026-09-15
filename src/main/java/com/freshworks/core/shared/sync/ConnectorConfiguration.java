@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -34,13 +35,23 @@ public class ConnectorConfiguration {
     int processorPollCount = 1000;
     int numberOfParallelProcessor = 20;
 
-    String infraDbType = "file";
-    String infraDbLocation = "./database_" + UUID.randomUUID().toString();
+    @Value("${spring.connector.infra.type:file}")
+    @Setter (AccessLevel.NONE)
+    String infraDbType;
+
+    @Value("${spring.connector.infra.nitrite.location:./database}")
+    @Setter (AccessLevel.NONE)
+    String infraDbLocation;
 
     String analyticsShouldPassTagsToMeterRegistry;
 
     int DEFAULT_RATE_LIMIT_API_CALLS = 100;
     int DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS = 1;
+
+    public ConnectorConfiguration(){
+        this.infraDbType = "file";
+        this.infraDbLocation = "./database";
+    }
 
     public void setStepRateLimit(Class<? extends AbstractStep> stepClass, StepRateLimitObject stepRateLimitObject){
 

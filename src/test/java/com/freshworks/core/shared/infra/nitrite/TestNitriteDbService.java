@@ -248,50 +248,52 @@ public class TestNitriteDbService {
             infraService.destroy();
 
         }
-//
-        @Test
-        public void testInfraServiceDestroyAllObject() throws Exception {
+        // I am commenting this test cases because we will never delete a file when sync is done, we will always just remove 
+        // the collections
+        
+        // @Test
+        // public void testInfraServiceDestroyAllObject() throws Exception {
 
 
-            String namespace = UUID.randomUUID().toString();
-            SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
-            NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
-            namespaceService.setNamespace(namespace);
-            syncServiceContainer.add(namespaceService, NamespaceService.class);
+        //     String namespace = UUID.randomUUID().toString();
+        //     SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
+        //     NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
+        //     namespaceService.setNamespace(namespace);
+        //     syncServiceContainer.add(namespaceService, NamespaceService.class);
 
-            InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
-                    .getInfraType("file")
-                    .build();
-            doCallRealMethod().when(infraConfigService).configure(any());
+        //     InfraConfigService infraConfigService = mockFacadeInfraConfigService
+        //             .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+        //             .getInfraType("file")
+        //             .build();
+        //     doCallRealMethod().when(infraConfigService).configure(any());
 
-            infraConfigService.configure(syncServiceContainer);
+        //     infraConfigService.configure(syncServiceContainer);
 
-            InfraService infraService = mockFacadeNitriteDbService
-                    .syncServiceContainer(syncServiceContainer)
-                    .build();
+        //     InfraService infraService = mockFacadeNitriteDbService
+        //             .syncServiceContainer(syncServiceContainer)
+        //             .build();
 
-            doCallRealMethod().when(infraService).configure(any(), any());
-            doCallRealMethod().when(infraService).getProcessorQueue();
-            doCallRealMethod().when(infraService).getPublisherList();
-            doCallRealMethod().when(infraService).destroy();
+        //     doCallRealMethod().when(infraService).configure(any(), any());
+        //     doCallRealMethod().when(infraService).getProcessorQueue();
+        //     doCallRealMethod().when(infraService).getPublisherList();
+        //     doCallRealMethod().when(infraService).destroy();
 
-            infraService.configure(syncServiceContainer, infraConfigService);
-
-
-            InfraDbQueue processorQueue = infraService.getProcessorQueue();
-            InfraDbList publisherList = infraService.getPublisherList();
+        //     infraService.configure(syncServiceContainer, infraConfigService);
 
 
-            // Assert that non of them is null
-            assertThat(processorQueue, is(Matchers.notNullValue()));
-            assertThat(publisherList, is(Matchers.notNullValue()));
+        //     InfraDbQueue processorQueue = infraService.getProcessorQueue();
+        //     InfraDbList publisherList = infraService.getPublisherList();
 
-            // Now destroy the infra
-            infraService.destroy();
-            Path path = Paths.get("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database");
-            assertThat(Files.exists(path), is(false));
-        }
+
+        //     // Assert that non of them is null
+        //     assertThat(processorQueue, is(Matchers.notNullValue()));
+        //     assertThat(publisherList, is(Matchers.notNullValue()));
+
+        //     // Now destroy the infra
+        //     infraService.destroy();
+        //     Path path = Paths.get("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database");
+        //     assertThat(Files.exists(path), is(false));
+        // }
 
 
         @RepeatedTest(50)

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
@@ -14,21 +15,23 @@ import org.springframework.context.annotation.Profile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("durability")
-public class FbUser extends AbstractAsset {
+@Component 
+public class FbPostAsset extends AbstractAsset {
 
-    String userId;
-    String userName;
+    String post_id;
+    String post_title;
+    String post_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbPostBean post){
 
-        userId = dummy.getUser_id();
-        userName = dummy.getUser_name();
+        post_id = post.getPost_id();
+        post_title = post.getPost_title();
+        post_text = post.getPost_text();
     }
-
 
     @Override
     public void transform() {
-//        System.out.println("Creating user asset");
+//        System.out.println("Creating post asset");
     }
 
 }

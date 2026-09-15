@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Profile("durability")
-public class FbComment extends AbstractBean {
+@Component 
+public class FbCommentBean extends AbstractBean {
 
     String comment_id;
     String comment_text;

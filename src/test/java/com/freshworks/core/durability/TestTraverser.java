@@ -91,16 +91,16 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+        syncServiceContainer.add(analyticsFactory);
+
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
-
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        syncServiceContainer.add(analyticsService);
-        syncServiceContainer.add(analyticsFactory);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);

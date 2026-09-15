@@ -150,25 +150,36 @@ public class NitriteService implements InfraService {
 
             // First take a lock so that no two concurrent schema deletion occur
             schemaDeletionLock.lock();
-
-            persistentQueueSingletonMap.remove(this.namespace);
-            persistentListSingletonMap.remove(this.namespace);
-            persistentKeyValueSingletonMap.remove(this.namespace);
-
-            if(Boolean.FALSE.equals(nitriteDb.isClosed())){
-                nitriteDb.close();
-
-                if(infraConfigService.getInfraDbType().equalsIgnoreCase("file")){
-                
-                    Path pathToBeDeleted = Paths.get(infraConfigService.getInfraDbLocation());
-                    Files.walk(pathToBeDeleted)
-                        .sorted(Comparator.reverseOrder())
-                        .map(Path::toFile)
-                        .forEach(File::delete);
-                    
-                }
-            }
             
+            // Now delete all collections from nitriteDb which starts with namespace 
+
+            if(persistentQueueSingletonMap.containsKey(this.namespace)){
+
+                for( NitriteDbQueue queue: persistentQueueSingletonMap.get(this.namespace).values()){
+                    queue.delete();
+                }
+
+                persistentQueueSingletonMap.remove(this.namespace);
+            }
+
+            if(persistentListSingletonMap.containsKey(this.namespace)){
+
+                for( NitriteDbList list: persistentListSingletonMap.get(this.namespace).values()){
+
+                    list.delete();
+                }
+
+                persistentListSingletonMap.remove(this.namespace);
+            }
+
+
+            if(persistentKeyValueSingletonMap.containsKey(this.namespace)){
+                for( NitriteDbKeyValue keyValue: persistentKeyValueSingletonMap.get(this.namespace).values()){
+                    keyValue.delete();
+                }
+
+                persistentKeyValueSingletonMap.remove(this.namespace);
+            }        
         }
 
         finally {

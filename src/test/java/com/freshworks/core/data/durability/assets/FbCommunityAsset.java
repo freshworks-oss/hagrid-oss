@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
@@ -14,13 +15,14 @@ import org.springframework.context.annotation.Profile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("durability")
-public class FbCommunity extends AbstractAsset {
+@Component 
+public class FbCommunityAsset extends AbstractAsset {
 
     String community_id;
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbCommunityBean community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

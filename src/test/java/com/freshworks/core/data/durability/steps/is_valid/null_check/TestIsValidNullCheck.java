@@ -2,7 +2,7 @@ package com.freshworks.core.data.durability.steps.is_valid.null_check;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.durability.beans.FbUser;
+import com.freshworks.core.data.durability.beans.FbUserBean;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
@@ -182,7 +182,7 @@ public class TestIsValidNullCheck extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(FbUser.class);
+            stepDataBeanMapping.setBeanClass(FbUserBean.class);
             return stepDataBeanMapping;
 
         }
