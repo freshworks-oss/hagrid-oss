@@ -111,6 +111,9 @@ public class SyncService {
         // Init the sync container
         this.syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
+        // Add SyncService ( this ) itself to the container
+        this.syncServiceContainer.add(this, SyncService.class);
+
         // Add Connector Configuration Object 
         this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 

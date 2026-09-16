@@ -2,6 +2,7 @@ package com.freshworks.core.data.concurrency.fb.assets;
 
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,13 +18,14 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("concurrency")
-public class FbComment extends AbstractAsset {
+@Component 
+public class FbCommentAsset extends AbstractAsset {
 
     String comment_id;
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbCommentBean comment){
 
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();

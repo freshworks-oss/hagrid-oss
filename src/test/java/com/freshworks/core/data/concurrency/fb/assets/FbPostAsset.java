@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
@@ -15,21 +16,23 @@ import org.springframework.context.annotation.Profile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("concurrency")
-public class FbCommunity extends AbstractAsset {
+@Component 
+public class FbPostAsset extends AbstractAsset {
 
-    String community_id;
-    String community_title;
-    String community_description;
+    String post_id;
+    String post_title;
+    String post_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbPostBean post){
 
-        community_id = community.getCommunity_id();
-        community_title = community.getCommunity_title();
-        community_description = community.getCommunity_description();
+        post_id = post.getPost_id();
+        post_title = post.getPost_title();
+        post_text = post.getPost_text();
     }
 
     @Override
     public void transform() {
+//        System.out.println("Creating post asset");
     }
 
 }

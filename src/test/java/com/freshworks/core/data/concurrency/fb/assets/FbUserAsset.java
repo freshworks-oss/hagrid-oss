@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @NoArgsConstructor
 @Getter
@@ -15,22 +16,22 @@ import org.springframework.context.annotation.Profile;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("concurrency")
-public class FbPost extends AbstractAsset {
+@Component 
+public class FbUserAsset extends AbstractAsset {
 
-    String post_id;
-    String post_title;
-    String post_text;
+    String userId;
+    String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbPost post){
+    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbUserBean dummy){
 
-        post_id = post.getPost_id();
-        post_title = post.getPost_title();
-        post_text = post.getPost_text();
+        userId = dummy.getUser_id();
+        userName = dummy.getUser_name();
     }
+
 
     @Override
     public void transform() {
-//        System.out.println("Creating post asset");
+//        System.out.println("Creating user asset");
     }
 
 }

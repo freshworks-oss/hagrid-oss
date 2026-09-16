@@ -90,7 +90,7 @@ public class FbComment extends HttpAbstractStep {
                 httpRequest.initGet("http://django:3000/posts/comments-failed-endpoint?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             }
             else{
-                httpRequest.initGet("http://django:3000/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
+                httpRequest.initGet("http://django:3000/post_comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             }
 
             httpRequestResponse.setRequest(httpRequest);
@@ -122,7 +122,7 @@ public class FbComment extends HttpAbstractStep {
 
             HttpRequestResponse httpRequestResponse = new HttpRequestResponse();
             HttpRequest httpRequest = new HttpRequest();
-            httpRequest.initGet("http://django:3000/posts/comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
+            httpRequest.initGet("http://django:3000/post_comments?how_many=" + numberOfCommentsEachPage + "&user_id=" + userId + "&post_id=" + postId);
             httpRequestResponse.setRequest(httpRequest);
             count = count + 1;
             Thread.sleep(waitBetweenCommentPaginationInMs);
@@ -178,8 +178,8 @@ public class FbComment extends HttpAbstractStep {
             String response = httpRequestResponse.getResponse().getBody();
 
             JsonNode jsonNode = objectMapper.readTree(response);
-            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("comments"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.concurrency.fb.beans.FbComment.class);
+            stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("comments"));
+            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.concurrency.fb.beans.FbCommentBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

@@ -319,16 +319,12 @@ public class DagNode implements AutoCloseable {
 
         try{
             nodeLock.lock();
-            if(getTotalFailedItems() > 0 || (getTotalItemsSynced() > (getTotalSuccessfulItems() + getTotalFailedItems()))){
-                this.setNodeOverallTraverserStatus(-1);
-                nodeSyncDataChangedCondition.signalAll();
-                nodeTraverserStatusChangeCondition.signalAll();
-            }
-            else if (getTotalFailedItems() == 0 && getTotalItemsSynced() == getTotalSuccessfulItems()){
-                throw new IllegalStateException("Cannot mark the node " + name + " failed because" + " total dagNodePerItems " + getTotalItemsSynced() + " initiated are  " +
-                        "equal to the sum of successful items "  + getTotalSuccessfulItems() + " and failed items " + getTotalFailedItems() + ". It is the case of successful node traversal");
-            }
+
+            this.setNodeOverallTraverserStatus(-1);
+            nodeSyncDataChangedCondition.signalAll();
+            nodeTraverserStatusChangeCondition.signalAll();
         }
+        
         finally {
             nodeLock.unlock();
         }

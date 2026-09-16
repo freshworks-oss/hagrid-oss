@@ -8,13 +8,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Profile("concurrency")
-public class FbPost extends AbstractBean {
+@Component 
+public class FbPostBean extends AbstractBean {
 
     String post_id;
     String post_title;

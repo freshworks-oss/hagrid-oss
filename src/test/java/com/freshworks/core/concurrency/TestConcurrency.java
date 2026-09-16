@@ -1,6 +1,6 @@
 package com.freshworks.core.concurrency;
 
-import com.freshworks.core.data.concurrency.fb.assets.FbComment;
+import com.freshworks.core.data.concurrency.fb.assets.FbCommentAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.infra.InfraService;
@@ -133,8 +133,8 @@ public class TestConcurrency {
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
         
-        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -205,8 +205,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
-        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -280,8 +280,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetCursor(FbComment.class).docSize(), Matchers.lessThan(10000L));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -349,6 +349,9 @@ public class TestConcurrency {
 
         List<DagNode> dagNodeLists2 = rootNodes2.getNodesInDag();
         for(DagNode dagNode : dagNodeLists2){
+            System.out.println(" node is " + dagNode.getName());
+            System.out.println("status is " + dagNode.getNodeOverallTraverserStatus());
+            System.out.println("--------");
             assertThat( "node name is " + dagNode.getName(), dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.greaterThanOrEqualTo(0L));
             assertThat(dagNode.getTotalSuccessfulItems(), Matchers.lessThanOrEqualTo(dagNode.getTotalItemsSynced()));
@@ -361,7 +364,7 @@ public class TestConcurrency {
         System.out.println("Getting sync1 syncStatys sync completion");
         assertThat(syncStatusService1.getSyncStatus() , Matchers.is(1));
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
-        assertThat(consumerService1.getAssetCursor(FbComment.class).docSize(), Matchers.is(10000));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
         InfraService infraService1 = s1.getBean(InfraService.class);
         assertThat(infraService1.getProcessorQueue().size(), Matchers.is(10012L));
 
