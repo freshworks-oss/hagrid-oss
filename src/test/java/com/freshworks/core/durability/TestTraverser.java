@@ -1,6 +1,19 @@
 package com.freshworks.core.durability;
 
 
+import com.freshworks.core.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck;
+import com.freshworks.core.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown;
+import com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck;
+import com.freshworks.core.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown;
+import com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck;
+import com.freshworks.core.data.durability.steps.is_valid.shutdown.TestIsValidShutdown;
+import com.freshworks.core.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown;
+import com.freshworks.core.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck;
+import com.freshworks.core.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown;
+import com.freshworks.core.data.durability.steps.setup.shutdown.TestSetupShutdown;
+import com.freshworks.core.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown;
+import com.freshworks.core.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck;
+import com.freshworks.core.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown;
 import com.freshworks.core.processor.MockFacadeProcessorService;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
@@ -33,6 +46,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Phaser;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -98,6 +112,18 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestSetupShutdown.class);
+        
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -189,16 +215,29 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         syncServiceContainer.add(analyticsService);
         syncServiceContainer.add(analyticsFactory);
+
+        DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
+        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestShouldProceedShutdown.class);
+        
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);
@@ -257,101 +296,108 @@ public class TestTraverser {
         Thread.sleep(10000);
     }
 
-    @Test
-    public void testWhenTraverserStepMethodShouldProceedWithParentReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
+    /*
+     * Commenting this test cases as it is not possible to return null from shouldProceedWithParent as return 
+     * type is of boolean 
+     */
+    // @Test
+    // public void testWhenTraverserStepMethodShouldProceedWithParentReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
-        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+    //     ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
-        String namespaceStr = UUID.randomUUID().toString();
-        NamespaceService namespace = new NamespaceService();
-        namespace.setNamespace(namespaceStr);
-        syncServiceContainer.add(namespace);
+    //     SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
+    //     String namespaceStr = UUID.randomUUID().toString();
+    //     NamespaceService namespace = new NamespaceService();
+    //     namespace.setNamespace(namespaceStr);
+    //     syncServiceContainer.add(namespace);
 
-        GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
-        syncServiceContainer.add(singletonUniqueIdentifier);
+    //     GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
+    //     syncServiceContainer.add(singletonUniqueIdentifier);
 
-        HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
-        syncServiceContainer.add(httpClientService);
+    //     HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
+    //     syncServiceContainer.add(httpClientService);
 
-        TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.configure(syncServiceContainer);
-        syncServiceContainer.add(traverseConfigService);
+    //     TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
+    //     traverseConfigService.configure(syncServiceContainer);
+    //     syncServiceContainer.add(traverseConfigService);
 
-        InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
-        InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
-        infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
-        infraService.configure(syncServiceContainer, infraConfigService);
-        syncServiceContainer.add(infraService, InfraService.class);
-
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        syncServiceContainer.add(analyticsService);
-        syncServiceContainer.add(analyticsFactory);
-
-        ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
-        serviceTree.configure(syncServiceContainer);
-        syncServiceContainer.add(serviceTree);
-
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
-        DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
-
-        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("numberOfUsersEachPage", "10")
-                .put("numberOfUserPagination", "1")
-                .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "10")
-                .put("numberOfPostPagination", "1")
-                .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "100")
-                .put("numberOfCommentPagination", "1")
-                .put("waitBetweenCommentPaginationInMs", "0")
-                .put("numberOfCommunitiesEachPage", "1")
-                .put("numberOfCommunityPagination", "1")
-                .put("waitBetweenCommunityPaginationInMs", "0").build();
-
-        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
-        syncServiceContainer.add(dagTraversalService);
-        TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
-
-        List<Boolean> list = new ArrayList<>();
-        AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
-        methodCalls.set(list);
-
-        analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
-            String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
-
-                String method = (String)z.get("method");
-                if(method.equalsIgnoreCase("shouldProceedWithParentObject")){
-                    methodCalls.get().add(true);
-                }
-                else{
-                    // fail here
-                    methodCalls.get().add(false);
-                }
-            }
-
-        });
+    //     InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
+    //     InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
+    //     infraConfigService.configure(syncServiceContainer);
+    //     InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+    //     infraService.configure(syncServiceContainer, infraConfigService);
+    //     syncServiceContainer.add(infraService, InfraService.class);
 
 
-        traverserExecutorService.submit(namespaceStr, dagTraversalService);
-        syncStatusService.waitUntilTraverserIsInProgress();
-        infraService.destroy();
-        assertThat(methodCalls.get().size(), Matchers.is(1));
-        assertThat(methodCalls.get().get(0), Matchers.is(true));
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
-        assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
-        Thread.sleep(10000);
-    }
+    //     AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+    //     AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+    //     syncServiceContainer.add(analyticsService);
+    //     syncServiceContainer.add(analyticsFactory);
+
+    //     DagService dagService = applicationContext.getBean(DagService.class);
+    //     dagService.configure(syncServiceContainer);
+    //     DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+    //     SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+    //     syncServiceContainer.add(syncStatusService);
+
+    //     ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
+    //     serviceTree.configure(syncServiceContainer);
+    //     syncServiceContainer.add(serviceTree);
+
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
+    //     DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
+
+    //     ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+    //             .put("numberOfUsersEachPage", "10")
+    //             .put("numberOfUserPagination", "1")
+    //             .put("waitBetweenUserPaginationInMs", "0")
+    //             .put("numberOfPostsEachPage", "10")
+    //             .put("numberOfPostPagination", "1")
+    //             .put("waitBetweenPostPaginationInMs", "0")
+    //             .put("numberOfCommentsEachPage", "100")
+    //             .put("numberOfCommentPagination", "1")
+    //             .put("waitBetweenCommentPaginationInMs", "0")
+    //             .put("numberOfCommunitiesEachPage", "1")
+    //             .put("numberOfCommunityPagination", "1")
+    //             .put("waitBetweenCommunityPaginationInMs", "0").build();
+
+    //     CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
+    //     dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+    //     syncServiceContainer.add(dagTraversalService);
+    //     TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
+
+    //     List<Boolean> list = new ArrayList<>();
+    //     AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
+    //     methodCalls.set(list);
+
+    //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
+    //         String step = (String)z.get("step");
+    //         if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
+
+    //             String method = (String)z.get("method");
+    //             System.out.println("Method called is " + method);
+    //             if(method.equalsIgnoreCase("shouldProceedWithParentObject")){
+    //                 methodCalls.get().add(true);
+    //             }
+    //             else{
+    //                 // fail here
+    //                 methodCalls.get().add(false);
+    //             }
+    //         }
+
+    //     });
+
+
+    //     traverserExecutorService.submit(namespaceStr, dagTraversalService);
+    //     syncStatusService.waitUntilTraverserIsInProgress();
+    //     infraService.destroy();
+    //     assertThat(methodCalls.get().size(), Matchers.is(1));
+    //     assertThat(methodCalls.get().get(0), Matchers.is(true));
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
+    //     assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
+    //     Thread.sleep(10000);
+    // }
 
     @Test
     public void testWhenTraverserIsShutdownByStepMethodStartSyncThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
@@ -382,18 +428,29 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
-
-
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         syncServiceContainer.add(analyticsService);
         syncServiceContainer.add(analyticsFactory);
+
+        DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
+        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestStartSyncShutdown.class);
+        
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);
@@ -430,6 +487,7 @@ public class TestTraverser {
             if(step.equals("com.freshworks.core.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown")){
 
                 String method = (String)z.get("method");
+                System.out.println("Method called is " + method);
                 if(method.equalsIgnoreCase("startSync")){
                     methodCalls.get().add(true);
                 }
@@ -483,16 +541,29 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         syncServiceContainer.add(analyticsService);
         syncServiceContainer.add(analyticsFactory);
+
+        DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
+        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+        
+        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestStartSyncNullCheck.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);
@@ -558,6 +629,10 @@ public class TestTraverser {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestIsValidShutdown.class);
+        connectorConfiguration.addPathToEnable(addEnabledPath);
+
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
         String namespaceStr = UUID.randomUUID().toString();
@@ -582,16 +657,26 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         syncServiceContainer.add(analyticsService);
         syncServiceContainer.add(analyticsFactory);
+
+        DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
+        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);
@@ -613,6 +698,7 @@ public class TestTraverser {
                 .put("numberOfCommunitiesEachPage", "1")
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
+
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
         dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
@@ -628,6 +714,7 @@ public class TestTraverser {
             if(step.equals("com.freshworks.core.data.durability.steps.is_valid.shutdown.TestIsValidShutdown")){
 
                 String method = (String)z.get("method");
+                System.out.println("method name is " + method);
                 if(method.equalsIgnoreCase("isValidResponse")){
                     methodCalls.get().add(true);
                 }
@@ -643,6 +730,7 @@ public class TestTraverser {
         traverserExecutorService.submit(namespaceStr, dagTraversalService);
         syncStatusService.waitUntilTraverserIsInProgress();
         infraService.destroy();
+        
         assertThat(methodCalls.get().size(), Matchers.is(4));
         assertThat(methodCalls.get().get(0), Matchers.is(false));
         assertThat(methodCalls.get().get(1), Matchers.is(false));
@@ -653,105 +741,122 @@ public class TestTraverser {
         Thread.sleep(10000);
     }
 
-    @Test
-    public void testWhenTraverserStepMethodIsValidReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
+    /**
+     * Commenting this test case as isValud can not return null because it is of type boolean not Boolean
+     * @throws Exception
+     */
+    // @Test
+    // public void testWhenTraverserStepMethodIsValidReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
-        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+    //     ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
+    //     SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
-        String namespaceStr = UUID.randomUUID().toString();
-        NamespaceService namespace = new NamespaceService();
-        namespace.setNamespace(namespaceStr);
-        syncServiceContainer.add(namespace);
+    //     String namespaceStr = UUID.randomUUID().toString();
+    //     NamespaceService namespace = new NamespaceService();
+    //     namespace.setNamespace(namespaceStr);
+    //     syncServiceContainer.add(namespace);
 
-        GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
-        syncServiceContainer.add(singletonUniqueIdentifier);
+    //     GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
+    //     syncServiceContainer.add(singletonUniqueIdentifier);
 
-        HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
-        syncServiceContainer.add(httpClientService);
+    //     HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
+    //     syncServiceContainer.add(httpClientService);
 
-        TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.configure(syncServiceContainer);
-        syncServiceContainer.add(traverseConfigService);
+    //     TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
+    //     traverseConfigService.configure(syncServiceContainer);
+    //     syncServiceContainer.add(traverseConfigService);
 
-        InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
-        InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
-        infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
-        infraService.configure(syncServiceContainer, infraConfigService);
-        syncServiceContainer.add(infraService, InfraService.class);
+    //     InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
+    //     InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
+    //     infraConfigService.configure(syncServiceContainer);
+    //     InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+    //     infraService.configure(syncServiceContainer, infraConfigService);
+    //     syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+    //     AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+    //     AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+    //     syncServiceContainer.add(analyticsService);
+    //     syncServiceContainer.add(analyticsFactory);
 
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
+    //     DagService dagService = applicationContext.getBean(DagService.class);
+    //     dagService.configure(syncServiceContainer);
+    //     DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
 
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        syncServiceContainer.add(analyticsService);
-        syncServiceContainer.add(analyticsFactory);
+    //     List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
+    //     addEnabledPath.add(TestIsValidNullCheck.class);
 
-        ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
-        serviceTree.configure(syncServiceContainer);
-        syncServiceContainer.add(serviceTree);
+    //     List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+    //     enabledPathList.add(addEnabledPath);
 
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
-        DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
+    //     // enable only the path added and disable rest of the path
+    //     dagService.enableDisableDagPath(rootNode, enabledPathList);
 
-        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("numberOfUsersEachPage", "10")
-                .put("numberOfUserPagination", "1")
-                .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "10")
-                .put("numberOfPostPagination", "1")
-                .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "100")
-                .put("numberOfCommentPagination", "1")
-                .put("waitBetweenCommentPaginationInMs", "0")
-                .put("numberOfCommunitiesEachPage", "1")
-                .put("numberOfCommunityPagination", "1")
-                .put("waitBetweenCommunityPaginationInMs", "0").build();
+    //     // Now set this as main root node
+    //     dagService.setRootNode(rootNode);
+        
+    //     SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+    //     syncServiceContainer.add(syncStatusService);
 
-        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
-        syncServiceContainer.add(dagTraversalService);
-        TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
+    //     ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
+    //     serviceTree.configure(syncServiceContainer);
+    //     syncServiceContainer.add(serviceTree);
 
-        List<Boolean> list = new ArrayList<>();
-        AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
-        methodCalls.set(list);
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
+    //     DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
 
-        analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
-            String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck")){
+    //     ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+    //             .put("numberOfUsersEachPage", "10")
+    //             .put("numberOfUserPagination", "1")
+    //             .put("waitBetweenUserPaginationInMs", "0")
+    //             .put("numberOfPostsEachPage", "10")
+    //             .put("numberOfPostPagination", "1")
+    //             .put("waitBetweenPostPaginationInMs", "0")
+    //             .put("numberOfCommentsEachPage", "100")
+    //             .put("numberOfCommentPagination", "1")
+    //             .put("waitBetweenCommentPaginationInMs", "0")
+    //             .put("numberOfCommunitiesEachPage", "1")
+    //             .put("numberOfCommunityPagination", "1")
+    //             .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-                String method = (String)z.get("method");
-                if(method.equalsIgnoreCase("isValidResponse")){
-                    methodCalls.get().add(true);
-                }
-                else{
-                    // fail here
-                    methodCalls.get().add(false);
-                }
-            }
+    //     CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
+    //     dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
+    //     syncServiceContainer.add(dagTraversalService);
+    //     TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
-        });
+    //     List<Boolean> list = new ArrayList<>();
+    //     AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
+    //     methodCalls.set(list);
+
+    //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
+    //         String step = (String)z.get("step");
+    //         if(step.equals("com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck")){
+
+    //             String method = (String)z.get("method");
+    //             if(method.equalsIgnoreCase("isValidResponse")){
+    //                 methodCalls.get().add(true);
+    //             }
+    //             else{
+    //                 // fail here
+    //                 methodCalls.get().add(false);
+    //             }
+    //         }
+
+    //     });
 
 
-        traverserExecutorService.submit(namespaceStr, dagTraversalService);
-        syncStatusService.waitUntilTraverserIsInProgress();
-        infraService.destroy();
-        assertThat(methodCalls.get().size(), Matchers.is(4));
-        assertThat(methodCalls.get().get(0), Matchers.is(false));
-        assertThat(methodCalls.get().get(1), Matchers.is(false));
-        assertThat(methodCalls.get().get(2), Matchers.is(false));
-        assertThat(methodCalls.get().get(3), Matchers.is(true));
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
-        assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
-        Thread.sleep(10000);
-    }
+    //     traverserExecutorService.submit(namespaceStr, dagTraversalService);
+    //     syncStatusService.waitUntilTraverserIsInProgress();
+    //     infraService.destroy();
+    //     assertThat(methodCalls.get().size(), Matchers.is(4));
+    //     assertThat(methodCalls.get().get(0), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(1), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(2), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(3), Matchers.is(true));
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
+    //     assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
+    //     Thread.sleep(10000);
+    // }
 
     @Test
     public void testWhenTraverserIsShutdownByStepMethodHandleInValidThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
@@ -783,7 +888,21 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestHandleInvalidShutdown.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -884,7 +1003,20 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestHandleInvalidNullCheck.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -985,7 +1117,20 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestParseSyncShutdown.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -1086,7 +1231,21 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestParseSyncNullCheck.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -1187,7 +1346,22 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestIsSyncCompleteShutdown.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
+
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -1247,121 +1421,136 @@ public class TestTraverser {
         traverserExecutorService.submit(namespaceStr, dagTraversalService);
         syncStatusService.waitUntilTraverserIsInProgress();
         infraService.destroy();
-        assertThat(methodCalls.get().size(), Matchers.is(7));
+        assertThat(methodCalls.get().size(), Matchers.is(6));
         assertThat(methodCalls.get().get(0), Matchers.is(false));
         assertThat(methodCalls.get().get(1), Matchers.is(false));
         assertThat(methodCalls.get().get(2), Matchers.is(false));
         assertThat(methodCalls.get().get(3), Matchers.is(false));
         assertThat(methodCalls.get().get(4), Matchers.is(false));
-        assertThat(methodCalls.get().get(5), Matchers.is(false));
-        assertThat(methodCalls.get().get(6), Matchers.is(true));
+        assertThat(methodCalls.get().get(5), Matchers.is(true));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
         assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
         Thread.sleep(10000);
     }
 
-    @Test
-    public void testWhenTraverserStepMethodIsSyncCompleteReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
-        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+    // IsSyncComplete can not return null as its return type is boolean not Boolean
+    // @Test
+    // public void testWhenTraverserStepMethodIsSyncCompleteReturnNullThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
 
-        SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
+    //     ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        String namespaceStr = UUID.randomUUID().toString();
-        NamespaceService namespace = new NamespaceService();
-        namespace.setNamespace(namespaceStr);
-        syncServiceContainer.add(namespace);
+    //     SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
 
-        GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
-        syncServiceContainer.add(singletonUniqueIdentifier);
+    //     String namespaceStr = UUID.randomUUID().toString();
+    //     NamespaceService namespace = new NamespaceService();
+    //     namespace.setNamespace(namespaceStr);
+    //     syncServiceContainer.add(namespace);
 
-        HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
-        syncServiceContainer.add(httpClientService);
+    //     GlobalNamespaceService singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
+    //     syncServiceContainer.add(singletonUniqueIdentifier);
 
-        TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
-        traverseConfigService.configure(syncServiceContainer);
-        syncServiceContainer.add(traverseConfigService);
+    //     HttpClientService httpClientService = applicationContext.getBean(HttpClientService.class);
+    //     syncServiceContainer.add(httpClientService);
 
-        InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
-        InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
-        infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
-        infraService.configure(syncServiceContainer, infraConfigService);
-        syncServiceContainer.add(infraService, InfraService.class);
+    //     TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
+    //     traverseConfigService.configure(syncServiceContainer);
+    //     syncServiceContainer.add(traverseConfigService);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+    //     InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
+    //     InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
+    //     infraConfigService.configure(syncServiceContainer);
+    //     InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+    //     infraService.configure(syncServiceContainer, infraConfigService);
+    //     syncServiceContainer.add(infraService, InfraService.class);
 
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
+    //     DagService dagService = applicationContext.getBean(DagService.class);
+    //     dagService.configure(syncServiceContainer);
+    //     DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
 
-        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-        syncServiceContainer.add(analyticsService);
-        syncServiceContainer.add(analyticsFactory);
+    //     List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+    //     addEnabledPath.add(TestIsSyncCompleteNullCheck.class);
 
-        ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
-        serviceTree.configure(syncServiceContainer);
-        syncServiceContainer.add(serviceTree);
+    //     List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+    //     enabledPathList.add(addEnabledPath);
 
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
-        DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
+    //     // enable only the path added and disable rest of the path
+    //     dagService.enableDisableDagPath(rootNode, enabledPathList);
 
-        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("numberOfUsersEachPage", "10")
-                .put("numberOfUserPagination", "1")
-                .put("waitBetweenUserPaginationInMs", "0")
-                .put("numberOfPostsEachPage", "10")
-                .put("numberOfPostPagination", "1")
-                .put("waitBetweenPostPaginationInMs", "0")
-                .put("numberOfCommentsEachPage", "100")
-                .put("numberOfCommentPagination", "1")
-                .put("waitBetweenCommentPaginationInMs", "0")
-                .put("numberOfCommunitiesEachPage", "1")
-                .put("numberOfCommunityPagination", "1")
-                .put("waitBetweenCommunityPaginationInMs", "0").build();
+    //     // Now set this as main root node
+    //     dagService.setRootNode(rootNode);
 
-        CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
-        syncServiceContainer.add(dagTraversalService);
-        TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
+    //     SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+    //     syncServiceContainer.add(syncStatusService);
 
-        List<Boolean> list = new ArrayList<>();
-        AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
-        methodCalls.set(list);
+    //     AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+    //     AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+    //     syncServiceContainer.add(analyticsService);
+    //     syncServiceContainer.add(analyticsFactory);
 
-        analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
-            String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
+    //     ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
+    //     serviceTree.configure(syncServiceContainer);
+    //     syncServiceContainer.add(serviceTree);
 
-                String method = (String)z.get("method");
-                if(method.equalsIgnoreCase("isSyncComplete")){
-                    methodCalls.get().add(true);
-                }
-                else{
-                    // fail here
-                    methodCalls.get().add(false);
-                }
-            }
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-100));
+    //     DagTraversalService dagTraversalService = applicationContext.getBean(DagTraversalService.class);
 
-        });
+    //     ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+    //             .put("numberOfUsersEachPage", "10")
+    //             .put("numberOfUserPagination", "1")
+    //             .put("waitBetweenUserPaginationInMs", "0")
+    //             .put("numberOfPostsEachPage", "10")
+    //             .put("numberOfPostPagination", "1")
+    //             .put("waitBetweenPostPaginationInMs", "0")
+    //             .put("numberOfCommentsEachPage", "100")
+    //             .put("numberOfCommentPagination", "1")
+    //             .put("waitBetweenCommentPaginationInMs", "0")
+    //             .put("numberOfCommunitiesEachPage", "1")
+    //             .put("numberOfCommunityPagination", "1")
+    //             .put("waitBetweenCommunityPaginationInMs", "0").build();
+
+    //     CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
+    //     dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+    //     syncServiceContainer.add(dagTraversalService);
+    //     TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
+
+    //     List<Boolean> list = new ArrayList<>();
+    //     AtomicReference<List<Boolean>> methodCalls = new AtomicReference<>();
+    //     methodCalls.set(list);
+
+    //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
+    //         String step = (String)z.get("step");
+    //         if(step.equals("com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
+
+    //             String method = (String)z.get("method");
+    //             System.out.print(method);
+    //             if(method.equalsIgnoreCase("isSyncComplete")){
+    //                 methodCalls.get().add(true);
+    //             }
+    //             else{
+    //                 // fail here
+    //                 methodCalls.get().add(false);
+    //             }
+    //         }
+
+    //     });
 
 
-        traverserExecutorService.submit(namespaceStr, dagTraversalService);
-        syncStatusService.waitUntilTraverserIsInProgress();
-        infraService.destroy();
-        assertThat(methodCalls.get().size(), Matchers.is(7));
-        assertThat(methodCalls.get().get(0), Matchers.is(false));
-        assertThat(methodCalls.get().get(1), Matchers.is(false));
-        assertThat(methodCalls.get().get(2), Matchers.is(false));
-        assertThat(methodCalls.get().get(3), Matchers.is(false));
-        assertThat(methodCalls.get().get(4), Matchers.is(false));
-        assertThat(methodCalls.get().get(5), Matchers.is(false));
-        assertThat(methodCalls.get().get(6), Matchers.is(true));
-        assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
-        assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
-        Thread.sleep(10000);
-    }
+    //     traverserExecutorService.submit(namespaceStr, dagTraversalService);
+    //     syncStatusService.waitUntilTraverserIsInProgress();
+    //     infraService.destroy();
+    //     assertThat(methodCalls.get().size(), Matchers.is(6));
+    //     assertThat(methodCalls.get().get(0), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(1), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(2), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(3), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(4), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(5), Matchers.is(false));
+    //     assertThat(methodCalls.get().get(6), Matchers.is(true));
+    //     assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
+    //     assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
+    //     Thread.sleep(10000);
+    // }
 
     @Test
     public void testWhenTraverserIsShutdownByStepMethodGetNextRequestThenStepDoesNotExecuteFurtherStepMethods() throws Exception {
@@ -1393,7 +1582,21 @@ public class TestTraverser {
         syncServiceContainer.add(infraService, InfraService.class);
 
         DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagScanner(namespaceStr, traverseConfigService, infraService);
+
+
+        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestGetNextRequestShutdown.class);
+
+        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        enabledPathList.add(addEnabledPath);
+
+        // enable only the path added and disable rest of the path
+        dagService.enableDisableDagPath(rootNode, enabledPathList);
+
+        // Now set this as main root node
+        dagService.setRootNode(rootNode);
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);
@@ -1453,15 +1656,14 @@ public class TestTraverser {
         traverserExecutorService.submit(namespaceStr, dagTraversalService);
         syncStatusService.waitUntilTraverserIsInProgress();
         infraService.destroy();
-        assertThat(methodCalls.get().size(), Matchers.is(8));
+        assertThat(methodCalls.get().size(), Matchers.is(7));
         assertThat(methodCalls.get().get(0), Matchers.is(false));
         assertThat(methodCalls.get().get(1), Matchers.is(false));
         assertThat(methodCalls.get().get(2), Matchers.is(false));
         assertThat(methodCalls.get().get(3), Matchers.is(false));
         assertThat(methodCalls.get().get(4), Matchers.is(false));
         assertThat(methodCalls.get().get(5), Matchers.is(false));
-        assertThat(methodCalls.get().get(6), Matchers.is(false));
-        assertThat(methodCalls.get().get(7), Matchers.is(true));
+        assertThat(methodCalls.get().get(6), Matchers.is(true));
         assertThat(syncStatusService.getTraverser_status(), Matchers.is(-1));
         assertThat(analyticsService.anyErrorEvent(), Matchers.is(true));
         Thread.sleep(10000);

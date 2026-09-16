@@ -272,8 +272,7 @@ public class DagService {
         return DagNode.cloneDag(rootNode);
     }
 
-    protected void enableDisableDagPath(DagNode rootNode, List<List<Class<? extends AbstractStep>>> allowedAbstractStep) throws Exception{
-
+    public void enableDisableDagPath(DagNode rootNode, List<List<Class<? extends AbstractStep>>> allowedAbstractStep) throws Exception{
 
         List<List<String>> allowedStepMultiList = new ArrayList<>();
 

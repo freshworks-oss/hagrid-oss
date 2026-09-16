@@ -55,7 +55,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
 
         try{
 
-            analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "setup");
+            analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "setup");
             analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "setup");
             if(baggageMap.containsKey("numberOfUsersEachPage")){
                 numberOfUsersEachPage = Integer.parseInt(baggageMap.get("numberOfUsersEachPage"));
@@ -77,13 +77,13 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
 
     @Override
     public boolean shouldProceedWithParentObject(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "shouldProceedWithParentObject");
-        return true;
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "shouldProceedWithParentObject");
+        return false;
     }
 
     @Override
     public HttpRequestResponse startSync(JsonNode... parentJsonObject) throws StepFailedException {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "startSync");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "startSync");
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "startSync");
         analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED", "api-name", "fbuser");
         try{
@@ -105,7 +105,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
     @Override
     public HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
         try{
-            analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "getNextSyncRequest");
+            analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "getNextSyncRequest");
             analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "getNextSyncRequest");
             analyticsService.infoLogEvent("THIRD_PARTY_API_CALLED","api-name", "fbuser");
 
@@ -128,7 +128,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
     @Override
     public boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "isValidResponse");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "isValidResponse");
 
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "isValidResponse");
         if(currentRequest.getResponse().getCode() == 200){
@@ -141,7 +141,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
 
     @Override
     public DagTraversalService.TraverseAction handleInvalidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws URISyntaxException, StepFailedException {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "handleInvalidResponse");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "handleInvalidResponse");
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "handleInvalidResponse");
         analyticsService.infoLogEvent("THIRD_PARTY_API_INVALID_RESPONSE");
         return null;
@@ -150,7 +150,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
     @Override
     public boolean isSyncComplete(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
 
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "isSyncComplete");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "isSyncComplete");
 
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "isSyncComplete");
 
@@ -164,7 +164,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
 
     @Override
     public StepDataBeanMapping parseSyncResponse(HttpRequestResponse httpRequestResponse, JsonNode... parentJsonObject) {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "parseSyncResponse");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "parseSyncResponse");
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "parseSyncResponse");
         analyticsService.infoLogEvent("THIRD_PARTY_API_RESPONSE");
         try{
@@ -187,7 +187,7 @@ public class TestShouldProceedNullCheck extends HttpAbstractStep {
 
     @Override
     public void closeSync() {
-        analyticsService.infoLogEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "closeSync");
+        analyticsService.appEvent("HAGRID_DURABILITY_EVENT", "step", this.getClass().getName(), "method", "closeSync");
         analyticsService.infoLogEvent("STEP_METHOD_CALLED", "name", "closeSync");
     }
 }
