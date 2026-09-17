@@ -1,14 +1,15 @@
 package com.freshworks.core.shared.infra;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.core.shared.infra.nitrite.NitriteService;
-import com.freshworks.core.shared.sync.ConnectorConfiguration;
 
 @Component
+@Scope ("prototype")
 public class InfraBeanService {
 
-    public InfraService getInfraService(InfraConfigService infraConfigService, ConnectorConfiguration connectorConfiguration) throws Exception {
+    public InfraService getInfraService(InfraConfigService infraConfigService) throws Exception {
 
         return  new NitriteService();
 

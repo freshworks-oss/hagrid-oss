@@ -4,6 +4,9 @@ import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.*;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
+
+import org.dizitart.no2.Nitrite;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -588,5 +591,105 @@ public class TestNitriteDbService {
         public void testConcurrentDeletionOfDifferentNamespaceWorksWithoutErrors() throws Exception {
 
         }
+
+
+        @Nested 
+        public class dyanmicInfraType{
+
+            @Test 
+            public void testWhenConnectorConfigurationHasImmemoryThenInMemoryIsCreated() throws Exception{
+
+                ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+                connectorConfiguration.setInfraDbType("inmemory");
+                
+                String namespace = UUID.randomUUID().toString();
+                SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
+                NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
+                namespaceService.setNamespace(namespace);
+                syncServiceContainer.add(namespaceService, NamespaceService.class);
+                syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
+
+                InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
+                doCallRealMethod().when(infraConfigService).configure(any());
+                doCallRealMethod().when(infraConfigService).getInfraDbType();
+                doCallRealMethod().when(infraConfigService).getInfraDbLocation();
+                infraConfigService.configure(syncServiceContainer);
+
+                InfraService infraService = mockFacadeNitriteDbService
+                    .syncServiceContainer(syncServiceContainer)
+                    .build();
+
+                doCallRealMethod().when(infraService).configure(any(), any());
+                doCallRealMethod().when(infraService).getKeyValue();
+                infraService.configure(syncServiceContainer, infraConfigService);
+
+                NitriteService nitriteService = (NitriteService)infraService;
+                Nitrite nitriteDb1 = nitriteService.getNitriteDb();
+
+                String filePath = nitriteDb1.getConfig().getNitriteStore().getStoreConfig().filePath();
+                assertThat(filePath, Matchers.isEmptyOrNullString());
+                
+
+                InfraService infraService2 = mockFacadeNitriteDbService
+                    .syncServiceContainer(syncServiceContainer)
+                    .build();
+
+                doCallRealMethod().when(infraService2).configure(any(), any());
+                doCallRealMethod().when(infraService2).getKeyValue();
+                infraService.configure(syncServiceContainer, infraConfigService);
+
+                NitriteService nitriteService2 = (NitriteService)infraService2;
+                Nitrite nitriteDb2 = nitriteService.getNitriteDb();
+                String filePath2 = nitriteDb2.getConfig().getNitriteStore().getStoreConfig().filePath();
+                assertThat(filePath2, Matchers.isEmptyOrNullString());
+                assertThat(nitriteDb1.hashCode(), Matchers.is(nitriteDb2.hashCode()));
+            }
+        }
+
+        @Test 
+        public void testWhenConnectorConfigurationHasFileThenFilebasedIsCreated() throws Exception{
+
+                ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+                connectorConfiguration.setInfraDbType("file");
+                
+                String namespace = UUID.randomUUID().toString();
+                SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.build();
+                NamespaceService namespaceService = applicationContext.getBean(NamespaceService.class);
+                namespaceService.setNamespace(namespace);
+                syncServiceContainer.add(namespaceService, NamespaceService.class);
+                syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
+
+                InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
+                doCallRealMethod().when(infraConfigService).configure(any());
+                doCallRealMethod().when(infraConfigService).getInfraDbType();
+                doCallRealMethod().when(infraConfigService).getInfraDbLocation();
+                infraConfigService.configure(syncServiceContainer);
+                
+                NitriteService infraService = (NitriteService)mockFacadeNitriteDbService
+                    .syncServiceContainer(syncServiceContainer)
+                    .build();
+
+                doCallRealMethod().when(infraService).configure(any(), any());
+                doCallRealMethod().when(infraService).getKeyValue();
+
+                infraService.configure(syncServiceContainer, infraConfigService);
+                Nitrite nitriteDb1 = infraService.getNitriteDb();
+                String filePath = nitriteDb1.getConfig().getNitriteStore().getStoreConfig().filePath();
+                assertThat(filePath, Matchers.not(Matchers.isEmptyOrNullString()));
+                
+                NitriteService infraService2 = (NitriteService)mockFacadeNitriteDbService
+                    .syncServiceContainer(syncServiceContainer)
+                    .build();
+
+                doCallRealMethod().when(infraService2).configure(any(), any());
+                doCallRealMethod().when(infraService2).getKeyValue();
+                infraService2.configure(syncServiceContainer, infraConfigService);
+
+                Nitrite nitriteDb2 = infraService2.getNitriteDb();
+                String filePath2 = nitriteDb2.getConfig().getNitriteStore().getStoreConfig().filePath();
+                assertThat(filePath2, Matchers.not(Matchers.isEmptyOrNullString()));
+
+                assertThat(nitriteDb1.hashCode(), Matchers.is(nitriteDb2.hashCode()));
+            }
     }
 }

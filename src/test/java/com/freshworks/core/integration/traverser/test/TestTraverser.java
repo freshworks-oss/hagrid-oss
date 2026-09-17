@@ -113,7 +113,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -194,7 +194,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
@@ -280,7 +280,7 @@ public class TestTraverser {
         InfraBeanService infraBeanConfiguration = applicationContext.getBean(InfraBeanService.class);
         InfraConfigService infraConfigService = applicationContext.getBean(InfraConfigService.class);
         infraConfigService.configure(syncServiceContainer);
-        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService, connectorConfiguration);
+        InfraService infraService = infraBeanConfiguration.getInfraService(infraConfigService);
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 

@@ -36,11 +36,9 @@ public class ConnectorConfiguration {
     int numberOfParallelProcessor = 20;
 
     @Value("${spring.connector.infra.type:file}")
-    @Setter (AccessLevel.NONE)
     String infraDbType;
 
     @Value("${spring.connector.infra.nitrite.location:./database}")
-    @Setter (AccessLevel.NONE)
     String infraDbLocation;
 
     String analyticsShouldPassTagsToMeterRegistry;

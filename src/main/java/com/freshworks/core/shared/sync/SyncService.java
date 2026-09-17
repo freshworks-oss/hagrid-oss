@@ -147,7 +147,7 @@ public class SyncService {
         this.infraConfigService.configure(syncServiceContainer);
 
         InfraBeanService infraBeanService = syncServiceContainer.getBean(InfraBeanService.class);
-        this.infraService = infraBeanService.getInfraService(infraConfigService, connectorConfiguration);
+        this.infraService = infraBeanService.getInfraService(infraConfigService);
         this.infraService.configure(syncServiceContainer, infraConfigService);
         this.syncServiceContainer.add(this.infraService, InfraService.class);
 

@@ -1,11 +1,5 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -17,8 +11,13 @@ import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter 
+@Setter 
 public class NitriteService implements InfraService {
 
     // We are adding this locking implementation as we have identified a bug in H2 where if two concurrent threads
@@ -40,17 +39,12 @@ public class NitriteService implements InfraService {
     ReentrantReadWriteLock.WriteLock uniqueKeyValue = new ReentrantReadWriteLock().writeLock();
 
     InfraConfigService infraConfigService;
-
     AnalyticsService analyticsService;
 
     String dataPath;
 
     String namespace;
     NitriteFactory nitriteFactory;
-
-    public NitriteService() throws IOException {
-
-    }
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer, InfraConfigService infraConfigService) throws Exception {
@@ -61,6 +55,7 @@ public class NitriteService implements InfraService {
         this.nitriteDb = nitriteFactory.getNitriteClient(this.namespace,infraConfigService);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace);
+        System.out.println("config type is " + infraConfigService.getInfraDbType());
     }
 
     @Override
