@@ -1,13 +1,11 @@
 package com.freshworks.core.processor;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.Annotations.FreshJoin;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.analytics.AppEventService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.google.common.base.Optional;
 import com.google.common.collect.Multimap;
 
 import io.micrometer.core.instrument.MeterRegistry;
@@ -88,7 +86,7 @@ public class ProcessorUtility {
     
     // TODO: This method need to optimise for insertion into freshIndex and
     // addAndGetIndex
-    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService, JsonIndexService jsonIndexService, Namespace namespace, AnalyticsService analyticsService, ObjectMapper freshIndexObjectMapper, MeterRegistry meterRegistry) throws Exception {
+    protected static void publishAbstractAsset(String uuid, List<AbstractAsset> assetsReadyToBePublishedList, InfraService infraService,  NamespaceService namespace, AnalyticsService analyticsService, MeterRegistry meterRegistry, AppEventService appEventService) throws Exception {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -99,34 +97,26 @@ public class ProcessorUtility {
             try {
                 if (!assetsReadyToBePublishedList.isEmpty()) {
                     List<String> assetsReadyToBePublishedListInPublisherQueue = new ArrayList<>();
-                    List<JsonNode> assetsReadyToBePublishedListInFreshIndex = new ArrayList<>();
 
                     for (AbstractAsset abstractAsset : assetsReadyToBePublishedList) {
                         assetsReadyToBePublishedListInPublisherQueue
                                 .add(objectMapper.writeValueAsString(abstractAsset));
-                        String s = freshIndexObjectMapper.writeValueAsString(abstractAsset);
-                        JsonNode j = objectMapper.readTree(s);
-                        assetsReadyToBePublishedListInFreshIndex.add(j);
+                        
+                        // Here I am firing app event so that any listener on it can receive the asset
+                        analyticsService.appEvent("HAGRID_ASSET_PUBLISH_DONE", "asset_name", abstractAsset.getClass().getName(), "asset", abstractAsset);
                     }
-
                     long currentTime = System.currentTimeMillis();
 
-                    List<Long> documentIdList = infraService.getPublisherList()
-                            .addAndGetIndexBulk(assetsReadyToBePublishedListInPublisherQueue);
+                    Long documentsInserted = infraService.getPublisherList()
+                            .addBulk(assetsReadyToBePublishedListInPublisherQueue);
                     long endTime = System.currentTimeMillis();
                     long diff = endTime - currentTime;
-                    analyticsService.debugLogEvent("PROCESSOR_UTILITY",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentIdList.size(), "execute_time_taken_ms", diff);
+                    analyticsService.debugLogEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentsInserted, "execute_time_taken_ms", diff);
 
-                    if (documentIdList.size() != assetsReadyToBePublishedList.size()) {
-                        return "Assets ready to be published are not equal to assets published in publisher list";
+                    if (documentsInserted != assetsReadyToBePublishedList.size()) {
+                        analyticsService.errorLogEvent("HAGRID_PROCESSOR_TASK_SERVICE",  "command", "addAndGetIndexBulk_in_publisher_list", "uuid", uuid, "namespace" ,namespace.getNamespace(), "queue_size", documentsInserted, "execute_time_taken_ms", diff, "_message", "Unable to publish all assets into infra layer");
                     }
-                    List<String> documentIdListString = new ArrayList<>();
-                    for (Long id : documentIdList) {
-                        documentIdListString.add(id.toString());
-                    }
-
-                    jsonIndexService.indexJsonStringBulk(assetsReadyToBePublishedListInFreshIndex,
-                            documentIdListString);
+                    
                     assetsReadyToBePublishedList.clear();
                     return null;
                 } else {

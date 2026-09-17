@@ -27,21 +27,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
-import com.freshworks.core.shared.infra.persistent.MongoDbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.core.shared.infra.nitrite.NitriteDbList;
 import com.google.common.collect.ImmutableMap;
 
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagNodePerParentTraversalService {
 
 
@@ -52,10 +52,10 @@ public class TestDagNodePerParentTraversalService {
     MockFacadeDagNodeTraversal mockFacadeDagNodeTraversal;
 
     @Autowired
-    MockFacadeMongoDbService mockFacadeMongoDbService;
+    MockFacadeNitriteDbService mockFacadeNitriteDbService;
 
     @Autowired
-    MockFacadeMongodbList mockFacadeMongodbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
     @Autowired
     MockFacadeTraverseConfigService mockFacadeTraverseConfigService;
@@ -76,37 +76,36 @@ public class TestDagNodePerParentTraversalService {
     @BeforeEach
     public void Mock() throws Exception {
 
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNodeTraversal.configure().build();
-        mockFacadeMongoDbService.configure().build();
-        mockFacadeMongodbList.configure().build();
+        mockFacadeNitriteDbService.configure().build();
+        mockFacadeNitritedbList.configure().build();
         mockFacadeTraverseConfigService.configure().build();
         dagNodeMockFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion  + ".unit.dag.steps.TestApplication");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
     }
 
     @Test
     public void testDagNodeTraverserCreatesNewStepObjectWhenStepIsPrototypeForEveryParentObject() throws Exception {
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("random_namespace");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         List<String> data = new ArrayList<>();
         data.add("{\"name\":\"amit\"}");
         data.add("{\"name\":\"rahul\"}");
 
-        MongoDbList m = mockFacadeMongodbList
+        NitriteDbList m = mockFacadeNitritedbList
                 .getNFromStartIndex(data)
                 .build();
 
-        InfraService mongoService = mockFacadeMongoDbService
+        InfraService mongoService = mockFacadeNitriteDbService
                 .getInfraDbListGivenName(m)
                 .build();
 
@@ -119,10 +118,10 @@ public class TestDagNodePerParentTraversalService {
         DagNode nodeToTraverse = dagNodeMockFacade
                 .hasMoreData(true, false)
                 .name(application)
-                .parentList(new LinkedHashMap<>(Map.of(parentNode, new Relationship())))
+                .parentList(new LinkedHashMap<>(Map.of(parentNode, new NodeRelationship())))
                 .build();
 
-        parentNode.setChildrenRelationshipMap(new LinkedHashMap<>(Map.of(nodeToTraverse, new Relationship())));
+        parentNode.setChildrenRelationshipMap(new LinkedHashMap<>(Map.of(nodeToTraverse, new NodeRelationship())));
 
         TraverseConfigService traverseConfigService = mockFacadeTraverseConfigService
                 .build();

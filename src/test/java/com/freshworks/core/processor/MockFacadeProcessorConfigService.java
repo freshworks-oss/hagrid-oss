@@ -20,16 +20,12 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
     ProcessorConfigService processorConfigService;
     ReturnableMockTypeList<Integer> getProcessorPollCount;
     ReturnableMockTypeList<Integer> getNumberOfParallelProcessor;
-    ReturnableMockTypeList<String> getAssetLocation;
-    ReturnableMockTypeList<String> getBeanLocation;
 
 
     public MockFacadeProcessorConfigService configure(){
         reset();
         getProcessorPollCount.add(1);
         getNumberOfParallelProcessor.add(1);
-        getAssetLocation.add("com.freshworks.core.data.fb.assets");
-        getBeanLocation.add("com.freshworks.core.data.fb.beans");
         return this;
     }
 
@@ -46,19 +42,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeProcessorConfigService getAssetLocation(String... getAssetLocation){
-        this.getAssetLocation.clear();
-        this.getAssetLocation.add(getAssetLocation);
-        return this;
-    }
-
-
-    public MockFacadeProcessorConfigService getBeanLocation(String... getBeanLocation){
-        this.getBeanLocation.clear();
-        this.getBeanLocation.add(getBeanLocation);
-        return this;
-    }
-
     @Override
     public ProcessorConfigService build() throws Exception {
 
@@ -66,9 +49,6 @@ public class MockFacadeProcessorConfigService implements MockFacadeInterface {
         ProcessorConfigService processorConfigServiceSpy = Mockito.spy(processorConfigService);
         
         doAnswer(getProcessorPollCount.answer()).when(processorConfigServiceSpy).getProcessorPollCount();
-        doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
-        doAnswer(getAssetLocation.answer()).when(processorConfigServiceSpy).getAssetLocation();
-        doAnswer(getBeanLocation.answer()).when(processorConfigServiceSpy).getBeanLocation();
         doAnswer(getNumberOfParallelProcessor.answer()).when(processorConfigServiceSpy).getNumberOfParallelProcessor();
         return processorConfigServiceSpy;
     }

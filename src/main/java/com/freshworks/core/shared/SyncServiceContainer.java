@@ -1,26 +1,12 @@
 package com.freshworks.core.shared;
 
 
-import com.freshworks.core.processor.ProcessorConfigService;
-import com.freshworks.core.processor.ProcessorExecutorService;
-import com.freshworks.core.processor.ProcessorService;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.consumer.ConsumerService;
-import com.freshworks.core.shared.infra.InfraConfigService;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.core.shared.synchronizers.ServiceTree;
-import com.freshworks.core.traverser.DagNode;
-import com.freshworks.core.traverser.DagTraversalService;
-import com.freshworks.core.traverser.TraverseConfigService;
-import com.freshworks.core.traverser.TraverserExecutorService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
 
 @Component
 @Scope("prototype")

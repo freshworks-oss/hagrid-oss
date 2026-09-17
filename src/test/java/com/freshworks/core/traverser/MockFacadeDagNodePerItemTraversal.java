@@ -6,11 +6,11 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.infra.InfraDbQueue;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbQueue;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.exception.StepFailedException;
 import com.freshworks.core.traverser.net.MockFacadeRequestResponseContainer;
@@ -53,7 +53,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<InfraDbQueue> processorQueue = new ReturnableMockTypeList<>();
     @Autowired
-    private MockFacadeMongodbQueue mockFacadeMongodbQueue;
+    private MockFacadeNitritedbQueue mockFacadeNitritedbQueue;
 
     ReturnableMockTypeList<TraverseConfigService> traverseConfigService = new ReturnableMockTypeList<>();
 
@@ -102,11 +102,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<StepDataBeanMapping> parseSyncResponseNonHttp = new ReturnableMockTypeList<>();
 
-
-    ReturnableMockTypeList<Boolean> filterHttp = new ReturnableMockTypeList<>();
-
-    ReturnableMockTypeList<Boolean> filterNonHttp = new ReturnableMockTypeList<>();
-
     ReturnableMockTypeList<Optional<Boolean>> isSyncCompleteHttp =  new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<HttpRequestResponse> getNextSyncRequest = new ReturnableMockTypeList<>();
@@ -129,7 +124,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
     ReturnableMockTypeList<Boolean> abortCurrentParentAndReTryWithNewParentNonHttp = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<Namespace> namespace = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<NamespaceService> namespace = new ReturnableMockTypeList<>();
 
     @Autowired
     private SimpleMockUtility simpleMockUtility;
@@ -148,7 +143,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
         parentNodeData.add(objectNode);
 
         waitUntilAllPerItemTraversalIsDonePhaser.add(simpleMockUtility.mockPhaser());
-        processorQueue.add(mockFacadeMongodbQueue.configure().build());
+        processorQueue.add(mockFacadeNitritedbQueue.configure().build());
 
         traverseConfigService.add(simpleMockUtility.mockTraverseConfigService());
 
@@ -214,7 +209,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
     }
 
 
-    public MockFacadeDagNodePerItemTraversal namespace(Namespace... namespace) {
+    public MockFacadeDagNodePerItemTraversal namespace(NamespaceService... namespace) {
         this.namespace.clear();
         this.namespace.add(namespace);
         return this;
@@ -370,17 +365,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeDagNodePerItemTraversal filterHttp(Boolean... filterHttp){
-        this.filterHttp.clear();
-        this.filterHttp.add(filterHttp);
-        return this;
-    }
-
-    public MockFacadeDagNodePerItemTraversal filterNonHttp(Boolean... filterNonHttp){
-        this.filterNonHttp.clear();
-        this.filterNonHttp.add(filterNonHttp);
-        return this;
-    }
 
     public MockFacadeDagNodePerItemTraversal isSyncCompleteHttp(Optional<Boolean>... isSyncCompleteHttp){
         this.isSyncCompleteHttp.clear();
@@ -486,9 +470,6 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
         doAnswer(parseSyncResponseHttp.answer()).when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
         doAnswer(parseSyncResponseNonHttp.answer()).when(dagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-
-        doNothing().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
-        doNothing().when(dagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
 
         doAnswer(isSyncCompleteHttp.answer()).when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
         doAnswer(isSyncCompleteNonHttp.answer()).when(dagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());

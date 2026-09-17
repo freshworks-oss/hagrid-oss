@@ -1,6 +1,6 @@
 package com.freshworks.core.traverser;
 
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.google.common.base.Throwables;
@@ -18,14 +18,14 @@ public class NodeCycleService implements Callable<Void> {
     Stack<NodesCycle> nodesCycles = new Stack<>();
     long delayInMs;
     AnalyticsService analyticsService;
-    Namespace namespace;
+    NamespaceService namespace;
     String uuid;
     DagNode startingNode;
 
     Map<String, String> mainThreadMdcCopy;
 
 
-    public void configure(String parentUUId, int delayInMs, Namespace namespace, DagNode startingNode, AnalyticsFactory analyticsFactory) throws Exception {
+    public void configure(String parentUUId, int delayInMs, NamespaceService namespace, DagNode startingNode, AnalyticsFactory analyticsFactory) throws Exception {
         uuid =  parentUUId + "/" + UUID.randomUUID();
         this.startingNode = startingNode;
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
@@ -132,7 +132,7 @@ public class NodeCycleService implements Callable<Void> {
 
         // Check if all entry points are closed
         for(CycleEntryPoint cycleEntryPoint : nodesCycle.getCycleEntryPoints()){
-            Relationship relationship = cycleEntryPoint.getRelationship();
+            NodeRelationship relationship = cycleEntryPoint.getRelationship();
             if(relationship.getStatus() == 0 || relationship.getStatus() == -100){
                 return false;
             }

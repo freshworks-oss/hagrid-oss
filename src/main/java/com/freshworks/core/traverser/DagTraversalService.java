@@ -3,7 +3,7 @@ package com.freshworks.core.traverser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.shared.Annotations.BetaRelease;
 import com.freshworks.core.shared.Annotations.Retire;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -43,7 +43,7 @@ public class DagTraversalService implements Callable<Void> {
 
     InfraService infra;
 
-    Namespace namespace;
+    NamespaceService namespace;
 
     SyncServiceContainer syncServiceContainer;
 
@@ -85,7 +85,7 @@ public class DagTraversalService implements Callable<Void> {
             else{
 
                 // Here now check the status of each node, whether it is 1 or -1 .
-                Iterator<DagNode> treeNodeIterator = startingNode.preOrder().iterator();
+                Iterator<DagNode> treeNodeIterator = startingNode.getNodesInDag().iterator();
                 boolean isTraverserSuccessful = true;
 
                 while(treeNodeIterator.hasNext()){
@@ -148,7 +148,7 @@ public class DagTraversalService implements Callable<Void> {
         this.infraConfigService = syncServiceContainer.getBean(InfraConfigService.class);
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
@@ -162,7 +162,7 @@ public class DagTraversalService implements Callable<Void> {
         Thread.currentThread().setName(threadName);
 
         syncStatusService.setTraverserInProgress();
-        Iterator<DagNode> treeNodeIterator = startingNode.preOrder().iterator();
+        Iterator<DagNode> treeNodeIterator = startingNode.getNodesInDag().iterator();
 
         while (treeNodeIterator.hasNext() && Boolean.FALSE.equals(Thread.interrupted())) {
             DagNode n = treeNodeIterator.next();

@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-@BetaRelease(sourceVersion = "3.0.0-beta", targetVersion = "3.1.0", useCase = "Provide structured logging framework along with metrics for hagrid")
 @Component
 @Slf4j
 public class AnalyticsFactory {
@@ -19,17 +18,19 @@ public class AnalyticsFactory {
 
     AnalyticsUtility analyticsUtility;
 
+    AppEventService appEventService;
+
     HashMap<String, AnalyticsService> singletonHashMap = new HashMap<>();
 
     ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    @Value("${spring.connector.analytics.meter.consume.event.tags: false}")
-    Boolean shouldPassTagsToMeterRegistry;
+    Boolean shouldPassTagsToMeterRegistry = false;
 
     @Autowired
-    public AnalyticsFactory(MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility) {
+    public AnalyticsFactory(MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility, AppEventService appEventService) {
         this.meterRegistry = meterRegistry;
         this.analyticsUtility = analyticsUtility;
+        this.appEventService = appEventService;
     }
 
     public AnalyticsService getAnalyticsService(String namespace) {
@@ -44,7 +45,7 @@ public class AnalyticsFactory {
             }
             else{
 
-                analyticsService = new AnalyticsService(meterRegistry, analyticsUtility);
+                analyticsService = new AnalyticsService(meterRegistry, analyticsUtility, appEventService);
                 analyticsService.configure(namespace, shouldPassTagsToMeterRegistry);
 
             }

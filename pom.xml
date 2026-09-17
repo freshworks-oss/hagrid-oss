@@ -12,10 +12,10 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>Hagrid</artifactId>
-    <version>4.6.0</version>
+    <version>4.7.0</version>
     <name>Hagrid</name>
-    <description>High performance generic asset discovery framework</description>
-    <url>https://github.com/freshdesk/hagrid</url>
+    <description>Generic connector developement framework</description>
+    <url>https://github.com/freshworks-oss/hagrid-oss</url>
 
     <licenses>
         <license>
@@ -43,15 +43,16 @@
         <start-class>com.freshworks.HagridApplication</start-class>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <unit_test_in_memory>four_five_zero.unit.inmemory</unit_test_in_memory>
-        <unit_test_in_persistent>four_five_zero.unit.persistent</unit_test_in_persistent>
     </properties>
 
     <dependencies>
+
+    <!-- Source: https://mvnrepository.com/artifact/org.dizitart/nitrite -->
         <dependency>
-            <groupId>com.freshworks</groupId>
-            <artifactId>freshindex</artifactId>
-            <version>1.0.1</version>
+            <groupId>org.dizitart</groupId>
+            <artifactId>nitrite</artifactId>
+            <version>5.0.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
@@ -127,7 +128,7 @@
 
     <profiles>
         <profile>
-            <id>run-feature-testcases-when-profile-not-present</id>
+            <id>run-unit-testcases-when-profile-not-present</id>
             <activation>
                 <property>
                     <name>!spring.profiles.active</name>
@@ -154,21 +155,7 @@
                                 <configuration>
                                     <skip>false</skip>
                                     <systemPropertyVariables>
-                                        <spring.profiles.active>${unit_test_in_memory}</spring.profiles.active>
-                                    </systemPropertyVariables>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>unit_test_in_persistent</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>false</skip>
-                                    <systemPropertyVariables>
-                                        <spring.profiles.active>${unit_test_in_persistent}</spring.profiles.active>
+                                        <spring.profiles.active>unit</spring.profiles.active>
                                     </systemPropertyVariables>
                                 </configuration>
                             </execution>

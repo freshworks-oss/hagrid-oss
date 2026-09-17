@@ -22,26 +22,26 @@ import com.freshworks.core.processor.AbstractBean;
 import com.freshworks.core.processor.MockFacadeAssetAssetDependencyService;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.inmemory.InmemoryService;
+import com.freshworks.core.shared.infra.nitrite.NitriteService;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
 import com.freshworks.core.TestUtility;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUsageAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.FbUserAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
-import com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUsageBean;
+import com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset;
+import com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset;
+import com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
+import com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
+import com.freshworks.core.data.unit.processor.joins.beans.FbUsageBean;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestJoinService {
     
     @Autowired
@@ -81,9 +81,9 @@ public class TestJoinService {
     @Test
     public void testGetLookupFieldValueOfLeftClass() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
         TestUtility.callMethod(fbUserAsset, "setUserId", "aggarwal");
@@ -99,9 +99,9 @@ public class TestJoinService {
     @Test
     public void testGetLookupFieldValueOfRightClass() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
         TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
@@ -117,9 +117,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftAssetAndRightAsset() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -139,14 +139,14 @@ public class TestJoinService {
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
 
-        InmemoryService inMemoryService = new InmemoryService();   
+        NitriteService inMemoryService = new NitriteService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -155,9 +155,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -180,9 +177,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftAssetAndRightAssetForInnerJoinService() throws Exception{
 
-        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -202,14 +199,14 @@ public class TestJoinService {
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
 
-        InmemoryService inMemoryService = new InmemoryService();   
+        NitriteService inMemoryService = new NitriteService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -218,9 +215,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = innerJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAssetInnerJoin.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -239,9 +233,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftBeanAndRightBeanWithNullKeyInLeftBean() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -258,14 +252,14 @@ public class TestJoinService {
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
     
-        InmemoryService inMemoryService = new InmemoryService();   
+        NitriteService inMemoryService = new NitriteService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -292,10 +286,10 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBean() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -319,14 +313,14 @@ public class TestJoinService {
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
     
-        InmemoryService inMemoryService = new InmemoryService();   
+        NitriteService inMemoryService = new NitriteService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -335,9 +329,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = leftJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAsset.getClass().getName(), fbUserAsset, freshJoin);
 
@@ -379,10 +370,10 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBeanInnerJoin() throws Exception{
 
-        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + TestUtility.getReleaseVerion() + ".unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -406,14 +397,14 @@ public class TestJoinService {
         // Setting up services 
         BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16),1000000);
     
-        InmemoryService inMemoryService = new InmemoryService();   
+        NitriteService inMemoryService = new NitriteService();   
         
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("some_namespace");
 
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService("some_namespace");
 
-        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, Namespace.class)
+        SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer.add(namespace, NamespaceService.class)
         .add(mockFacadeInfraConfigService, InfraConfigService.class)
         .add(analyticsService, AnalyticsService.class)
         .build();
@@ -422,9 +413,6 @@ public class TestJoinService {
 
         inMemoryService.configure(syncServiceContainer, mockFacadeInfraConfigService.build());
         InfraDbKeyValue infraDbKeyValue = inMemoryService.getKeyValue();
-
-        // Simulate that left bean has arrived already
-        // infraDbKeyValue.put("com.freshworks.core.data.four_five_zero.unit.processor.joins.beans.FbUserBean_left", "user_id_123456");
 
         List<AbstractAsset> joinAssetData = innerJoinService.getNonPrimitiveAsset(infraDbKeyValue, fbUserUsageAssetInnerJoin.getClass().getName(), fbUserAsset, freshJoin);
         assertThat(joinAssetData.size(), Matchers.is(0));

@@ -15,20 +15,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SimpleMockUtility;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.executor.SharedExecutorService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongoDbService;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
 import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.google.common.collect.ImmutableMap;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagTraversalService {
 
     @Autowired
@@ -38,7 +38,7 @@ public class TestDagTraversalService {
     MockFacadeDagNode mockFacadeDagNode;
 
     @Autowired
-    MockFacadeMongoDbService mongoDbServiceFacade;
+    MockFacadeNitriteDbService nitriteDbServiceFacade;
 
     @Autowired
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
@@ -53,8 +53,6 @@ public class TestDagTraversalService {
     DagTraversalService dagTraversalService;
 
     TraverserExecutorService traverserExecutorService;
-    @Autowired
-    private MockFacadeMongoDbService mockFacadeMongoDbService;
 
     String releaseVersion;
 
@@ -64,17 +62,16 @@ public class TestDagTraversalService {
 
     @BeforeEach
     public void beforeEach() throws Exception {
-        releaseVersion = System.getProperty("spring.profiles.active").split("\\.")[0];
 
         mockFacadeDagNode.configure().build();
-        mongoDbServiceFacade.configure().build();
+        nitriteDbServiceFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
         mockFacadeSyncStatusService.configure().build();
         mockFacadeInfraConfigService.configure().build();
 
-        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestAppRoleAssignment");
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestApplication");
-        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.steps.TestServicePrinciple");
+        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestAppRoleAssignment");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
     }
 
 
@@ -102,19 +99,19 @@ public class TestDagTraversalService {
         parentNode.addChild(childNode2);
 
 
-        Namespace namespace = new Namespace();
+        NamespaceService namespace = new NamespaceService();
         namespace.setNamespace("dummy_name_space");
 
         SyncStatusService syncStatusService = mockFacadeSyncStatusService.build();
         InfraConfigService infraConfigService = mockFacadeInfraConfigService.build();
-        InfraService mongoService = mockFacadeMongoDbService.build();
+        InfraService nitriteService = nitriteDbServiceFacade.build();
         traverserExecutorService = traverserMockUtility.mockTraverserExecutorService();
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(syncStatusService, SyncStatusService.class)
                 .add(infraConfigService, InfraConfigService.class)
-                .add(mongoService, InfraService.class)
-                .add(namespace, Namespace.class)
+                .add(nitriteService, InfraService.class)
+                .add(namespace, NamespaceService.class)
                 .add(traverserExecutorService, TraverserExecutorService.class)
                 .build();
 

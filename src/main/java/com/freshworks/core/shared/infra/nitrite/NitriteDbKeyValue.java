@@ -6,24 +6,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.stream.Collectors;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
-import org.dizitart.no2.common.WriteResult;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -67,21 +63,21 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
     @Override
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
 
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
     }
 
     @Override
-    public void put(String key, String value) throws Exception{
+    public void set(String key, String value) throws Exception{
 
         try{
             keyAddLock.lock();
             key = key.replaceAll("\\.", "ENCODE_DOT");
             value = value.replaceAll("\\.", "ENCODE_DOT");
 
-            insert(key, value);
+            insert(key, value, true);
         }
 
         finally {
@@ -106,7 +102,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
 
             for(int i = 0; i < value.size(); i++){
                 String v = value.get(i).replaceAll("\\.", "ENCODE_DOT");
-                insert(key, v);
+                insert(key, v, false);
             }
         }
 
@@ -123,7 +119,7 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
             
             key = key.replaceAll("\\.", "ENCODE_DOT");
             value = value.replaceAll("\\.", "ENCODE_DOT");
-            insert(key, value);
+            insert(key, value, false);
             
         }
         finally {
@@ -170,17 +166,25 @@ public class NitriteDbKeyValue implements InfraDbKeyValue {
         }
     }
 
-    private void insert(String key, String value) throws Exception{
+    private void insert(String key, String value, boolean set) throws Exception{
 
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the key value");
         }
 
+
+        // If set is true then remove all pre-existing keys and just set this one
+        if(set){
+            nitriteCollection.remove(where("key").eq(key));
+        }
+
         Map<String, Object> valueMap = objectMapper.readValue(value, new TypeReference<HashMap<String, Object>>() {});
+
+        Document subDocument = Document.createDocument(valueMap);
 
         Map<String, Object> documentMap = new HashMap<>();        
         documentMap.put("key", key);
-        documentMap.put("value", valueMap);
+        documentMap.put("value", subDocument);
         Document document = Document.createDocument(documentMap);
 
         nitriteCollection.insert(document);

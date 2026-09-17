@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.processor.AbstractBean;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -63,7 +63,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
     InfraDbQueue processorQueue;
 
-    Namespace namespace;
+    NamespaceService namespace;
     TraverseConfigService traverseConfigService;
 
     InfraConfigService infraConfigService;
@@ -109,7 +109,7 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
         this.rateLimitBucket = rateLimitBucket;
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
         mainThreadMdcCopy = MDC.getCopyOfContextMap();
@@ -466,27 +466,6 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
     }
 
-    protected void filterHttp(HttpAbstractStep abstractStep, StepDataBeanMapping stepDataBeanMapping, JsonNode parentNodeData) throws Exception {
-
-        abstractStep.filterResponse(stepDataBeanMapping, parentNodeData);
-        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
-
-        if(Boolean.TRUE.equals(isThreadInterrupted())){
-            throw new InterruptedException("Thread is interrupted in step filterHttp method");
-        }
-
-    }
-
-    protected void filterNonHttp(NonHttpAbstractStep abstractStep, StepDataBeanMapping StepDataBeanMapping, JsonNode parentNodeData) throws Exception {
-
-        abstractStep.filterResponseNonHttp(StepDataBeanMapping, parentNodeData);
-        analyticsService.debugLogEvent("HAGRID_DAG_NODE_PER_ITEM", "step", abstractStep.getClass().getName(), "command", "filterNonHttp", "uuid", uuid, "namespace" ,namespace.getNamespace());
-
-        if(Boolean.TRUE.equals(isThreadInterrupted())){
-            throw new InterruptedException("Thread is interrupted in step filterNonHttp method");
-        }
-
-    }
 
     protected boolean isSyncCompleteHttp(HttpAbstractStep abstractStep, HttpRequestResponse httpRequestResponse, JsonNode parentNodeData) throws Exception {
 
@@ -791,14 +770,6 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
             else{
                 stepDataBeanMapping = parseSyncResponseNonHttp(nonHttpAbstractStep, requestResponseContainer, parentNodeData);
                 jNodeList = stepDataBeanMapping.getParseSyncedResponseData();
-            }
-
-
-            if(isHttpBased){
-                filterHttp(httpAbstractStep, stepDataBeanMapping, parentNodeData);
-            }
-            else{
-                filterNonHttp(nonHttpAbstractStep, stepDataBeanMapping, parentNodeData);
             }
 
 

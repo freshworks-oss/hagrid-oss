@@ -59,7 +59,7 @@ public class MockFacadeProcessorTask implements MockFacadeInterface {
     public Object build() throws Exception {
         processorTask = applicationContext.getBean(ProcessorTaskService.class);
         ProcessorTaskService processorTaskSpy = Mockito.spy(processorTask);
-        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
+        doNothing().when(processorTaskSpy).configure(anyString(), anyList(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any(), any());
         doNothing().when(processorTaskSpy).processBeanForAsset(anyString());
         return processorTaskSpy;
     }

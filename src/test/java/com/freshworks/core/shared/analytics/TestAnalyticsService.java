@@ -20,7 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\.[a-z]*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestAnalyticsService {
 
     @Autowired
@@ -42,7 +42,7 @@ public class TestAnalyticsService {
     @Test
     public void testConfiguringNamespaceIsMandatory(){
 
-        AnalyticsService analyticsService = new AnalyticsService(null, null);
+        AnalyticsService analyticsService = new AnalyticsService(null, null, new AppEventService());
 
         try{
             analyticsService.debugLogEvent("SOME_DEBUG_EVENT", "method", "method_name");

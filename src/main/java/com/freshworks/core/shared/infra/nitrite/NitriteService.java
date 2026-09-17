@@ -1,25 +1,23 @@
 package com.freshworks.core.shared.infra.nitrite;
 
-import com.freshworks.core.shared.Namespace;
+import java.util.HashMap;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+import org.dizitart.no2.Nitrite;
+
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraConfigService;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.freshindex.NamespaceService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
-import com.zaxxer.hikari.HikariDataSource;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 
-import org.dizitart.no2.Nitrite;
-import org.h2.tools.Server;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.HashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-
+@Getter 
+@Setter 
 public class NitriteService implements InfraService {
 
     // We are adding this locking implementation as we have identified a bug in H2 where if two concurrent threads
@@ -41,7 +39,6 @@ public class NitriteService implements InfraService {
     ReentrantReadWriteLock.WriteLock uniqueKeyValue = new ReentrantReadWriteLock().writeLock();
 
     InfraConfigService infraConfigService;
-
     AnalyticsService analyticsService;
 
     String dataPath;
@@ -49,20 +46,16 @@ public class NitriteService implements InfraService {
     String namespace;
     NitriteFactory nitriteFactory;
 
-    public NitriteService() throws IOException {
-
-    }
-
-
     @Override
     public void configure(SyncServiceContainer syncServiceContainer, InfraConfigService infraConfigService) throws Exception {
         this.syncServiceContainer = syncServiceContainer;
         this.infraConfigService = infraConfigService;
-        this.namespace = syncServiceContainer.getBean(Namespace.class).getNamespace();
+        this.namespace = syncServiceContainer.getBean(NamespaceService.class).getNamespace();
         nitriteFactory = syncServiceContainer.getBean(NitriteFactory.class);
         this.nitriteDb = nitriteFactory.getNitriteClient(this.namespace,infraConfigService);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace);
+        System.out.println("config type is " + infraConfigService.getInfraDbType());
     }
 
     @Override
@@ -81,35 +74,6 @@ public class NitriteService implements InfraService {
 
         return nitriteDbQueue;
     }
-
-    @Override
-    public JsonIndexService getJsonIndexService() throws Exception{
-
-        JsonIndexService jsonIndexService = syncServiceContainer.getBean(JsonIndexService.class);
-        jsonIndexService.configure(this.namespace);
-        return  jsonIndexService;
-    }
-
-    @Override
-    public JsonQueryService getJsonQueryService() throws Exception{
-        JsonQueryService jsonQueryService = syncServiceContainer.getBean(JsonQueryService.class);
-        jsonQueryService.configure(this.namespace);
-        return  jsonQueryService;
-    }
-
-    @Override
-    public NamespaceService getNamespaceService() throws Exception{
-
-        NamespaceService namespaceService = syncServiceContainer.getBean(NamespaceService.class);
-        return namespaceService;
-    }
-
-    @Override
-    public void destroyFreshIndex() throws Exception{
-
-        getNamespaceService().clearnNamespace(this.namespace);
-    }
-
 
     public NitriteDbList getPublisherList() throws Exception{
 
@@ -181,22 +145,40 @@ public class NitriteService implements InfraService {
 
             // First take a lock so that no two concurrent schema deletion occur
             schemaDeletionLock.lock();
-
-            persistentQueueSingletonMap.remove(this.namespace);
-            persistentListSingletonMap.remove(this.namespace);
-            persistentKeyValueSingletonMap.remove(this.namespace);
-
-
-            // We need to clear the freshIndex as well.
-            destroyFreshIndex();
-
-            if(Boolean.FALSE.equals(nitriteDb.isClosed())){
-                nitriteDb.close();
-            }
             
+            // Now delete all collections from nitriteDb which starts with namespace 
+
+            if(persistentQueueSingletonMap.containsKey(this.namespace)){
+
+                for( NitriteDbQueue queue: persistentQueueSingletonMap.get(this.namespace).values()){
+                    queue.delete();
+                }
+
+                persistentQueueSingletonMap.remove(this.namespace);
+            }
+
+            if(persistentListSingletonMap.containsKey(this.namespace)){
+
+                for( NitriteDbList list: persistentListSingletonMap.get(this.namespace).values()){
+
+                    list.delete();
+                }
+
+                persistentListSingletonMap.remove(this.namespace);
+            }
+
+
+            if(persistentKeyValueSingletonMap.containsKey(this.namespace)){
+                for( NitriteDbKeyValue keyValue: persistentKeyValueSingletonMap.get(this.namespace).values()){
+                    keyValue.delete();
+                }
+
+                persistentKeyValueSingletonMap.remove(this.namespace);
+            }        
         }
 
         finally {
+
             schemaDeletionLock.unlock();
         }
     }

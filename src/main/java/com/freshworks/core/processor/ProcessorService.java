@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.freshworks.core.processor.joins.AbstractJoinService;
 import com.freshworks.core.shared.Annotations.BetaRelease;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -13,7 +13,6 @@ import com.freshworks.core.shared.infra.InfraDbQueue;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
-import com.freshworks.freshindex.index.JsonIndexService;
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableListMultimap;
@@ -50,9 +49,6 @@ public class ProcessorService implements Callable<Void> {
 
     ProcessorExecutorService processorExecutorService;
 
-    JsonIndexService jsonIndexService;
-
-
     BloomFilter<String> bloomFilter = BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_16), 1000000);
 
 
@@ -68,8 +64,7 @@ public class ProcessorService implements Callable<Void> {
 
     SyncStatusService syncStatusService;
 
-    ObjectMapper freshIndexObjectMapper;
-    Namespace namespace;
+    NamespaceService namespace;
 
     Phaser phaser;
 
@@ -88,20 +83,7 @@ public class ProcessorService implements Callable<Void> {
         this.innerJoinService = innerJoinService;
         this.leftJoinService = leftJoinService;
         this.noopJoinService = noopJoinService;
-        
-
         this.processorExecutorService = processorExecutorService;
-        freshIndexObjectMapper = new ObjectMapper();
-        freshIndexObjectMapper.registerModule(new SimpleModule(){
-
-            @Override
-            public void setupModule(SetupContext context) {
-                super.setupModule(context);
-                context.addBeanSerializerModifier(new FreshIndexBeanSerializeModifier());
-            }
-        });
-
-        freshIndexObjectMapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 
     }
 
@@ -156,7 +138,7 @@ public class ProcessorService implements Callable<Void> {
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
         this.syncServiceContainer = syncServiceContainer;
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        this.namespace = syncServiceContainer.getBean(Namespace.class);
+        this.namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(this.namespace.getNamespace());
         this.processorConfigService = processorConfigService;
         this.infraService = infraService;
@@ -178,8 +160,6 @@ public class ProcessorService implements Callable<Void> {
         Thread.currentThread().setName(threadName);
 
         analyticsService.debugLogEvent("HAGRID_PROCESSOR_SERVICE", "action", "started");
-
-        this.jsonIndexService = infraService.getJsonIndexService();
 
         int processorPollCount = this.processorConfigService.getProcessorPollCount();
         int numberOfParallelProcessor = this.processorConfigService.getNumberOfParallelProcessor();
@@ -206,7 +186,7 @@ public class ProcessorService implements Callable<Void> {
                 phaser.register();
                 ProcessorTaskService processorTask = getProcessorTask();
                 String parentPath = uuid + "/" + "processor_service_task";
-                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService, this.jsonIndexService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, this.freshIndexObjectMapper, phaser, processTaskTracker);
+                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, phaser, processTaskTracker);
                 processorExecutorService.submit(namespace.getNamespace(), processorTask);
                 numberOfProcessorTaskScheduled = numberOfProcessorTaskScheduled + 1;
             }

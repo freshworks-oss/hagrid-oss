@@ -9,23 +9,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
+import org.dizitart.no2.common.SortOrder;
+import org.dizitart.no2.filters.NitriteFilter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.infra.InfraDbCursor;
 import com.freshworks.core.shared.infra.InfraDbList;
 
 import lombok.Getter;
@@ -61,12 +63,13 @@ public class NitriteDbList implements InfraDbList {
         this.listName = namespace + "_" + listName;
         this.nitriteCollection = nitriteDb.getCollection(this.listName);
         this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.UNIQUE),"list_index");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"value.created_at_ms");
     }
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
 
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
@@ -106,11 +109,11 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public List<Long> addAndGetIndexBulk(List<String> s) throws Exception{
+    public Long addBulk(List<String> s) throws Exception{
 
         List<Long> documentIds = new ArrayList<>();
         if(s.isEmpty()){
-            return  documentIds;
+            return  0L;
         }
 
         try{
@@ -121,7 +124,7 @@ public class NitriteDbList implements InfraDbList {
                 insert(currentIndex, ss);
                 documentIds.add(currentIndex);
             }
-            return documentIds;
+            return Long.valueOf(documentIds.size());
         }
 
         finally {
@@ -198,10 +201,6 @@ public class NitriteDbList implements InfraDbList {
         return returnList;
     }
 
-    @Override
-    public void deRegisterPublisher() throws Exception{
-
-    }
 
     @Override
     public long size() {
@@ -240,19 +239,22 @@ public class NitriteDbList implements InfraDbList {
     }
 
 
+    
+
     private void insert(long listIndex, String item) throws Exception{
-        
-        
+
         if (!isDatabaseOpen()){
             throw new IllegalStateException("Nitrite DB is closed and insert operation has been asked to perform in the list");
         }
 
-        
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json  
         Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
+
+        Document subDocument = Document.createDocument(map);
         documentMap.put("list_index", listIndex);
-        documentMap.put("value", map);
+        documentMap.put("value", subDocument);
+
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         
@@ -339,5 +341,50 @@ public class NitriteDbList implements InfraDbList {
         else{
             return false;
         }
+    }
+
+    @Override
+    public <T extends AbstractAsset> NitriteDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception {
+        
+        
+        if(assetClassType == null ){
+
+            throw new IllegalArgumentException("asset class type can not be null. Consumer can consume asset by asset type only");
+        }
+
+
+        DocumentCursor documentCursor;
+        FindOptions options = FindOptions.orderBy("value.created_at_ms", SortOrder.Ascending);
+
+
+        if(nitriteFilter != null){
+
+            String className = assetClassType.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+
+            NitriteFilter filter = where("value.clazz").eq(className);
+
+            nitriteFilter.and(filter);
+
+            documentCursor = this.nitriteCollection.find(nitriteFilter, options);
+        }
+
+        else {
+
+            String className = assetClassType.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            NitriteFilter filter = where("value.clazz").eq(className);
+
+            documentCursor = this.nitriteCollection.find(filter, options);
+        }
+        
+        NitriteDbCursor<T> nitriteCursorResponse = new NitriteDbCursor<T>(documentCursor);
+        return nitriteCursorResponse;
+    }
+
+    @Override
+    public void removePublisher() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removePublisher'");
     }
 }
