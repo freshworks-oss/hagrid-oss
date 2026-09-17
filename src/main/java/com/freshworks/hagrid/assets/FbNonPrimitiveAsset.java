@@ -1,5 +1,8 @@
 package com.freshworks.hagrid.assets;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.freshworks.core.processor.AbstractAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.processor.Annotations.FreshJoin.JOIN_TYPE;
@@ -12,9 +15,11 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 
-@FreshJoin(leftClass = FbComment.class, rightClass = FbCommunity.class, leftClassFieldName = "user_id", rightClassFieldName = "user_id", 
+@FreshJoin(leftClass = FbCommentAsset.class, rightClass = FbCommunityAsset.class, leftClassFieldName = "user_id", rightClassFieldName = "user_id", 
     join_type = JOIN_TYPE.INNER_JOIN, uniqueJoinName = "comment_community_inner_join")
 
+@Component 
+@Scope ("prototype")
 public class FbNonPrimitiveAsset extends AbstractAsset {
 
 
@@ -23,7 +28,7 @@ public class FbNonPrimitiveAsset extends AbstractAsset {
     String comment_id;
 
 
-    public void set(FbComment fbComment, FbCommunity fbCommunity){
+    public void set(FbCommentAsset fbComment, FbCommunityAsset fbCommunity){
         this.user_id = fbComment.getUser_id();
         this.comment_id = fbComment.getComment_id();
         this.community_id = fbCommunity.getCommunity_id();

@@ -10,6 +10,8 @@ import lombok.Setter;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 /**
  * FbComment is primitive asset as it is created from FbComment bean
@@ -20,7 +22,9 @@ import org.springframework.context.annotation.Conditional;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FbComment extends AbstractAsset {
+@Component 
+@Scope ("prototype")
+public class FbCommentAsset extends AbstractAsset {
 
     String user_id;
     String post_id;
@@ -28,7 +32,7 @@ public class FbComment extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.hagrid.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.hagrid.beans.FbCommentBean comment){
 
         user_id = comment.getUser_id();
         post_id = comment.getPost_id();

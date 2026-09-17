@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -47,7 +47,7 @@ public class FbCommunity extends HttpAbstractStep {
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer){
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
@@ -90,12 +90,6 @@ public class FbCommunity extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-
     }
 
     @Override
@@ -180,7 +174,7 @@ public class FbCommunity extends HttpAbstractStep {
             }
             
             stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
-            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunity.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunityBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){
