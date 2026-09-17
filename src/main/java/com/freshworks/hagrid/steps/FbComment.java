@@ -35,7 +35,7 @@ import java.net.URISyntaxException;
 public class FbComment extends HttpAbstractStep {
 
     // Below is the custom logic written to fetch data from our hypothetical fb database 
-    int numberOfCommentsEachPage = 5;
+    int numberOfCommentsEachPage = 100;
     int numberOfCommentPagination = 10;
     long waitBetweenCommentPaginationInMs = 0;
 

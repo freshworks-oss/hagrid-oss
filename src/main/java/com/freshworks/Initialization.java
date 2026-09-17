@@ -53,8 +53,7 @@ public class Initialization {
             SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
             ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
-            // Now consume assets as they are being generated
-            
+            // Now consume assets as they are being generated            
             consumerService.registerAssetCallback(FbCommentAsset.class, asset ->{
                 FbCommentAsset commentAsset = (FbCommentAsset)asset;
                 System.out.println("Comment id of the comment generated it " + commentAsset.getComment_id());
