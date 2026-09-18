@@ -265,7 +265,7 @@ public class TestNitriteDbService {
         //     syncServiceContainer.add(namespaceService, NamespaceService.class);
 
         //     InfraConfigService infraConfigService = mockFacadeInfraConfigService
-        //             .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+        //             .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database")
         //             .getInfraType("file")
         //             .build();
         //     doCallRealMethod().when(infraConfigService).configure(any());
@@ -309,7 +309,7 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database")
                     .getInfraType("file")
                     .build();
 
