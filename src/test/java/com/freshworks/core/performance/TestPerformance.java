@@ -212,7 +212,6 @@ public class TestPerformance {
     public void testWhenThousandAPIRequestComes() throws Exception {
         
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-        // connectorConfiguration.setInfraDbType("inmemory");
 
         CompletableFuture<Void> futureTasks[] = new CompletableFuture[10];
         ObjectMapper objectMapper = new ObjectMapper();
