@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -114,6 +115,62 @@ public class TestPerformance {
         assertThat(fbUserCommentList.size(), Matchers.is(fbCommentList.size()));
         Thread.sleep(10000);
     }
+
+
+    @Test
+    public void testTenMillionPayloadWhenChildNodeHasMoreDataThanParentAndConsumeAssetInstant() throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        LocalDateTime localDataTime = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm");
+        String formattedDateTime = localDataTime.format(formatter);
+        Random random = new Random();
+        int number = random.nextInt();
+
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+                .put("numberOfUsersEachPage", "1")
+                .put("numberOfUserPagination", "1")
+                .put("waitBetweenUserPaginationInMs", "0")
+                .put("numberOfPostsEachPage", "1")
+                .put("numberOfPostPagination", "1")
+                .put("waitBetweenPostPaginationInMs", "0")
+                .put("numberOfCommentsEachPage", "1000")
+                .put("numberOfCommentPagination", "100")
+                .put("waitBetweenCommentPaginationInMs", "0")
+                .put("numberOfCommunitiesEachPage", "1")
+                .put("numberOfCommunityPagination", "1")
+                .put("waitBetweenCommunityPaginationInMs", "0").build();
+
+        MDC.put("mdc_key", "mdc_value");
+        SyncServiceContainer syncServiceContainer = syncService.configureSync("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x, connectorConfiguration);
+        syncService.startSync();
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        
+        AtomicInteger count = new AtomicInteger(0);
+        consumerService.streamAsset(FbComment.class, asset -> {
+
+            FbComment fbComment = (FbComment)asset;
+            // System.out.println("asset is generated. Callback is called");
+            count.incrementAndGet();
+            // System.out.println(fbComment.getComment_id());
+            System.out.println("total times it called are " + count.get());
+        });
+        
+        syncStatusService.waitUntilSyncIsInProgress();
+
+        syncService.shutdown();
+        assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
+        assertThat(syncStatusService.getTraverser_status(), Matchers.is(1));
+        assertThat(syncStatusService.getProcessor_status(), Matchers.is(1));
+        Thread.sleep(10000);
+    }
+
+
+
+
 
     @Test
     public void testTenMillionPayloadWhenParentNodeHasMoreDataThanChildNode() throws Exception {

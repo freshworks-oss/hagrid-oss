@@ -73,7 +73,11 @@ public class ConsumerService {
      * @param abstractAsset
      * @param consumer
      */
+<<<<<<< HEAD
+    public void streamAsset(Class<? extends AbstractAsset> abstractAsset, Consumer<AbstractAsset> consumer){
+=======
     public void registerAssetCallback(Class<? extends AbstractAsset> abstractAsset, Consumer<AbstractAsset> consumer){
+>>>>>>> b1fecc8271258358cf86ee8351829808b447a9e5
 
         ObjectMapper objectMapper = new ObjectMapper();
         this.analyticsService.registerEventCallback("HAGRID_ASSET_PUBLISH_DONE",
@@ -81,7 +85,11 @@ public class ConsumerService {
             params -> {
                 Object object = params.get("asset");
                 AbstractAsset asset = objectMapper.convertValue(object, AbstractAsset.class);
-                consumer.accept(asset);
+
+                if(abstractAsset.getName().equalsIgnoreCase(asset.getClass().getName())){
+                    consumer.accept(asset);
+                }
+                
             }
         );
     }

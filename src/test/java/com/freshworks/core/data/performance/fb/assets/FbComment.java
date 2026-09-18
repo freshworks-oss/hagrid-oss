@@ -6,6 +6,9 @@ import com.freshworks.core.processor.AbstractAsset;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,8 @@ import org.springframework.stereotype.Component;
 @Profile("performance")
 @Component("fb_asset_fbComment")
 public class FbComment extends AbstractAsset {
+
+    static AtomicInteger totalAssetCreated = new AtomicInteger(0);
 
     String userId;
     String comment_id;
@@ -34,7 +39,7 @@ public class FbComment extends AbstractAsset {
 
     @Override
     public void transform() {
-//        System.out.println("Creating comment asset");
+       System.out.println("Creating comment asset are " + totalAssetCreated.incrementAndGet());
     }
 
 }

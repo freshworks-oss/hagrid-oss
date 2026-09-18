@@ -267,7 +267,7 @@ public class TestSyncService {
         SyncServiceContainer syncServiceContainer = syncService.configureSync( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
-        consumerService.registerAssetCallback(FbUser.class, asset -> {
+        consumerService.streamAsset(FbUser.class, asset -> {
 
             System.out.println(asset.getUuid());
                 
