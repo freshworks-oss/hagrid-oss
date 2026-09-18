@@ -1,0 +1,110 @@
+package com.freshworks.core.data.integration.recursive.contextual.steps;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.freshworks.core.data.integration.recursive.contextual.beans.RoutedToken;
+import com.freshworks.core.data.integration.recursive.contextual.beans.TransformedBean;
+import com.freshworks.hagrid.shared.NamespaceService;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
+import com.freshworks.hagrid.shared.analytics.AnalyticsService;
+import com.freshworks.hagrid.shared.infra.InfraService;
+import com.freshworks.hagrid.traverser.DagTraversalService;
+import com.freshworks.hagrid.traverser.NonHttpAbstractStep;
+import com.freshworks.hagrid.traverser.RequestResponseContainer;
+import com.freshworks.hagrid.traverser.StepDataBeanMapping;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.google.common.collect.ImmutableMap;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Slf4j
+@FreshHierarchy(parentClass = {TokenGenerator.class, TokenAddContext.class}, rateLimit = 800, duration = 1, ignore = false)
+@Component("recursive_contextual_step_token_route")
+@Scope("prototype")
+@Profile("integration")
+public class TokenRoute extends NonHttpAbstractStep {
+
+    AnalyticsService analyticsService;
+    InfraService infraService;
+
+    @Override
+    public void configure(SyncServiceContainer syncServiceContainer) {
+        AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+        this.infraService = syncServiceContainer.getBean(InfraService.class);
+    }
+
+
+    @Override
+    public void setupNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception {
+
+    }
+
+    @Override
+    public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
+
+        return true;
+    }
+
+    @Override
+    public RequestResponseContainer startSyncNonHttp(JsonNode... parentJsonObject) throws StepFailedException {
+
+        JsonNode jsonNode = parentJsonObject[0];
+
+        RequestResponseContainer requestResponseContainer = new RequestResponseContainer();
+        requestResponseContainer.setRequest(jsonNode);
+        return requestResponseContainer;
+    }
+
+    @Override
+    public RequestResponseContainer executeNonHttp(RequestResponseContainer requestResponseContainer, JsonNode... parentJsonObject){
+
+        JsonNode jsonNode = (JsonNode) requestResponseContainer.getRequest();
+        requestResponseContainer.setResponse(jsonNode);
+        return requestResponseContainer;
+    }
+
+    @Override
+    public RequestResponseContainer getNextSyncRequestNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws Exception {
+        return null;
+    }
+
+
+    @Override
+    public boolean isValidResponseNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
+        return true;
+    }
+
+    @Override
+    public DagTraversalService.TraverseAction handleInValidResponseNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws Exception {
+        return null;
+    }
+
+    @Override
+    public boolean isSyncCompleteNonHttp(RequestResponseContainer currentRequest, JsonNode... parentJsonObject) throws StepFailedException {
+        return true;
+    }
+
+    @Override
+    public StepDataBeanMapping parseSyncResponseNonHttp(RequestResponseContainer requestResponseContainer, JsonNode... parentJsonObject) {
+
+        JsonNode j = (JsonNode) requestResponseContainer.getResponse();
+
+        StepDataBeanMapping stepDataBeanMapping = new StepDataBeanMapping();
+        stepDataBeanMapping.setParseSyncedResponseData(j);
+        stepDataBeanMapping.setBeanClass(RoutedToken.class);
+        return stepDataBeanMapping;
+    }
+
+    @Override
+    public void closeSync() {
+
+    }
+}

@@ -1,0 +1,46 @@
+package com.freshworks.core.data.performance.fb.assets;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+@NoArgsConstructor
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+@Profile("performance")
+@Component("fb_asset_fbComment")
+public class FbComment extends AbstractAsset {
+
+    static AtomicInteger totalAssetCreated = new AtomicInteger(0);
+
+    String userId;
+    String comment_id;
+    String comment_title;
+    String comment_text;
+
+    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbComment comment){
+
+        userId = comment.getUser_id();
+        comment_id = comment.getComment_id();
+        comment_title = comment.getComment_title();
+        comment_text = comment.getComment_text();
+    }
+
+    @Override
+    public void transform() {
+       System.out.println("Creating comment asset are " + totalAssetCreated.incrementAndGet());
+    }
+
+}
