@@ -10,12 +10,16 @@ import lombok.Setter;
 import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FbUser extends AbstractBean {
+@Component 
+@Scope ("prototype")
+public class FbUserBean extends AbstractBean {
 
     String user_id;
     String user_name;
