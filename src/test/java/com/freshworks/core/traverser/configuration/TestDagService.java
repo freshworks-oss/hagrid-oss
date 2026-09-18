@@ -1,19 +1,22 @@
 package com.freshworks.core.traverser.configuration;
 
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.*;
-import com.freshworks.core.data.four_five_zero.unit.dag.steps.loop.StepA;
+import com.freshworks.core.data.unit.dag.steps.*;
+import com.freshworks.core.data.unit.dag.steps.loop.StepA;
 import com.freshworks.core.traverser.DagNode;
+import com.freshworks.core.traverser.DagService;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 @SpringBootTest()
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagService {
 
     @Autowired

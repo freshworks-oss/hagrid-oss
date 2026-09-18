@@ -7,8 +7,9 @@ import com.freshworks.core.MockFacadeInterface;
 import com.freshworks.core.ReturnableMockTypeList;
 import com.freshworks.core.shared.infra.InfraDbKeyValue;
 import com.freshworks.core.shared.infra.InfraDbList;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbKeyValue;
-import com.freshworks.core.shared.infra.persistent.MockFacadeMongodbList;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbKeyValue;
+import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,17 +35,17 @@ public class MockFacadeDagNode implements MockFacadeInterface {
 
     ReturnableMockTypeList<JsonNode> data = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<LinkedHashMap<DagNode, Relationship>> children = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<LinkedHashMap<DagNode, NodeRelationship>> children = new ReturnableMockTypeList<>();
 
-    ReturnableMockTypeList<LinkedHashMap<DagNode, Relationship>> parentList = new ReturnableMockTypeList<>();
+    ReturnableMockTypeList<LinkedHashMap<DagNode, NodeRelationship>> parentList = new ReturnableMockTypeList<>();
 
     ReturnableMockTypeList<InfraDbList> infraDbList = new ReturnableMockTypeList<>();
     @Autowired
-    MockFacadeMongodbList mockFacadeMongodbList;
+    MockFacadeNitritedbList mockFacadeNitritedbList;
 
     ReturnableMockTypeList<InfraDbKeyValue> infraDbKeyValue = new ReturnableMockTypeList<>();
     @Autowired
-    MockFacadeMongodbKeyValue mockFacadeMongodbKeyValue;
+    MockFacadeNitritedbKeyValue mockFacadeNitriteKeyValue;
 
     ReturnableMockTypeList<Boolean> hasMoreData;
 
@@ -65,13 +66,13 @@ public class MockFacadeDagNode implements MockFacadeInterface {
         objectNode.put("dummy-key", "dummy-value");
         data.add(objectNode);
 
-        LinkedHashMap<DagNode, Relationship> c = new LinkedHashMap<>();
+        LinkedHashMap<DagNode, NodeRelationship> c = new LinkedHashMap<>();
         children.add(c);
         DagNode parentNodeValue = null;
 
         parentList.add(c);
-        infraDbList.add(mockFacadeMongodbList.configure().build());
-        infraDbKeyValue.add(mockFacadeMongodbKeyValue.configure().build());
+        infraDbList.add(mockFacadeNitritedbList.configure().build());
+        infraDbKeyValue.add(mockFacadeNitriteKeyValue.configure().build());
         hasMoreData.add(false);
         List<String> s = new ArrayList<>();
         s.add("{\"name\":\"amit\"}");
@@ -114,13 +115,13 @@ public class MockFacadeDagNode implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeDagNode children(LinkedHashMap<DagNode, Relationship>... children) {
+    public MockFacadeDagNode children(LinkedHashMap<DagNode, NodeRelationship>... children) {
         this.children.clear();
         this.children.add(children);
         return this;
     }
 
-    public MockFacadeDagNode parentList(LinkedHashMap<DagNode, Relationship>... parentList) {
+    public MockFacadeDagNode parentList(LinkedHashMap<DagNode, NodeRelationship>... parentList) {
         this.parentList.clear();
         this.parentList.add(parentList);
         return this;

@@ -68,7 +68,7 @@ public class MockFacadeAssetBeanDependencyService implements MockFacadeInterface
         AssetBeanDependencyService assetBeanDependencyServiceSpy = Mockito.spy(assetBeanDependencyService);
         
         doAnswer(scanner.answer()).when(assetBeanDependencyServiceSpy).scanner(anyString(), any());
-        doAnswer(findDependencyOfAsset.answer()).when(assetBeanDependencyServiceSpy).findDependencyOfAsset(anyList(), any());
+        doAnswer(findDependencyOfAsset.answer()).when(assetBeanDependencyServiceSpy).findDependencyOfAsset(anyList());
 
         return assetBeanDependencyServiceSpy;
     }

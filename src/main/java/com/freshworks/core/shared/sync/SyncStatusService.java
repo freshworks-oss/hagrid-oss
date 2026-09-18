@@ -1,6 +1,10 @@
 package com.freshworks.core.shared.sync;
 
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +45,15 @@ public final class SyncStatusService {
 
     SyncServiceContainer syncServiceContainer;
 
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
+    NamespaceService namespaceService;
+
     public void configure(SyncServiceContainer syncServiceContainer){
         this.syncServiceContainer = syncServiceContainer;
+        this.analyticsFactory = this.syncServiceContainer.getBean(AnalyticsFactory.class);
+        this.namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
     }
 
     public void setTraverserInProgress(){
@@ -144,9 +155,6 @@ public final class SyncStatusService {
 
     public synchronized int getSyncStatus() {
 
-        System.out.println("traverser status is " + getTraverser_status());
-        System.out.println("processor status is " + getProcessor_status());
-
         // Here sequence of if and else matters.
 
         // If any module in progress then total sync is in progress
@@ -183,6 +191,7 @@ public final class SyncStatusService {
             while(this.getSyncStatus() == 0 || this.getSyncStatus() == -100){
 
                 waitUntilSyncIsComplete.await();
+                this.analyticsService.infoLogEvent("SYNC_STATUS","total_status", this.getSyncStatus(), "traverser_status", this.getTraverser_status(), "processor_status", this.getProcessor_status());
             }
         }
 

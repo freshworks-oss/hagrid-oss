@@ -22,8 +22,8 @@ public class DagNode implements AutoCloseable {
     private String shortName;
     private int nodeOverallTraverserStatus = -100;
     private JsonNode data;
-    private LinkedHashMap<DagNode, Relationship> childrenRelationshipMap;
-    private LinkedHashMap<DagNode, Relationship> parentRelationshipMap;
+    private LinkedHashMap<DagNode, NodeRelationship> childrenRelationshipMap;
+    private LinkedHashMap<DagNode, NodeRelationship> parentRelationshipMap;
     private InfraDbList infraDbList;
     private InfraDbKeyValue infraDbKeyValue;
 
@@ -63,7 +63,7 @@ public class DagNode implements AutoCloseable {
 
     public DagNode find(String name){
 
-        List<DagNode> preOrder = this.preOrder();
+        List<DagNode> preOrder = this.getNodesInDag();
         Iterator<DagNode> iterator = preOrder.iterator();
         while(iterator.hasNext()){
             DagNode node = iterator.next();
@@ -84,13 +84,13 @@ public class DagNode implements AutoCloseable {
             // Check if it is already a parent, if so do not add it
             // otherwise it will lead to duplication
             if(!parentRelationshipMap.containsKey(parent)){
-                Relationship relationship = new Relationship();
+                NodeRelationship relationship = new NodeRelationship();
                 parentRelationshipMap.put(parent, relationship);
             }
 
             // Make sure to provide reverse relationship as well.
             if(!parent.getChildrenRelationshipMap().containsKey(this)){
-                Relationship relationship = new Relationship();
+                NodeRelationship relationship = new NodeRelationship();
                 parent.getChildrenRelationshipMap().put(this, relationship);
             }
         }
@@ -99,14 +99,44 @@ public class DagNode implements AutoCloseable {
         }
     }
 
-    private boolean isInParentList(DagNode parentNode){
+    public boolean isInParentList(DagNode parentNode){
         return parentRelationshipMap.containsKey(parentNode);
+    }
+
+    public boolean isInChildList(DagNode childNode){
+        return childrenRelationshipMap.containsKey(childNode);
+    }
+
+    public NodeRelationship getParentRelationship(DagNode parentNode) throws IllegalArgumentException{
+
+        if(isInParentList(parentNode)){
+
+            return parentRelationshipMap.get(parentNode);
+        }
+
+        else{
+
+            throw new IllegalArgumentException("Parent Node " + parentNode.getName() + " is not parent of this child node " + this.getName());
+        }
+    }
+
+    public NodeRelationship getChildRelationship(DagNode childNode) throws IllegalArgumentException{
+
+        if(isInChildList(childNode)){
+
+            return childrenRelationshipMap.get(childNode);
+        }
+
+        else{
+
+            throw new IllegalArgumentException("Child Node " + childNode.getName() + " is not child of this parent node " + this.getName());
+        }
     }
 
     public void relationshipIncrementTotalItemsCount(DagNode parentNode) throws IllegalArgumentException{
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipDataChangeLock().lock();
                 relationship.setTotalItemsSynced(relationship.getTotalItemsSynced() + 1);
@@ -124,7 +154,7 @@ public class DagNode implements AutoCloseable {
     public void relationshipIncrementSuccessItemsCount(DagNode parentNode) throws IllegalArgumentException{
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipDataChangeLock().lock();
                 relationship.setSuccessfulItemsSynced(relationship.getSuccessfulItemsSynced() + 1);
@@ -143,7 +173,7 @@ public class DagNode implements AutoCloseable {
     public void relationshipIncrementFailedItemsCount(DagNode parentNode) throws IllegalArgumentException{
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipDataChangeLock().lock();
                 relationship.setFailedItemsSynced(relationship.getFailedItemsSynced() + 1);
@@ -161,7 +191,7 @@ public class DagNode implements AutoCloseable {
     public long getRelationshipFailedItemsCount(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             return relationship.getFailedItemsSynced();
         }
         else{
@@ -172,7 +202,7 @@ public class DagNode implements AutoCloseable {
     public long getRelationshipTotalItemsCount(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             return relationship.getTotalItemsSynced();
         }
         else{
@@ -183,7 +213,7 @@ public class DagNode implements AutoCloseable {
     public long getRelationshipSuccessfulItemsCount(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             return relationship.getSuccessfulItemsSynced();
         }
         else{
@@ -194,7 +224,7 @@ public class DagNode implements AutoCloseable {
     public void setRelationshipFailed(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipStatusChangeLock().lock();
                 if(relationship.getFailedItemsSynced() > 0 || (relationship.getTotalItemsSynced() > (relationship.getSuccessfulItemsSynced() + relationship.getFailedItemsSynced()))){
@@ -220,7 +250,7 @@ public class DagNode implements AutoCloseable {
     public void setRelationshipInProgress(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipStatusChangeLock().lock();
                 relationship.setStatus(0);
@@ -236,7 +266,7 @@ public class DagNode implements AutoCloseable {
 
     public void setRelationshipSuccessful(DagNode parentNode){
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             try{
                 relationship.getRelationshipStatusChangeLock().lock();
                 if(relationship.getFailedItemsSynced() == 0 && relationship.getTotalItemsSynced() == relationship.getSuccessfulItemsSynced()){
@@ -262,7 +292,7 @@ public class DagNode implements AutoCloseable {
     public void waitUntilRelationshipIsInProgress(DagNode parentNode) throws Exception{
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.get(parentNode);
+            NodeRelationship relationship = parentRelationshipMap.get(parentNode);
             try{
                 relationship.getRelationshipStatusChangeLock().lock();
                 if(relationship.getStatus() == 0 || relationship.getStatus() == -100){
@@ -277,7 +307,7 @@ public class DagNode implements AutoCloseable {
     public int getRelationshipStatus(DagNode parentNode){
 
         if(isInParentList(parentNode)){
-            Relationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new Relationship());
+            NodeRelationship relationship = parentRelationshipMap.computeIfAbsent(parentNode, k -> new NodeRelationship());
             return relationship.getStatus();
         }
         else{
@@ -289,16 +319,12 @@ public class DagNode implements AutoCloseable {
 
         try{
             nodeLock.lock();
-            if(getTotalFailedItems() > 0 || (getTotalItemsSynced() > (getTotalSuccessfulItems() + getTotalFailedItems()))){
-                this.setNodeOverallTraverserStatus(-1);
-                nodeSyncDataChangedCondition.signalAll();
-                nodeTraverserStatusChangeCondition.signalAll();
-            }
-            else if (getTotalFailedItems() == 0 && getTotalItemsSynced() == getTotalSuccessfulItems()){
-                throw new IllegalStateException("Cannot mark the node " + name + " failed because" + " total dagNodePerItems " + getTotalItemsSynced() + " initiated are  " +
-                        "equal to the sum of successful items "  + getTotalSuccessfulItems() + " and failed items " + getTotalFailedItems() + ". It is the case of successful node traversal");
-            }
+
+            this.setNodeOverallTraverserStatus(-1);
+            nodeSyncDataChangedCondition.signalAll();
+            nodeTraverserStatusChangeCondition.signalAll();
         }
+        
         finally {
             nodeLock.unlock();
         }
@@ -370,7 +396,7 @@ public class DagNode implements AutoCloseable {
     public long getTotalFailedItems(){
 
         long totalFailedItems = 0;
-        for(Relationship relationship : parentRelationshipMap.values()){
+        for(NodeRelationship relationship : parentRelationshipMap.values()){
 
             try{
                 relationship.getRelationshipDataChangeLock().lock();
@@ -387,7 +413,7 @@ public class DagNode implements AutoCloseable {
     public long getTotalItemsSynced(){
 
         long totalItemsSynced = 0;
-        for(Relationship relationship : parentRelationshipMap.values()){
+        for(NodeRelationship relationship : parentRelationshipMap.values()){
 
             try{
                 relationship.getRelationshipDataChangeLock().lock();
@@ -404,7 +430,7 @@ public class DagNode implements AutoCloseable {
     public long getTotalSuccessfulItems(){
 
         long successfulItemsSynced = 0;
-        for(Relationship relationship : parentRelationshipMap.values()){
+        for(NodeRelationship relationship : parentRelationshipMap.values()){
             try{
                 relationship.getRelationshipDataChangeLock().lock();
                 successfulItemsSynced += relationship.getSuccessfulItemsSynced();
@@ -423,12 +449,12 @@ public class DagNode implements AutoCloseable {
         // Add this child node as child of this node only when it is not child already
         //
         if(!childrenRelationshipMap.containsKey(child)){
-            this.childrenRelationshipMap.put(child, new Relationship());
+            this.childrenRelationshipMap.put(child, new NodeRelationship());
         }
 
         // Add this node as Parent of child node as well
         if(!child.getParentRelationshipMap().containsKey(this)){
-            child.getParentRelationshipMap().put(this, new Relationship());
+            child.getParentRelationshipMap().put(this, new NodeRelationship());
         }
     }
 
@@ -462,21 +488,30 @@ public class DagNode implements AutoCloseable {
         }
     }
 
-    public void dropSubtree(DagNode node){
+    /**
+     *  We should not drop subtree as it could cause un-intended issues due to cyclick graph
+     *  Hence we should just disable or enable the relationship. 
+     * If relationship is enabled then data will be pass from paren to child 
+     * If relationship is disabled then data child will skip processing data from parent. 
+     */
 
-        // Find the parent of the node which matches the above node name
-        List<DagNode> parentList = new ArrayList<>(this.find(node.getName()).getParentRelationshipMap().keySet());
-        // Loop through each parent so that we can remove this node from their children list
-        for (DagNode parent : parentList){
-            parent.getChildrenRelationshipMap().remove(node);
-        }
-    }
+    
+    // public void dropSubtree(DagNode node){
 
-    public List<DagNode> getSubtree(){
+    //     // Find the parent of the node which matches the above node name
+    //     List<DagNode> parentList = new ArrayList<>(this.find(node.getName()).getParentRelationshipMap().keySet());
+    //     // Loop through each parent so that we can remove this node from their children list
+    //     for (DagNode parent : parentList){
+    //         parent.getChildrenRelationshipMap().remove(node);
+    //     }
+    // }
+
+
+    public List<DagNode> getImmediateChildren(){
         return new ArrayList<>(this.getChildrenRelationshipMap().keySet());
     }
 
-    public List<DagNode> preOrder(){
+    public List<DagNode> getNodesInDag(){
 
         List<DagNode> preOrderList = new ArrayList<>();
         Stack<DagNode> readyToScrapStack = new Stack<>();
@@ -495,7 +530,22 @@ public class DagNode implements AutoCloseable {
                 for(int i = curr.getChildrenRelationshipMap().keySet().size() - 1; i >= 0; i--)
                 {
                     DagNode childNode =  nodeList.get(i);
-                    // Check if child not been traversed already and currently is not present in stack
+                    // This condition is important to make sure right scan happens
+                    /**
+                     *  Suppose below DAG 
+                     *                  
+                     *              A
+                     *           /     <
+                     *          /       \
+                     *         v         \
+                     *         B <------C
+                     * 
+                     *    A has B and C as child and , C has B and A as child. 
+                     *   in this case, result should be just [A,B,C] ( order does not matter) 
+                     *   preOrderList check is needed to make sure that we are not adding them again 
+                     *   readyToScrapStack check is needed to make sure we have not scanned ( or in the stack already) already
+                     */
+                    
                     if(!preOrderList.contains(childNode) && !readyToScrapStack.contains(childNode)){
                         readyToScrapStack.add(childNode);
                     }

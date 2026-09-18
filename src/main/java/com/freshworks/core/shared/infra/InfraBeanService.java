@@ -1,41 +1,18 @@
 package com.freshworks.core.shared.infra;
 
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.infra.inmemory.InmemoryService;
-import com.freshworks.core.shared.infra.nitrite.NitriteService;
-import com.freshworks.core.shared.infra.persistent.MongoService;
-import com.freshworks.core.shared.infra.redis.RedisService;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import com.freshworks.core.shared.infra.nitrite.NitriteService;
 
 @Component
+@Scope ("prototype")
 public class InfraBeanService {
 
     public InfraService getInfraService(InfraConfigService infraConfigService) throws Exception {
 
-        InfraService infraService;
-        if(infraConfigService.getInfraType().equals("persistent")){
-            infraService = new MongoService();
-            return infraService;
-        }
+        return  new NitriteService();
 
-        else if (infraConfigService.getInfraType().equals("redis")){
-            infraService = new RedisService();
-            return infraService;
-
-        }
-
-        else if (infraConfigService.getInfraType().equals("nitrite")){
-            infraService = new NitriteService();
-            return infraService;
-        }
-        else{
-            infraService = new InmemoryService();
-            return infraService;
-        }
     }
 
 }

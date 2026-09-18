@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.rocksdb.RocksDBModule;
-import org.h2.tools.Server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,8 @@ import lombok.Getter;
 @Component
 public class NitriteFactory {
 
-    Nitrite nitriteDb;
+    Nitrite fileBasedNitriteDb;
+    Nitrite inmemoryBasedNitriteDb;
     AnalyticsService analyticsService;
     GlobalNamespaceService globalNamespaceService;
     MeterRegistry meterRegistry;
@@ -42,27 +42,33 @@ public class NitriteFactory {
 
                 if(uniqueClient.compareAndSet(false, true)) {
 
-                     if(doesClientExists()) {
-                        return nitriteDb;
-                    }
-
-                    String NitriteType = infraConfigService.getNitriteDatabaseType();
+                    String NitriteType = infraConfigService.getInfraDbType();
                     if(NitriteType.equalsIgnoreCase("file")){
-  
-                        nitriteDb = Nitrite.builder()
-                        .loadModule(new RocksDBModule(infraConfigService.getNitriteDataPath()))
+                        
+                        if(doesFileBasedClientExists()) {
+                            return fileBasedNitriteDb;
+                        }
+
+                        fileBasedNitriteDb = Nitrite.builder()
+                        .loadModule(new RocksDBModule(infraConfigService.getInfraDbLocation()))
                         .openOrCreate();
 
-                        return nitriteDb;
+                        return fileBasedNitriteDb;
                     }
 
                     else{
+
+                        if(doesInmemoryBasedClientExists()) {
+                            return inmemoryBasedNitriteDb;
+                        }
+
                         // In case of in memory , I am returning nitrite db directly instead of creating just one instance. 
                         // If I create just one instance of nitrite db then when db get closed after 1st request is completed 
                         // then for second request, db will be found closed which will be problem. 
                         // Like inmemory i.e RAM , everytime new infra is set up, to simulate the same case, I am returning new RAM ( new in memory nitrite db)
-                        return Nitrite.builder()
+                        inmemoryBasedNitriteDb = Nitrite.builder()
                         .openOrCreate();
+                        return inmemoryBasedNitriteDb;
                     }
 
                 }
@@ -74,9 +80,20 @@ public class NitriteFactory {
         }
     }
 
-    public boolean doesClientExists() {
+    public boolean doesFileBasedClientExists() {
 
-        if(nitriteDb != null && !nitriteDb.isClosed()) {
+        if(fileBasedNitriteDb != null && !fileBasedNitriteDb.isClosed()) {
+
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    public boolean doesInmemoryBasedClientExists() {
+
+        if(inmemoryBasedNitriteDb != null && !inmemoryBasedNitriteDb.isClosed()) {
 
             return true;
         }

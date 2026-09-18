@@ -58,7 +58,6 @@ public class MockFacadeSyncStatusService implements MockFacadeInterface {
 
         syncStatusService = applicationContext.getBean(SyncStatusService.class);
         SyncStatusService syncStatusServiceSpy = Mockito.spy(syncStatusService); 
-        doNothing().when(syncStatusServiceSpy).configure(any());
         doNothing().when(syncStatusServiceSpy).setTraverserInProgress();
         doNothing().when(syncStatusServiceSpy).setProcessorInProgress();
         doNothing().when(syncStatusServiceSpy).setTraverserInFailed();

@@ -1,9 +1,11 @@
 package com.freshworks.core.shared.infra;
 
-import com.freshworks.core.shared.SyncServiceContainer;
-
-import java.util.ArrayList;
 import java.util.List;
+
+import org.dizitart.no2.filters.NitriteFilter;
+
+import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.shared.SyncServiceContainer;
 
 public interface InfraDbList {
 
@@ -18,8 +20,8 @@ public interface InfraDbList {
     // Add a single string and get its index 
     public  Long addAndGetIndex(String s) throws Exception;
 
-    // Add a list of strings and get their indexes
-    public  List<Long> addAndGetIndexBulk(List<String> sList) throws Exception;
+    // Add a list of strings and get number of inserted documents
+    public  Long addBulk(List<String> sList) throws Exception;
 
     // Get a string added at index index
     public String get(int index) throws Exception;
@@ -30,10 +32,11 @@ public interface InfraDbList {
     // Get list of strings for given ids
     public List<String> get(List<Long> documentIdList) throws Exception;
 
-    //TODO : Deregister publisher will help to notify the consumer that data is done
-    public void deRegisterPublisher() throws Exception;
+    public <T extends AbstractAsset> InfraDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception;
 
     public long size() throws Exception;
+
+    public void removePublisher() throws Exception;
 
     public Boolean isEndOfListReached(int index) throws Exception;
 

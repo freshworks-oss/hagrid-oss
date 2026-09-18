@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,15 +18,12 @@ import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
-import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
-import org.dizitart.no2.repository.Cursor;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
@@ -44,6 +39,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 public class NitriteDbQueue implements InfraDbQueue {
+
+    // -100 means they are not yet attached i.e no message is published nor consumed
+    // 0 means they are attached i.e. in progress 
+    // 1 means they are done i.e publisher is done publishing and consumer is done consuming.  
 
     int publisherAttached = -100;
     int consumerAttached = -100;
@@ -84,7 +83,7 @@ public class NitriteDbQueue implements InfraDbQueue {
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception{
         MeterRegistry meterRegistry = syncServiceContainer.getBean(MeterRegistry.class);
         timer = meterRegistry.timer(queueName + ".execution.time");
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
@@ -92,6 +91,7 @@ public class NitriteDbQueue implements InfraDbQueue {
     @Override
     public void add(String s) throws Exception{
 
+        // As soon as single message is published, publisher marked as attached
         publisherAttached = 0;
         s = s.replaceAll("\\.", "ENCODE_DOT");
         try{
@@ -112,7 +112,10 @@ public class NitriteDbQueue implements InfraDbQueue {
     @Override
     public void add(List<String> s) throws Exception{
 
+        // As soon as single message is published, publisher marked as attached
         publisherAttached = 0;
+
+
         if(s.isEmpty()){
             return;
         }
@@ -138,6 +141,8 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public String poll() throws Exception{
+
+        // As soon as single message is consumed, consumer marked as attached
         consumerAttached = 0;
         try{
             queuePollLock.lock();
@@ -159,6 +164,8 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     @Override
     public List<String> poll(int n) throws Exception{
+
+        // As soon as single message is consumed, consumer marked as attached
         consumerAttached = 0;
 
         try{
@@ -189,6 +196,7 @@ public class NitriteDbQueue implements InfraDbQueue {
 
         try{
             hasMoreDataLock.lock();
+
             // It means that child so far has consumed less data than parent has fetched already
             if(this.popIndex < this.queueIndex.get()){
                 return true;
@@ -211,10 +219,6 @@ public class NitriteDbQueue implements InfraDbQueue {
 
     }
 
-    @Override
-    public void attachPublisher() throws Exception{
-
-    }
 
     @Override
     public void removePublisher() throws Exception{
@@ -270,8 +274,11 @@ public class NitriteDbQueue implements InfraDbQueue {
         Map<String, Object> documentMap = new HashMap<>();
         // Check if this item can be converted to MAP i.e json 
         Map<String, Object> map = objectMapper.readValue(item, new TypeReference<HashMap<String, Object>>() {});
+
+        Document subDocument = Document.createDocument(map);
+
         documentMap.put("queue_index", queueIndex);
-        documentMap.put("value", map);
+        documentMap.put("value", subDocument);
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         

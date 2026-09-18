@@ -1,12 +1,13 @@
 package com.freshworks.core.traverser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import com.freshworks.core.shared.analytics.AnalyticsService;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.synchronizers.ServiceTree;
+import com.freshworks.core.traverser.NodeRelationship.REL_SWITCH;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.github.bucket4j.Bucket;
@@ -36,7 +37,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
     SyncServiceContainer syncServiceContainer;
     ObjectMapper objectMapper = new ObjectMapper();
     Bucket rateLimitBucket = null;
-    Namespace namespace;
+    NamespaceService namespace;
     DagNode node;
     DagNode parentNode;
     TraverserExecutorService traverserExecutorService;
@@ -122,7 +123,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         this.infraService = infraService;
         this.traverseConfigService = traverseConfigService;
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
-        namespace = syncServiceContainer.getBean(Namespace.class);
+        namespace = syncServiceContainer.getBean(NamespaceService.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
@@ -141,9 +142,24 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         int rateLimitUsed = 0;
 
         node.setRelationshipInProgress(parentNode);
+
+        // TODO: Do we need this, as it should have been happening already in DagNodeTraversalService.
         node.setNodeInProgress();
 
-        while (Boolean.TRUE.equals(parentNode.waitUntilHasMoreData(index, node))  && Boolean.FALSE.equals(Thread.interrupted())) {
+
+        NodeRelationship nodeRelationship = node.getParentRelationship(parentNode);
+
+        if(nodeRelationship.getRelSwitch() == REL_SWITCH.OFF){
+
+            analyticsService.warnLogEvent("HAGRID_DAG_NODE_PER_PARENT", "_message", "Path is disabled between parent and child node hence skipping.." , "node", this.node.getName(), "parent" , this.parentNode.getName() , "namespace" ,namespace.getNamespace(), "uuid", uuid);
+        }
+        
+        /** 
+         *  Process parent data only when its relationship with parent is switched ON 
+         *  We have provided a feature where developer may switch off some path of the DAG
+         * 
+         * */  
+        while (nodeRelationship.getRelSwitch() == REL_SWITCH.ON &&  Boolean.TRUE.equals(parentNode.waitUntilHasMoreData(index, node))  && Boolean.FALSE.equals(Thread.interrupted())) {
 
             int numberOfPerItemTraverserCanBeLaunched = limitNumberOfConcurrentPerItemTraversalSemaphore.drainPermits();
             List<String> listOfParentItems;

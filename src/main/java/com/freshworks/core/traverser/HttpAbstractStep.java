@@ -20,8 +20,6 @@ public abstract  class HttpAbstractStep extends AbstractStep{
 
     public abstract HttpRequestResponse startSync(JsonNode... parentJsonObject) throws Exception;
 
-    public abstract void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws Exception;
-
     public abstract HttpRequestResponse getNextSyncRequest(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws Exception;
 
     public abstract boolean isValidResponse(HttpRequestResponse currentRequest, JsonNode... parentJsonObject) throws Exception;

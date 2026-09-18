@@ -1,7 +1,7 @@
 package com.freshworks.core.shared.synchronizers;
 
 import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.Namespace;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.analytics.AnalyticsFactory;
 import jakarta.persistence.Table;
@@ -43,12 +43,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -68,12 +68,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -97,12 +97,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -126,12 +126,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -155,12 +155,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -188,12 +188,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -213,12 +213,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -236,12 +236,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -259,12 +259,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);
@@ -281,12 +281,12 @@ public class TestServiceTree {
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         AnalyticsFactory analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
-        Namespace namespace = applicationContext.getBean(Namespace.class);
+        NamespaceService namespace = applicationContext.getBean(NamespaceService.class);
         namespace.setNamespace("abcde");
 
         SyncServiceContainer syncServiceContainer = mockFacadeSyncServiceContainer
                 .add(analyticsFactory, AnalyticsFactory.class)
-                .add(namespace, Namespace.class)
+                .add(namespace, NamespaceService.class)
                 .build();
 
         serviceTree.configure(syncServiceContainer);

@@ -61,7 +61,7 @@ public class MockFacadeNitritedbKeyValue implements MockFacadeInterface {
         NitriteDbKeyValue nitritebKeyValue = new NitriteDbKeyValue(nitriteDb, "some_namespace","key_value");
         nitritebKeyValue = Mockito.spy(nitritebKeyValue);
 
-        doNothing().when(nitritebKeyValue).put(anyString(), anyString());
+        doNothing().when(nitritebKeyValue).set(anyString(), anyString());
 
         doAnswer(get.answer()).when(nitritebKeyValue).get(anyString());
 

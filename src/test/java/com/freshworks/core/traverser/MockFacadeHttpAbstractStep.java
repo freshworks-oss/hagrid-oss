@@ -156,8 +156,6 @@ public class MockFacadeHttpAbstractStep implements MockFacadeInterface {
 
         doAnswer(startSync.answer()).when(abstractStep).startSync(any());
 
-        doNothing().when(abstractStep).filterResponse(any());
-
         doAnswer(getNextSyncRequestWithHttpRequestResponse.answer()).when(abstractStep).getNextSyncRequest(any(), any(), any());
 
         doAnswer(isValidResponseWithHttp.answer()).when(abstractStep).isValidResponse(any(), any());

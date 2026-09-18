@@ -33,6 +33,7 @@ public class AnalyticsService {
     ConcurrentHashMap<String, AtomicLong> appEventsMap = new ConcurrentHashMap<>();
 
     MeterRegistry meterRegistry;
+    AppEventService appEventService;
 
     AnalyticsUtility analyticsUtility;
     HashMap<String, List<Consumer<Map<String, Object>>>> consumerHashMap = new HashMap<>();
@@ -44,9 +45,10 @@ public class AnalyticsService {
     boolean shouldPrintSummaryOnDestroy = true;
 
 
-    protected AnalyticsService( MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility) {
+    protected AnalyticsService( MeterRegistry meterRegistry, AnalyticsUtility analyticsUtility, AppEventService appEventService) {
         this.meterRegistry = meterRegistry;
         this.analyticsUtility = analyticsUtility;
+        this.appEventService = appEventService;
     }
 
     protected void configure(String namespace, Boolean shouldPassTagsToMeterRegistry){
@@ -72,11 +74,6 @@ public class AnalyticsService {
         fireMeter(eventName, tags);
 
         numberOfDebugEvents.incrementAndGet();
-
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
@@ -99,10 +96,6 @@ public class AnalyticsService {
 
         numberOfInfoEvents.incrementAndGet();
 
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
 
@@ -125,10 +118,6 @@ public class AnalyticsService {
 
         numberOfWarningEvents.incrementAndGet();
 
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
@@ -149,11 +138,6 @@ public class AnalyticsService {
         fireMeter(eventName, tags);
 
         numberOfErrorEvents.incrementAndGet();
-
-        // Here I am making a callback called if this event type is present
-        if(consumerHashMap.containsKey(eventName)){
-            consumerHashMap.get(eventName).forEach(consumer -> consumer.accept(s));
-        }
     }
 
     /**
@@ -168,15 +152,21 @@ public class AnalyticsService {
         Map<String, Object> s = analyticsUtility.processTagListIntoMap(tags);
         s.put(NAMESPACE_KEY, namespace);
 
+        // validate app event
+        if(Boolean.FALSE.equals(appEventService.validate(eventName, s))){
+
+            System.out.println("WARNING: App event name " + eventName + " does not have mandatory params");
+        }
+
         // Here I am firing event to meterRegistry
         fireMeter(eventName, tags);
 
-        if(appEventsMap.contains(eventName)){
+        AtomicLong previousValue = appEventsMap.putIfAbsent(eventName, new AtomicLong(1));
+
+        if(previousValue != null ){
+
             AtomicLong count = appEventsMap.get(eventName);
             count.incrementAndGet();
-        }
-        else{
-            appEventsMap.put(eventName, new AtomicLong(0));
         }
 
         // Here I am making a callback called if this event type is present
@@ -382,8 +372,8 @@ public class AnalyticsService {
 
             this.meterRegistry.counter(eventName, meterTagList).increment(1);
         }
-        else{
-            this.meterRegistry.counter(eventName).increment(1);
+        else if(s.length %2 != 0){
+            System.out.println("WARNING: Got event " + eventName + ". Tags are not even count");
         }
     }
 

@@ -4,9 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.core.shared.infra.InfraDbQueue;
 import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.shared.infra.persistent.MongoDbKeyValue;
-import com.freshworks.core.shared.infra.persistent.MongoDbList;
-import com.freshworks.core.shared.infra.persistent.MongoDbQueue;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.*;
 import com.freshworks.core.traverser.net.http.HttpRequest;
@@ -94,8 +91,8 @@ public class SimpleMockUtility {
         return ImmutableMap.<String, String>builder().put("namespace","namespace").build();
     }
 
-    public Namespace mockNamespace(String namespace){
-        Namespace namespaceObj = Mockito.mock(Namespace.class);
+    public NamespaceService mockNamespace(String namespace){
+        NamespaceService namespaceObj = Mockito.mock(NamespaceService.class);
         when(namespaceObj.getNamespace()).thenReturn(namespace);
         return namespaceObj;
     }
@@ -132,28 +129,6 @@ public class SimpleMockUtility {
     public SyncServiceContainer spySyncStatusService(){
         return Mockito.spy(SyncServiceContainer.class);
     }
-
-    public MongoDbQueue mockMongoDbQueue(){
-        return Mockito.mock(MongoDbQueue.class);
-    }
-    public MongoDbQueue spyMongoDbQueue(){
-        return Mockito.spy(MongoDbQueue.class);
-    }
-
-    public MongoDbList mockMongoDbList(){
-        return Mockito.mock(MongoDbList.class);
-    }
-    public MongoDbList spyMongoDbList(){
-        return Mockito.spy(MongoDbList.class);
-    }
-
-    public MongoDbKeyValue mockMongoDbKeyValue(){
-        return Mockito.mock(MongoDbKeyValue.class);
-    }
-    public MongoDbKeyValue spyMongoDbKeyValue(){
-        return Mockito.spy(MongoDbKeyValue.class);
-    }
-
     public InfraService mockInfraService(){
         return Mockito.mock(InfraService.class);
     }

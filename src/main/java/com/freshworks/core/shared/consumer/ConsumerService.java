@@ -1,19 +1,23 @@
 package com.freshworks.core.shared.consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.shared.NamespaceService;
 import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.core.shared.analytics.AnalyticsFactory;
+import com.freshworks.core.shared.analytics.AnalyticsService;
+import com.freshworks.core.shared.analytics.AppEventService;
+import com.freshworks.core.shared.infra.InfraDbCursor;
+import com.freshworks.core.shared.infra.InfraDbList;
 import com.freshworks.core.shared.infra.InfraService;
 import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.freshindex.index.query.Expression;
-import com.freshworks.freshindex.index.query.JsonQueryService;
+
+import org.dizitart.no2.filters.NitriteFilter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import java.util.function.Consumer;
 
 @Component
 @Scope(value="prototype")
@@ -21,100 +25,68 @@ public class ConsumerService {
 
 
     InfraService infraService;
-
     SyncStatusService syncStatusService;
-
-    JsonQueryService jsonQueryService;
-    public ConsumerService() {
-    }
-
+    InfraDbList infraDbList;
+    AnalyticsFactory analyticsFactory;
+    AnalyticsService analyticsService;
+    NamespaceService namespaceService;
+    AppEventService appEventService;
 
     public void configure(SyncServiceContainer syncServiceContainer) throws Exception {
         this.infraService = syncServiceContainer.getBean(InfraService.class);
+        this.infraDbList = this.infraService.getPublisherList();
         this.syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        this.jsonQueryService = infraService.getJsonQueryService();
+        this.analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
+        this.namespaceService = syncServiceContainer.getBean(NamespaceService.class);
+        this.analyticsService = this.analyticsFactory.getAnalyticsService(this.namespaceService.getNamespace());
+        this.appEventService = syncServiceContainer.getBean(AppEventService.class);
     }
 
-
-//    public void configure(InfraService infraService, SyncStatusService syncStatusService, JsonQueryService jsonQueryService){
-//        this.infraService = infraService;
-//        this.syncStatusService = syncStatusService;
-//        this.jsonQueryService = jsonQueryService;
-//    }
-
-
-    public <T extends AbstractAsset> List<T> getAssetByAssetType(Class<T> assetClass) throws Exception {
-
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        return getAbstractAssets(expression, assetClass);
-    }
-
-    public <T extends AbstractAsset> AssetStreamResponse<T> streamAssetByAssetType(Class<T> assetClass, AssetStreamResponse.Token nextToken) throws Exception {
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression expression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        List<String> docIdStrList = jsonQueryService.queryAssetByExpression(expression);
-        List<String> docIdStrDuplicateList = new ArrayList<>(docIdStrList);
-
-        List<Long> interestedStrList = docIdStrDuplicateList.stream().skip(nextToken.getStart()).limit(nextToken.getCount()).map(Long::parseLong).collect(Collectors.toList());
-
-        List<String> abstractAssetList = infraService.getPublisherList().get(interestedStrList);
-
-        // Here form the response
-        AssetStreamResponse<T> assetStreamResponse = new AssetStreamResponse<T>();
-
-        List<T> abstractAssetResponseList = abstractAssetList.stream().map(asset -> {
-            try {
-                return objectMapper.readValue(asset, assetClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).collect(Collectors.toList());
-
-        assetStreamResponse.setAbstractAssetList(abstractAssetResponseList);
-
-        AssetStreamResponse.Token newNextToken = new AssetStreamResponse.Token();
-        newNextToken.setCount(nextToken.getCount());
-        newNextToken.setStart(nextToken.getStart() + interestedStrList.size());
-        assetStreamResponse.setNextToken(newNextToken);
 
         /**
-         *  When hagrid is (completed OR failed) AND (start has reached the last index of the publisher list) then
-         *  set the nextToken as null
-         */
-        if(syncStatusService.getSyncStatus() != 0 && nextToken.getStart() >= docIdStrList.size()){
-            assetStreamResponse.setNextToken(null);
-        }
+     * Use this method to consume assets when sync is done 
+     * @param filter
+     * @return
+     * @throws Exception
+     */
+    public <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception{
 
-        return assetStreamResponse;
-
+        InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, nitriteFilter);
+        return infraDbCursor;
     }
 
-    public <T extends AbstractAsset> List<T> getAssetByAssetTypeAndFilter(Class<T> assetClass, Expression expression) throws Exception {
 
-        String whenAssetFieldName = "$." + assetClass.getSimpleName() + "." + "clazz" ;
-        Expression abstractAssetBasedExpression = Expression.expressionBuilder().whenAssetFieldName(whenAssetFieldName).is().whenAssetFieldValue(assetClass.getName()).build();
-        Expression finalExpression = Expression.expressionJoiner().whenLeftExpressionIs(abstractAssetBasedExpression).whenJoinerIsAnd().whenRightExpressionIs(expression).build();
-        return getAbstractAssets(finalExpression, assetClass);
+    /**
+     * Use this method to consume assets when sync is done 
+     * @param filter
+     * @return
+     * @throws Exception
+     */
+    public <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType) throws Exception{
+
+        InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, null);
+        return infraDbCursor;
     }
 
-    private <T extends AbstractAsset> List<T> getAbstractAssets(Expression finalExpression,Class<T> assetClass) throws Exception {
+    /**
+     * Use this method to consume stream of assets of particular type
+     * @param abstractAsset
+     * @param consumer
+     */
+    public void streamAsset(Class<? extends AbstractAsset> abstractAsset, Consumer<AbstractAsset> consumer){
 
         ObjectMapper objectMapper = new ObjectMapper();
+        this.analyticsService.registerEventCallback("HAGRID_ASSET_PUBLISH_DONE",
 
-        List<String> docIdStrList = jsonQueryService.queryAssetByExpression(finalExpression);
-        List<Long> documentIdList =  docIdStrList.stream().map(Long::valueOf).collect(Collectors.toList());
-        List<String> abstractAssetList = infraService.getPublisherList().get(documentIdList);
-        return abstractAssetList.stream().map(asset -> {
-            try {
-                return objectMapper.readValue(asset, assetClass);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+            params -> {
+                Object object = params.get("asset");
+                AbstractAsset asset = objectMapper.convertValue(object, AbstractAsset.class);
+
+                if(abstractAsset.getName().equalsIgnoreCase(asset.getClass().getName())){
+                    consumer.accept(asset);
+                }
+                
             }
-        }).collect(Collectors.toList());
+        );
     }
-
 }

@@ -1,9 +1,10 @@
 package com.freshworks.core.concurrency;
 
-import com.freshworks.core.data.four_five_zero.concurrency.fb.assets.FbComment;
+import com.freshworks.core.data.concurrency.fb.assets.FbCommentAsset;
 import com.freshworks.core.shared.SyncServiceContainer;
 import com.freshworks.core.shared.consumer.ConsumerService;
 import com.freshworks.core.shared.infra.InfraService;
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 import com.freshworks.core.shared.sync.SyncService;
 import com.freshworks.core.shared.sync.SyncStatusService;
 import com.freshworks.core.traverser.DagNode;
@@ -27,13 +28,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureObservability
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.concurrency\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "concurrency")
 public class TestConcurrency {
 
     @Autowired
     ApplicationContext applicationContext;
 
     private SyncServiceContainer longSyncRun(String namespace, boolean shouldFail) throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
         ImmutableMap<String, String> x;
         x = ImmutableMap.<String, String>builder()
                 .put("numberOfUsersEachPage", "100")
@@ -52,14 +56,16 @@ public class TestConcurrency {
 
 
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer(namespace, ParentStep.class, x);
-        syncService.startSync(syncServiceContainer);
+        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        syncService.startSync();
 
         return syncServiceContainer;
     }
 
 
     private SyncServiceContainer lightSyncRun(String namespace, Boolean shouldFail) throws Exception {
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("numberOfUsersEachPage", "1")
@@ -76,8 +82,8 @@ public class TestConcurrency {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.initSyncServiceContainer(namespace, ParentStep.class, x);
-        syncService.startSync(syncServiceContainer);
+        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        syncService.startSync();
         return syncServiceContainer;
     }
 
@@ -126,8 +132,9 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
+        
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -137,7 +144,7 @@ public class TestConcurrency {
         assertThat(infraService2.getProcessorQueue().size(), Matchers.is(10012L));
 
         DagNode rootNode = s1.getBean(DagNode.class);
-        List<DagNode> dagNodeList = rootNode.preOrder();
+        List<DagNode> dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(0L));
@@ -146,7 +153,7 @@ public class TestConcurrency {
 
 
         rootNode = s2.getBean(DagNode.class);
-        dagNodeList = rootNode.preOrder();
+        dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(0L));
@@ -198,8 +205,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -209,7 +216,7 @@ public class TestConcurrency {
         assertThat(infraService2.getProcessorQueue().size(), Matchers.lessThan(10012L));
 
         DagNode rootNode = s1.getBean(DagNode.class);
-        List<DagNode> dagNodeList = rootNode.preOrder();
+        List<DagNode> dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(dagNode.getTotalItemsSynced()));
@@ -218,7 +225,7 @@ public class TestConcurrency {
 
 
         rootNode = s2.getBean(DagNode.class);
-        dagNodeList = rootNode.preOrder();
+        dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(dagNode.getTotalItemsSynced()));
@@ -273,8 +280,8 @@ public class TestConcurrency {
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
         ConsumerService consumerService2 = s2.getBean(ConsumerService.class);
 
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
-        assertThat(consumerService2.getAssetByAssetType(FbComment.class).size(), Matchers.lessThan(10000));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
+        assertThat(consumerService2.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.lessThan(10000L));
 
 
         InfraService infraService1 = s1.getBean(InfraService.class);
@@ -284,7 +291,7 @@ public class TestConcurrency {
         assertThat(infraService2.getProcessorQueue().size(), Matchers.lessThan(10012L));
 
         DagNode rootNode = s1.getBean(DagNode.class);
-        List<DagNode> dagNodeList = rootNode.preOrder();
+        List<DagNode> dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(0L));
             assertThat(dagNode.getTotalItemsSynced(), Matchers.is(dagNode.getTotalSuccessfulItems()));
@@ -292,7 +299,7 @@ public class TestConcurrency {
 
 
         rootNode = s2.getBean(DagNode.class);
-        dagNodeList = rootNode.preOrder();
+        dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getTotalSuccessfulItems(), Matchers.is(0L));
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(dagNode.getTotalItemsSynced()));
@@ -340,8 +347,11 @@ public class TestConcurrency {
         System.out.println("Getting sync2 syncStatys after shutdown");
         assertThat(syncStatusService2.getSyncStatus() , Matchers.is(-1));
 
-        List<DagNode> dagNodeLists2 = rootNodes2.preOrder();
+        List<DagNode> dagNodeLists2 = rootNodes2.getNodesInDag();
         for(DagNode dagNode : dagNodeLists2){
+            System.out.println(" node is " + dagNode.getName());
+            System.out.println("status is " + dagNode.getNodeOverallTraverserStatus());
+            System.out.println("--------");
             assertThat( "node name is " + dagNode.getName(), dagNode.getNodeOverallTraverserStatus(), Matchers.is(Matchers.not(0)));
             assertThat(dagNode.getTotalFailedItems(), Matchers.greaterThanOrEqualTo(0L));
             assertThat(dagNode.getTotalSuccessfulItems(), Matchers.lessThanOrEqualTo(dagNode.getTotalItemsSynced()));
@@ -354,12 +364,12 @@ public class TestConcurrency {
         System.out.println("Getting sync1 syncStatys sync completion");
         assertThat(syncStatusService1.getSyncStatus() , Matchers.is(1));
         ConsumerService consumerService1 = s1.getBean(ConsumerService.class);
-        assertThat(consumerService1.getAssetByAssetType(FbComment.class).size(), Matchers.is(10000));
+        assertThat(consumerService1.getAssetCursor(FbCommentAsset.class).docSize(), Matchers.is(10000L));
         InfraService infraService1 = s1.getBean(InfraService.class);
         assertThat(infraService1.getProcessorQueue().size(), Matchers.is(10012L));
 
         DagNode rootNode = s1.getBean(DagNode.class);
-        List<DagNode> dagNodeList = rootNode.preOrder();
+        List<DagNode> dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getTotalFailedItems(), Matchers.is(0L));
             assertThat(dagNode.getTotalSuccessfulItems(), Matchers.is(dagNode.getTotalItemsSynced()));
@@ -408,7 +418,7 @@ public class TestConcurrency {
         assertThat(syncStatusService2.getSyncStatus() , Matchers.is(-1));
         assertThat(infraService2.getProcessorQueue().size(), Matchers.lessThan(10012L));
 
-        List<DagNode> dagNodeLists2 = rootNodes2.preOrder();
+        List<DagNode> dagNodeLists2 = rootNodes2.getNodesInDag();
         for(DagNode dagNode : dagNodeLists2){
             System.out.println("dag node name is " + dagNode.getName());
             assertThat(dagNode.getTotalFailedItems(), Matchers.greaterThanOrEqualTo(0L));
@@ -431,7 +441,7 @@ public class TestConcurrency {
         assertThat(syncStatusService1.getSyncStatus() , Matchers.is(-1));
         assertThat(infraService1.getProcessorQueue().size(), Matchers.lessThanOrEqualTo(10012L));
 
-        List<DagNode> dagNodeList = rootNode.preOrder();
+        List<DagNode> dagNodeList = rootNode.getNodesInDag();
         for(DagNode dagNode : dagNodeList){
             assertThat(dagNode.getTotalFailedItems(), Matchers.greaterThanOrEqualTo(0L));
             assertThat(dagNode.getTotalSuccessfulItems(), Matchers.lessThanOrEqualTo(dagNode.getTotalItemsSynced()));

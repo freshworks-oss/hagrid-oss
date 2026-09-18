@@ -1,27 +1,13 @@
 package com.freshworks.core.shared.infra;
 
-
 import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.freshindex.NamespaceService;
-import com.freshworks.freshindex.index.JsonIndexService;
-import com.freshworks.freshindex.index.query.JsonQueryService;
-
-import java.io.IOException;
-
+import com.freshworks.core.shared.sync.ConnectorConfiguration;
 
 public interface InfraService {
 
     void configure(SyncServiceContainer syncServiceContainer, InfraConfigService infraConfigService) throws Exception;
 
     InfraDbQueue getProcessorQueue() throws Exception;
-
-    JsonIndexService getJsonIndexService() throws Exception;
-
-    JsonQueryService getJsonQueryService() throws Exception;
-
-    NamespaceService getNamespaceService() throws Exception;
-
-    void destroyFreshIndex() throws Exception;
 
     InfraDbKeyValue getKeyValue() throws Exception;
 

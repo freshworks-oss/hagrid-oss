@@ -35,7 +35,7 @@ import com.freshworks.core.traverser.net.http.HttpRequestResponse;
 import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestDagNodePerItemTraversalService {
 
     ObjectMapper objectMapper = new ObjectMapper();
@@ -80,10 +80,10 @@ public class TestDagNodePerItemTraversalService {
         nonHttpAbstractStepFacade.configure();
         mockFacadeHttpRequestResponse.configure();
 
-        complexBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.beans.ComplexBean");
-        simpleBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.dag.beans.SimpleBean");
-        singleApplicationStep = (Class<? extends HttpAbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.traverser.single.steps.TestSingleApplicationStep");
-        singleNonHttpApplicationStep = (Class<? extends NonHttpAbstractStep>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.traverser.single.steps.TestSingleNonHttpApplicationStep");
+        complexBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data.unit.dag.beans.ComplexBean");
+        simpleBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data.unit.dag.beans.SimpleBean");
+        singleApplicationStep = (Class<? extends HttpAbstractStep>) Class.forName("com.freshworks.core.data.unit.traverser.single.steps.TestSingleApplicationStep");
+        singleNonHttpApplicationStep = (Class<? extends NonHttpAbstractStep>) Class.forName("com.freshworks.core.data.unit.traverser.single.steps.TestSingleNonHttpApplicationStep");
 
     }
 
@@ -116,7 +116,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).startSyncHttp(any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
 
             dagNodePerItemTraversalService.traverse();
@@ -128,7 +127,6 @@ public class TestDagNodePerItemTraversalService {
             order.verify(dagNodePerItemTraversalService, times(1)).isValidResponseHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(0)).handleInValidResponseHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(1)).parseSyncResponseHttp(any(), any(), any());
-            order.verify(dagNodePerItemTraversalService, times(1)).filterHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(1)).isSyncCompleteHttp(any(), any(), any());
         }
 
@@ -163,7 +161,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).handleInValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
 
             dagNodePerItemTraversalService.traverse();
@@ -175,7 +172,6 @@ public class TestDagNodePerItemTraversalService {
             order.verify(dagNodePerItemTraversalService, times(1)).isValidResponseHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(1)).handleInValidResponseHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(0)).parseSyncResponseHttp(any(), any(), any());
-            order.verify(dagNodePerItemTraversalService, times(0)).filterHttp(any(), any(), any());
             order.verify(dagNodePerItemTraversalService, times(0)).isSyncCompleteHttp(any(), any(), any());
         }
 
@@ -210,7 +206,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).handleInValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
             dagNodePerItemTraversalService.traverse();
 
@@ -251,7 +246,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).handleInValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
 
             dagNodePerItemTraversalService.traverse();
@@ -291,7 +285,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).handleInValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
 
             dagNodePerItemTraversalService.traverse();
@@ -331,7 +324,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(dagNodePerItemTraversalService).isValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).handleInValidResponseHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).parseSyncResponseHttp(any(), any(), any());
-            doCallRealMethod().when(dagNodePerItemTraversalService).filterHttp(any(), any(), any());
             doCallRealMethod().when(dagNodePerItemTraversalService).isSyncCompleteHttp(any(), any(), any());
 
             dagNodePerItemTraversalService.traverse();
@@ -379,7 +371,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).startSyncNonHttp(any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -393,7 +384,6 @@ public class TestDagNodePerItemTraversalService {
             order.verify(mockDagNodePerItemTraversalService, times(1)).isValidResponseNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(0)).handleInValidResponseNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(1)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(1)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(1)).isSyncCompleteNonHttp(any(), any(), any());
         }
 //
@@ -434,7 +424,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).startSyncNonHttp(any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -447,7 +436,6 @@ public class TestDagNodePerItemTraversalService {
             order.verify(mockDagNodePerItemTraversalService, times(1)).isValidResponseNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(1)).handleInValidResponseNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(0)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(0)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(0)).isSyncCompleteNonHttp(any(), any(), any());
         }
 //
@@ -491,7 +479,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleInValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleAbortTransactionActionNonHttp();
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -500,7 +487,6 @@ public class TestDagNodePerItemTraversalService {
             InOrder order = inOrder(mockDagNodePerItemTraversalService);
             order.verify(mockDagNodePerItemTraversalService, times(1)).handleAbortTransactionActionNonHttp();
             order.verify(mockDagNodePerItemTraversalService, times(0)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(0)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(0)).isSyncCompleteNonHttp(any(), any(), any());
         }
 //
@@ -544,7 +530,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleInValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleHoldAndRetryActionNonHttp(any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -552,7 +537,6 @@ public class TestDagNodePerItemTraversalService {
             InOrder order = inOrder(mockDagNodePerItemTraversalService);
             order.verify(mockDagNodePerItemTraversalService, times(1)).handleHoldAndRetryActionNonHttp(traverseAction);
             order.verify(mockDagNodePerItemTraversalService, times(1)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(1)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(1)).isSyncCompleteNonHttp(any(), any(), any());
         }
 //
@@ -598,7 +582,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleInValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleRetryWithNewRequestNonHttp(any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -607,7 +590,6 @@ public class TestDagNodePerItemTraversalService {
             InOrder order = inOrder(mockDagNodePerItemTraversalService);
             order.verify(mockDagNodePerItemTraversalService, times(1)).handleRetryWithNewRequestNonHttp(traverseAction);
             order.verify(mockDagNodePerItemTraversalService, times(1)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(1)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(1)).isSyncCompleteNonHttp(any(), any(), any());
         }
 //
@@ -652,7 +634,6 @@ public class TestDagNodePerItemTraversalService {
             doCallRealMethod().when(mockDagNodePerItemTraversalService).handleInValidResponseNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).abortCurrentParentAndReTryWithNewParentNonHttp();
             doCallRealMethod().when(mockDagNodePerItemTraversalService).parseSyncResponseNonHttp(any(), any(), any());
-            doCallRealMethod().when(mockDagNodePerItemTraversalService).filterNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).isSyncCompleteNonHttp(any(), any(), any());
             doCallRealMethod().when(mockDagNodePerItemTraversalService).traverse();
 
@@ -661,7 +642,6 @@ public class TestDagNodePerItemTraversalService {
             InOrder order = inOrder(mockDagNodePerItemTraversalService);
             order.verify(mockDagNodePerItemTraversalService, times(1)).abortCurrentParentAndReTryWithNewParentNonHttp();
             order.verify(mockDagNodePerItemTraversalService, times(0)).parseSyncResponseNonHttp(any(), any(), any());
-            order.verify(mockDagNodePerItemTraversalService, times(0)).filterNonHttp(any(), any(), any());
             order.verify(mockDagNodePerItemTraversalService, times(0)).isSyncCompleteNonHttp(any(), any(), any());
         }
     }
