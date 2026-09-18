@@ -3,6 +3,8 @@ package com.freshworks.hagrid.assets;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.processor.Annotations.FreshAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

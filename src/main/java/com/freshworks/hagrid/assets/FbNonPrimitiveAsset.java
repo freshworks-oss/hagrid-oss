@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.core.processor.Annotations.FreshAsset;
 import com.freshworks.core.processor.Annotations.FreshJoin;
 import com.freshworks.core.processor.Annotations.FreshJoin.JOIN_TYPE;
 
