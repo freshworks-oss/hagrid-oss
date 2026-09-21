@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.beans;
+package com.freshworks.hagrid.data.unit.dag.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.processor.AbstractBean;

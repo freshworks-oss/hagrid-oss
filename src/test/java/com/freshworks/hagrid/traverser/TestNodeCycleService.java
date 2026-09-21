@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;

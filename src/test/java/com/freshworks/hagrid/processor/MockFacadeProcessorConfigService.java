@@ -1,7 +1,7 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.processor.ProcessorConfigService;
 
 import org.springframework.beans.factory.annotation.Autowired;

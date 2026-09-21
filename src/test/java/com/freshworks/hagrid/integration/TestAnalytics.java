@@ -1,4 +1,4 @@
-package com.freshworks.core.integration;
+package com.freshworks.hagrid.integration;
 
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 

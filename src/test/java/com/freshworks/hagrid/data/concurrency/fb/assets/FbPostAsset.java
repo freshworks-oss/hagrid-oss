@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.assets;
+package com.freshworks.hagrid.data.concurrency.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +24,7 @@ public class FbPostAsset extends AbstractAsset {
     String post_title;
     String post_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbPostBean post){
+    public void setBatchFromBean(com.freshworks.hagrid.data.concurrency.fb.beans.FbPostBean post){
 
         post_id = post.getPost_id();
         post_title = post.getPost_title();

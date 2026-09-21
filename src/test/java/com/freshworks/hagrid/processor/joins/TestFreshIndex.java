@@ -1,4 +1,4 @@
-package com.freshworks.core.processor.joins;
+package com.freshworks.hagrid.processor.joins;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -10,8 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.freshworks.core.TestUtility;
-import com.freshworks.core.data.unit.processor.joins.assets.FbUserUsageAssetFreshIndex;
+import com.freshworks.hagrid.TestUtility;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserUsageAssetFreshIndex;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.processor.FreshIndexBeanSerializeModifier;
 
@@ -44,8 +44,8 @@ public class TestFreshIndex {
 
         freshIndexObjectMapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 
-        fbUserUsageAssetFreshIndex = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.processor.joins.assets.FbUserUsageAssetFreshIndex");
-        fbUserBean = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data." + releaseVersion + ".unit.processor.joins.beans.FbUserBean");
+        fbUserUsageAssetFreshIndex = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data." + releaseVersion + ".unit.processor.joins.assets.FbUserUsageAssetFreshIndex");
+        fbUserBean = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data." + releaseVersion + ".unit.processor.joins.beans.FbUserBean");
     }
 
     @Test

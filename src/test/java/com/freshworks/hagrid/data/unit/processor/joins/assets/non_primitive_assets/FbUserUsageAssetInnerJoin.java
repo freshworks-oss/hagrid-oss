@@ -1,10 +1,10 @@
-package com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets;
+package com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset;
-import com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.processor.Annotations.FreshJoin;
 import com.freshworks.hagrid.processor.Annotations.FreshJoin.JOIN_TYPE;

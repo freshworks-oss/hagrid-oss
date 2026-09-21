@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;

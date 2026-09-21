@@ -1,6 +1,6 @@
-package com.freshworks.core.data.unit.dag.assets.inner;
+package com.freshworks.hagrid.data.unit.dag.assets.inner;
 
-import com.freshworks.core.data.unit.dag.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.beans.Application;
 import com.freshworks.hagrid.processor.AbstractAsset;
 
 import org.springframework.context.annotation.Profile;

@@ -1,4 +1,4 @@
-package com.freshworks.core.data.integration.recursive.json.beans;
+package com.freshworks.hagrid.data.integration.recursive.json.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;

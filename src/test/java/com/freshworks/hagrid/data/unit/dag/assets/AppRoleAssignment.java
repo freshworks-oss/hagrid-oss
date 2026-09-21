@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.assets;
+package com.freshworks.hagrid.data.unit.dag.assets;
 
 
 import org.springframework.context.annotation.Conditional;
@@ -11,7 +11,7 @@ import com.freshworks.hagrid.processor.AbstractAsset;
 @Component("unit_dag_asset_AppRoleAssignment")
 public class AppRoleAssignment extends AbstractAsset {
 
-    public void setFromBean(com.freshworks.core.data.unit.dag.beans.AppRoleAssignment appRoleAssignment){
+    public void setFromBean(com.freshworks.hagrid.data.unit.dag.beans.AppRoleAssignment appRoleAssignment){
 
     }
 

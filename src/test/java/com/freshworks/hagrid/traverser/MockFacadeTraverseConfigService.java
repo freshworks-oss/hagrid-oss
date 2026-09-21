@@ -1,13 +1,13 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.unit.dag.steps.TestUser;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.data.unit.dag.steps.TestApplication;
+import com.freshworks.hagrid.data.unit.dag.steps.TestUser;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.hagrid.traverser.TraverseConfigService;

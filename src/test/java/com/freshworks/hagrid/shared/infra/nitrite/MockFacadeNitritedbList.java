@@ -1,7 +1,7 @@
-package com.freshworks.core.shared.infra.nitrite;
+package com.freshworks.hagrid.shared.infra.nitrite;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbCursor;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbList;

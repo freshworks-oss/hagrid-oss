@@ -1,4 +1,4 @@
-package com.freshworks.core.runners;
+package com.freshworks.hagrid.runners;
 
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.platform.suite.api.SelectPackages;
@@ -7,8 +7,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @Suite
 @SelectPackages({
-        "com.freshworks.core.integration.traverser.test",
-        "com.freshworks.core.integration.sync.test"
+        "com.freshworks.hagridintegration.traverser.test",
+        "com.freshworks.hagridintegration.sync.test"
 })
 public class IntegrationSuiteRunner {
 }

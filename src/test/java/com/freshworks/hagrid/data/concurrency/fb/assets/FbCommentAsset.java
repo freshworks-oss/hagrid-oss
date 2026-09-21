@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.assets;
+package com.freshworks.hagrid.data.concurrency.fb.assets;
 
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
@@ -25,7 +25,7 @@ public class FbCommentAsset extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbCommentBean comment){
+    public void setBatchFromBean(com.freshworks.hagrid.data.concurrency.fb.beans.FbCommentBean comment){
 
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();

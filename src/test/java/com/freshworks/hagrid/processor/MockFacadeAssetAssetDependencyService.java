@@ -1,4 +1,4 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.TestUtility;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.TestUtility;
 import com.freshworks.hagrid.processor.AssetAssetDependencyService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
@@ -38,11 +38,11 @@ public class MockFacadeAssetAssetDependencyService implements MockFacadeInterfac
 
         reset();
         Multimap<String, String> connectorConfigItemTable = ArrayListMultimap.create();
-        connectorConfigItemTable.put("com.freshworks.core." + TestUtility.getReleaseVerion() + ".assets.fb.data.FbComment", "com.freshworks.core." + TestUtility.getReleaseVerion() + ".beans.fb.data.FbComment");
+        connectorConfigItemTable.put("com.freshworks.hagrid" + TestUtility.getReleaseVerion() + ".assets.fb.data.FbComment", "com.freshworks.hagrid" + TestUtility.getReleaseVerion() + ".beans.fb.data.FbComment");
         scanner.add(ImmutableListMultimap.copyOf(connectorConfigItemTable));
 
         List<String> dependencyList = new ArrayList<>();
-        dependencyList.add("com.freshworks.core." + TestUtility.getReleaseVerion() + ".beans.fb.data.FbComment");
+        dependencyList.add("com.freshworks.hagrid" + TestUtility.getReleaseVerion() + ".beans.fb.data.FbComment");
         findDependencyOfAsset.add(dependencyList);
 
         return this;

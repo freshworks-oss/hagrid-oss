@@ -1,4 +1,4 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.processor.ProcessorService;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;
 

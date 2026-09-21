@@ -1,7 +1,7 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
-import com.freshworks.core.TestUtility;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.TestUtility;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.processor.AssetBeanDependencyService;
 import com.freshworks.hagrid.processor.ProcessorConfigService;
@@ -46,9 +46,9 @@ public class TestAssetBeanDependencyService {
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.TestInnerAsset");
-        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.innermost.TestInnerMostAsset");
-        innerMostJoinedAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.inner.innermost.TestInnerMostJoinedAsset");
+        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.inner.TestInnerAsset");
+        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.inner.innermost.TestInnerMostAsset");
+        innerMostJoinedAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.inner.innermost.TestInnerMostJoinedAsset");
     }
 
     @Test

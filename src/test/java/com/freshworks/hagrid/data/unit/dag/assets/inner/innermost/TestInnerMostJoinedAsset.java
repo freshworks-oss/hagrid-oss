@@ -1,7 +1,7 @@
-package com.freshworks.core.data.unit.dag.assets.inner.innermost;
+package com.freshworks.hagrid.data.unit.dag.assets.inner.innermost;
 
-import com.freshworks.core.data.unit.dag.beans.Application;
-import com.freshworks.core.data.unit.dag.beans.ServicePrinciple;
+import com.freshworks.hagrid.data.unit.dag.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.beans.ServicePrinciple;
 import com.freshworks.hagrid.processor.AbstractAsset;
 
 import org.springframework.context.annotation.Conditional;

@@ -1,4 +1,4 @@
-package com.freshworks.core;
+package com.freshworks.hagrid;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;

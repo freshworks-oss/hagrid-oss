@@ -1,4 +1,4 @@
-package com.freshworks.core.runners;
+package com.freshworks.hagrid.runners;
 
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;

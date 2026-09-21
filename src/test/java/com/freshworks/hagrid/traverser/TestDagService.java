@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
@@ -84,20 +84,20 @@ public class TestDagService {
     @BeforeEach
     public void beforeEach() throws Exception {
         
-        stepA  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepA");
-        stepB  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepB");
-        stepC  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.loop.StepC");
-        application  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
-        servicePrinciple  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
-        appRoleAssignment  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestAppRoleAssignment");
-        users = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestUser");
-        groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestGroup");
-        usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestUsage");
-        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestIgnored");
+        stepA  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.loop.StepA");
+        stepB  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.loop.StepB");
+        stepC  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.loop.StepC");
+        application  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestApplication");
+        servicePrinciple  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestServicePrinciple");
+        appRoleAssignment  = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestAppRoleAssignment");
+        users = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestUser");
+        groups = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestGroup");
+        usages = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestUsage");
+        testIgnored = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestIgnored");
 
-        testAnotherInner = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.anotherinner.TestAnotherInner");
-        testInnerStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.TestInnerStep");
-        testInnerMost = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.inner.innermost.TestInnerMost");
+        testAnotherInner = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.anotherinner.TestAnotherInner");
+        testInnerStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.inner.TestInnerStep");
+        testInnerMost = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.inner.innermost.TestInnerMost");
         
     }
 
@@ -116,9 +116,9 @@ public class TestDagService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
-        enablePath.add(application);
-        enablePath.add(usages);
+        List<String> enablePath = new ArrayList<>();
+        enablePath.add(application.getName());
+        enablePath.add(usages.getName());
 
         connectorConfiguration.addPathToEnable(enablePath);
 
@@ -167,10 +167,10 @@ public class TestDagService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
-        enablePath.add(servicePrinciple);
-        enablePath.add(appRoleAssignment);
-        enablePath.add(users);
+        List<String> enablePath = new ArrayList<>();
+        enablePath.add(servicePrinciple.getName());
+        enablePath.add(appRoleAssignment.getName());
+        enablePath.add(users.getName());
 
         connectorConfiguration.addPathToEnable(enablePath);
 
@@ -217,9 +217,9 @@ public class TestDagService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
-        enablePath.add(stepA);
-        enablePath.add(stepB);
+        List<String> enablePath = new ArrayList<>();
+        enablePath.add(stepA.getName());
+        enablePath.add(stepB.getName());
 
         connectorConfiguration.addPathToEnable(enablePath);
 
@@ -273,9 +273,9 @@ public class TestDagService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        List<Class<? extends AbstractStep>> enablePath = new ArrayList<>();
-        enablePath.add(stepB);
-        enablePath.add(stepC);
+        List<String> enablePath = new ArrayList<>();
+        enablePath.add(stepB.getName());
+        enablePath.add(stepC.getName());
 
         connectorConfiguration.addPathToEnable(enablePath);
 

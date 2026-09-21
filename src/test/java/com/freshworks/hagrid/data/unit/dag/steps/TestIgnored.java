@@ -1,8 +1,8 @@
-package com.freshworks.core.data.unit.dag.steps;
+package com.freshworks.hagrid.data.unit.dag.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.dag.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.beans.Application;
 import com.freshworks.hagrid.traverser.*;
 import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
 import com.freshworks.hagrid.traverser.exception.StepFailedException;

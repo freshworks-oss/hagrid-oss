@@ -1,20 +1,20 @@
-package com.freshworks.core.durability;
+package com.freshworks.hagrid.durability;
 
 
-import com.freshworks.core.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck;
-import com.freshworks.core.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown;
-import com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck;
-import com.freshworks.core.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown;
-import com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck;
-import com.freshworks.core.data.durability.steps.is_valid.shutdown.TestIsValidShutdown;
-import com.freshworks.core.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown;
-import com.freshworks.core.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck;
-import com.freshworks.core.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown;
-import com.freshworks.core.data.durability.steps.setup.shutdown.TestSetupShutdown;
-import com.freshworks.core.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown;
-import com.freshworks.core.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck;
-import com.freshworks.core.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown;
-import com.freshworks.core.processor.MockFacadeProcessorService;
+import com.freshworks.hagrid.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck;
+import com.freshworks.hagrid.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown;
+import com.freshworks.hagrid.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck;
+import com.freshworks.hagrid.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown;
+import com.freshworks.hagrid.data.durability.steps.is_valid.null_check.TestIsValidNullCheck;
+import com.freshworks.hagrid.data.durability.steps.is_valid.shutdown.TestIsValidShutdown;
+import com.freshworks.hagrid.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown;
+import com.freshworks.hagrid.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck;
+import com.freshworks.hagrid.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown;
+import com.freshworks.hagrid.data.durability.steps.setup.shutdown.TestSetupShutdown;
+import com.freshworks.hagrid.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown;
+import com.freshworks.hagrid.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck;
+import com.freshworks.hagrid.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown;
+import com.freshworks.hagrid.processor.MockFacadeProcessorService;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
@@ -113,10 +113,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
-        addEnabledPath.add(TestSetupShutdown.class);
+        List<String> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestSetupShutdown.class.getName());
         
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -160,7 +160,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
                 String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.setup.shutdown.TestSetupShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.setup.shutdown.TestSetupShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("setup")){
@@ -224,10 +224,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
-        addEnabledPath.add(TestShouldProceedShutdown.class);
+        List<String> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestShouldProceedShutdown.class.getName());
         
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -271,7 +271,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.should_proceed.shutdown.TestShouldProceedShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("shouldProceedWithParentObject")){
@@ -373,7 +373,7 @@ public class TestTraverser {
 
     //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
     //         String step = (String)z.get("step");
-    //         if(step.equals("com.freshworks.core.data.durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
+    //         if(step.equals("com.freshworks.hagrid.data.durability.steps.should_proceed.null_check.TestShouldProceedNullCheck")){
 
     //             String method = (String)z.get("method");
     //             System.out.println("Method called is " + method);
@@ -437,10 +437,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
-        addEnabledPath.add(TestStartSyncShutdown.class);
+        List<String> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestStartSyncShutdown.class.getName());
         
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -484,7 +484,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.start_sync.shutdown.TestStartSyncShutdown")){
 
                 String method = (String)z.get("method");
                 System.out.println("Method called is " + method);
@@ -550,10 +550,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
         
-        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
-        addEnabledPath.add(TestStartSyncNullCheck.class);
+        List<String> addEnabledPath = new ArrayList<>();
+        addEnabledPath.add(TestStartSyncNullCheck.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -597,7 +597,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.start_sync.null_check.TestStartSyncNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("startSync")){
@@ -629,8 +629,8 @@ public class TestTraverser {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestIsValidShutdown.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestIsValidShutdown.class.getName());
         connectorConfiguration.addPathToEnable(addEnabledPath);
 
         SyncServiceContainer syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
@@ -666,7 +666,7 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -711,7 +711,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.is_valid.shutdown.TestIsValidShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.is_valid.shutdown.TestIsValidShutdown")){
 
                 String method = (String)z.get("method");
                 System.out.println("method name is " + method);
@@ -830,7 +830,7 @@ public class TestTraverser {
 
     //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
     //         String step = (String)z.get("step");
-    //         if(step.equals("com.freshworks.core.data.durability.steps.is_valid.null_check.TestIsValidNullCheck")){
+    //         if(step.equals("com.freshworks.hagrid.data.durability.steps.is_valid.null_check.TestIsValidNullCheck")){
 
     //             String method = (String)z.get("method");
     //             if(method.equalsIgnoreCase("isValidResponse")){
@@ -891,10 +891,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestHandleInvalidShutdown.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestHandleInvalidShutdown.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -944,7 +944,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.handle_invalid.shutdown.TestHandleInvalidShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("handleInvalidResponse")){
@@ -1006,10 +1006,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestHandleInvalidNullCheck.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestHandleInvalidNullCheck.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -1058,7 +1058,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.handle_invalid.null_check.TestHandleInvalidNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("handleInvalidResponse")){
@@ -1120,10 +1120,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestParseSyncShutdown.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestParseSyncShutdown.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -1172,7 +1172,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.parse_sync.shutdown.TestParseSyncShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("parseSyncResponse")){
@@ -1234,10 +1234,10 @@ public class TestTraverser {
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestParseSyncNullCheck.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestParseSyncNullCheck.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -1287,7 +1287,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.parse_sync.null_check.TestParseSyncNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("parseSyncResponse")){
@@ -1350,10 +1350,10 @@ public class TestTraverser {
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestIsSyncCompleteShutdown.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestIsSyncCompleteShutdown.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -1403,7 +1403,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.is_complete.shutdown.TestIsSyncCompleteShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("isSyncComplete")){
@@ -1520,7 +1520,7 @@ public class TestTraverser {
 
     //     analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
     //         String step = (String)z.get("step");
-    //         if(step.equals("com.freshworks.core.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
+    //         if(step.equals("com.freshworks.hagrid.data.durability.steps.is_complete.null_check.TestIsSyncCompleteNullCheck")){
 
     //             String method = (String)z.get("method");
     //             System.out.print(method);
@@ -1586,10 +1586,10 @@ public class TestTraverser {
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
 
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestGetNextRequestShutdown.class);
+        List<String> addEnabledPath = new ArrayList();
+        addEnabledPath.add(TestGetNextRequestShutdown.class.getName());
 
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
+        List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
@@ -1638,7 +1638,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.next_request.shutdown.TestGetNextRequestShutdown")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("getNextSyncRequest")){
@@ -1741,7 +1741,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
-            if(step.equals("com.freshworks.core.data.durability.steps.next_request.null_check.TestGetNextRequestNullCheck")){
+            if(step.equals("com.freshworks.hagrid.data.durability.steps.next_request.null_check.TestGetNextRequestNullCheck")){
 
                 String method = (String)z.get("method");
                 if(method.equalsIgnoreCase("getNextSyncRequest")){

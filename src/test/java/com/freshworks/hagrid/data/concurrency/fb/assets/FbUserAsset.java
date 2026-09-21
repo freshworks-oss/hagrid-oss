@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.assets;
+package com.freshworks.hagrid.data.concurrency.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +23,7 @@ public class FbUserAsset extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbUserBean dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.data.concurrency.fb.beans.FbUserBean dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();

@@ -8,11 +8,11 @@ package com.freshworks.hagrid;
 // import org.springframework.context.ApplicationContext;
 // import org.springframework.stereotype.Component;
 
-// import com.freshworks.core.shared.SyncServiceContainer;
-// import com.freshworks.core.shared.consumer.ConsumerService;
-// import com.freshworks.core.shared.sync.SyncService;
-// import com.freshworks.core.shared.sync.SyncStatusService;
-// import com.freshworks.core.traverser.ParentStep;
+// import com.freshworks.hagridshared.SyncServiceContainer;
+// import com.freshworks.hagridshared.consumer.ConsumerService;
+// import com.freshworks.hagridshared.sync.SyncService;
+// import com.freshworks.hagridshared.sync.SyncStatusService;
+// import com.freshworks.hagridtraverser.ParentStep;
 // import com.google.common.collect.ImmutableMap;
 
 // @Component

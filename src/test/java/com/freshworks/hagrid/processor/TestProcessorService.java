@@ -1,4 +1,4 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,12 +17,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.consumer.MockFacadeConsumerService;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.consumer.MockFacadeConsumerService;
+import com.freshworks.hagrid.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbQueue;
 import com.freshworks.hagrid.processor.AssetAssetDependencyService;
 import com.freshworks.hagrid.processor.AssetBeanDependencyService;
 import com.freshworks.hagrid.processor.ProcessorConfigService;

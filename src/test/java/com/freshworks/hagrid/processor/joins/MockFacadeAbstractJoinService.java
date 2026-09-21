@@ -1,4 +1,4 @@
-package com.freshworks.core.processor.joins;
+package com.freshworks.hagrid.processor.joins;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -12,8 +12,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.mockito.Mockito;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.processor.AbstractBean;
 import com.freshworks.hagrid.processor.joins.AbstractJoinService;
 

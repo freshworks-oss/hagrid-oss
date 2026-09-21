@@ -1,11 +1,13 @@
 package com.freshworks.hagrid.traverser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.steps.GenericNonHttpStep;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;
 import com.freshworks.hagrid.shared.infra.InfraService;
+import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.shared.synchronizers.ServiceTree;
 import com.freshworks.hagrid.traverser.NodeRelationship.REL_SWITCH;
 import com.google.common.base.Throwables;
@@ -46,6 +48,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
     Map<String, String> mainThreadMdcCopy;
     ImmutableMap<String, String> baggageMap;
     Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore;
+    ConnectorConfiguration connectorConfiguration;
 
     @Setter
     @Getter
@@ -124,6 +127,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         this.traverseConfigService = traverseConfigService;
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         namespace = syncServiceContainer.getBean(NamespaceService.class);
+        this.connectorConfiguration = syncServiceContainer.getBean(ConnectorConfiguration.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         this.traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
         this.serviceTree = syncServiceContainer.getBean(ServiceTree.class);
@@ -182,7 +186,16 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
 
             for (String s : listOfParentItems) {
 
-                AbstractStep abstractStep = syncServiceContainer.getBean(node.getName());
+                AbstractStep abstractStep = null;
+                
+                if(connectorConfiguration.isDslBasedExecution()){
+
+                    abstractStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
+                }
+                else{
+                    abstractStep = syncServiceContainer.getBean(node.getName());
+                }
+                
                 DagNodePerItemTraversalService dagNodePerItemTraversalService = getDagNodePerItemTraversalService();
                 dagNodePerParentPhaser.register();
                 dagNodePerItemTraversalService.configure(uuid + "/" + "dag_node_per_item_traversal", syncServiceContainer, abstractStep, objectMapper.readTree(s), node, parentNode, limitNumberOfConcurrentPerItemTraversalSemaphore, dagNodePerParentPhaser, rateLimitBucket, infraService.getProcessorQueue(), traverseConfigService, baggageMap);

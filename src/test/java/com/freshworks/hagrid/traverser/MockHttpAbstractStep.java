@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.hagrid.traverser.DagTraversalService;

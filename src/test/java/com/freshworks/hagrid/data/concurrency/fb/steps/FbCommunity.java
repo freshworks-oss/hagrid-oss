@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.steps;
+package com.freshworks.hagrid.data.concurrency.fb.steps;
 
 import java.net.URISyntaxException;
 
@@ -169,7 +169,7 @@ public class FbCommunity extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("communities"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.concurrency.fb.beans.FbCommunityBean.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.data.concurrency.fb.beans.FbCommunityBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

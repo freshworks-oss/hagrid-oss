@@ -26,8 +26,8 @@ public class TraverseConfigService {
         return connectorConfiguration.getTraverserThreadCount();
     }
 
-    public StepRateLimitObject getRateLimitForStep(Class<? extends AbstractStep> stepClass){
+    public StepRateLimitObject getRateLimitForStep(String stepName) throws Exception{
 
-        return this.connectorConfiguration.getStepRateLimit(stepClass);
+        return this.connectorConfiguration.getStepRateLimit(stepName);
     }
 }

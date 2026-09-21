@@ -1,14 +1,14 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbList;
 import com.freshworks.hagrid.traverser.DagNodeTraversalService;
 
 @SpringBootTest

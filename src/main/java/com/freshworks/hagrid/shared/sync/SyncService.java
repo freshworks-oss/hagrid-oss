@@ -104,7 +104,7 @@ public class SyncService {
         return syncServiceContainer;
     }
 
-    public SyncServiceContainer configureSync(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    public SyncServiceContainer configureWithStaticSteps(String infraNameSpace, Class<? extends AbstractStep> stepClass, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
@@ -115,6 +115,7 @@ public class SyncService {
         this.syncServiceContainer.add(this, SyncService.class);
 
         // Add Connector Configuration Object 
+        connectorConfiguration.setDslBasedExecution(false);
         this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 
         // Add unique Identifier
@@ -220,7 +221,7 @@ public class SyncService {
     }
 
 
-    public SyncServiceContainer configureSync(String infraNameSpace, DagNode rootNode, String startNodeName, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    public SyncServiceContainer configureWithDslDag(String infraNameSpace, DagNode rootNode, String startNodeName, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
@@ -231,6 +232,7 @@ public class SyncService {
         this.syncServiceContainer.add(this, SyncService.class);
 
         // Add Connector Configuration Object 
+        connectorConfiguration.setDslBasedExecution(true);
         this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 
         // Add unique Identifier
@@ -334,7 +336,6 @@ public class SyncService {
 
         return this.syncServiceContainer;
     }
-
 
     public void interruptSync() throws Exception {
 

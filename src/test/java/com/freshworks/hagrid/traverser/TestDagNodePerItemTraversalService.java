@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,9 +28,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
+import com.freshworks.hagrid.traverser.net.http.MockFacadeHttpRequestResponse;
 import com.freshworks.hagrid.processor.AbstractBean;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagNode;
@@ -88,10 +88,10 @@ public class TestDagNodePerItemTraversalService {
         nonHttpAbstractStepFacade.configure();
         mockFacadeHttpRequestResponse.configure();
 
-        complexBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data.unit.dag.beans.ComplexBean");
-        simpleBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.core.data.unit.dag.beans.SimpleBean");
-        singleApplicationStep = (Class<? extends HttpAbstractStep>) Class.forName("com.freshworks.core.data.unit.traverser.single.steps.TestSingleApplicationStep");
-        singleNonHttpApplicationStep = (Class<? extends NonHttpAbstractStep>) Class.forName("com.freshworks.core.data.unit.traverser.single.steps.TestSingleNonHttpApplicationStep");
+        complexBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.hagrid.data.unit.dag.beans.ComplexBean");
+        simpleBean = (Class<? extends AbstractBean>) Class.forName("com.freshworks.hagrid.data.unit.dag.beans.SimpleBean");
+        singleApplicationStep = (Class<? extends HttpAbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.traverser.single.steps.TestSingleApplicationStep");
+        singleNonHttpApplicationStep = (Class<? extends NonHttpAbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.traverser.single.steps.TestSingleNonHttpApplicationStep");
 
     }
 

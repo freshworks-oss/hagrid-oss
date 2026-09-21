@@ -1,4 +1,4 @@
-package com.freshworks.core.data.durability.steps.parse_sync.null_check;
+package com.freshworks.hagrid.data.durability.steps.parse_sync.null_check;
 
 import java.net.URISyntaxException;
 

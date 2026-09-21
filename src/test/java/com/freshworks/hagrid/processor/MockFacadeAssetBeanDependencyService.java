@@ -1,4 +1,4 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.processor.AssetBeanDependencyService;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
@@ -39,11 +39,11 @@ public class MockFacadeAssetBeanDependencyService implements MockFacadeInterface
 
         reset();
         Multimap<String, String> connectorConfigItemTable = ArrayListMultimap.create();
-        connectorConfigItemTable.put("com.freshworks.core.four_five_zero.assets.fb.data.FbComment", "com.freshworks.core.four_five_zero.beans.fb.data.FbComment");
+        connectorConfigItemTable.put("com.freshworks.hagridfour_five_zero.assets.fb.data.FbComment", "com.freshworks.hagridfour_five_zero.beans.fb.data.FbComment");
         scanner.add(ImmutableListMultimap.copyOf(connectorConfigItemTable));
 
         List<String> dependencyList = new ArrayList<>();
-        dependencyList.add("com.freshworks.core.three_seven_zero.beans.fb.data.FbComment");
+        dependencyList.add("com.freshworks.hagridthree_seven_zero.beans.fb.data.FbComment");
         findDependencyOfAsset.add(dependencyList);
 
         return this;

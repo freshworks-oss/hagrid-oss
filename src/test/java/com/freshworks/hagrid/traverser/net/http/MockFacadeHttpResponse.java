@@ -1,7 +1,7 @@
-package com.freshworks.core.traverser.net.http;
+package com.freshworks.hagrid.traverser.net.http;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.traverser.net.http.HttpResponse;
 
 import org.apache.hc.core5.http.ParseException;

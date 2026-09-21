@@ -1,7 +1,7 @@
-package com.freshworks.core.traverser.net;
+package com.freshworks.hagrid.traverser.net;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.traverser.RequestResponseContainer;
 
 import org.mockito.Mockito;

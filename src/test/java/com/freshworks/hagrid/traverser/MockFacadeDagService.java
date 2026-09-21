@@ -1,9 +1,9 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.data.unit.dag.steps.TestApplication;
-import com.freshworks.core.data.unit.dag.steps.TestServicePrinciple;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.data.unit.dag.steps.TestApplication;
+import com.freshworks.hagrid.data.unit.dag.steps.TestServicePrinciple;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.DagService;
 

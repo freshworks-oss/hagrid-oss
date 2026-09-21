@@ -1,11 +1,11 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequest;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpResponse;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.traverser.net.http.MockFacadeHttpRequest;
+import com.freshworks.hagrid.traverser.net.http.MockFacadeHttpRequestResponse;
+import com.freshworks.hagrid.traverser.net.http.MockFacadeHttpResponse;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.HttpAbstractStep;

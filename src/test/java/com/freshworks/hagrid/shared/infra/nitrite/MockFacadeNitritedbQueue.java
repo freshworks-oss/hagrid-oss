@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.infra.nitrite;
+package com.freshworks.hagrid.shared.infra.nitrite;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -13,8 +13,8 @@ import org.dizitart.no2.Nitrite;
 import org.mockito.Mockito;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbQueue;
 
 @Component

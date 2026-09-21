@@ -1,4 +1,4 @@
-package com.freshworks.core.data.durability.beans;
+package com.freshworks.hagrid.data.durability.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.processor.AbstractBean;

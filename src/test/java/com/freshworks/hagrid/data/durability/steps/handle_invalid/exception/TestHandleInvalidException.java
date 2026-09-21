@@ -1,8 +1,8 @@
-package com.freshworks.core.data.durability.steps.handle_invalid.exception;
+package com.freshworks.hagrid.data.durability.steps.handle_invalid.exception;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.durability.beans.FbUserBean;
+import com.freshworks.hagrid.data.durability.beans.FbUserBean;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;

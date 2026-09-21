@@ -1,6 +1,6 @@
-package com.freshworks.core.shared.synchronizers;
+package com.freshworks.hagrid.shared.synchronizers;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;

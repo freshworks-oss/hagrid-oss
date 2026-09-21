@@ -1,4 +1,4 @@
-package com.freshworks.core.data.performance.fb.beans;
+package com.freshworks.hagrid.data.performance.fb.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.processor.AbstractBean;

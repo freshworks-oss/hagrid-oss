@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.consumer;
+package com.freshworks.hagrid.shared.consumer;
 
 import static org.dizitart.no2.filters.FluentFilter.where;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,12 +22,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.fb.assets.FbComment;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
-import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
+import com.freshworks.hagrid.data.unit.fb.assets.FbComment;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.hagrid.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;

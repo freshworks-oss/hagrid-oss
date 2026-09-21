@@ -1,5 +1,5 @@
 
-package com.freshworks.core.performance;
+package com.freshworks.hagrid.performance;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -33,9 +33,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.performance.fb.assets.FbUser;
-import com.freshworks.core.data.performance.fb.assets.non_primitive_assets.FbUserComment;
-import com.freshworks.core.data.performance.fb.steps.FbUserServer;
+import com.freshworks.hagrid.data.performance.fb.assets.FbUser;
+import com.freshworks.hagrid.data.performance.fb.assets.non_primitive_assets.FbUserComment;
+import com.freshworks.hagrid.data.performance.fb.steps.FbUserServer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbKeyValue;

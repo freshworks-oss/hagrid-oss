@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.steps;
+package com.freshworks.hagrid.data.unit.dag.steps;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

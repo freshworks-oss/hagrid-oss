@@ -1,15 +1,15 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbQueue;
-import com.freshworks.core.traverser.net.MockFacadeRequestResponseContainer;
-import com.freshworks.core.traverser.net.http.MockFacadeHttpRequestResponse;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbQueue;
+import com.freshworks.hagrid.traverser.net.MockFacadeRequestResponseContainer;
+import com.freshworks.hagrid.traverser.net.http.MockFacadeHttpRequestResponse;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.infra.InfraDbQueue;

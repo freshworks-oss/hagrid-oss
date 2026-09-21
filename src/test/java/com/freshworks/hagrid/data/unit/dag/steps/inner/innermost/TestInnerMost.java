@@ -1,7 +1,7 @@
-package com.freshworks.core.data.unit.dag.steps.inner.innermost;
+package com.freshworks.hagrid.data.unit.dag.steps.inner.innermost;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.data.unit.dag.steps.inner.TestInnerStep;
+import com.freshworks.hagrid.data.unit.dag.steps.inner.TestInnerStep;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.HttpAbstractStep;

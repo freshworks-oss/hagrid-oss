@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.assets;
+package com.freshworks.hagrid.data.concurrency.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -24,7 +24,7 @@ public class FbCommunityAsset extends AbstractAsset {
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbCommunityBean community){
+    public void setBatchFromBean(com.freshworks.hagrid.data.concurrency.fb.beans.FbCommunityBean community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

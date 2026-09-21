@@ -1,4 +1,4 @@
-package com.freshworks.core.processor.joins;
+package com.freshworks.hagrid.processor.joins;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -17,9 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.processor.MockFacadeAssetAssetDependencyService;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.hagrid.processor.MockFacadeAssetAssetDependencyService;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.infra.MockFacadeInfraConfigService;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.processor.AbstractBean;
 import com.freshworks.hagrid.processor.Annotations.FreshJoin;
@@ -36,12 +36,12 @@ import com.freshworks.hagrid.shared.infra.nitrite.NitriteService;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
-import com.freshworks.core.TestUtility;
-import com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset;
-import com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset;
-import com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
-import com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
-import com.freshworks.core.data.unit.processor.joins.beans.FbUsageBean;
+import com.freshworks.hagrid.TestUtility;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin;
+import com.freshworks.hagrid.data.unit.processor.joins.beans.FbUsageBean;
 
 @SpringBootTest
 @EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
@@ -84,9 +84,9 @@ public class TestJoinService {
     @Test
     public void testGetLookupFieldValueOfLeftClass() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         AbstractAsset fbUserAsset = this.fbUserAsset.getDeclaredConstructor().newInstance();
         TestUtility.callMethod(fbUserAsset, "setUserId", "aggarwal");
@@ -102,9 +102,9 @@ public class TestJoinService {
     @Test
     public void testGetLookupFieldValueOfRightClass() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         AbstractAsset fbUsageAsset = this.fbUsageAsset.getDeclaredConstructor().newInstance();
         TestUtility.callMethod(fbUsageAsset, "setUserId", "aggarwal");
@@ -120,9 +120,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftAssetAndRightAsset() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -180,9 +180,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftAssetAndRightAssetForInnerJoinService() throws Exception{
 
-        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -236,9 +236,9 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithSingleLeftBeanAndRightBeanWithNullKeyInLeftBean() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -289,10 +289,10 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBean() throws Exception{
 
-        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAsset");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -373,10 +373,10 @@ public class TestJoinService {
     @Test
     public void testLookupStagingAreaWithMultipleLeftBeanAndSingleRightBeanInnerJoin() throws Exception{
 
-        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
-        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUserAsset");
-        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.processor.joins.assets.FbUsageAsset");
+        fbUserUsageAssetInnerJoin = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.non_primitive_assets.FbUserUsageAssetInnerJoin");
+        fbUserAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUserAsset1 = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUserAsset");
+        fbUsageAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.processor.joins.assets.FbUsageAsset");
 
         // Setting up data 
         ObjectMapper objectMapper = new ObjectMapper();

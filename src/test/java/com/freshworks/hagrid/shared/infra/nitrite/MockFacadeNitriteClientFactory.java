@@ -1,11 +1,11 @@
-package com.freshworks.core.shared.infra.nitrite;
+package com.freshworks.hagrid.shared.infra.nitrite;
 
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.hagrid.MockFacadeInterface;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteFactory;
 
 @Component

@@ -1,4 +1,4 @@
-package com.freshworks.core.data.concurrency.fb.steps;
+package com.freshworks.hagrid.data.concurrency.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -160,7 +160,7 @@ public class FbUser extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.concurrency.fb.beans.FbUserBean.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.data.concurrency.fb.beans.FbUserBean.class);
             return stepDataBeanMapping;
 
         }

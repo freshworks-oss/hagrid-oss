@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.steps.anotherinner;
+package com.freshworks.hagrid.data.unit.dag.steps.anotherinner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.hagrid.traverser.*;

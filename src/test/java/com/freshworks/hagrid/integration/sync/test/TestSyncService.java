@@ -1,9 +1,9 @@
-package com.freshworks.core.integration.sync.test;
+package com.freshworks.hagrid.integration.sync.test;
 
-import com.freshworks.core.data.integration.fb.assets.FbUser;
-import com.freshworks.core.data.integration.fb.assets.complex_asset.FbUserComment;
-import com.freshworks.core.data.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
-import com.freshworks.core.data.integration.recursive.contextual.assets.PublishedAsset;
+import com.freshworks.hagrid.data.integration.fb.assets.FbUser;
+import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserComment;
+import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
+import com.freshworks.hagrid.data.integration.recursive.contextual.assets.PublishedAsset;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
@@ -67,7 +67,7 @@ public class TestSyncService {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncService.startSync();
@@ -130,7 +130,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
@@ -167,7 +167,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
@@ -200,7 +200,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
 
@@ -232,7 +232,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();
@@ -264,7 +264,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
         consumerService.streamAsset(FbUser.class, asset -> {
@@ -304,7 +304,7 @@ public class TestSyncService {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps( UUID.randomUUID().toString(), ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncStatusService.waitUntilSyncIsInProgress();

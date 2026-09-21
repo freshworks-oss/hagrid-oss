@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.fb.assets;
+package com.freshworks.hagrid.data.unit.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -28,7 +28,7 @@ public class FbComment extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.unit.fb.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.hagrid.data.unit.fb.beans.FbComment comment){
 
         comment_id = comment.getComment_id();
         comment_title = comment.getComment_title();

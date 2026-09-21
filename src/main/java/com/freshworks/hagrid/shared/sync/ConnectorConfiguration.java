@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.freshworks.hagrid.main.steps.GenericNonHttpStep;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
 
@@ -30,7 +31,7 @@ public class ConnectorConfiguration {
     @Setter(AccessLevel.NONE)
     Map<String, StepRateLimitObject> stepRateLimitMap = new HashMap<>();
 
-    List<List<Class< ? extends AbstractStep>>> enabledDagPath = new ArrayList<>();
+    List<List<String>> enabledDagPath = new ArrayList<>();
 
     int processorPollCount = 1000;
     int numberOfParallelProcessor = 20;
@@ -46,30 +47,39 @@ public class ConnectorConfiguration {
     int DEFAULT_RATE_LIMIT_API_CALLS = 100;
     int DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS = 1;
 
+    // This method is used internally by the sync service to configure whether the current execution is based on static steps or dsl based dag
+    boolean dslBasedExecution = true;
+
     public ConnectorConfiguration(){
         this.infraDbType = "file";
         this.infraDbLocation = "./database";
+        
+        // Setting the default for action based steps
+        StepRateLimitObject rateLimitObject = new StepRateLimitObject();
+        rateLimitObject.setDurationInSeconds(1);
+        rateLimitObject.setNumberOfApiCalls(1000);
+        stepRateLimitMap.put(GenericNonHttpStep.class.getName(), rateLimitObject);
     }
 
-    public void setStepRateLimit(Class<? extends AbstractStep> stepClass, StepRateLimitObject stepRateLimitObject){
+    public void setStepRateLimit(String stepName, StepRateLimitObject stepRateLimitObject){
 
-        stepRateLimitMap.put(stepClass.getName(), stepRateLimitObject);
+        stepRateLimitMap.put(stepName, stepRateLimitObject);
     }
 
-    public void addPathToEnable(List<Class<? extends AbstractStep>> enabledPath){
+    public void addPathToEnable(List<String> enabledPath){
 
         this.enabledDagPath.add(enabledPath);
     }
 
-    public List<List<Class<? extends AbstractStep>>> getEnabledDagPathList(){
+    public List<List<String>> getEnabledDagPathList(){
 
         return this.enabledDagPath;
     }
+    
+    public StepRateLimitObject getStepRateLimit(String stepName) throws Exception{
 
-    public StepRateLimitObject getStepRateLimit(Class<? extends AbstractStep> stepClass){
-
-        if(stepRateLimitMap.containsKey(stepClass.getName())){
-            return stepRateLimitMap.get(stepClass.getName());
+        if(stepRateLimitMap.containsKey(stepName)){
+            return stepRateLimitMap.get(stepName);
         }
         else{
 
@@ -78,7 +88,8 @@ public class ConnectorConfiguration {
 
             StepRateLimitObject stepRateLimitObject = new StepRateLimitObject();
 
-            FreshHierarchy freshHierarchy = stepClass.getAnnotation(FreshHierarchy.class);
+            Class<?> x = Class.forName(stepName);
+            FreshHierarchy freshHierarchy = x.getAnnotation(FreshHierarchy.class);
 
             if(freshHierarchy != null){
 
@@ -104,7 +115,6 @@ public class ConnectorConfiguration {
                 stepRateLimitObject.setNumberOfApiCalls(DEFAULT_RATE_LIMIT_API_CALLS);
             }
 
-            
             return stepRateLimitObject;
         }
         

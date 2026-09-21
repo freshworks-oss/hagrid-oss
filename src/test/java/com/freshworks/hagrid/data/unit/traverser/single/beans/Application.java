@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.traverser.single.beans;
+package com.freshworks.hagrid.data.unit.traverser.single.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.processor.AbstractBean;

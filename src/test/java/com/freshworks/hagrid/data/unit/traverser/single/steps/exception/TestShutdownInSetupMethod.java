@@ -1,9 +1,9 @@
-package com.freshworks.core.data.unit.traverser.single.steps.exception;
+package com.freshworks.hagrid.data.unit.traverser.single.steps.exception;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.dag.steps.Authentication;
-import com.freshworks.core.data.unit.traverser.single.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.steps.Authentication;
+import com.freshworks.hagrid.data.unit.traverser.single.beans.Application;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;

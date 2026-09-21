@@ -1,4 +1,4 @@
-package com.freshworks.core.processor;
+package com.freshworks.hagrid.processor;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -14,8 +14,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.freshworks.core.TestUtility;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.TestUtility;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.processor.AssetAssetDependencyService;
 import com.freshworks.hagrid.processor.ProcessorConfigService;
@@ -51,9 +51,9 @@ public class TestAssetAssetDependencyService {
         mockFacadeProcessorConfigService.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        outer = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.Outer");
-        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.inner.Inner");
-        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.core.data.unit.dag.assets.complex_asset.inner.inner_most.InnerMost");
+        outer = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.complex_asset.Outer");
+        innerAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.complex_asset.inner.Inner");
+        innerMostAsset = (Class<? extends AbstractAsset>) Class.forName("com.freshworks.hagrid.data.unit.dag.assets.complex_asset.inner.inner_most.InnerMost");
     }
 
     @Test

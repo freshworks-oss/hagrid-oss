@@ -1,4 +1,4 @@
-package com.freshworks.core;
+package com.freshworks.hagrid;
 
 import com.mongodb.client.MongoClient;
 import org.springframework.util.ReflectionUtils;

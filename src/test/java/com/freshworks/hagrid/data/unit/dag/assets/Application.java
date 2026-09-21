@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.assets;
+package com.freshworks.hagrid.data.unit.dag.assets;
 
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
@@ -12,7 +12,7 @@ public class Application extends AbstractAsset {
 
     String id;
 
-    public void setFromBean(com.freshworks.core.data.unit.dag.beans.Application application){
+    public void setFromBean(com.freshworks.hagrid.data.unit.dag.beans.Application application){
         this.id = application.getClazz();
     }
 

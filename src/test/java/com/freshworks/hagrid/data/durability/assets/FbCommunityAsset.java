@@ -1,4 +1,4 @@
-package com.freshworks.core.data.durability.assets;
+package com.freshworks.hagrid.data.durability.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,7 +23,7 @@ public class FbCommunityAsset extends AbstractAsset {
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbCommunityBean community){
+    public void setBatchFromBean(com.freshworks.hagrid.data.durability.beans.FbCommunityBean community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

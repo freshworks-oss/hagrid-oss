@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 
 
@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
@@ -73,13 +73,13 @@ public class TestTraverserConfigService{
     @Test
     public void testTraverseWhenLoadedConfigureRateLimitViaFreshHierarchyAnnotation() throws Exception {
 
-        Class<? extends AbstractStep> sc = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
+        Class<? extends AbstractStep> sc = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestServicePrinciple");
 
         DagNode servicePrincipal = mockFacadeDagNode
                 .name(sc)
                 .build();
 
-        Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        Class<? extends AbstractStep> c = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestApplication");
         DagNode applicationNode = mockFacadeDagNode
                 .name(c)
                 .children(new LinkedHashMap<>(Map.of(servicePrincipal, new NodeRelationship())))
@@ -103,14 +103,14 @@ public class TestTraverserConfigService{
 
         doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any());
 
-        StepRateLimitObject stepRateLimitNode = traverseConfigService.getRateLimitForStep(c);
+        StepRateLimitObject stepRateLimitNode = traverseConfigService.getRateLimitForStep(c.getName());
 
         assertThat(stepRateLimitNode.getNumberOfApiCalls(), is(20));
         assertThat(stepRateLimitNode.getDurationInSeconds(), is(100));
 
 
     
-        stepRateLimitNode = traverseConfigService.getRateLimitForStep(sc);
+        stepRateLimitNode = traverseConfigService.getRateLimitForStep(sc.getName());
 
         assertThat(stepRateLimitNode.getNumberOfApiCalls(), is(800));
         assertThat(stepRateLimitNode.getDurationInSeconds(), is(1));

@@ -1,9 +1,9 @@
-package com.freshworks.core.data.unit.traverser.single.steps;
+package com.freshworks.hagrid.data.unit.traverser.single.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.dag.steps.Authentication;
-import com.freshworks.core.data.unit.traverser.single.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.steps.Authentication;
+import com.freshworks.hagrid.data.unit.traverser.single.beans.Application;
 import com.freshworks.hagrid.traverser.*;
 import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
 import com.freshworks.hagrid.traverser.exception.StepFailedException;

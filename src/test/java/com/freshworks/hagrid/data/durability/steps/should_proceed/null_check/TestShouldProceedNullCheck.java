@@ -1,8 +1,8 @@
-package com.freshworks.core.data.durability.steps.should_proceed.null_check;
+package com.freshworks.hagrid.data.durability.steps.should_proceed.null_check;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.durability.beans.FbUserBean;
+import com.freshworks.hagrid.data.durability.beans.FbUserBean;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;

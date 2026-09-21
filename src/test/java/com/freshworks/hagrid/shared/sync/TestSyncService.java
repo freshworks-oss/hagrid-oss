@@ -1,10 +1,10 @@
-package com.freshworks.core.shared.sync;
+package com.freshworks.hagrid.shared.sync;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.data.unit.dag.steps.TestUser;
-import com.freshworks.core.data.unit.fb.steps.FbComment;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.traverser.MockFacadeDagService;
+import com.freshworks.hagrid.data.unit.dag.steps.TestUser;
+import com.freshworks.hagrid.data.unit.fb.steps.FbComment;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.traverser.MockFacadeDagService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.shared.sync.SyncService;
@@ -55,15 +55,15 @@ public class TestSyncService {
         StepRateLimitObject stepRateLimitObject = new StepRateLimitObject();
         stepRateLimitObject.setDurationInSeconds(1);
         stepRateLimitObject.setNumberOfApiCalls(100);
-        configuration.setStepRateLimit(FbComment.class, stepRateLimitObject);
+        configuration.setStepRateLimit(FbComment.class.getName(), stepRateLimitObject);
 
 
         SyncService syncService = mockFacadeSyncService.build();
-        doCallRealMethod().when(syncService).configureSync(anyString(), any(), any(), any());
+        doCallRealMethod().when(syncService).configureWithStaticSteps(anyString(), any(), any(), any());
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync("my_name_space", ParentStep.class, ImmutableMap.<String, String>builder().build(), configuration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps("my_name_space", ParentStep.class, ImmutableMap.<String, String>builder().build(), configuration);
         TraverseConfigService traverseConfigService = syncServiceContainer.getBean(TraverseConfigService.class);
-        stepRateLimitObject = traverseConfigService.getRateLimitForStep(FbComment.class);
+        stepRateLimitObject = traverseConfigService.getRateLimitForStep(FbComment.class.getName());
         assertThat(stepRateLimitObject.getDurationInSeconds(), Matchers.is(1));
         assertThat(stepRateLimitObject.getNumberOfApiCalls(), Matchers.is(100));
     }

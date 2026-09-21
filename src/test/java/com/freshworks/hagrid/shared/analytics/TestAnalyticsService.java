@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.analytics;
+package com.freshworks.hagrid.shared.analytics;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;

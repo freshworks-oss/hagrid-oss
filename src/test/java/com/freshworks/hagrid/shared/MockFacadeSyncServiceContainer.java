@@ -1,4 +1,4 @@
-package com.freshworks.core.shared;
+package com.freshworks.hagrid.shared;
 
 import java.util.HashMap;
 
@@ -7,7 +7,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.mockito.Mockito;
-import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.hagrid.MockFacadeInterface;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 
 @Component

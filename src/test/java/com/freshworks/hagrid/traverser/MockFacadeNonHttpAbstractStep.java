@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -10,9 +10,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.traverser.net.MockFacadeRequestResponseContainer;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.traverser.net.MockFacadeRequestResponseContainer;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.NonHttpAbstractStep;

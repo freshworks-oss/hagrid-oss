@@ -1,4 +1,4 @@
-package com.freshworks.core.mockFacade;
+package com.freshworks.hagrid.mockFacade;
 
 public interface ConfigurableMockFacade {
 

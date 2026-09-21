@@ -1,4 +1,4 @@
-package com.freshworks.core.data.performance.fb.assets;
+package com.freshworks.hagrid.data.performance.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -30,7 +30,7 @@ public class FbComment extends AbstractAsset {
     String comment_title;
     String comment_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbComment comment){
+    public void setBatchFromBean(com.freshworks.hagrid.data.performance.fb.beans.FbComment comment){
 
         userId = comment.getUser_id();
         comment_id = comment.getComment_id();

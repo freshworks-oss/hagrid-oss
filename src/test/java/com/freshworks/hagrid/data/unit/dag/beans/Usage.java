@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.beans;
+package com.freshworks.hagrid.data.unit.dag.beans;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;

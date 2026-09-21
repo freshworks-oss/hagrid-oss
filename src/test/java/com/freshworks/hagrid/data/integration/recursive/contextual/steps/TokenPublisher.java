@@ -1,11 +1,11 @@
-package com.freshworks.core.data.integration.recursive.contextual.steps;
+package com.freshworks.hagrid.data.integration.recursive.contextual.steps;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.data.integration.recursive.contextual.beans.PublishedBean;
+import com.freshworks.hagrid.data.integration.recursive.contextual.beans.PublishedBean;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;

@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.processor.joins.beans;
+package com.freshworks.hagrid.data.unit.processor.joins.beans;
 
 import org.springframework.context.annotation.Profile;
 

@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
@@ -26,10 +26,10 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitritedbList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbList;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.executor.SharedExecutorService;
@@ -90,7 +90,7 @@ public class TestDagNodePerParentTraversalService {
         dagNodeMockFacade.configure().build();
         mockFacadeSyncServiceContainer.configure().build();
 
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestApplication");
     }
 
     @Test

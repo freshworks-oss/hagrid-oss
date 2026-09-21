@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.dag.assets;
+package com.freshworks.hagrid.data.unit.dag.assets;
 
 import lombok.Data;
 import org.springframework.context.annotation.Conditional;
@@ -16,7 +16,7 @@ public class Usage extends AbstractAsset {
     String usage;
     SyncServiceContainer syncServiceContainer;
 
-    public void setFromBean(com.freshworks.core.data.unit.dag.beans.Usage usage){
+    public void setFromBean(com.freshworks.hagrid.data.unit.dag.beans.Usage usage){
 
     }
 

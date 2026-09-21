@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.sync;
+package com.freshworks.hagrid.shared.sync;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.SyncService;
 
@@ -57,7 +57,7 @@ public class MockFacadeSyncService implements MockFacadeInterface {
     public SyncService build() throws Exception {
         syncService = applicationContext.getBean(SyncService.class);
         SyncService syncServiceSpy = Mockito.spy(syncService);
-        doAnswer(configureSync.answer()).when(syncServiceSpy).configureSync(anyString(), any(), any(), any());
+        doAnswer(configureSync.answer()).when(syncServiceSpy).configureWithStaticSteps(anyString(), any(), any(), any());
         doNothing().when(syncServiceSpy).shutdown();
         return syncServiceSpy;
     }

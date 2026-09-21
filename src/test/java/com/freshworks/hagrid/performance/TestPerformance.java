@@ -1,4 +1,4 @@
-package com.freshworks.core.performance;
+package com.freshworks.hagrid.performance;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -22,10 +22,10 @@ import org.springframework.context.ApplicationContext;
 
 import com.esotericsoftware.kryo.kryo5.util.ObjectMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.performance.fb.assets.FbComment;
-import com.freshworks.core.data.performance.fb.assets.FbUser;
-import com.freshworks.core.data.performance.fb.assets.non_primitive_assets.FbUserComment;
-import com.freshworks.core.data.performance.fb.steps.FbUserServer;
+import com.freshworks.hagrid.data.performance.fb.assets.FbComment;
+import com.freshworks.hagrid.data.performance.fb.assets.FbUser;
+import com.freshworks.hagrid.data.performance.fb.assets.non_primitive_assets.FbUserComment;
+import com.freshworks.hagrid.data.performance.fb.steps.FbUserServer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
@@ -78,7 +78,7 @@ public class TestPerformance {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         MDC.put("mdc_key", "mdc_value");
-        SyncServiceContainer syncServiceContainer = syncService.configureSync("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -143,7 +143,7 @@ public class TestPerformance {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         MDC.put("mdc_key", "mdc_value");
-        SyncServiceContainer syncServiceContainer = syncService.configureSync("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps("ten_million_performance_test" + "_" + formattedDateTime + "_" + number, ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -195,7 +195,7 @@ public class TestPerformance {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureSync("ten_million_performance_test" + "_" + formattedDateTime,  ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps("ten_million_performance_test" + "_" + formattedDateTime,  ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -226,7 +226,7 @@ public class TestPerformance {
                     ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                         .build();
 
-                    SyncServiceContainer syncServiceContainer = syncService.configureSync(UUID.randomUUID().toString(),  FbUserServer.class, x, connectorConfiguration);
+                    SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(UUID.randomUUID().toString(),  FbUserServer.class, x, connectorConfiguration);
                     syncService.startSync();
 
                     SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);

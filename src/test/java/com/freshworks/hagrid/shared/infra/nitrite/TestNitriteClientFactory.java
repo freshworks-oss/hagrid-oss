@@ -1,4 +1,4 @@
-package com.freshworks.core.shared.infra.nitrite;
+package com.freshworks.hagrid.shared.infra.nitrite;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.infra.MockFacadeInfraConfigService;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.infra.InfraConfigService;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteFactory;

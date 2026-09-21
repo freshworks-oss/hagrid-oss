@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 
 import static org.mockito.ArgumentMatchers.any;
@@ -11,9 +11,9 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.SimpleMockUtility;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.DagNodeTraversalService;
 

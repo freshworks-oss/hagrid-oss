@@ -1,7 +1,7 @@
-package com.freshworks.core.traverser.configuration;
+package com.freshworks.hagrid.traverser.configuration;
 
-import com.freshworks.core.data.unit.dag.steps.*;
-import com.freshworks.core.data.unit.dag.steps.loop.StepA;
+import com.freshworks.hagrid.data.unit.dag.steps.*;
+import com.freshworks.hagrid.data.unit.dag.steps.loop.StepA;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.DagService;
 

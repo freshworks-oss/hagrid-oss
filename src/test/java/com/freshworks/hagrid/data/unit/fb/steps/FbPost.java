@@ -1,4 +1,4 @@
-package com.freshworks.core.data.unit.fb.steps;
+package com.freshworks.hagrid.data.unit.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -160,7 +160,7 @@ public class FbPost extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("data").get("posts"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.unit.fb.beans.FbPost.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.data.unit.fb.beans.FbPost.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

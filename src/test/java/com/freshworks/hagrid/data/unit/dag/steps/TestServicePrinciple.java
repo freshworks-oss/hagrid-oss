@@ -1,8 +1,8 @@
-package com.freshworks.core.data.unit.dag.steps;
+package com.freshworks.hagrid.data.unit.dag.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.dag.beans.Application;
+import com.freshworks.hagrid.data.unit.dag.beans.Application;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.HttpAbstractStep;
@@ -37,7 +37,7 @@ public class TestServicePrinciple extends HttpAbstractStep {
     @Override
     public void setup(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws StepFailedException {
 
-        this.token = com.freshworks.core.data.unit.dag.steps.Authentication.getAuthtoken();
+        this.token = com.freshworks.hagrid.data.unit.dag.steps.Authentication.getAuthtoken();
     }
 
     @Override

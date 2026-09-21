@@ -1,4 +1,4 @@
-package com.freshworks.core;
+package com.freshworks.hagrid;
 
 public class TestUtility {
     

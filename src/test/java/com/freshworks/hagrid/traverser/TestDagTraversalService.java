@@ -1,4 +1,4 @@
-package com.freshworks.core.traverser;
+package com.freshworks.hagrid.traverser;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -14,11 +14,11 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
-import com.freshworks.core.shared.SimpleMockUtility;
-import com.freshworks.core.shared.infra.MockFacadeInfraConfigService;
-import com.freshworks.core.shared.infra.nitrite.MockFacadeNitriteDbService;
-import com.freshworks.core.shared.sync.MockFacadeSyncStatusService;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.shared.SimpleMockUtility;
+import com.freshworks.hagrid.shared.infra.MockFacadeInfraConfigService;
+import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitriteDbService;
+import com.freshworks.hagrid.shared.sync.MockFacadeSyncStatusService;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.executor.SharedExecutorService;
@@ -73,9 +73,9 @@ public class TestDagTraversalService {
         mockFacadeSyncStatusService.configure().build();
         mockFacadeInfraConfigService.configure().build();
 
-        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestAppRoleAssignment");
-        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestApplication");
-        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.core.data.unit.dag.steps.TestServicePrinciple");
+        appRoleAssignmentStep = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestAppRoleAssignment");
+        application = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestApplication");
+        servicePrinciple = (Class<? extends AbstractStep>) Class.forName("com.freshworks.hagrid.data.unit.dag.steps.TestServicePrinciple");
     }
 
 

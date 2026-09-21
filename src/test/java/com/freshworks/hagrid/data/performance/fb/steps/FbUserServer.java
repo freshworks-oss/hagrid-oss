@@ -1,4 +1,4 @@
-package com.freshworks.core.data.performance.fb.steps;
+package com.freshworks.hagrid.data.performance.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.data.performance.fb.beans.*;
+import com.freshworks.hagrid.data.performance.fb.beans.*;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
@@ -119,7 +119,7 @@ public class FbUserServer extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.performance.fb.beans.FbUser.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.data.performance.fb.beans.FbUser.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

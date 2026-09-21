@@ -1,4 +1,4 @@
-package com.freshworks.core.data.performance.fb.assets;
+package com.freshworks.hagrid.data.performance.fb.assets;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,7 +24,7 @@ public class FbCommunity extends AbstractAsset {
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.hagrid.data.performance.fb.beans.FbCommunity community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

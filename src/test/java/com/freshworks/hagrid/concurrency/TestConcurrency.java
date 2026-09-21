@@ -1,6 +1,6 @@
-package com.freshworks.core.concurrency;
+package com.freshworks.hagrid.concurrency;
 
-import com.freshworks.core.data.concurrency.fb.assets.FbCommentAsset;
+import com.freshworks.hagrid.data.concurrency.fb.assets.FbCommentAsset;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraService;
@@ -56,7 +56,7 @@ public class TestConcurrency {
 
 
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(namespace, ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
 
         return syncServiceContainer;
@@ -82,7 +82,7 @@ public class TestConcurrency {
                 .put("numberOfCommunityPagination", "1")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
         SyncService syncService = applicationContext.getBean(SyncService.class);
-        SyncServiceContainer syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithStaticSteps(namespace, ParentStep.class, x, connectorConfiguration);
         syncService.startSync();
         return syncServiceContainer;
     }

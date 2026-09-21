@@ -1,13 +1,13 @@
-package com.freshworks.core.runners;
+package com.freshworks.hagrid.runners;
 
 import org.junit.platform.suite.api.*;
 
 @Suite
 @SelectPackages({
-        "com.freshworks.core.traverser",
-        "com.freshworks.core.shared",
-        "com.freshworks.core.processor",
-        // "com.freshworks.core.shared.infra.inmemory"
+        "com.freshworks.hagridtraverser",
+        "com.freshworks.hagridshared",
+        "com.freshworks.hagridprocessor",
+        // "com.freshworks.hagridshared.infra.inmemory"
 })
 public class UnitSuiteRunner {
 

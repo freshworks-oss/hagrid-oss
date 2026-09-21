@@ -1,4 +1,4 @@
-package com.freshworks.core.data.integration.recursive.contextual.beans;
+package com.freshworks.hagrid.data.integration.recursive.contextual.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.processor.AbstractBean;

@@ -46,8 +46,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
 
     }
 
-    public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap,
-            JsonNode... parentJsonObject) throws Exception{
+    public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
         
         this.syncServiceContainer = getSyncServiceContainer();
         this.actionInput = baggageMap;

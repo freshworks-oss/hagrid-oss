@@ -149,9 +149,7 @@ public class DagNodeTraversalService implements Callable<Void> {
             node.saveSyncResult("{}");
             node.setNodeSuccessful();
         } else {
-
-            AbstractStep step = syncServiceContainer.getBean(node.getName());
-            StepRateLimitObject jsonNode = this.traverseConfigService.getRateLimitForStep(step.getClass());
+            StepRateLimitObject jsonNode = this.traverseConfigService.getRateLimitForStep(node.getName());
             List<DagNode> parentNodeList = new ArrayList<>();
             int rateLimit = jsonNode.getNumberOfApiCalls();
             int rateLimitDuration = jsonNode.getDurationInSeconds();

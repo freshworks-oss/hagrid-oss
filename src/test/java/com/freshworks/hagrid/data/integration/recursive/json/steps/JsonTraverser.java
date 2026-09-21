@@ -1,10 +1,10 @@
-package com.freshworks.core.data.integration.recursive.json.steps;
+package com.freshworks.hagrid.data.integration.recursive.json.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.data.integration.recursive.json.beans.GeneratedJson;
-import com.freshworks.core.data.integration.recursive.json.beans.NonPrimitiveKeyValue;
+import com.freshworks.hagrid.data.integration.recursive.json.beans.GeneratedJson;
+import com.freshworks.hagrid.data.integration.recursive.json.beans.NonPrimitiveKeyValue;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;

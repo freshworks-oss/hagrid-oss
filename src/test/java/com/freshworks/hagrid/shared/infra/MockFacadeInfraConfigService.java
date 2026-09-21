@@ -1,8 +1,8 @@
-package com.freshworks.core.shared.infra;
+package com.freshworks.hagrid.shared.infra;
 
-import com.freshworks.core.MockFacadeInterface;
-import com.freshworks.core.ReturnableMockTypeList;
-import com.freshworks.core.shared.MockFacadeSyncServiceContainer;
+import com.freshworks.hagrid.MockFacadeInterface;
+import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.infra.InfraConfigService;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;

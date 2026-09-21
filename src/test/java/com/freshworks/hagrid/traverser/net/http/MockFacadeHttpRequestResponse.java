@@ -1,6 +1,6 @@
-package com.freshworks.core.traverser.net.http;
+package com.freshworks.hagrid.traverser.net.http;
 
-import com.freshworks.core.MockFacadeInterface;
+import com.freshworks.hagrid.MockFacadeInterface;
 import com.freshworks.hagrid.traverser.net.http.HttpRequest;
 import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.freshworks.hagrid.traverser.net.http.HttpResponse;
