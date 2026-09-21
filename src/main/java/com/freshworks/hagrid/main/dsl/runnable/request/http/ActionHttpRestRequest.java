@@ -1,4 +1,4 @@
-package com.freshworks.uip.worker.hagrid.dsl.runnable.request.http;
+package com.freshworks.hagrid.main.dsl.runnable.request.http;
 
 import java.util.Map;
 
@@ -13,10 +13,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.ActionResponse;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
 
 import groovy.lang.Closure;
 import lombok.Getter;

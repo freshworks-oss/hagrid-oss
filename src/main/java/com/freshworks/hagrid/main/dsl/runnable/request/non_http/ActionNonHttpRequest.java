@@ -1,11 +1,11 @@
-package com.freshworks.uip.worker.hagrid.dsl.runnable.request.non_http;
+package com.freshworks.hagrid.main.dsl.runnable.request.non_http;
 
 import java.util.Map;
 
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.ActionRequest;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.ActionResponse;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 
 public class ActionNonHttpRequest implements ActionRequest{
 

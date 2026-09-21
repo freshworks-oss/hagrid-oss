@@ -1,10 +1,10 @@
-package com.freshworks.uip.worker.hagrid.dsl.runnable.request;
+package com.freshworks.hagrid.main.dsl.runnable.request;
 
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_TYPE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "clazz", visible = true)
 public interface ActionRequest {

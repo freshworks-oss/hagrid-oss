@@ -1,11 +1,11 @@
-package com.freshworks.uip.worker.hagrid.dsl.services.resolvers.request.http;
+package com.freshworks.hagrid.main.dsl.services.resolvers.request.http;
 
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.http.ActionHttpRestRequest;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig;
+import com.freshworks.hagrid.main.dsl.runnable.request.http.ActionHttpRestRequest;
 
 @Component
 public class SoapHttpResolver {

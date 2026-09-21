@@ -1,4 +1,4 @@
-package com.freshworks.uip.worker.hagrid.dsl.services.resolvers.request.http;
+package com.freshworks.hagrid.main.dsl.services.resolvers.request.http;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -6,12 +6,12 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.config.requests.RequestConfig.REQUEST_TYPE;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.ActionRequest;
-import com.freshworks.uip.worker.hagrid.dsl.runnable.request.http.ActionHttpRequest;
-import com.freshworks.uip.worker.hagrid.dsl.services.resolvers.request.nonhttp.NonHttpRequestResolver;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
+import com.freshworks.hagrid.main.dsl.runnable.request.http.ActionHttpRequest;
+import com.freshworks.hagrid.main.dsl.services.resolvers.request.nonhttp.NonHttpRequestResolver;
 
 @Component
 public class HttpRequestResolver {

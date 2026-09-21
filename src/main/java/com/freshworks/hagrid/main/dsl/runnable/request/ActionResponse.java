@@ -1,4 +1,4 @@
-package com.freshworks.uip.worker.hagrid.dsl.runnable.request;
+package com.freshworks.hagrid.main.dsl.runnable.request;
 
 import java.util.Map;
 
