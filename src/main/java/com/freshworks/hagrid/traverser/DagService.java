@@ -20,6 +20,7 @@ import org.reflections.Reflections;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.freshworks.hagrid.main.steps.GenericNonHttpStep;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
@@ -153,7 +154,13 @@ public class DagService {
         Set<Class<? extends AbstractStep>> steps = new HashSet<>();
         
         for(AbstractStep abstractStep : abstractStepList){
-            steps.add(abstractStep.getClass());
+
+            // I have added a condition here to make sure that when static Dag Creation is going on then 
+            // it does not pull GenericNonHttp step which is used for dsl based Dag execution
+            if(!abstractStep.getClass().getName().equalsIgnoreCase(GenericNonHttpStep.class.getName())){
+                steps.add(abstractStep.getClass());
+            }
+            
         }
 
         // Go through each step

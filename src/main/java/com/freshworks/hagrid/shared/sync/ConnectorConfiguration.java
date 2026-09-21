@@ -48,7 +48,7 @@ public class ConnectorConfiguration {
     int DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS = 1;
 
     // This method is used internally by the sync service to configure whether the current execution is based on static steps or dsl based dag
-    boolean dslBasedExecution = true;
+    boolean dslBasedExecution = false;
 
     public ConnectorConfiguration(){
         this.infraDbType = "file";

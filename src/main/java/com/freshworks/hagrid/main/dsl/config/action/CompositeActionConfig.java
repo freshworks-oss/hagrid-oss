@@ -79,7 +79,9 @@ public class CompositeActionConfig {
 
         // Check if composite action has just one action 
         if(actionConfigList.size() == 1){
-            rootActionConfigList.add(actionConfigList.get(0));
+            ActionConfig actionConfig = actionConfigList.get(0);
+            actionConfig.setRootNode(true);
+            rootActionConfigList.add(actionConfig);
         }
 
         else{
@@ -119,9 +121,18 @@ public class CompositeActionConfig {
             }
             
 
-            // Create list of child nodes for this parentNodes
+            // Create list of child nodes for this parentNode
             actionConfigList.stream()
-            .filter( actionConfig -> actionConfig.getParentActionName().equalsIgnoreCase(parentConfig.getName()))
+            .filter( actionConfig -> {
+        
+                if(actionConfig.getParentActionName() != null && actionConfig.getParentActionName().equalsIgnoreCase(parentConfig.getName())){
+
+                    return true;
+                }
+
+                return false;  
+            })
+            
             .forEach( actionConfig -> {
                     
                     // Check if this actionConfig is already traversed
