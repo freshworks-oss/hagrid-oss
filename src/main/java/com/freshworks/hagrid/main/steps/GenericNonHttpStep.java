@@ -44,6 +44,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     @Override
     public void setupNonHttp(ImmutableMap<String, String> actionInput, JsonNode... parentJsonObject) throws StepFailedException{
 
+        // First configure the action service 
+        this.actionService.setup(parentJsonObject);
     }
 
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
@@ -60,6 +62,10 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         }
         getSyncServiceContainer().add(this.actionService, ActionService.class);
 
+        // First configure the action service 
+        this.actionService.configure(actionName, newInputMap, parentJsonObject);
+
+        // Now starts calling the the step methods 
         return this.actionService.shouldProceedWithParent(parentJsonObject);
     }
 

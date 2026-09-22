@@ -5,6 +5,7 @@ package com.freshworks.hagrid.traverser;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 
 import java.util.HashMap;
@@ -21,11 +22,11 @@ import org.springframework.test.context.ActiveProfiles;
 import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.hagrid.traverser.AbstractStep;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.NodeRelationship;
 import com.freshworks.hagrid.traverser.TraverseConfigService;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 
 
 @SpringBootTest
@@ -101,9 +102,10 @@ public class TestTraverserConfigService{
 
         traverseConfigService.configure(syncServiceContainer);
 
-        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any());
+        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(anyString());
+        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any(DagNode.class));
 
-        StepRateLimitObject stepRateLimitNode = traverseConfigService.getRateLimitForStep(c.getName());
+        NodeRateLimitObject stepRateLimitNode = traverseConfigService.getRateLimitForStep(c.getName());
 
         assertThat(stepRateLimitNode.getNumberOfApiCalls(), is(20));
         assertThat(stepRateLimitNode.getDurationInSeconds(), is(100));

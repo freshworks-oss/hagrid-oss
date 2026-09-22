@@ -103,7 +103,7 @@ public class TestDagService {
 
 
     @Test
-    public void testDagIsCreatedSuccessfully() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagIsCreatedSuccessfully() throws Exception {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.rootNode = this.dagScannerService.scanner(this.traverseConfigService, analyticsService);
@@ -331,7 +331,7 @@ public class TestDagService {
 
 
     @Test
-    public void testDagIsCorrectWhenSomeStepsAreStaticallyIgnored() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagIsCorrectWhenSomeStepsAreStaticallyIgnored() throws Exception {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.rootNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);
@@ -340,7 +340,7 @@ public class TestDagService {
 
 
     @Test
-    public void testDagIsCorrectWithRightHierarchy() throws IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public void testDagIsCorrectWithRightHierarchy() throws Exception {
 
         this.analyticsService = analyticsFactory.getAnalyticsService("abc");
         this.rootNode = this.dagScannerService.scanner(traverseConfigService, analyticsService);

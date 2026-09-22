@@ -1,0 +1,11 @@
+{
+    "java.test.config": [
+        {
+            "name": "defaultProfile",
+            "vmArgs": [
+                "-Dspring.profiles.active=integration"
+            ]
+        }
+    ],
+    "java.compile.nullAnalysis.mode": "automatic"
+}

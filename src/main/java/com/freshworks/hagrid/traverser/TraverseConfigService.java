@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 
 @Component
 @Scope(value="prototype")
@@ -15,6 +15,7 @@ public class TraverseConfigService {
 
     SyncServiceContainer syncServiceContainer;
     ConnectorConfiguration connectorConfiguration;
+    DagNode rootNode;
 
     public void configure(SyncServiceContainer syncServiceContainer) throws ClassNotFoundException, IllegalAccessException, IOException {
         this.syncServiceContainer = syncServiceContainer;
@@ -26,8 +27,30 @@ public class TraverseConfigService {
         return connectorConfiguration.getTraverserThreadCount();
     }
 
-    public StepRateLimitObject getRateLimitForStep(String stepName) throws Exception{
+    public NodeRateLimitObject getRateLimitForStep(DagNode dagNode) throws Exception{
 
-        return this.connectorConfiguration.getStepRateLimit(stepName);
+       this.rootNode = this.syncServiceContainer.getBean(DagNode.class);
+       NodeRateLimitObject nodeRateLimitObject =  this.connectorConfiguration.getNodeRateLimitObject(dagNode.getName());
+
+       if(nodeRateLimitObject == null){
+        return dagNode.getNodeRateLimitObject();
+       }
+       else{
+        return nodeRateLimitObject;
+       }
+    }
+
+    public NodeRateLimitObject getRateLimitForStep(Class<? extends AbstractStep> clazz) throws Exception{
+
+      this.rootNode = this.syncServiceContainer.getBean(DagNode.class);
+       DagNode node = this.rootNode.find(clazz.getName());
+       return getRateLimitForStep(node);
+    }
+
+    public NodeRateLimitObject getRateLimitForStep(String clazzName) throws Exception{
+
+       this.rootNode = this.syncServiceContainer.getBean(DagNode.class);
+       DagNode node = this.rootNode.find(clazzName);
+       return getRateLimitForStep(node);
     }
 }

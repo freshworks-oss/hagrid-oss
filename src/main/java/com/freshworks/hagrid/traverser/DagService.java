@@ -29,6 +29,7 @@ import com.freshworks.hagrid.shared.infra.InfraService;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.traverser.Annotations.CustomDagNode;
 import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 import com.freshworks.hagrid.traverser.NodeRelationship.REL_SWITCH;
 import com.google.common.collect.Lists;
 
@@ -53,6 +54,10 @@ public class DagService {
     NamespaceService namespaceService;
     AnalyticsService analyticsService;
     ConnectorConfiguration connectorConfiguration;
+
+    int DEFAULT_RATE_LIMIT_API_CALLS = 100;
+    int DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS = 1;
+
 
     public void configure(SyncServiceContainer syncServiceContainer){
         this.syncServiceContainer = syncServiceContainer;
@@ -117,7 +122,7 @@ public class DagService {
     }
 
 
-    public DagNode scanner(TraverseConfigService traverseConfigService, AnalyticsService analyticsService) throws ClassNotFoundException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public DagNode scanner(TraverseConfigService traverseConfigService, AnalyticsService analyticsService) throws Exception {
 
         List<String> dagNodeShortNameTempStorage = new ArrayList();
         DagNode treeNode =   createDAG(abstractStepList, analyticsService);
@@ -146,7 +151,7 @@ public class DagService {
         return result;
     }
 
-    protected DagNode createDAG(List<AbstractStep> abstractStepList, AnalyticsService analyticsService) throws ClassNotFoundException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+    protected DagNode createDAG(List<AbstractStep> abstractStepList, AnalyticsService analyticsService) throws Exception {
 
         HashMap<String, DagNode> nodeNameWithNodeObjectMap = new HashMap<>();
         DagNode root = new DagNode(ParentStep.class.getName());
@@ -182,6 +187,7 @@ public class DagService {
                 childNode = getCustomNodeObject(clazz);
                 if(childNode == null) {
                     childNode = new DagNode(clazz.getName());
+                    setNodeRateLimitObject(childNode);
                 }
                 nodeNameWithNodeObjectMap.put(clazz.getName(), childNode);
             }
@@ -198,6 +204,7 @@ public class DagService {
                     parentNode = getCustomNodeObject(parentClass);
                     if(parentNode == null) {
                         parentNode = new DagNode(parentClass.getName());
+                        setNodeRateLimitObject(parentNode);
                     }
                     nodeNameWithNodeObjectMap.put(parentClass.getName(), parentNode);
                 }
@@ -222,6 +229,41 @@ public class DagService {
         Class<?> clazz = Class.forName(clazzName, false, DagService.class.getClassLoader());
         FreshHierarchy freshHierarchy = clazz.getAnnotation(FreshHierarchy.class);
         return freshHierarchy.ignore();
+    }
+
+
+    public void setNodeRateLimitObject(DagNode node) throws Exception{
+
+        NodeRateLimitObject stepRateLimitObject = new NodeRateLimitObject();
+
+        Class<?> x = Class.forName(node.getName());
+        FreshHierarchy freshHierarchy = x.getAnnotation(FreshHierarchy.class);
+
+        if(freshHierarchy != null){
+
+            int durationInSeconds = freshHierarchy.duration();
+
+            if(durationInSeconds == 0 ){
+                durationInSeconds = DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS;
+            }
+
+            int numberOfApiCalls = freshHierarchy.rateLimit();
+
+            if(numberOfApiCalls == 0 ){
+                numberOfApiCalls = DEFAULT_RATE_LIMIT_API_CALLS;
+            }
+
+            stepRateLimitObject.setDurationInSeconds(durationInSeconds);
+            stepRateLimitObject.setNumberOfApiCalls(numberOfApiCalls);
+        }
+
+        else{
+            stepRateLimitObject.setDurationInSeconds(DEFAULT_RATE_LIMIT_DURATION_IN_SECONDS);
+            stepRateLimitObject.setNumberOfApiCalls(DEFAULT_RATE_LIMIT_API_CALLS);
+        }
+
+        node.setNodeRateLimitObject(stepRateLimitObject);
+        
     }
 
     private List<Class<?>> getParentClass(Class<?> clazz){

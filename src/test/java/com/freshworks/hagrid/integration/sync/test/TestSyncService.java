@@ -1,15 +1,19 @@
 package com.freshworks.hagrid.integration.sync.test;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.hagrid.data.integration.fb.assets.FbUser;
 import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserComment;
 import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
 import com.freshworks.hagrid.data.integration.recursive.contextual.assets.PublishedAsset;
+import com.freshworks.hagrid.main.assets.GenericAsset;
+import com.freshworks.hagrid.main.dsl.config.action.ActionSpec;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.shared.sync.SyncService;
 import com.freshworks.hagrid.shared.sync.SyncStatusService;
+import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matchers;
@@ -325,5 +329,36 @@ public class TestSyncService {
         assertThat(syncStatusService.getTraverser_status() , Matchers.is(1));
         assertThat(syncStatusService.getProcessor_status() , Matchers.is(1));
 
+    }
+
+    @Test 
+    public void testSyncWhenRunningDynamicDag() throws Exception{
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
+        DagNode parentNode = actionSpec.getCompositeActionByName("action1").getRootNode();
+                
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+                .put("actionName", "action1")
+                .put("waitBetweenCommunityPaginationInMs", "0").build();
+
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), parentNode, "action1" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+
+        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
+
+        while(infraDbCursor.hasNext()){
+            GenericAsset genericAsset = infraDbCursor.getNext();
+            JsonNode node = genericAsset.getOutput();
+            System.out.println(node);
+        }
+
+        // assertThat(syncStatusService.getSyncStatus() , Matchers.is(-1));
+        // assertThat(syncStatusService.getTraverser_status() , Matchers.is(-1));
+        // assertThat(syncStatusService.getProcessor_status() , Matchers.anyOf(Matchers.is(-1), Matchers.is(1)));
+        syncService.shutdown();
     }
 }

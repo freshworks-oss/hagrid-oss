@@ -115,7 +115,6 @@ public class SyncService {
         this.syncServiceContainer.add(this, SyncService.class);
 
         // Add Connector Configuration Object 
-        connectorConfiguration.setDslBasedExecution(false);
         this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 
         // Add unique Identifier
@@ -231,8 +230,7 @@ public class SyncService {
         // Add SyncService ( this ) itself to the container
         this.syncServiceContainer.add(this, SyncService.class);
 
-        // Add Connector Configuration Object 
-        connectorConfiguration.setDslBasedExecution(true);
+        // Add Connector Configuration Object
         this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
 
         // Add unique Identifier

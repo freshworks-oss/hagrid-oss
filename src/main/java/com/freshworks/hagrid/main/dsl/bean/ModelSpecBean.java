@@ -16,9 +16,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-public class ModelSpecConfig {
+public class ModelSpecBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModelSpecConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModelSpecBean.class);
     private static final String MODELS_DSL_RESOURCE = "models.groovy";
 
     @Bean

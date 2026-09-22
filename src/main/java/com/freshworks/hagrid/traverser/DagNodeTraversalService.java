@@ -7,8 +7,8 @@ import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;
 import com.freshworks.hagrid.shared.infra.InfraService;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.hagrid.shared.synchronizers.ServiceTree;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.github.bucket4j.Bandwidth;
@@ -149,7 +149,7 @@ public class DagNodeTraversalService implements Callable<Void> {
             node.saveSyncResult("{}");
             node.setNodeSuccessful();
         } else {
-            StepRateLimitObject jsonNode = this.traverseConfigService.getRateLimitForStep(node.getName());
+            NodeRateLimitObject jsonNode = this.traverseConfigService.getRateLimitForStep(node);
             List<DagNode> parentNodeList = new ArrayList<>();
             int rateLimit = jsonNode.getNumberOfApiCalls();
             int rateLimitDuration = jsonNode.getDurationInSeconds();

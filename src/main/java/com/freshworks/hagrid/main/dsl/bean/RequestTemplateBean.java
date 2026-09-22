@@ -18,10 +18,10 @@ import groovy.lang.GroovyShell;
 
 
 @Configuration
-public class RequestTemplateConfig {
+public class RequestTemplateBean {
     
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestTemplateConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RequestTemplateBean.class);
     private static final String REQUESTS_DSL_RESOURCE = "requests.groovy";
 
     @Bean

@@ -9,8 +9,8 @@ import com.freshworks.hagrid.data.unit.dag.steps.TestApplication;
 import com.freshworks.hagrid.data.unit.dag.steps.TestUser;
 import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.hagrid.traverser.TraverseConfigService;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,14 +33,14 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
     MockFacadeSyncServiceContainer mockFacadeSyncServiceContainer;
 
     ReturnableMockTypeList<Integer> getTraverserThreadCount = new ReturnableMockTypeList<>();
-    ReturnableMockTypeList<StepRateLimitObject> getRateLimitForStep = new ReturnableMockTypeList<>();;
+    ReturnableMockTypeList<NodeRateLimitObject> getRateLimitForStep = new ReturnableMockTypeList<>();;
 
     @Override
     public MockFacadeTraverseConfigService configure(){
         reset();
 
         getTraverserThreadCount.add(1);
-        StepRateLimitObject stepRateLimitObject = new StepRateLimitObject();
+        NodeRateLimitObject stepRateLimitObject = new NodeRateLimitObject();
         stepRateLimitObject.setDurationInSeconds(1);
         stepRateLimitObject.setNumberOfApiCalls(100);
         getRateLimitForStep.add(stepRateLimitObject);
@@ -55,7 +55,7 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
         return this;
     }
 
-    public MockFacadeTraverseConfigService getRateLimitForStep(StepRateLimitObject... stepRateLimitObject){
+    public MockFacadeTraverseConfigService getRateLimitForStep(NodeRateLimitObject... stepRateLimitObject){
         this.getRateLimitForStep.clear();
         this.getRateLimitForStep.add(stepRateLimitObject);
         return this;
@@ -68,7 +68,8 @@ public class MockFacadeTraverseConfigService implements MockFacadeInterface {
         TraverseConfigService traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
         TraverseConfigService traverseConfigServiceSpy = Mockito.spy(traverseConfigService);
         doAnswer(getTraverserThreadCount.answer()).when(traverseConfigServiceSpy).getTraverserThreadCount();
-        doAnswer(getRateLimitForStep.answer()).when(traverseConfigServiceSpy).getRateLimitForStep(any());
+        doAnswer(getRateLimitForStep.answer()).when(traverseConfigServiceSpy).getRateLimitForStep(anyString());
+        doAnswer(getRateLimitForStep.answer()).when(traverseConfigServiceSpy).getRateLimitForStep(any(DagNode.class));
 
         return traverseConfigServiceSpy;
     }

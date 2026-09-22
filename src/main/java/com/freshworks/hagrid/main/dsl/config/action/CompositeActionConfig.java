@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 import com.freshworks.hagrid.main.dsl.config.model.ModelSpec;
 import com.freshworks.hagrid.main.dsl.config.requests.RequestSpec;
 import com.google.common.base.Strings;
@@ -23,7 +24,7 @@ public class CompositeActionConfig {
     List<ActionConfig> actionConfigList = new ArrayList<>();
     ModelSpec modelSpec;
     RequestSpec requestSpec;
-    DagNode rootNode = new DagNode(ParentStep.class.getName());
+    DagNode rootNode = new DagNode(ParentStep.class.getName(), true);
 
     public CompositeActionConfig(ModelSpec modelSpec, RequestSpec requestSpec){
         this.modelSpec = modelSpec;
@@ -115,7 +116,12 @@ public class CompositeActionConfig {
             // now check if parentConfig is root Node 
 
             DagNode parentNode;
-            parentNode = new DagNode(parentConfig.getName());
+            parentNode = new DagNode(parentConfig.getName(), true);
+            NodeRateLimitObject nodeRateLimitObject = new NodeRateLimitObject();
+            nodeRateLimitObject.setDurationInSeconds(1);
+            nodeRateLimitObject.setNumberOfApiCalls(100);
+            parentNode.setNodeRateLimitObject(nodeRateLimitObject);
+            
             if(parentConfig.isRootNode){
                 rootNodeList.add(parentNode);
             }
@@ -138,8 +144,14 @@ public class CompositeActionConfig {
                     // Check if this actionConfig is already traversed
                     if(!alreadyTraversedActionConfig.contains(actionConfig)){
                         stack.add(actionConfig);
-                        DagNode childNode = new DagNode(actionConfig.getName());
+                        DagNode childNode = new DagNode(actionConfig.getName(), true);
                         parentNode.addChild(childNode);
+
+                        NodeRateLimitObject nodeRateLimitObject1 = new NodeRateLimitObject();
+                        nodeRateLimitObject1.setDurationInSeconds(1);
+                        nodeRateLimitObject1.setNumberOfApiCalls(100);
+                        childNode.setNodeRateLimitObject(nodeRateLimitObject1);
+
                     }
                     else{
                         

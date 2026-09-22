@@ -27,6 +27,8 @@ public class DagNode implements AutoCloseable {
     private LinkedHashMap<DagNode, NodeRelationship> parentRelationshipMap;
     private InfraDbList infraDbList;
     private InfraDbKeyValue infraDbKeyValue;
+    private boolean isDslBasedNode = false;
+    private NodeRateLimitObject nodeRateLimitObject;
 
     private ReentrantLock dagManipulationLock = new ReentrantLock();
 
@@ -42,11 +44,29 @@ public class DagNode implements AutoCloseable {
         this.nodeId = UUID.randomUUID().toString();
         childrenRelationshipMap = new LinkedHashMap<>();
         parentRelationshipMap = new LinkedHashMap<>();
+        NodeRateLimitObject nodeRateLimitObject = new NodeRateLimitObject();
+        nodeRateLimitObject.setDurationInSeconds(1);
+        nodeRateLimitObject.setNumberOfApiCalls(100);
+        this.nodeRateLimitObject = nodeRateLimitObject;
+    }
+
+    public DagNode(String name, boolean isDslBasedNode){
+        this.name = name;
+        this.shortName = name;
+        this.isDslBasedNode = isDslBasedNode;
+        this.nodeId = UUID.randomUUID().toString();
+        childrenRelationshipMap = new LinkedHashMap<>();
+        parentRelationshipMap = new LinkedHashMap<>();
+        NodeRateLimitObject nodeRateLimitObject = new NodeRateLimitObject();
+        nodeRateLimitObject.setDurationInSeconds(1);
+        nodeRateLimitObject.setNumberOfApiCalls(100);
+        this.nodeRateLimitObject = nodeRateLimitObject;
     }
 
     public static DagNode shallowCopyOfDagNode(DagNode dagNode){
         DagNode newDagNode = new DagNode(dagNode.name);
         newDagNode.isCloned = true;
+        newDagNode.isDslBasedNode = dagNode.isDslBasedNode;
         newDagNode.nodeId = UUID.randomUUID().toString();
         newDagNode.name = dagNode.name;
         newDagNode.shortName = dagNode.shortName;
@@ -54,6 +74,11 @@ public class DagNode implements AutoCloseable {
         newDagNode.childrenRelationshipMap = new LinkedHashMap<>();
         newDagNode.parentRelationshipMap = new LinkedHashMap<>();
         newDagNode.nodeOverallTraverserStatus = -100;
+        NodeRateLimitObject nodeRateLimitObject = new NodeRateLimitObject();
+        nodeRateLimitObject.setDurationInSeconds(1);
+        nodeRateLimitObject.setNumberOfApiCalls(100);
+        newDagNode.nodeRateLimitObject = nodeRateLimitObject;
+
         return newDagNode;
     }
 
@@ -76,6 +101,14 @@ public class DagNode implements AutoCloseable {
         return null;
     }
 
+    public void setNodeRatelimitObject(int durationInSeconds, int numberOfApiCalls){
+        NodeRateLimitObject nodeRateLimitObject = new NodeRateLimitObject();
+        nodeRateLimitObject.setDurationInSeconds(durationInSeconds);
+        nodeRateLimitObject.setNumberOfApiCalls(numberOfApiCalls);
+        this.nodeRateLimitObject = nodeRateLimitObject;
+    }
+
+    
     public void setParent(DagNode parent){
 
         try{
@@ -811,6 +844,13 @@ public class DagNode implements AutoCloseable {
         finally {
             nodeLock.unlock();
         }
+    }
 
+    @Getter
+    @Setter
+    public static class NodeRateLimitObject{
+
+        int numberOfApiCalls = 100;
+        int durationInSeconds = 1;
     }
 }

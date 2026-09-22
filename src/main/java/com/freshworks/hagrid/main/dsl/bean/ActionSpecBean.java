@@ -18,9 +18,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 @Configuration
-public class ActionSpecConfig {
+public class ActionSpecBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ActionSpecConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionSpecBean.class);
     private static final String ACTIONS_DSL_RESOURCE = "actions.groovy";
 
     @Bean

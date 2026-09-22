@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 
@@ -132,7 +133,8 @@ public class TestDagNodePerParentTraversalService {
         TraverseConfigService traverseConfigService = mockFacadeTraverseConfigService
                 .build();
         doCallRealMethod().when(traverseConfigService).configure(any());
-        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any());
+        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(anyString());
+        doCallRealMethod().when(traverseConfigService).getRateLimitForStep(any(DagNode.class));
 
         traverseConfigService.configure(syncServiceContainer);
 

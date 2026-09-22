@@ -8,9 +8,9 @@ import com.freshworks.hagrid.traverser.MockFacadeDagService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 import com.freshworks.hagrid.shared.sync.SyncService;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.StepRateLimitObject;
 import com.freshworks.hagrid.traverser.ParentStep;
 import com.freshworks.hagrid.traverser.TraverseConfigService;
+import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 import com.google.common.collect.ImmutableMap;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +52,7 @@ public class TestSyncService {
         ConnectorConfiguration configuration = new ConnectorConfiguration();
 
         configuration.setTraverserThreadCount(100);
-        StepRateLimitObject stepRateLimitObject = new StepRateLimitObject();
+        NodeRateLimitObject stepRateLimitObject = new NodeRateLimitObject();
         stepRateLimitObject.setDurationInSeconds(1);
         stepRateLimitObject.setNumberOfApiCalls(100);
         configuration.setStepRateLimit(FbComment.class.getName(), stepRateLimitObject);
