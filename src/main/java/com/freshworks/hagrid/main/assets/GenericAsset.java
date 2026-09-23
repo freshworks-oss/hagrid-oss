@@ -44,8 +44,7 @@ public class GenericAsset extends AbstractAsset{
     @Override
     public void transform() {
         
-        NamespaceService namespaceService = getSyncServiceContainer().getBean(NamespaceService.class);
-        String namespace = namespaceService.getNamespace();
+        this.namespace = genericBean.getNamespace();
         this.actionName = genericBean.getActionName();
         this.subActionName = genericBean.getSubActionName();
         ActionService actionService = SharedActionServiceMap.get(namespace, actionName, subActionName);

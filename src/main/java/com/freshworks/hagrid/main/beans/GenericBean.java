@@ -20,6 +20,7 @@ public class GenericBean extends AbstractBean{
     JsonNode data;
     String actionName;
     String subActionName;
+    String namespace;
     String apiModelName;
     String outputModelName;
     

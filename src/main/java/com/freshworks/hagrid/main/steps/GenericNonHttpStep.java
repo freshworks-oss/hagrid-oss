@@ -63,7 +63,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         
         this.syncServiceContainer = getSyncServiceContainer();
         NamespaceService namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
-        String namespace = namespaceService.getNamespace();
+        this.namespace = namespaceService.getNamespace();
         this.actionInput = baggageMap;
         this.actionName = actionInput.get("actionName");
 
@@ -151,6 +151,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         JsonNode response = this.actionService.parseSyncResponseNonHttp(currentRequestResponse, parentJsonObject);
         ObjectNode node = objectMapper.createObjectNode();
         node.set("data", response);
+        node.put("namespace", this.namespace);
+        node.put("subActionName", this.subActionName);
         node.put("actionName", this.actionName);
 
         StepDataBeanMapping stepDataBeanMapping = new StepDataBeanMapping();
