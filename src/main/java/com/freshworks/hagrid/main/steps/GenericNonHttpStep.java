@@ -3,6 +3,7 @@ package com.freshworks.hagrid.main.steps;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     ObjectMapper objectMapper = new ObjectMapper();
     private ActionService actionService;
     private String actionName;
+    private String subActionName;
     private ImmutableMap<String, String> actionInput;
     SyncServiceContainer syncServiceContainer;
 
@@ -48,6 +50,10 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         this.actionService.setup(parentJsonObject);
     }
 
+    public void setSubActionName(String subActionName){
+        this.subActionName = subActionName;
+    }
+
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
         
         this.syncServiceContainer = getSyncServiceContainer();
@@ -63,7 +69,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         getSyncServiceContainer().add(this.actionService, ActionService.class);
 
         // First configure the action service 
-        this.actionService.configure(actionName, newInputMap, parentJsonObject);
+        this.actionService.configure(actionName, subActionName, newInputMap, parentJsonObject);
 
         // Now starts calling the the step methods 
         return this.actionService.shouldProceedWithParent(parentJsonObject);

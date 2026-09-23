@@ -75,10 +75,10 @@ public class ActionService {
      * @param actionName
      * @param parentActionName
      */
-    public void configure(String actionName, Map<String, Object> actionInput, JsonNode... parentDataList){
+    public void configure(String actionName, String subActionName, Map<String, Object> actionInput, JsonNode... parentDataList){
 
-        CompositeActionConfig compositeActionConfig = this.actionSpec.getCompositeActionByName(actionName);
-        this.actionConfig = compositeActionConfig.getActionByName(actionName);
+        CompositeActionConfig compositeActionConfig = this.actionSpec.getActionByName(actionName);
+        this.actionConfig = compositeActionConfig.getActionByName(subActionName);
         this.actionInput = actionInput;
 
         for(JsonNode parentData : parentDataList){
@@ -557,6 +557,17 @@ public class ActionService {
         return finalResponse;
     }
 
+    public String getOutputModelName(){
+
+        if(this.actionContext.getActionSharedMap().containsKey("_custom_output_model")){
+            String outputModelName = (String)this.actionContext.getActionSharedMap().get("_custom_output_model");
+            return outputModelName;
+        }
+        else{
+            // This needs to be changed, not just 0th , fill all output model 
+                return this.actionConfig.getOutputModelConfigList().get(0).getName();
+            }
+    }
 
     public Map<String, Object> createContext(Map<String, Object> context, ActionRequest request, JsonNode response){
 

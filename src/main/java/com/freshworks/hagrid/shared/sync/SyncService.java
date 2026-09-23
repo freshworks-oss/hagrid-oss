@@ -28,6 +28,7 @@ import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.DagService;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.NodeCycleService;
+import com.freshworks.hagrid.traverser.ParentStep;
 import com.freshworks.hagrid.traverser.TraverseConfigService;
 import com.freshworks.hagrid.traverser.TraverserExecutorService;
 import com.freshworks.hagrid.traverser.net.http.HttpClientService;
@@ -288,6 +289,121 @@ public class SyncService {
 
         String parentDagTraverserServicePath = "/" + namespace.getNamespace() + "/" + "traverser" + "/" + "dag_traversal";
         DagNode startingNode = rootNode.find(startNodeName);
+
+        // Init NodeCycle
+        this.nodeCycleService = applicationContext.getBean(NodeCycleService.class);
+        this.nodeCycleService.configure(parentDagTraverserServicePath, 1000 , namespace, startingNode, this.analyticsFactory);
+        this.syncServiceContainer.add(this.nodeCycleService, NodeCycleService.class);
+
+
+        this.dagTraversalService = applicationContext.getBean(DagTraversalService.class);
+        this.dagTraversalService.configure(parentDagTraverserServicePath, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
+        this.syncServiceContainer.add(this.dagTraversalService, DagTraversalService.class);
+
+        // Init Processor Module
+        this.processorExecutorService = applicationContext.getBean(ProcessorExecutorService.class);
+        this.syncServiceContainer.add(this.processorExecutorService, ProcessorExecutorService.class);
+
+        this.processorConfigService = applicationContext.getBean(ProcessorConfigService.class);
+        this.processorConfigService.configure(syncServiceContainer);
+        this.syncServiceContainer.add(processorConfigService, ProcessorConfigService.class);
+
+        this.assetBeanDependencyService = applicationContext.getBean(AssetBeanDependencyService.class);
+        this.assetBeanDependencyService.configure(syncServiceContainer);
+        this.syncServiceContainer.add(assetBeanDependencyService, AssetBeanDependencyService.class);
+
+        this.assetAssetDependencyService = applicationContext.getBean(AssetAssetDependencyService.class);
+        this.syncServiceContainer.add(assetAssetDependencyService, AssetAssetDependencyService.class);
+
+        String parentProcessorServicePath = "/" + namespace.getNamespace() + "/" + "processor" + "/" + "processor_service";
+        this.processorService = applicationContext.getBean(ProcessorService.class);
+        this.processorService.configure(parentProcessorServicePath, new Phaser(), syncServiceContainer, assetBeanDependencyService, assetAssetDependencyService, infraService, syncStatusService, processorConfigService);
+        this.syncServiceContainer.add(this.processorService, ProcessorService.class);
+
+
+        // Init Consumer Module
+        this.consumerService = applicationContext.getBean(ConsumerService.class);
+        this.consumerService.configure(syncServiceContainer);
+        this.syncServiceContainer.add(this.consumerService, ConsumerService.class);
+
+
+        // Init Shared Executor
+        this.sharedExecutorService = applicationContext.getBean(SharedExecutorService.class);
+        this.syncServiceContainer.add(this.sharedExecutorService, SharedExecutorService.class);
+
+        // END
+
+        return this.syncServiceContainer;
+    }
+
+        public SyncServiceContainer configureWithDslDag(String infraNameSpace, DagNode rootNode, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+
+        // START: Moved classes from syncService constructor
+
+        // Init the sync container
+        this.syncServiceContainer = applicationContext.getBean(SyncServiceContainer.class);
+
+        // Add SyncService ( this ) itself to the container
+        this.syncServiceContainer.add(this, SyncService.class);
+
+        // Add Connector Configuration Object
+        this.syncServiceContainer.add(connectorConfiguration, ConnectorConfiguration.class);
+
+        // Add unique Identifier
+        this.singletonUniqueIdentifier = applicationContext.getBean(GlobalNamespaceService.class);
+        this.syncServiceContainer.add(this.singletonUniqueIdentifier, GlobalNamespaceService.class);
+
+        // Add AppEvent Service 
+        this.appEventService = applicationContext.getBean(AppEventService.class);
+        this.syncServiceContainer.add(this.appEventService, AppEventService.class);
+
+        // Init namespace
+        this.namespace = applicationContext.getBean(NamespaceService.class);
+        this.namespace.setNamespace(infraNameSpace);
+        this.syncServiceContainer.add(this.namespace, NamespaceService.class);
+
+
+        // Analytics Factory
+        this.analyticsFactory = applicationContext.getBean(AnalyticsFactory.class);
+        this.syncServiceContainer.add(this.analyticsFactory, AnalyticsFactory.class);
+
+
+        // Init SyncStatusService
+        this.syncStatusService = applicationContext.getBean(SyncStatusService.class);
+        this.syncStatusService.configure(syncServiceContainer);
+        this.syncServiceContainer.add(this.syncStatusService, SyncStatusService.class);
+
+
+        // Init Infra Module
+        this.infraConfigService = syncServiceContainer.getBean(InfraConfigService.class);
+        this.infraConfigService.configure(syncServiceContainer);
+
+        InfraBeanService infraBeanService = syncServiceContainer.getBean(InfraBeanService.class);
+        this.infraService = infraBeanService.getInfraService(infraConfigService);
+        this.infraService.configure(syncServiceContainer, infraConfigService);
+        this.syncServiceContainer.add(this.infraService, InfraService.class);
+
+
+        // Init Traverser Module
+        this.traverserExecutorService = applicationContext.getBean(TraverserExecutorService.class);
+        this.syncServiceContainer.add(this.traverserExecutorService, TraverserExecutorService.class);
+
+        this.traverseConfigService = applicationContext.getBean(TraverseConfigService.class);
+        this.traverseConfigService.configure(syncServiceContainer);
+        this.syncServiceContainer.add(this.traverseConfigService, TraverseConfigService.class);
+
+        this.dagService = applicationContext.getBean(DagService.class);
+        this.dagService.configure(syncServiceContainer);
+        rootNode = this.dagService.dagDynamicDagScanner(namespace.getNamespace(), rootNode, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
+
+
+        this.httpClientService = applicationContext.getBean(HttpClientService.class);
+        this.syncServiceContainer.add(httpClientService, HttpClientService.class);
+
+
+        String parentDagTraverserServicePath = "/" + namespace.getNamespace() + "/" + "traverser" + "/" + "dag_traversal";
+        DagNode startingNode = rootNode.find(ParentStep.class.getName());
 
         // Init NodeCycle
         this.nodeCycleService = applicationContext.getBean(NodeCycleService.class);

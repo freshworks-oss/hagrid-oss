@@ -192,7 +192,9 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
                 // otherwise, step defined should be used
                 if(node.isDslBasedNode()){
 
-                    abstractStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
+                    GenericNonHttpStep genericNonHttpStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
+                    genericNonHttpStep.setSubActionName(node.getName());
+                    abstractStep = genericNonHttpStep;
                 }
                 else{
                     abstractStep = syncServiceContainer.getBean(node.getName());

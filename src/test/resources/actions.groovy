@@ -25,50 +25,50 @@ actions {
     //     output "get_repo_model_output"
     // }
 
-    simple_action {
+    // simple_action {
 
-        /**
-          Use case : Very simple action with no pagination and no parameters
-        */
-        name "action1"
-        api_model "action1" // idea from nango 
-        request "action1"
-        response_path "context._response.body.body.data.users"
-        output "action1_output"
-    }
-
-
-    // composite_action {
-
-    //     name "json_processing"
-
-    //     simple_action {
-
-    //         /**
-    //         Use case : Very simple action with no pagination and no parameters
-    //         */
-    //         name "action1"
-    //         api_model "action1" // idea from nango 
-    //         request "action1"
-    //         response_path "context._response.body.body.data.users"
-    //         output "action1_output"
-    //         parent "action2"
-    //         is_root true
-
-    //     }
-
-    //     simple_action {
-
-    //         /**
-    //         Use case : Very simple action with no pagination and no parameters
-    //         */
-    //         name "action2"
-    //         api_model "action2" // idea from nango 
-    //         request "action2"
-    //         response_path "context._response.body.body.data.users"
-    //         output "action1_output"
-    //     }
+    //     /**
+    //       Use case : Very simple action with no pagination and no parameters
+    //     */
+    //     name "action1"
+    //     api_model "action1" // idea from nango 
+    //     request "action1"
+    //     response_path "context._response.body.body.data.users"
+    //     output "action1_output"
     // }
+
+
+    composite_action {
+
+        name "json_processing"
+
+        simple_action {
+
+            /**
+            Use case : Very simple action with no pagination and no parameters
+            */
+            name "action1"
+            api_model "action1" // idea from nango 
+            request "action1"
+            response_path "context._response.body.body.data.users"
+            output "action1_output"
+            parent "action2"
+            is_root true
+
+        }
+
+        // simple_action {
+
+        //     /**
+        //     Use case : Very simple action with no pagination and no parameters
+        //     */
+        //     name "action2"
+        //     api_model "action2" // idea from nango 
+        //     request "action2"
+        //     response_path "context._response.body.body.data.users"
+        //     output "action1_output"
+        // }
+    }
 
     // simple_action {
 

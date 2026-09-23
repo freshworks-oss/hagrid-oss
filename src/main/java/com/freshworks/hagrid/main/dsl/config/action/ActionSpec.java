@@ -60,7 +60,7 @@ public class ActionSpec extends GroovyObjectSupport{
         
     }
 
-    public CompositeActionConfig getCompositeActionByName(String name) {
+    public CompositeActionConfig getActionByName(String name) {
         for (CompositeActionConfig action : actionList) {
             if (action.getCompositeActionName().equalsIgnoreCase(name)) {
                 return action;

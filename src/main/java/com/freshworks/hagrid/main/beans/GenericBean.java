@@ -19,10 +19,13 @@ public class GenericBean extends AbstractBean{
     
     JsonNode data;
     String actionName;
+    String apiModelName;
+    String outputModelName;
     
     SyncServiceContainer syncServiceContainer;
     @Override
     public void transform() {
-    
+        
+        System.out.println("Bean is bean");
     }
 }

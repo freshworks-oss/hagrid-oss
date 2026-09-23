@@ -23,6 +23,7 @@ public class GenericAsset extends AbstractAsset{
 
     JsonNode output;
 
+    String outputModelName;
     GenericBean genericBean;
 
     @JsonIgnore
@@ -39,6 +40,7 @@ public class GenericAsset extends AbstractAsset{
         
         actionService = getSyncServiceContainer().getBean(ActionService.class);
         output = actionService.populateActionOutput(genericBean.getData());
+        this.outputModelName = actionService.getOutputModelName();
     }
     
 }
