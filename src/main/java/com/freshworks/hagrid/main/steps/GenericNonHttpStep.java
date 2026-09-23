@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.freshworks.hagrid.main.SharedActionServiceMap;
 import com.freshworks.hagrid.main.beans.*;
+import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.traverser.DagTraversalService;
 import com.freshworks.hagrid.traverser.NonHttpAbstractStep;
@@ -23,6 +25,8 @@ import com.freshworks.hagrid.traverser.exception.StepFailedException;
 import com.freshworks.hagrid.main.dsl.services.ActionService;
 import com.google.common.collect.ImmutableMap;
 
+import groovy.xml.Namespace;
+
 @Component
 @Scope("prototype")
 @FreshHierarchy(parentClass = ParentStep.class, rateLimit = 5, duration = 5)
@@ -32,6 +36,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     private ActionService actionService;
     private String actionName;
     private String subActionName;
+    String namespace;
     private ImmutableMap<String, String> actionInput;
     SyncServiceContainer syncServiceContainer;
 
@@ -57,6 +62,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
         
         this.syncServiceContainer = getSyncServiceContainer();
+        NamespaceService namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
+        String namespace = namespaceService.getNamespace();
         this.actionInput = baggageMap;
         this.actionName = actionInput.get("actionName");
 
@@ -71,6 +78,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         // First configure the action service 
         this.actionService.configure(actionName, subActionName, newInputMap, parentJsonObject);
 
+        SharedActionServiceMap.add(namespace, actionName, subActionName, actionService);
+        
         // Now starts calling the the step methods 
         return this.actionService.shouldProceedWithParent(parentJsonObject);
     }
