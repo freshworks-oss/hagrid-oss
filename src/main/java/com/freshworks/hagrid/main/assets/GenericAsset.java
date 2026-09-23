@@ -50,6 +50,7 @@ public class GenericAsset extends AbstractAsset{
         ActionService actionService = SharedActionServiceMap.get(namespace, actionName, subActionName);
         output = actionService.populateActionOutput(genericBean.getData());
         this.outputModelName = actionService.getOutputModelName();
+        SharedActionServiceMap.clear(namespace, actionName, subActionName);
     }
     
 }

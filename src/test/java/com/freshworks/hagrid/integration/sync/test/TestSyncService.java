@@ -7,6 +7,7 @@ import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserComm
 import com.freshworks.hagrid.data.integration.recursive.contextual.assets.PublishedAsset;
 import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.main.dsl.config.action.ActionSpec;
+import com.freshworks.hagrid.main.dsl.config.action.CompositeActionConfig;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
@@ -16,6 +17,8 @@ import com.freshworks.hagrid.shared.sync.SyncStatusService;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
 import com.google.common.collect.ImmutableMap;
+
+import org.dizitart.no2.filters.NitriteFilter;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -336,7 +339,8 @@ public class TestSyncService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
-        DagNode parentNode = actionSpec.getActionByName("json_processing").getRootNode();
+        CompositeActionConfig actionConfig = actionSpec.getActionByName("json_processing");
+        DagNode parentNode = actionConfig.getRootNode();
                 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("actionName", "json_processing")
@@ -347,8 +351,8 @@ public class TestSyncService {
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
-
-        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
+        
+        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class, where("outputModelName").eq() );
 
         while(infraDbCursor.hasNext()){
             GenericAsset genericAsset = infraDbCursor.getNext();
