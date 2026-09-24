@@ -43,7 +43,7 @@ public class ConsumerService {
     }
 
 
-        /**
+    /**
      * Use this method to consume assets when sync is done 
      * @param filter
      * @return
@@ -54,8 +54,7 @@ public class ConsumerService {
         InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, nitriteFilter);
         return infraDbCursor;
     }
-
-
+    
     /**
      * Use this method to consume assets when sync is done 
      * @param filter

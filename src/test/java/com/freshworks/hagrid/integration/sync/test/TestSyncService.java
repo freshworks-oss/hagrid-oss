@@ -8,6 +8,7 @@ import com.freshworks.hagrid.data.integration.recursive.contextual.assets.Publis
 import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.main.dsl.config.action.ActionSpec;
 import com.freshworks.hagrid.main.dsl.config.action.CompositeActionConfig;
+import static org.dizitart.no2.filters.FluentFilter.$;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
@@ -26,6 +27,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import static org.dizitart.no2.filters.FluentFilter.where;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -352,7 +354,7 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class, where("outputModelName").eq() );
+        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class, where("value.output.response").elemMatch($.where("name").eq("action1_output")));
 
         while(infraDbCursor.hasNext()){
             GenericAsset genericAsset = infraDbCursor.getNext();

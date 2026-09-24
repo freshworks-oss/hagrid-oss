@@ -271,7 +271,7 @@ models {
     api_model {
 
         // Name of the model 
-        name "create_github_isue_model"
+        name "create_github_issue_model"
 
         // desired attributes required in this model
         attr "repo_name" : "_response.name", "is_private" : "_response.private"
@@ -282,7 +282,7 @@ models {
     output_model {
 
         // Name of the output model
-        name "create_github_isue_model_output"
+        name "create_github_issue_model_output"
 
         // mapping of output model attributes with api model attribute
         attr "repo_name" : model('get_repo_model', 'repo_name')
