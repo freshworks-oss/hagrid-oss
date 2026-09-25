@@ -308,7 +308,7 @@ actions {
             /**
             Use case : Very simple action with no pagination and no parameters
             */
-            name "getUser"
+            name "action1"
             api_model "action1" // idea from nango 
             request "action1"
             response_path "context._response.body.body.data.users"
@@ -321,12 +321,12 @@ actions {
             /**
             Use case : Very simple action with no pagination and no parameters
             */
-            name "getUser"
+            name "action2"
             api_model "action1" // idea from nango 
             request "action1"
             response_path "context._response.body.body.data.users"
             output "action1_output"
-            parent "getUser"
+            parent "action1"
         }
 
     }
