@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Component
 @Scope ("prototype")
-@JsonIgnoreProperties ({"apiModelService", "syncServiceContainer"})
+@JsonIgnoreProperties (ignoreUnknown = true, value={"apiModelService", "syncServiceContainer"})
 public class GenericBean extends AbstractBean{
     
     boolean isDslBasedBean = true;

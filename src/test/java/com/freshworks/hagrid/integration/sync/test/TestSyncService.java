@@ -354,13 +354,13 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class, where("value.output.response").elemMatch($.where("name").eq("action1_output")));
+        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
 
-        // while(infraDbCursor.hasNext()){
-        //     GenericAsset genericAsset = infraDbCursor.getNext();
-        //     JsonNode node = genericAsset.getOutput();
-        //     System.out.println(node);
-        // }
+        while(infraDbCursor.hasNext()){
+            GenericAsset genericAsset = infraDbCursor.getNext();
+            JsonNode node = genericAsset.getOutputModel().getData();
+            System.out.println(node);
+        }
 
         // assertThat(syncStatusService.getSyncStatus() , Matchers.is(-1));
         // assertThat(syncStatusService.getTraverser_status() , Matchers.is(-1));

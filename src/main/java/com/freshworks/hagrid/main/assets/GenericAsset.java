@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Component
 @Scope ("prototype")
+@JsonIgnoreProperties (ignoreUnknown = true, value = {"outputModelService", "syncServiceContainer"})
 public class GenericAsset extends AbstractAsset{
 
     boolean isDslAsset = true;
