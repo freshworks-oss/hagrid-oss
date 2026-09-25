@@ -57,7 +57,7 @@ public class CompositeActionConfig {
         simpleActionClosure.call();
     }
 
-    public void sanityChecks(){
+    public void initChecks(){
 
         // it means that it is simple action, 
         // so where developer may not have provided the name of the composite action explicitly, check 
@@ -73,7 +73,7 @@ public class CompositeActionConfig {
     /*
      *  In this method, we will create a dag like we do it in Hagrid 
      */
-    public void createDag(){
+    public void createDag() throws Exception{
 
         List<DagNode> rootNodeList = new ArrayList<>();
         List<ActionConfig> rootActionConfigList = new ArrayList<>();
@@ -89,9 +89,21 @@ public class CompositeActionConfig {
             // First find list of rootnodes 
             for(ActionConfig actionConfig : actionConfigList){
                 if(actionConfig.isRootNode){
+
+                    // Remember even rootNode actions can have parent associated. 
+                    // This would be the case of cyclic dag or even single node dag with self recursion
                     rootActionConfigList.add(actionConfig);
-                    break;
                 }
+
+                else{
+
+                    if (actionConfig.getParentActionName() == null){
+                        
+                        throw new IllegalArgumentException("This action is neither a root node, not belong with any parent. Action must either a root node or belong to a parent");
+                    }
+                }
+
+                
             }
         }
     
@@ -151,11 +163,11 @@ public class CompositeActionConfig {
                         nodeRateLimitObject1.setDurationInSeconds(1);
                         nodeRateLimitObject1.setNumberOfApiCalls(100);
                         childNode.setNodeRateLimitObject(nodeRateLimitObject1);
-
                     }
+
                     else{
                         
-                        // It means that this graph has cycles.
+                        // It means that this graph has cycles and we have reached to the same node which we have already traversed
                         // It is the case when child is having pointer to its parent 
                         // Do not add this config to stack because it is already traversed
 

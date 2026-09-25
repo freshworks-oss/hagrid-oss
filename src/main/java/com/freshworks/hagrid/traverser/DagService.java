@@ -105,12 +105,14 @@ public class DagService {
             uniqueScan.lock();
             // If Dag for the given stepLocation already exists then do not create it again
             if(rootNode != null){
-                DagNode clonedDagNode = cloneDag(rootNode);
+
+                // We do not need to clone in dynamic dsl case, as it is being created dynamically
+                // DagNode clonedDagNode = cloneDag(rootNode);
 
                 // Below I am removing nodes which are switched Off by the customer
-                enableDisableDagPath(clonedDagNode, connectorConfiguration.getEnabledDagPathList());
-                init(clonedDagNode.getNodesInDag(), infraService);
-                return clonedDagNode.getNodesInDag().get(0);
+                enableDisableDagPath(rootNode, connectorConfiguration.getEnabledDagPathList());
+                init(rootNode.getNodesInDag(), infraService);
+                return rootNode.getNodesInDag().get(0);
             }
 
             throw new IllegalArgumentException("Root node can not be null. Dag must be already created");

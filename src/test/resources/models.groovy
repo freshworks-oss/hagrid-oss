@@ -43,7 +43,7 @@ models {
         name "action1_output"
 
         // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action1', 'user_name') , "user_id" : model('action1' , 'user_id')
+        attr "user_name_formatted" : model('action1', 'user_name') , "user_id_formatted" : model('action1' , 'user_id')
     }
 
     // API Model refers to the model which will render the API output

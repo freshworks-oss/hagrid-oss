@@ -36,26 +36,35 @@ public class ActionSpec extends GroovyObjectSupport{
     }
 
     // Redirect the resolution of simple_action lang via composite_action
-    public void simple_action(Closure closure){
+    public void simple_action(Closure closure) throws Exception{
 
         // Once we have simple action closure, we can convert it to composition action closure
         Closure compositeActionClosure = simpleActionToCompositeActionClosure(closure);
         composite_action(compositeActionClosure);
     }
 
-    public void composite_action(Closure closure) {
+    public void composite_action(Closure closure) throws Exception{
         
         CompositeActionConfig compositeActionConfig = new CompositeActionConfig(this.modelSpec, this.requestSpec);
-        actionList.add(compositeActionConfig);
 
         closure.setDelegate(compositeActionConfig);
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
         closure.call();
 
+        // Validate this duplicate name is present 
+
+        for(CompositeActionConfig compositeActionConfig1 : actionList){
+
+            if(compositeActionConfig1.getCompositeActionName().equals(compositeActionConfig.getCompositeActionName())){
+                throw new IllegalArgumentException("Action names can not be duplicate. It must be unique");
+            }
+        }
+
+        actionList.add(compositeActionConfig);
         // Once all actions of composite actions are resolved then
         // perform tree creation 
 
-        compositeActionConfig.sanityChecks();
+        compositeActionConfig.initChecks();
         compositeActionConfig.createDag();
         
     }
