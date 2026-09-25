@@ -3,6 +3,7 @@ package com.freshworks.hagrid.processor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.freshworks.hagrid.main.dsl.services.OutputModelService;
 import com.freshworks.hagrid.processor.joins.AbstractJoinService;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;

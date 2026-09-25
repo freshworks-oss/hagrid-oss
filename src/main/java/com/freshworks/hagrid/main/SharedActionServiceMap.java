@@ -6,24 +6,21 @@ import com.freshworks.hagrid.main.dsl.services.ActionService;
 
 public class SharedActionServiceMap {
 
-    static HashMap<String, ActionService> sharedActionServiceStorage = new HashMap<>();
+    static HashMap<Integer, ActionService> sharedActionServiceStorage = new HashMap<>();
 
-    public static void add(String namespace, String actionName, String subActionName, ActionService actionService){
+    public static void add(Integer actionServiceHashCode, ActionService actionService){
 
-        String uniqueKey = namespace + "_" + actionName + "_" + subActionName;
-        sharedActionServiceStorage.put(uniqueKey, actionService);
+        sharedActionServiceStorage.put(actionServiceHashCode, actionService);
     }
 
-    public static ActionService get(String namespace, String actionName, String subActionName){
+    public static ActionService get(Integer actionServiceHashCode){
 
-        String uniqueKey = namespace + "_" + actionName + "_" + subActionName;
-        return sharedActionServiceStorage.get(uniqueKey);
+        return sharedActionServiceStorage.get(actionServiceHashCode);
     }
 
-    public static void clear(String namespace, String actionName, String subActionName){
+    public static void clear(Integer actionServiceHashCode){
 
-        String uniqueKey = namespace + "_" + actionName + "_" + subActionName;
-        sharedActionServiceStorage.remove(uniqueKey);
+        sharedActionServiceStorage.remove(actionServiceHashCode);
     }
     
 }

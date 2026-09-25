@@ -38,6 +38,8 @@ import com.freshworks.hagrid.main.dsl.services.resolvers.ActionResolver;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
+import lombok.Getter;
+import lombok.Setter;
 
 @Component
 @Scope("prototype")
@@ -47,6 +49,8 @@ public class ActionService {
     Map<String, Object> actionInput;
     List<Map<String, Object>> parentModelData = new ArrayList<>();
 
+    @Getter 
+    @Setter 
     ActionContext actionContext = new ActionContext();
 
     ActionConfig actionConfig;
@@ -283,8 +287,6 @@ public class ActionService {
 
     public JsonNode parseSyncResponseNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject){
 
-        ArrayNode filteredResponse = objectMapper.createArrayNode();
-        
         try{
 
             ActionRequest r = objectMapper.convertValue(currentRequestResponse.getRequest(), ActionRequest.class);
@@ -319,6 +321,9 @@ public class ActionService {
                 c.setResolveStrategy(Closure.DELEGATE_ONLY);
                 diggedResponseBody = objectMapper.convertValue(c.call(), JsonNode.class);
                 apiModelConfig = actionConfig.getApiModelConfig();
+                this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
+                this.actionContext.getActionSharedMap().put("_output_config_model_name", actionConfig.getOutputModelConfigList().get(0).getName());
+                this.actionContext.getActionSharedMap().put("_response_type", "OK");
             }
 
             else{
@@ -328,91 +333,13 @@ public class ActionService {
                 // Here using modelSpec take the apiModelConfig 
                 apiModelConfig = this.modelSpec.getApiModelByName(parseSyncResponseObject.getModelName());
 
-                this.actionContext.getActionSharedMap().put("_custom_output_model", parseSyncResponseObject.getOutputModelName());
+                this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
+                this.actionContext.getActionSharedMap().put("_output_config_model_name", parseSyncResponseObject.getOutputModelName());
                 this.actionContext.getActionSharedMap().put("_response_type", parseSyncResponseObject.getResponseType());
             }
-            
+        
 
-            // Now resolve model attributes
-            Map<String, Closure> desiredFieldListConfig = apiModelConfig.getDesiredAttrListMap();
-
-            if(diggedResponseBody.isArray()){
-
-                // I am looping through each model in the response 
-                for(JsonNode eachModel: diggedResponseBody){
-
-                    // Creating a context for each
-
-                    
-                    Map resolvedApiModelAttributeMap = new HashMap<>();
-
-                    // Create a context 
-                    Map eachModelMap = objectMapper.convertValue(eachModel, Map.class);
-                    actionResponse = this.actionContext.getActionResponse();
-                    actionResponse.setModel(eachModelMap);                    
-
-                    for(Map.Entry<String, Closure> fieldConfig: desiredFieldListConfig.entrySet()){    
-
-                        Closure c = fieldConfig.getValue();
-
-                        // resolve field config closure on api response
-                        c.setDelegate(this.actionContext);
-                        c.setResolveStrategy(Closure.DELEGATE_ONLY);
-                        resolvedApiModelAttributeMap.put(fieldConfig.getKey(), c.call());
-                    }
-
-                    ApiModel apiModel = new ApiModel();
-                    apiModel.setName(apiModelConfig.getName());
-                    apiModel.setFilterClosure(apiModelConfig.getFilterClosure());
-                    apiModel.setTransformClosure(apiModelConfig.getTransformClosure());
-
-
-                    ObjectNode objectNode = objectMapper.convertValue(resolvedApiModelAttributeMap, ObjectNode.class);
-
-                    apiModel.setData(objectNode);
-                    apiModel.transformModel();
-
-                    if(apiModel.filterModel()){
-                        JsonNode apiNode = objectMapper.convertValue(apiModel, JsonNode.class);
-                        filteredResponse.add(apiNode);    
-                    }
-                }
-            }
-
-            else{
-
-                Map resolvedApiModelAttributeMap = new HashMap<>();
-
-                // Create a context 
-                Map diggedResponseBodyAsMap = objectMapper.convertValue(diggedResponseBody, Map.class);
-                
-                actionResponse = this.actionContext.getActionResponse();
-                actionResponse.setModel(diggedResponseBodyAsMap);            
-
-                for(Map.Entry<String, Closure> fieldConfig: desiredFieldListConfig.entrySet()){
-                    
-                    Closure c = fieldConfig.getValue();
-                    c.setDelegate(this.actionContext);
-                    c.setResolveStrategy(Closure.DELEGATE_ONLY);
-                    resolvedApiModelAttributeMap.put(fieldConfig.getKey(), c.call());
-                }
-
-                ApiModel apiModel = new ApiModel();
-                apiModel.setName(apiModelConfig.getName());
-                apiModel.setFilterClosure(apiModelConfig.getFilterClosure());
-                apiModel.setTransformClosure(apiModelConfig.getTransformClosure());
-                
-                ObjectNode objectNode = objectMapper.convertValue(resolvedApiModelAttributeMap, ObjectNode.class);
-                apiModel.setData(objectNode);
-                apiModel.transformModel();
-
-                if(apiModel.filterModel()){
-                    JsonNode apiNode = objectMapper.convertValue(apiModel, JsonNode.class);
-                    filteredResponse.add(apiNode);
-                }
-            }
-
-            return filteredResponse;
+            return diggedResponseBody;
 
         }
 
@@ -422,6 +349,7 @@ public class ActionService {
             return null;
         }
     }
+
 
     /**
      *  HasMore hook will be called after one API call of the action. 
@@ -485,88 +413,6 @@ public class ActionService {
             e.printStackTrace();
         }
 
-    }
-    public JsonNode populateActionOutput(JsonNode jsonNode){
-
-        List<ApiModel> apiModelList = actionServiceUtility.parseResponseToModel(jsonNode);
-        ObjectNode finalResponse = objectMapper.createObjectNode();
-        ArrayNode arrayNode = objectMapper.createArrayNode();
-
-        for(ApiModel apiModel : apiModelList){
-
-            OutputModelConfig outputModelConfig = null;
-            
-            if(this.actionContext.getActionSharedMap().containsKey("_custom_output_model")){
-                String outputModelName = (String)this.actionContext.getActionSharedMap().get("_custom_output_model");
-                outputModelConfig = this.modelSpec.getOutputModelByName(outputModelName);
-            }
-            else{
-
-                // This needs to be changed, not just 0th , fill all output model 
-                outputModelConfig = this.actionConfig.getOutputModelConfigList().get(0);
-            }
-            
-            OutputModel outputModel = new OutputModel();
-            outputModel.setName(outputModelConfig.getName());
-            outputModel.setFilterClosure(outputModelConfig.getFilterClosure());
-            outputModel.setTransformClosure(outputModelConfig.getTransformClosure());
-            outputModel.setOutputFieldMapping(outputModelConfig.getOutputFieldMapping());
-
-            if(outputModel.dependsOn(apiModel)){
-
-                if(Boolean.TRUE.equals(outputModel.primitive())){
-                    outputModel.populate(apiModel);
-                    JsonNode outputModelNode = objectMapper.convertValue(outputModel, JsonNode.class);
-                    arrayNode.add(outputModelNode);
-                }
-
-                else{
-
-                    // it is partial 
-                    // It means that it is partial 
-                    Join join = outputModel.getJoin();   
-
-                    if(join.getLeftModelKey().equalsIgnoreCase(apiModel.getName())){
-
-                        //  Check if right filled exists already ? 
-                        // if so then populate it with left model 
-                    }
-
-                    else{
-
-                        // it is right model
-                        // check if left filled already exists ? 
-                        // if so then populate it with right filled 
-                    }
-                }
-            }
-
-        }
-
-        finalResponse.set("response", arrayNode);
-
-        if(this.actionContext.getActionSharedMap().containsKey("_response_type")){
-
-            ACTION_HTTP_CODE httpCode = (ACTION_HTTP_CODE)this.actionContext.getActionSharedMap().get("_response_type");
-            finalResponse.put("status", httpCode.toString());
-        }
-        else{
-            finalResponse.put("status", ACTION_HTTP_CODE.OK.toString());
-        }
-        
-        return finalResponse;
-    }
-
-    public String getOutputModelName(){
-
-        if(this.actionContext.getActionSharedMap().containsKey("_custom_output_model")){
-            String outputModelName = (String)this.actionContext.getActionSharedMap().get("_custom_output_model");
-            return outputModelName;
-        }
-        else{
-            // This needs to be changed, not just 0th , fill all output model 
-                return this.actionConfig.getOutputModelConfigList().get(0).getName();
-            }
     }
 
     public Map<String, Object> createContext(Map<String, Object> context, ActionRequest request, JsonNode response){

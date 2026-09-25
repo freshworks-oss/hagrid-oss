@@ -5,6 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.freshworks.hagrid.main.beans.GenericBean;
+import com.freshworks.hagrid.main.dsl.runnable.ApiModel;
+import com.freshworks.hagrid.main.dsl.runnable.context.ActionContext;
+import com.freshworks.hagrid.main.dsl.services.ActionService;
+import com.freshworks.hagrid.main.dsl.services.ApiModelService;
 import com.freshworks.hagrid.processor.AbstractBean;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -48,6 +53,9 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     String uuid;
 
     AbstractStep abstractStep;
+    ActionService actionService;
+    ApiModelService apiModelService;
+
     HttpAbstractStep httpAbstractStep;
     NonHttpAbstractStep nonHttpAbstractStep;
 
@@ -91,10 +99,12 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
     Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore;
 
 
-    public void configure(String parentUUId, SyncServiceContainer syncServiceContainer, AbstractStep abstractStep, JsonNode parentNodeData, DagNode currentNode, DagNode parentNode, Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore, Phaser parentPhaser, Bucket rateLimitBucket, InfraDbQueue processorQueue, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap){
+    public void configure(String parentUUId, SyncServiceContainer syncServiceContainer, AbstractStep abstractStep, ActionService actionService, ApiModelService apiModelService, JsonNode parentNodeData, DagNode currentNode, DagNode parentNode, Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore, Phaser parentPhaser, Bucket rateLimitBucket, InfraDbQueue processorQueue, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap){
         uuid = parentUUId + "/" + UUID.randomUUID();
         this.syncServiceContainer = syncServiceContainer;
         this.abstractStep = abstractStep;
+        this.actionService = actionService;
+        this.apiModelService = apiModelService;
         this.parentNodeData = parentNodeData;
         this.abstractStepName = this.abstractStep.getClass().getName();
         this.limitNumberOfConcurrentPerItemTraversalSemaphore = limitNumberOfConcurrentPerItemTraversalSemaphore;
@@ -829,18 +839,33 @@ public class DagNodePerItemTraversalService implements Callable<Void> {
 
             o = (ObjectNode) jNode;
 
-            String clazzName = abstractBeanClass.getName();
-            o.put(Constants.JsonTypeInfo_As_PROPERTY, clazzName);
+            AbstractBean abstractBean = null;
+            if(currentNode.isDslBasedNode()){
 
-            long serialTime = System.currentTimeMillis();
-            AbstractBean abstractBean = objectMapper.convertValue(o, AbstractBean.class);
+                // First get the API model from the apimodel service 
+                ActionContext actionContext = this.actionService.getActionContext();
+                this.apiModelService.configure(actionContext);
+                ApiModel apiModel = this.apiModelService.getApiModelForBean(o);
+
+
+                // Now create the generic bean and set this apiModel as attribute of it
+                GenericBean genericBean = syncServiceContainer.getBean(GenericBean.class);
+                genericBean.configure(syncServiceContainer);
+                genericBean.setParentBean(parentNodeData);
+                genericBean.setApiModel(apiModel);
+                genericBean.setApiModelService(apiModelService, actionContext);
+                abstractBean = genericBean;
+            }
+
+            else{
+
+                String clazzName = abstractBeanClass.getName();
+                o.put(Constants.JsonTypeInfo_As_PROPERTY, clazzName);
+                abstractBean = objectMapper.convertValue(o, AbstractBean.class);
+            }
 
             // adding syncServiceContainer to bean
             abstractBean.configure(syncServiceContainer);
-
-
-            String abstractBeanName = abstractBean.getClass().getName();
-
 
             // Here using map function, abstract bean can be transformed into set of other array beans;
             List<AbstractBean> abstractBeanList = abstractBean.map();

@@ -1,6 +1,14 @@
 package com.freshworks.hagrid.processor;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.SharedActionServiceMap;
+import com.freshworks.hagrid.main.assets.GenericAsset;
+import com.freshworks.hagrid.main.beans.GenericBean;
+import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
+import com.freshworks.hagrid.main.dsl.runnable.context.ActionContext;
+import com.freshworks.hagrid.main.dsl.services.ActionService;
+import com.freshworks.hagrid.main.dsl.services.OutputModelService;
 import com.freshworks.hagrid.processor.Annotations.FreshAsset;
 import com.freshworks.hagrid.processor.Annotations.FreshJoin;
 import com.freshworks.hagrid.processor.joins.AbstractJoinService;
@@ -86,6 +94,8 @@ public class ProcessorTaskService implements Callable<Void> {
 
     AppEventService appEventService;
 
+    OutputModelService outputModelService;
+
     public ProcessorTaskService() {
     }
 
@@ -93,7 +103,7 @@ public class ProcessorTaskService implements Callable<Void> {
             AnalyticsService analyticsService, ImmutableListMultimap<String, String> assetBeanDependencyMap, ImmutableListMultimap<String, String> assetAssetDependencyMap,
             ProcessorConfigService processorConfigService, BloomFilter<String> bloomFilter, InfraService infraService,
             AbstractJoinService noopJoinService, AbstractJoinService leftJoinService,
-            AbstractJoinService innerJoinService, SyncStatusService syncStatusService,Phaser phaser,
+            AbstractJoinService innerJoinService, OutputModelService outputModelService, SyncStatusService syncStatusService,Phaser phaser,
             ProcessorService.ProcessTaskTracker processTaskTracker) {
 
         uuid = parentPath + "/" + UUID.randomUUID();
@@ -105,6 +115,7 @@ public class ProcessorTaskService implements Callable<Void> {
         this.noopJoinService = noopJoinService;
         this.leftJoinService = leftJoinService;
         this.innerJoinService = innerJoinService;
+        this.outputModelService = outputModelService;
         this.syncStatusService = syncStatusService;
         this.assetBeanDependencyMap = assetBeanDependencyMap;
         this.assetAssetDependencyMap = assetAssetDependencyMap;
@@ -135,20 +146,49 @@ public class ProcessorTaskService implements Callable<Void> {
             abstractAssetList.clear();
             for (String bean : itemList) {
 
-                if (Boolean.FALSE.equals(Thread.interrupted())) {
-                  abstractAssetList = processBeanForAsset(bean);
-                   while(true) {
-                       
-                        if (abstractAssetList.isEmpty()){
-                            break;
-                        }
-                        processAssetForAsset(abstractAssetList.pop());           
-                   }
+                // Here I need to check if bean is DSL based bean or regular bean.
+                // If bean is dsl based bean the asset creation will be done by ActionService
+                JsonNode beanNode = objectMapper.readTree(bean);
 
-                } else {
-                    // If thread is interrupted or asked to terminate then skip the list and publish
-                    // whatever assets are generated
-                    break;
+                if(beanNode.has("isDslBasedBean")){
+
+                    // It is DSL based bean
+                    GenericBean genericBean = objectMapper.convertValue(beanNode, GenericBean.class);
+                    ActionContext actionContext = genericBean.getActionContext();
+
+                    List<OutputModel> outputModelList = this.outputModelService.getOutputModelFromBean(beanNode);
+
+                    for(OutputModel outputModel : outputModelList){
+                        GenericAsset genericAsset = syncServiceContainer.getBean(GenericAsset.class);
+                        genericAsset.configure(syncServiceContainer);
+                        genericAsset.setOutputModelService(outputModelService, actionContext);
+                        genericAsset.setFromBean(genericBean);
+                        genericAsset.filter();
+                        genericAsset.transform();
+                        assetsReadyToBePublishedList.add(genericAsset);
+                    }
+                }
+
+                else{
+
+                    // It is regular bean and it needs to processed by processor service as usual
+                    if (Boolean.FALSE.equals(Thread.interrupted())) {
+                        abstractAssetList = processBeanForAsset(bean);
+                        while(true) {
+                       
+                            if (abstractAssetList.isEmpty()){
+                                break;
+                            }
+                            processAssetForAsset(abstractAssetList.pop());           
+                        }
+
+                    } 
+                    
+                    else {
+                        // If thread is interrupted or asked to terminate then skip the list and publish
+                        // whatever assets are generated
+                        break;
+                    }
                 }
             }
             // Publish abstract assets of all items received by this process task

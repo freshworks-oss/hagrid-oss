@@ -8,7 +8,11 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
+import com.freshworks.hagrid.main.dsl.runnable.context.ActionContext;
 import com.freshworks.hagrid.main.dsl.services.ActionService;
+import com.freshworks.hagrid.main.dsl.services.ApiModelService;
+import com.freshworks.hagrid.main.dsl.services.OutputModelService;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.main.SharedActionServiceMap;
@@ -23,34 +27,34 @@ import lombok.NoArgsConstructor;
 @Scope ("prototype")
 public class GenericAsset extends AbstractAsset{
 
-    JsonNode output;
-    String namespace;
-    String actionName;
-    String subActionName;
-    String outputModelName;
+    boolean isDslAsset = true;
+    OutputModel outputModel;
     GenericBean genericBean;
-
-    @JsonIgnore
-    ActionService actionService;
+    ActionContext actionContext;
+    OutputModelService outputModelService;
     static ObjectMapper objectMapper = new ObjectMapper();
 
-
+    public void setOutputModelService(OutputModelService outputModelService, ActionContext actionContext){
+        this.outputModelService = outputModelService;
+        this.outputModelService.configure(actionContext);
+        this.actionContext = actionContext;
+    }
 
     public void setFromBean(GenericBean genericBean){
         
         this.genericBean = genericBean;
     }
 
+    @Override 
+    public boolean filter(){
+
+        return this.outputModelService.filterOutputModel(outputModel);
+    }
+
     @Override
     public void transform() {
         
-        this.namespace = genericBean.getNamespace();
-        this.actionName = genericBean.getActionName();
-        this.subActionName = genericBean.getSubActionName();
-        ActionService actionService = SharedActionServiceMap.get(namespace, actionName, subActionName);
-        output = actionService.populateActionOutput(genericBean.getData());
-        this.outputModelName = actionService.getOutputModelName();
-        SharedActionServiceMap.clear(namespace, actionName, subActionName);
+        this.outputModel = this.outputModelService.transformOutputModel(outputModel);
     }
     
 }

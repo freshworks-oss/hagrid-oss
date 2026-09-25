@@ -43,10 +43,6 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     RequestResponseContainer lastContainer;
     JsonNode[] lastParentJsonNodes;
 
-    @Autowired
-    public GenericNonHttpStep(ActionService actionService) {
-        this.actionService = actionService;
-    }
 
     @Override
     public void setupNonHttp(ImmutableMap<String, String> actionInput, JsonNode... parentJsonObject) throws StepFailedException{
@@ -55,8 +51,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         this.actionService.setup(parentJsonObject);
     }
 
-    public void setSubActionName(String subActionName){
-        this.subActionName = subActionName;
+    public void setActionService(ActionService actionService){
+        this.actionService = actionService;
     }
 
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
@@ -73,12 +69,9 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
 
             newInputMap.put(in.getKey(), in.getValue());
         }
-        getSyncServiceContainer().add(this.actionService, ActionService.class);
 
         // First configure the action service 
         this.actionService.configure(actionName, subActionName, newInputMap, parentJsonObject);
-
-        SharedActionServiceMap.add(namespace, actionName, subActionName, actionService);
         
         // Now starts calling the the step methods 
         return this.actionService.shouldProceedWithParent(parentJsonObject);
@@ -96,10 +89,8 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
 
             e.printStackTrace();
             return null;
-        }
-        
+        }        
     }
-
 
     public RequestResponseContainer executeNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject){
 
@@ -149,15 +140,9 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
     public StepDataBeanMapping parseSyncResponseNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject){
 
         JsonNode response = this.actionService.parseSyncResponseNonHttp(currentRequestResponse, parentJsonObject);
-        ObjectNode node = objectMapper.createObjectNode();
-        node.set("data", response);
-        node.put("namespace", this.namespace);
-        node.put("subActionName", this.subActionName);
-        node.put("actionName", this.actionName);
-
         StepDataBeanMapping stepDataBeanMapping = new StepDataBeanMapping();
         stepDataBeanMapping.setBeanClass(GenericBean.class);
-        stepDataBeanMapping.setParseSyncedResponseData(node);
+        stepDataBeanMapping.setParseSyncedResponseData(response);
         return stepDataBeanMapping;
     }
 

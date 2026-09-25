@@ -1,16 +1,16 @@
 actions {
 
-    // simple_action {
+    simple_action {
 
-    //     /**
-    //       Use case : Very simple action with no pagination and no parameters
-    //     */
-    //     name "getUser"
-    //     api_model "action1" // idea from nango 
-    //     request "action1"
-    //     response_path "context._response.body.body.data.users"
-    //     output "action1_output"
-    // }
+        /**
+          Use case : Very simple action with no pagination and no parameters
+        */
+        name "getUser"
+        api_model "action1" // idea from nango 
+        request "action1"
+        response_path "context._response.body.body.data.users"
+        output "action1_output"
+    }
 
     //  simple_action {
 

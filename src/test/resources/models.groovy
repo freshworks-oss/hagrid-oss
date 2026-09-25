@@ -125,7 +125,7 @@ models {
         }
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
+    // Output model refers to the model which can be filled with other API model or output model to create desired business object
     output_model {
 
         // Name of the output model

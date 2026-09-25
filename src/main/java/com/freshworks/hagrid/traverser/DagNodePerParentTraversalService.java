@@ -1,6 +1,8 @@
 package com.freshworks.hagrid.traverser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.dsl.services.ActionService;
+import com.freshworks.hagrid.main.dsl.services.ApiModelService;
 import com.freshworks.hagrid.main.steps.GenericNonHttpStep;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -187,13 +189,17 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
             for (String s : listOfParentItems) {
 
                 AbstractStep abstractStep = null;
+                ActionService actionService = null;
+                ApiModelService apiModelService = null;
                 
                 // If this node is dsl based node then GenericNonHttpStep should be used for execution
                 // otherwise, step defined should be used
                 if(node.isDslBasedNode()){
 
                     GenericNonHttpStep genericNonHttpStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
-                    genericNonHttpStep.setSubActionName(node.getName());
+                    actionService = syncServiceContainer.getBean(ActionService.class);
+                    apiModelService = syncServiceContainer.getBean(ApiModelService.class);
+                    genericNonHttpStep.setActionService(actionService);
                     abstractStep = genericNonHttpStep;
                 }
                 else{
@@ -202,7 +208,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
                 
                 DagNodePerItemTraversalService dagNodePerItemTraversalService = getDagNodePerItemTraversalService();
                 dagNodePerParentPhaser.register();
-                dagNodePerItemTraversalService.configure(uuid + "/" + "dag_node_per_item_traversal", syncServiceContainer, abstractStep, objectMapper.readTree(s), node, parentNode, limitNumberOfConcurrentPerItemTraversalSemaphore, dagNodePerParentPhaser, rateLimitBucket, infraService.getProcessorQueue(), traverseConfigService, baggageMap);
+                dagNodePerItemTraversalService.configure(uuid + "/" + "dag_node_per_item_traversal", syncServiceContainer, abstractStep, actionService, apiModelService, objectMapper.readTree(s), node, parentNode, limitNumberOfConcurrentPerItemTraversalSemaphore, dagNodePerParentPhaser, rateLimitBucket, infraService.getProcessorQueue(), traverseConfigService, baggageMap);
                 // Here I am registering per item to the waiter phaser
                 // TODO: What if I have register it but when task was in the queue, it got cancelled
                 // Then DagNodeTraversal could get stuck.
