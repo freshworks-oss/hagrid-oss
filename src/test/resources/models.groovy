@@ -34,6 +34,8 @@ models {
 
         // desired attributes required in this model
         attr "user_id" : "context._response.model.user_id", "user_name" : "context._response.model.user_name"
+
+        transform
     }
 
     // Output model refers to the model which can be filled with other API model to create desired business object

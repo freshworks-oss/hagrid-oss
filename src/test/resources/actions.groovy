@@ -314,6 +314,20 @@ actions {
             response_path "context._response.body.body.data.users"
             output "action1_output"
             is_root true
+
+            hooks {
+
+                action_parse_response {
+
+                    def how_many = context._response.body.body.how_many
+                    def users = context._response.body.body.data.users
+
+                    for( user in users){
+                        println(user)
+                    }
+                    parse context._response.body, "body.data.users", "error_api_model", "error_output_model", "BAD"
+                }
+            }
         }
 
         simple_action {
@@ -322,15 +336,15 @@ actions {
             Use case : Very simple action with no pagination and no parameters
             */
             name "action2"
-            api_model "action1" // idea from nango 
-            request "action1"
+            api_model "action2" // idea from nango 
+            request "action2", ["how_many" : "1"]
             response_path "context._response.body.body.data.users"
-            output "action1_output"
+            output "action2_output"
             parent "action1"
         }
+    } // composite action close 
 
-    }
-}
+} // actions close
 
 
 

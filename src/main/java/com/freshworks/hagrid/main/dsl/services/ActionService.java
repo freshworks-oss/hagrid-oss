@@ -310,7 +310,7 @@ public class ActionService {
 
             }
 
-            JsonNode diggedResponseBody = null;
+            JsonNode parsedResponse = null;
             ApiModelConfig apiModelConfig = null;
             if(parseSyncResponseObject == null){
 
@@ -318,7 +318,7 @@ public class ActionService {
                 Closure c = this.actionConfig.getResponsePathClosure();
                 c.setDelegate(actionContext);
                 c.setResolveStrategy(Closure.DELEGATE_ONLY);
-                diggedResponseBody = objectMapper.convertValue(c.call(), JsonNode.class);
+                parsedResponse = objectMapper.convertValue(c.call(), JsonNode.class);
                 apiModelConfig = actionConfig.getApiModelConfig();
                 this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
 
@@ -334,7 +334,7 @@ public class ActionService {
             else{
 
                 // Parse response body here manually
-                diggedResponseBody = parseSyncResponseObject.getDiggedResponseBody();
+                parsedResponse = parseSyncResponseObject.getDiggedResponseBody();
                 // Here using modelSpec take the apiModelConfig 
                 apiModelConfig = this.modelSpec.getApiModelByName(parseSyncResponseObject.getModelName());
 
@@ -344,7 +344,7 @@ public class ActionService {
             }
         
 
-            return diggedResponseBody;
+            return parsedResponse;
 
         }
 

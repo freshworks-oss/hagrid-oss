@@ -64,9 +64,10 @@ public class ActionContext {
         this.parentApiModelData = objectMapper.convertValue(context.get("_parent_actions"), new TypeReference<List<Map<String, Object>>>(){});
     }
 
-    public ParseSyncResponse parse(String responsePath, String modelName, String outputModelName, String responseType){
+    public ParseSyncResponse parse(Map parsedResponse, String responsePath, String modelName, String outputModelName, String responseType){
 
         ParseSyncResponse parseSyncResponse =  new ParseSyncResponse();
+        parseSyncResponse.setParsedResponse(parsedResponse);
         parseSyncResponse.setResponsePath(responsePath);
         parseSyncResponse.setModelName(modelName);
         parseSyncResponse.setOutputModelName(outputModelName);
@@ -78,12 +79,14 @@ public class ActionContext {
     @Setter
     public class ParseSyncResponse{
 
+        Map parsedResponse;
         String responsePath;
         String modelName;
         String outputModelName;
         ACTION_HTTP_CODE responseType;
 
-        public void parse(String responsePath, String modelName, String outputModelName, ACTION_HTTP_CODE responseType){
+        public void parse(Map parsedResponse, String responsePath, String modelName, String outputModelName, ACTION_HTTP_CODE responseType){
+            this.parsedResponse = parsedResponse;
             this.responsePath = responsePath;
             this.modelName = modelName;
             this.outputModelName = outputModelName;
@@ -92,7 +95,7 @@ public class ActionContext {
 
         public JsonNode getDiggedResponseBody() throws Exception{
             
-            JsonNode bodyNode = objectMapper.convertValue(actionResponse.getBody(), JsonNode.class);
+            JsonNode bodyNode = objectMapper.convertValue(parsedResponse, JsonNode.class);
             
             String[] split = this.responsePath.split("\\.");
 
