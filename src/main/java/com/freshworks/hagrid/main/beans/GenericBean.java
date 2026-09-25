@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.SharedActionServiceMap;
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Component
 @Scope ("prototype")
+@JsonIgnoreProperties ({"apiModelService", "syncServiceContainer"})
 public class GenericBean extends AbstractBean{
     
     boolean isDslBasedBean = true;

@@ -17,11 +17,12 @@ import lombok.Setter;
 @Setter
 public class ApiModel {
 
-    static ObjectMapper objectMapper = new ObjectMapper();
-
     String name = UUID.randomUUID().toString();
     ObjectNode data;
     
+    @JsonIgnore 
+    ObjectMapper objectMapper = new ObjectMapper();
+
     @JsonIgnore
     Closure<Boolean> filterClosure = new Closure<Boolean>(null) {public Boolean doCall(Map data){return true;}};
 

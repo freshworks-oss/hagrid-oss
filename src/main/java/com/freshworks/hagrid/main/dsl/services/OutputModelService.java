@@ -38,7 +38,7 @@ public class OutputModelService {
         this.actionContext = actionContext;
     }
 
-    public List<OutputModel> getOutputModelFromBean(JsonNode beanNode){
+    public List<OutputModel> getOutputModelFromApiModel(JsonNode beanNode){
 
         List<OutputModel> outputModelList = new ArrayList<>();
 
@@ -90,70 +90,6 @@ public class OutputModelService {
         }
 
         return outputModelList;
-    }
-
-    public JsonNode populateActionOutput(JsonNode jsonNode){
-
-        List<ApiModel> apiModelList = parseResponseToModel(jsonNode);
-        ObjectNode finalResponse = objectMapper.createObjectNode();
-        ArrayNode arrayNode = objectMapper.createArrayNode();
-
-        for(ApiModel apiModel : apiModelList){
-
-            OutputModelConfig outputModelConfig = null;
-            String outputModelName = (String)this.actionContext.getActionSharedMap().get("_output_config_model_name");
-            outputModelConfig = this.modelSpec.getOutputModelByName(outputModelName);
-            
-            
-            OutputModel outputModel = new OutputModel();
-            outputModel.setName(outputModelConfig.getName());
-            outputModel.setFilterClosure(outputModelConfig.getFilterClosure());
-            outputModel.setTransformClosure(outputModelConfig.getTransformClosure());
-            outputModel.setOutputFieldMapping(outputModelConfig.getOutputFieldMapping());
-
-            if(outputModel.dependsOn(apiModel)){
-
-                if(Boolean.TRUE.equals(outputModel.primitive())){
-                    outputModel.populate(apiModel);
-                    JsonNode outputModelNode = objectMapper.convertValue(outputModel, JsonNode.class);
-                    arrayNode.add(outputModelNode);
-                }
-
-                else{
-
-                    // it is partial 
-                    // It means that it is partial 
-                    Join join = outputModel.getJoin();   
-
-                    if(join.getLeftModelKey().equalsIgnoreCase(apiModel.getName())){
-
-                        //  Check if right filled exists already ? 
-                        // if so then populate it with left model 
-                    }
-
-                    else{
-
-                        // it is right model
-                        // check if left filled already exists ? 
-                        // if so then populate it with right filled 
-                    }
-                }
-            }
-
-        }
-
-        finalResponse.set("response", arrayNode);
-
-        if(this.actionContext.getActionSharedMap().containsKey("_response_type")){
-
-            ACTION_HTTP_CODE httpCode = (ACTION_HTTP_CODE)this.actionContext.getActionSharedMap().get("_response_type");
-            finalResponse.put("status", httpCode.toString());
-        }
-        else{
-            finalResponse.put("status", ACTION_HTTP_CODE.OK.toString());
-        }
-        
-        return finalResponse;
     }
 
     public String getOutputModelName(){

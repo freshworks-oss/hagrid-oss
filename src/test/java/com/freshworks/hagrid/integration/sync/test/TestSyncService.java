@@ -356,11 +356,11 @@ public class TestSyncService {
         
         InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class, where("value.output.response").elemMatch($.where("name").eq("action1_output")));
 
-        while(infraDbCursor.hasNext()){
-            GenericAsset genericAsset = infraDbCursor.getNext();
-            JsonNode node = genericAsset.getOutput();
-            System.out.println(node);
-        }
+        // while(infraDbCursor.hasNext()){
+        //     GenericAsset genericAsset = infraDbCursor.getNext();
+        //     JsonNode node = genericAsset.getOutput();
+        //     System.out.println(node);
+        // }
 
         // assertThat(syncStatusService.getSyncStatus() , Matchers.is(-1));
         // assertThat(syncStatusService.getTraverser_status() , Matchers.is(-1));

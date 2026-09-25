@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.MockFacadeInterface;
 import com.freshworks.hagrid.ReturnableMockTypeList;
+import com.freshworks.hagrid.main.dsl.services.ActionService;
+import com.freshworks.hagrid.main.dsl.services.ApiModelService;
 import com.freshworks.hagrid.shared.MockFacadeSyncServiceContainer;
 import com.freshworks.hagrid.shared.SimpleMockUtility;
 import com.freshworks.hagrid.shared.infra.nitrite.MockFacadeNitritedbQueue;
@@ -35,6 +37,7 @@ import java.util.concurrent.Phaser;
 import java.util.concurrent.Semaphore;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.*;
 
 /**
@@ -51,6 +54,11 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
     ReturnableMockTypeList<AbstractStep> abstractStep = new ReturnableMockTypeList<>();
     @Autowired
     MockFacadeHttpAbstractStep mockFacadeHttpAbstractStep;
+
+    ReturnableMockTypeList<ActionService> actionService = new ReturnableMockTypeList<>();
+
+    ReturnableMockTypeList<ApiModelService> apiModelService = new ReturnableMockTypeList<>();
+
 
     ReturnableMockTypeList<JsonNode> parentNodeData = new ReturnableMockTypeList<>();
     ReturnableMockTypeList<DagNode> parentNode = new ReturnableMockTypeList<>();
@@ -453,7 +461,7 @@ public class MockFacadeDagNodePerItemTraversal implements MockFacadeInterface {
 
         // Adding namespace so that analytics service can be fetched
         syncServiceContainer.next().add(namespace.next());
-        dagNodePerItemTraversalService.configure("dummy-name-space", syncServiceContainer.next(), abstractStep.next(), parentNodeData.next(), currentNode.next(), parentNode.next(), limitNumberOfConcurrentPerItemTraversalSemaphore.next(), waitUntilAllPerItemTraversalIsDonePhaser.next(), rateLimitBucket.next(), processorQueue.next(), traverseConfigService.next(), baggageMap.next());
+        dagNodePerItemTraversalService.configure("dummy-name-space", syncServiceContainer.next(), abstractStep.next(), actionService.next(), apiModelService.next(), parentNodeData.next(), currentNode.next(), parentNode.next(), limitNumberOfConcurrentPerItemTraversalSemaphore.next(), waitUntilAllPerItemTraversalIsDonePhaser.next(), rateLimitBucket.next(), processorQueue.next(), traverseConfigService.next(), baggageMap.next());
 
         doNothing().when(dagNodePerItemTraversalService).stepConfigure(any(), any());
 

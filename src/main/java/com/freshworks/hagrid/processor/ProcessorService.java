@@ -63,6 +63,8 @@ public class ProcessorService implements Callable<Void> {
 
     AbstractJoinService innerJoinService;
 
+    OutputModelService outputModelService;
+
     SyncStatusService syncStatusService;
 
     NamespaceService namespace;
@@ -79,11 +81,12 @@ public class ProcessorService implements Callable<Void> {
 
 
     @Autowired
-    public ProcessorService(@Qualifier("LeftJoinService") AbstractJoinService leftJoinService, @Qualifier("InnerJoinService") AbstractJoinService innerJoinService, @Qualifier("NoopJoinService") AbstractJoinService noopJoinService, ProcessorExecutorService processorExecutorService) throws IOException {
+    public ProcessorService(@Qualifier("LeftJoinService") AbstractJoinService leftJoinService, @Qualifier("InnerJoinService") AbstractJoinService innerJoinService, @Qualifier("NoopJoinService") AbstractJoinService noopJoinService, OutputModelService outputModelService, ProcessorExecutorService processorExecutorService) throws IOException {
 
         this.innerJoinService = innerJoinService;
         this.leftJoinService = leftJoinService;
         this.noopJoinService = noopJoinService;
+        this.outputModelService = outputModelService;
         this.processorExecutorService = processorExecutorService;
 
     }
@@ -187,7 +190,7 @@ public class ProcessorService implements Callable<Void> {
                 phaser.register();
                 ProcessorTaskService processorTask = getProcessorTask();
                 String parentPath = uuid + "/" + "processor_service_task";
-                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.syncStatusService, phaser, processTaskTracker);
+                processorTask.configure(parentPath, sList, syncServiceContainer, this.analyticsService, assetBeanDependencyMap, assetAssetDependencyMap, this.processorConfigService, this.bloomFilter, this.infraService , this.noopJoinService, this.leftJoinService, this.innerJoinService, this.outputModelService, this.syncStatusService, phaser, processTaskTracker);
                 processorExecutorService.submit(namespace.getNamespace(), processorTask);
                 numberOfProcessorTaskScheduled = numberOfProcessorTaskScheduled + 1;
             }

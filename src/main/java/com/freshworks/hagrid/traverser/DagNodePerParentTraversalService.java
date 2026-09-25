@@ -199,7 +199,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
                     GenericNonHttpStep genericNonHttpStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
                     actionService = syncServiceContainer.getBean(ActionService.class);
                     apiModelService = syncServiceContainer.getBean(ApiModelService.class);
-                    genericNonHttpStep.setActionService(actionService);
+                    genericNonHttpStep.setActionService(actionService, node.getName());
                     abstractStep = genericNonHttpStep;
                 }
                 else{

@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
@@ -16,6 +19,7 @@ import lombok.Setter;
 
 @Getter 
 @Setter 
+@JsonIgnoreProperties ({"objectMapper", "input", "actionRequest" , "actionResponse", "actionSharedMap", "parentApiModelData"})
 public class ActionContext {
 
     ObjectMapper objectMapper = new ObjectMapper();
@@ -26,8 +30,10 @@ public class ActionContext {
     // This holds the last request 
     ActionRequest actionRequest;
 
+
     // This holds the last response
     ActionResponse actionResponse;
+
 
     // This holds the shared variables
     Map<String, Object> actionSharedMap = new HashMap();
@@ -35,16 +41,27 @@ public class ActionContext {
     // This holds the parent data 
     List<Map<String, Object>> parentApiModelData = new ArrayList<>();
 
+    Map context = new HashMap<>();
+
+
     public Map getContext() throws Exception{
 
-        Map contextMap = new HashMap<>();
-        contextMap.put("_input", input);
-        contextMap.put("_request", actionRequest);
-        contextMap.put("_response", actionResponse);
-        contextMap.put("_shared", actionSharedMap);
-        contextMap.put("_parent_actions", parentApiModelData);
+        context.put("_input", input);
+        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+        context.put("_response", objectMapper.convertValue(actionResponse, Map.class));
+        context.put("_shared", actionSharedMap);
+        context.put("_parent_actions", parentApiModelData);
 
-        return contextMap;
+        return context;
+    }
+
+    public void setContext(Map context){
+
+        this.input = (Map)context.get("_input");
+        this.actionRequest = objectMapper.convertValue(context.get("_request"), ActionRequest.class);
+        this.actionResponse = objectMapper.convertValue(context.get("_response"), ActionResponse.class);
+        this.actionSharedMap = (Map)context.get("_shared");
+        this.parentApiModelData = objectMapper.convertValue(context.get("_parent_actions"), new TypeReference<List<Map<String, Object>>>(){});
     }
 
     public ParseSyncResponse parse(String responsePath, String modelName, String outputModelName, String responseType){

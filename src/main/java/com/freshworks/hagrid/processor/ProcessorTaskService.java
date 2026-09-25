@@ -150,19 +150,21 @@ public class ProcessorTaskService implements Callable<Void> {
                 // If bean is dsl based bean the asset creation will be done by ActionService
                 JsonNode beanNode = objectMapper.readTree(bean);
 
-                if(beanNode.has("isDslBasedBean")){
+                if(beanNode.has("dslBasedBean")){
 
                     // It is DSL based bean
                     GenericBean genericBean = objectMapper.convertValue(beanNode, GenericBean.class);
                     ActionContext actionContext = genericBean.getActionContext();
+                    this.outputModelService.configure(actionContext);
 
-                    List<OutputModel> outputModelList = this.outputModelService.getOutputModelFromBean(beanNode);
+                    List<OutputModel> outputModelList = this.outputModelService.getOutputModelFromApiModel(beanNode.get("apiModel"));
 
                     for(OutputModel outputModel : outputModelList){
                         GenericAsset genericAsset = syncServiceContainer.getBean(GenericAsset.class);
                         genericAsset.configure(syncServiceContainer);
                         genericAsset.setOutputModelService(outputModelService, actionContext);
                         genericAsset.setFromBean(genericBean);
+                        genericAsset.setOutputModel(outputModel);
                         genericAsset.filter();
                         genericAsset.transform();
                         assetsReadyToBePublishedList.add(genericAsset);

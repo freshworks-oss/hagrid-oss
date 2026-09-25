@@ -55,7 +55,7 @@ public class ActionService {
 
     ActionConfig actionConfig;
     ActionSpec actionSpec;
-    ActionServiceUtility actionServiceUtility;
+
 
     ActionResolver actionResolver;
 
@@ -65,11 +65,10 @@ public class ActionService {
     ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
-    public ActionService(ActionSpec actionSpec, ModelSpec modelSpec, ActionResolver actionResolver, RequestService requestService, ActionServiceUtility actionServiceUtility){
+    public ActionService(ActionSpec actionSpec, ModelSpec modelSpec, ActionResolver actionResolver, RequestService requestService){
         this.actionSpec = actionSpec;
         this.modelSpec = modelSpec;
         this.requestService = requestService;
-        this.actionServiceUtility = actionServiceUtility;
         this.actionResolver = actionResolver;
     }
 
@@ -322,7 +321,13 @@ public class ActionService {
                 diggedResponseBody = objectMapper.convertValue(c.call(), JsonNode.class);
                 apiModelConfig = actionConfig.getApiModelConfig();
                 this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
-                this.actionContext.getActionSharedMap().put("_output_config_model_name", actionConfig.getOutputModelConfigList().get(0).getName());
+
+                List<String> outputModelConfigListName = new ArrayList<>();
+
+                for(OutputModelConfig outputModelConfig: actionConfig.getOutputModelConfigList()){
+                    outputModelConfigListName.add(outputModelConfig.getName());
+                }
+                this.actionContext.getActionSharedMap().put("_output_config_model_name", outputModelConfigListName);
                 this.actionContext.getActionSharedMap().put("_response_type", "OK");
             }
 

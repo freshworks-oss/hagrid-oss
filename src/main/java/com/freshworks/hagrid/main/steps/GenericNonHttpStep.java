@@ -51,8 +51,9 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         this.actionService.setup(parentJsonObject);
     }
 
-    public void setActionService(ActionService actionService){
+    public void setActionService(ActionService actionService, String subActionName){
         this.actionService = actionService;
+        this.subActionName = subActionName;
     }
 
     public boolean shouldProceedWithParentObjectNonHttp(ImmutableMap<String, String> baggageMap, JsonNode... parentJsonObject) throws Exception{
