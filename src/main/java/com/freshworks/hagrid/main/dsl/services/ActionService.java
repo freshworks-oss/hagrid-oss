@@ -86,10 +86,17 @@ public class ActionService {
 
         for(JsonNode parentData : parentDataList){
 
-            if(parentData.has("data")){
-                JsonNode apiModelNode = parentData.get("data");
-                ApiModel apiModel = objectMapper.convertValue(apiModelNode, ApiModel.class);
-                this.parentModelData.add(apiModel.getModelDataAsMap());
+            if(parentData.has("apiModel")){
+
+                JsonNode parentApiModel = parentData.get("apiModel");
+
+                if(parentApiModel.has("data")){
+
+                    JsonNode apiModelData = parentApiModel.get("data");
+                    Map apiModelDataAsMap = objectMapper.convertValue(apiModelData, Map.class);
+                    this.parentModelData.add(apiModelDataAsMap);
+                }
+                
             }
         }
 
@@ -338,8 +345,13 @@ public class ActionService {
                 // Here using modelSpec take the apiModelConfig 
                 apiModelConfig = this.modelSpec.getApiModelByName(parseSyncResponseObject.getModelName());
 
+                // Change the response of the context 
+                    
+
+
+
                 this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
-                this.actionContext.getActionSharedMap().put("_output_config_model_name", parseSyncResponseObject.getOutputModelName());
+                this.actionContext.getActionSharedMap().put("_output_config_model_name", parseSyncResponseObject.getOutputConfigModelNameList());
                 this.actionContext.getActionSharedMap().put("_response_type", parseSyncResponseObject.getResponseType());
             }
         

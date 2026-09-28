@@ -301,7 +301,7 @@ actions {
 
     composite_action {
 
-        name "json_processing"
+        name "test_composite_action"
         
         simple_action {
 
@@ -323,9 +323,11 @@ actions {
                     def users = context._response.body.body.data.users
 
                     for( user in users){
-                        println(user)
+                        user["how_many"] = 100
                     }
-                    parse context._response.body, "body.data.users", "error_api_model", "error_output_model", "BAD"
+
+                    def new_response_body = ["users" : users]
+                    parse new_response_body, "users", "action1", "action1_output", "OK"
                 }
             }
         }
@@ -337,7 +339,7 @@ actions {
             */
             name "action2"
             api_model "action2" // idea from nango 
-            request "action2", ["how_many" : "1"]
+            request "action2", ["how_many" : "context._parent_actions[0].how_many"]
             response_path "context._response.body.body.data.users"
             output "action2_output"
             parent "action1"

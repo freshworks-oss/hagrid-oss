@@ -341,11 +341,11 @@ public class TestSyncService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
         ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
-        CompositeActionConfig actionConfig = actionSpec.getActionByName("json_processing");
+        CompositeActionConfig actionConfig = actionSpec.getActionByName("test_composite_action");
         DagNode parentNode = actionConfig.getRootNode();
                 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("actionName", "json_processing")
+                .put("actionName", "test_composite_action")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), parentNode , x, connectorConfiguration);

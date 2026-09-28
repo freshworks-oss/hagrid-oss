@@ -55,6 +55,35 @@ public class ActionContext {
         return context;
     }
 
+    public void setInput(Map input){
+
+        this.input = input;
+        context.put("_input", input);
+    }
+
+    public void setActionRequest(ActionRequest actionRequest){
+        this.actionRequest = actionRequest;
+        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+    }
+
+    public void setActionResponse(ActionResponse actionResponse){
+        this.actionResponse = actionResponse;
+        context.put("_response", objectMapper.convertValue(actionResponse, Map.class));
+    }
+
+
+    public void setActionSharedMap(Map actionSharedMap){
+        this.actionSharedMap = actionSharedMap;
+        context.put("_shared", actionSharedMap);
+    }
+
+
+    public void setParentApiModelData(List parentData){
+        this.parentApiModelData = parentData;
+        context.put("_parent_actions", parentData);
+    }
+
+
     public void setContext(Map context){
 
         this.input = (Map)context.get("_input");
@@ -70,7 +99,7 @@ public class ActionContext {
         parseSyncResponse.setParsedResponse(parsedResponse);
         parseSyncResponse.setResponsePath(responsePath);
         parseSyncResponse.setModelName(modelName);
-        parseSyncResponse.setOutputModelName(outputModelName);
+        parseSyncResponse.getOutputConfigModelNameList().add(outputModelName);
         parseSyncResponse.setResponseType(ACTION_HTTP_CODE.valueOf(responseType));
         return parseSyncResponse;
     }
@@ -82,14 +111,14 @@ public class ActionContext {
         Map parsedResponse;
         String responsePath;
         String modelName;
-        String outputModelName;
+        List<String> outputConfigModelNameList = new ArrayList<>();
         ACTION_HTTP_CODE responseType;
 
         public void parse(Map parsedResponse, String responsePath, String modelName, String outputModelName, ACTION_HTTP_CODE responseType){
             this.parsedResponse = parsedResponse;
             this.responsePath = responsePath;
             this.modelName = modelName;
-            this.outputModelName = outputModelName;
+            this.outputConfigModelNameList.add(outputModelName);
             this.responseType = responseType;
         }
 

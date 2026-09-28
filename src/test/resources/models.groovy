@@ -34,8 +34,7 @@ models {
 
         // desired attributes required in this model
         attr "user_id" : "context._response.model.user_id", "user_name" : "context._response.model.user_name"
-
-        transform
+        attr "how_many" : "context._response.model.how_many"
     }
 
     // Output model refers to the model which can be filled with other API model to create desired business object
@@ -46,6 +45,7 @@ models {
 
         // mapping of output model attributes with api model attribute
         attr "user_name_formatted" : model('action1', 'user_name') , "user_id_formatted" : model('action1' , 'user_id')
+        attr "how_many_formatted" : model("action1", "how_many")
     }
 
     // API Model refers to the model which will render the API output
