@@ -34,6 +34,8 @@ public class ConnectorConfiguration {
 
     String analyticsShouldPassTagsToMeterRegistry;
 
+    MongoDbConfiguration mongoDbConfiguration;
+
     HashMap<String, NodeRateLimitObject> nodeRateLimitHashMap = new HashMap<>();
 
     public ConnectorConfiguration(){
@@ -59,5 +61,21 @@ public class ConnectorConfiguration {
     public NodeRateLimitObject getNodeRateLimitObject(String name){
 
         return nodeRateLimitHashMap.get(name);
+    }
+
+
+    @Getter 
+    @Setter 
+    public static class MongoDbConfiguration{
+
+        String mongoConnectionString;
+        String databaseUserName;
+        String databasePassword;
+        String databaseAuthDb;
+        String databaseHost;
+        int databasePort;
+        String additionalParams;
+
+
     }
 }

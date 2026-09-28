@@ -40,49 +40,49 @@ public class InfraConfigService {
     // Use nitriteDb instead
     public String getMongoConnectionString(){
 
-        return this.connectorConfiguration.getMongoConnectionString();
+        return this.connectorConfiguration.getMongoDbConfiguration().getMongoConnectionString();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public String getDatabaseUserName(){
 
-        return this.connectorConfiguration.getDatabaseUserName();
+        return this.connectorConfiguration.getMongoDbConfiguration().getDatabaseUserName();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public String getDatabasePassword(){
 
-        return this.connectorConfiguration.getDatabasePassword();
+        return this.connectorConfiguration.getMongoDbConfiguration().getDatabasePassword();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public String getDatabaseAuthDb(){
         
-        return this.connectorConfiguration.getDatabaseAuthDb();
+        return this.connectorConfiguration.getMongoDbConfiguration().getDatabaseAuthDb();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public String getDatabaseHost(){
 
-        return this.connectorConfiguration.getDatabaseHost();
+        return this.connectorConfiguration.getMongoDbConfiguration().getDatabaseHost();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public String getAdditionalParams(){
 
-        return this.connectorConfiguration.getAdditionalParams();
+        return this.connectorConfiguration.getMongoDbConfiguration().getAdditionalParams();
     }
 
     // For backward compatibility
     // Use nitriteDb instead
     public int getDatabasePort(){
 
-        return this.connectorConfiguration.getDatabasePort();
+        return this.connectorConfiguration.getMongoDbConfiguration().getDatabasePort();
     }
 
 }
