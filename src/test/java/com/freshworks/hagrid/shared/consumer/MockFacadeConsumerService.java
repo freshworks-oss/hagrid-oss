@@ -49,7 +49,6 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
         consumerService = applicationContext.getBean(ConsumerService.class);
         ConsumerService consumerServiceSpy = Mockito.spy(consumerService);
         doNothing().when(consumerServiceSpy).configure(any());
-        doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any(), any());
         doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any());
 
         return consumerServiceSpy;

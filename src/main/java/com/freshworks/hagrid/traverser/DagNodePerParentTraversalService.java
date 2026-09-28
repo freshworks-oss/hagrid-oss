@@ -178,6 +178,14 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
             }
 
             int listOfParentItemsFetched = listOfParentItems.size();
+
+
+            if(listOfParentItemsFetched == 0 ){
+
+                throw new IllegalStateException("Though waitUntilHasMore return true on parent node, when fetching parent data then returned results is 0. It should not happen");
+            }
+
+
             index = index + listOfParentItemsFetched;
 
             // This to handle the case when drained limit say 800 but items fetched are 700 then we should return 100 permits back
