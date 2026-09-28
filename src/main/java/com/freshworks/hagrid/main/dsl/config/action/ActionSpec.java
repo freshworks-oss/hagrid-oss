@@ -51,8 +51,26 @@ public class ActionSpec extends GroovyObjectSupport{
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
         closure.call();
 
-        // Validate this duplicate name is present 
 
+        // Once composite action config is created, make sure there is no duplicate simple_action name is present
+
+        List<String> uniqueActionNameList = new ArrayList();
+        for(ActionConfig actionConfig : compositeActionConfig.getActionConfigList()){
+
+            if(uniqueActionNameList.contains(actionConfig.getName())){
+
+                throw new IllegalArgumentException("Composite action can not have simple actions with same name. Please change the name of the actions to make them unique");
+            }
+
+            uniqueActionNameList.add(actionConfig.getName());
+        }
+
+        // Clear the list after checkin is done
+        uniqueActionNameList.clear();
+
+
+
+        // Validate this duplicate name is present 
         for(CompositeActionConfig compositeActionConfig1 : actionList){
 
             if(compositeActionConfig1.getCompositeActionName().equals(compositeActionConfig.getCompositeActionName())){
