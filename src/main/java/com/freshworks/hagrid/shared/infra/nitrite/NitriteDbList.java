@@ -27,7 +27,6 @@ import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;
-import com.freshworks.hagrid.shared.infra.InfraDbCursor;
 import com.freshworks.hagrid.shared.infra.InfraDbList;
 
 import lombok.Getter;
@@ -380,11 +379,5 @@ public class NitriteDbList implements InfraDbList {
         
         NitriteDbCursor<T> nitriteCursorResponse = new NitriteDbCursor<T>(documentCursor);
         return nitriteCursorResponse;
-    }
-
-    @Override
-    public void removePublisher() throws Exception {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removePublisher'");
     }
 }

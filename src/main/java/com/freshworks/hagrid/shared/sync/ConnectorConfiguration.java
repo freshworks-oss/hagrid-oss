@@ -3,22 +3,14 @@ package com.freshworks.hagrid.shared.sync;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
-import com.freshworks.hagrid.main.steps.GenericNonHttpStep;
-import com.freshworks.hagrid.traverser.AbstractStep;
-import com.freshworks.hagrid.traverser.DagNode;
-import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
 import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.AccessLevel;
 
 
 @Getter

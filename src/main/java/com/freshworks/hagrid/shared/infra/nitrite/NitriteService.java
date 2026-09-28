@@ -11,7 +11,6 @@ import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
 import com.freshworks.hagrid.shared.analytics.AnalyticsService;
 import com.freshworks.hagrid.shared.infra.InfraConfigService;
 import com.freshworks.hagrid.shared.infra.InfraService;
-import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
 
 import lombok.Getter;
 import lombok.Setter;

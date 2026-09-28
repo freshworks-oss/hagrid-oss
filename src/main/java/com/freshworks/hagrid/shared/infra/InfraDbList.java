@@ -36,8 +36,6 @@ public interface InfraDbList {
 
     public long size() throws Exception;
 
-    public void removePublisher() throws Exception;
-
     public Boolean isEndOfListReached(int index) throws Exception;
 
     public void delete() throws Exception;

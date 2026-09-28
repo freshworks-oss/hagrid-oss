@@ -49,7 +49,7 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    public <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception{
+    private <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception{
 
         InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, nitriteFilter);
         return infraDbCursor;
