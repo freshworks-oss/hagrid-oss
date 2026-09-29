@@ -45,6 +45,8 @@ public class DagTraversalService implements Callable<Void> {
 
     NamespaceService namespace;
 
+    String dslCompositeActionName;
+
     SyncServiceContainer syncServiceContainer;
 
     TraverserExecutorService traverserExecutorService;
@@ -134,9 +136,10 @@ public class DagTraversalService implements Callable<Void> {
         return null;
     }
 
-    public void configure(String parentServiceUid, DagNode startingNode, ImmutableMap<String, String> baggageMap, Phaser dagPhaser, SyncServiceContainer syncServiceContainer){
+    public void configure(String parentServiceUid, String dslCompositeActionName, DagNode startingNode, ImmutableMap<String, String> baggageMap, Phaser dagPhaser, SyncServiceContainer syncServiceContainer){
 
         uuid =  parentServiceUid +  "/" + UUID.randomUUID();
+        this.dslCompositeActionName = dslCompositeActionName;
         this.startingNode = startingNode;
         this.baggageMap = baggageMap;
         this.dagPhaser = dagPhaser;
@@ -168,7 +171,7 @@ public class DagTraversalService implements Callable<Void> {
             DagNode n = treeNodeIterator.next();
             DagNodeTraversalService dagNodeTraversal = syncServiceContainer.getBean(DagNodeTraversalService.class);
             dagPhaser.register();
-            dagNodeTraversal.configure(uuid + "/dag_node_traversal" , dagPhaser, syncServiceContainer, n, startingNode, this.infra, this.traverserConfigService, baggageMap);
+            dagNodeTraversal.configure(uuid + "/dag_node_traversal" , dagPhaser, syncServiceContainer, dslCompositeActionName, n, startingNode, this.infra, this.traverserConfigService, baggageMap);
             traverserExecutorService.submit( namespace.getNamespace(), dagNodeTraversal);
         }
 

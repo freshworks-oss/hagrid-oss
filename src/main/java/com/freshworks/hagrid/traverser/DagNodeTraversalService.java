@@ -40,6 +40,7 @@ public class DagNodeTraversalService implements Callable<Void> {
     ObjectMapper objectMapper = new ObjectMapper();
     Bucket rateLimitBucket = null;
     NamespaceService namespace;
+    String dslCompositeActionName;
 
     TraverserExecutorService traverserExecutorService;
     DagNode node;
@@ -118,10 +119,11 @@ public class DagNodeTraversalService implements Callable<Void> {
         return null;
     }
 
-    public void configure(String parentUUId, Phaser parentPhaser,  SyncServiceContainer syncServiceContainer, DagNode node, DagNode topNodeOfThisSubTree, InfraService infraService, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap) throws Exception {
+    public void configure(String parentUUId, Phaser parentPhaser,  SyncServiceContainer syncServiceContainer, String dslCompositeActionName, DagNode node, DagNode topNodeOfThisSubTree, InfraService infraService, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap) throws Exception {
 
         uuid =  parentUUId + "/" + UUID.randomUUID();
         this.syncServiceContainer = syncServiceContainer;
+        this.dslCompositeActionName = dslCompositeActionName;
         this.node = node;
         this.baggageMap = baggageMap;
         this.infraService = infraService;
@@ -180,7 +182,7 @@ public class DagNodeTraversalService implements Callable<Void> {
 
                 DagNodePerParentTraversalService dagNodePerParentTraversalService = getNodePerParentTraversalService();
                 dagNodePhaser.register();
-                dagNodePerParentTraversalService.configure(uuid + "/" + "dag_node_per_parent_traversal", dagNodePhaser, syncServiceContainer,node, parentNode, infraService, traverseConfigService, baggageMap, limitNumberOfConcurrentPerItemTraversalSemaphore, rateLimitBucket);
+                dagNodePerParentTraversalService.configure(uuid + "/" + "dag_node_per_parent_traversal", dagNodePhaser, syncServiceContainer, this.dslCompositeActionName , node, parentNode, infraService, traverseConfigService, baggageMap, limitNumberOfConcurrentPerItemTraversalSemaphore, rateLimitBucket);
                 this.traverserExecutorService.submit(namespace.getNamespace(), dagNodePerParentTraversalService);
             }
         }

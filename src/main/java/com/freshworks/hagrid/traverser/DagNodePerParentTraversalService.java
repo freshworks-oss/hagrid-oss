@@ -42,6 +42,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
     ObjectMapper objectMapper = new ObjectMapper();
     Bucket rateLimitBucket = null;
     NamespaceService namespace;
+    String dslCompositeActionName;
     DagNode node;
     DagNode parentNode;
     TraverserExecutorService traverserExecutorService;
@@ -119,11 +120,12 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         return null;
     }
 
-    public void configure(String parentUUId, Phaser parentPhaser, SyncServiceContainer syncServiceContainer, DagNode node, DagNode parentNode, InfraService infraService, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap, Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore, Bucket rateLimitBucket) throws Exception {
+    public void configure(String parentUUId, Phaser parentPhaser, SyncServiceContainer syncServiceContainer, String dslCompositeActionName, DagNode node, DagNode parentNode, InfraService infraService, TraverseConfigService traverseConfigService, ImmutableMap<String, String> baggageMap, Semaphore limitNumberOfConcurrentPerItemTraversalSemaphore, Bucket rateLimitBucket) throws Exception {
 
         uuid =  parentUUId + "/" + UUID.randomUUID();
         this.syncServiceContainer = syncServiceContainer;
         this.node = node;
+        this.dslCompositeActionName = dslCompositeActionName;
         this.baggageMap = baggageMap;
         this.infraService = infraService;
         this.traverseConfigService = traverseConfigService;
@@ -207,7 +209,7 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
                     GenericNonHttpStep genericNonHttpStep = syncServiceContainer.getBean(GenericNonHttpStep.class);
                     actionService = syncServiceContainer.getBean(ActionService.class);
                     apiModelService = syncServiceContainer.getBean(ApiModelService.class);
-                    genericNonHttpStep.setActionService(actionService, node.getName());
+                    genericNonHttpStep.setActionService(actionService, this.dslCompositeActionName , node.getName());
                     abstractStep = genericNonHttpStep;
                 }
                 else{

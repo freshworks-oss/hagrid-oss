@@ -158,7 +158,7 @@ public class TestTraverser {
         NodeCycleService nodeCycleService = applicationContext.getBean(NodeCycleService.class);
         nodeCycleService.configure("/traverser", 1000 , namespace, rootNode, analyticsFactory);
 
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
         sharedExecutorService.submit(namespace.getNamespace(), nodeCycleService);
@@ -234,7 +234,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser",rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
 
@@ -319,7 +319,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser",rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService);
 

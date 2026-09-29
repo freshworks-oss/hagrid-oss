@@ -50,8 +50,9 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         this.actionService.setup(parentJsonObject);
     }
 
-    public void setActionService(ActionService actionService, String subActionName){
+    public void setActionService(ActionService actionService, String actionName, String subActionName){
         this.actionService = actionService;
+        this.actionName = actionName;
         this.subActionName = subActionName;
     }
 
@@ -61,7 +62,6 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         NamespaceService namespaceService = this.syncServiceContainer.getBean(NamespaceService.class);
         this.namespace = namespaceService.getNamespace();
         this.actionInput = baggageMap;
-        this.actionName = actionInput.get("actionName");
 
         Map<String, Object> newInputMap = new HashMap<>();
 

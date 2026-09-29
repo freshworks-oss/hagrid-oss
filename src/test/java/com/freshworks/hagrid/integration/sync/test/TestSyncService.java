@@ -340,15 +340,11 @@ public class TestSyncService {
     public void testSyncWhenRunningDynamicDag() throws Exception{
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
-        CompositeActionConfig actionConfig = actionSpec.getActionByName("test_composite_action");
-        DagNode parentNode = actionConfig.getRootNode();
-                
+        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);        
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("actionName", "test_composite_action")
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), parentNode , x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "test_composite_action" , x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);

@@ -123,7 +123,7 @@ public class TestDagTraversalService {
 
         ImmutableMap<String, String> map = ImmutableMap.<String, String>builder().put("", "").build();
 
-        dagTraversalService.configure("/traverser", parentNode, map,mockedPhaser, syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, parentNode, map,mockedPhaser, syncServiceContainer);
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
 
         sharedExecutorService.submit(namespace.getNamespace(), dagTraversalService).get();

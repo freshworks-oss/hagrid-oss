@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import com.freshworks.hagrid.main.dsl.config.action.ActionSpec;
 import com.freshworks.hagrid.processor.AssetAssetDependencyService;
 import com.freshworks.hagrid.processor.AssetBeanDependencyService;
 import com.freshworks.hagrid.processor.ProcessorConfigService;
@@ -181,7 +182,7 @@ public class SyncService {
 
 
         this.dagTraversalService = applicationContext.getBean(DagTraversalService.class);
-        this.dagTraversalService.configure(parentDagTraverserServicePath, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
+        this.dagTraversalService.configure(parentDagTraverserServicePath, null, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
         this.syncServiceContainer.add(this.dagTraversalService, DagTraversalService.class);
 
         // Init Processor Module
@@ -221,7 +222,7 @@ public class SyncService {
     }
 
 
-    public SyncServiceContainer configureWithDslDag(String infraNameSpace, DagNode rootNode, String startNodeName, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    public SyncServiceContainer configureWithDslDag(String infraNameSpace, String compositeActionName, String startActionName, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
@@ -279,6 +280,9 @@ public class SyncService {
 
         this.dagService = applicationContext.getBean(DagService.class);
         this.dagService.configure(syncServiceContainer);
+
+        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
+        DagNode rootNode = actionSpec.getActionByName(compositeActionName).getRootNode();
         rootNode = this.dagService.dagDynamicDagScanner(namespace.getNamespace(), rootNode, traverseConfigService, infraService);
         syncServiceContainer.add(rootNode, DagNode.class);
 
@@ -288,7 +292,7 @@ public class SyncService {
 
 
         String parentDagTraverserServicePath = "/" + namespace.getNamespace() + "/" + "traverser" + "/" + "dag_traversal";
-        DagNode startingNode = rootNode.find(startNodeName);
+        DagNode startingNode = rootNode.find(startActionName);
 
         // Init NodeCycle
         this.nodeCycleService = applicationContext.getBean(NodeCycleService.class);
@@ -297,7 +301,7 @@ public class SyncService {
 
 
         this.dagTraversalService = applicationContext.getBean(DagTraversalService.class);
-        this.dagTraversalService.configure(parentDagTraverserServicePath, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
+        this.dagTraversalService.configure(parentDagTraverserServicePath, compositeActionName, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
         this.syncServiceContainer.add(this.dagTraversalService, DagTraversalService.class);
 
         // Init Processor Module
@@ -336,7 +340,7 @@ public class SyncService {
         return this.syncServiceContainer;
     }
 
-        public SyncServiceContainer configureWithDslDag(String infraNameSpace, DagNode rootNode, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
+    public SyncServiceContainer configureWithDslDag(String infraNameSpace, String compositeActionName, ImmutableMap<String, String> baggageMap, ConnectorConfiguration connectorConfiguration) throws Exception{
 
         // START: Moved classes from syncService constructor
 
@@ -394,6 +398,8 @@ public class SyncService {
 
         this.dagService = applicationContext.getBean(DagService.class);
         this.dagService.configure(syncServiceContainer);
+        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
+        DagNode rootNode = actionSpec.getActionByName(compositeActionName).getRootNode();
         rootNode = this.dagService.dagDynamicDagScanner(namespace.getNamespace(), rootNode, traverseConfigService, infraService);
         syncServiceContainer.add(rootNode, DagNode.class);
 
@@ -412,7 +418,7 @@ public class SyncService {
 
 
         this.dagTraversalService = applicationContext.getBean(DagTraversalService.class);
-        this.dagTraversalService.configure(parentDagTraverserServicePath, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
+        this.dagTraversalService.configure(parentDagTraverserServicePath, compositeActionName, startingNode, baggageMap, new Phaser(), this.syncServiceContainer);
         this.syncServiceContainer.add(this.dagTraversalService, DagTraversalService.class);
 
         // Init Processor Module

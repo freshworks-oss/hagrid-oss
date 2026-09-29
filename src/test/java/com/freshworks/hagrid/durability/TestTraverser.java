@@ -150,7 +150,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -261,7 +261,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -474,7 +474,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -587,7 +587,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -701,7 +701,7 @@ public class TestTraverser {
 
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x,  new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -934,7 +934,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x,  new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1048,7 +1048,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x,  new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1162,7 +1162,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1277,7 +1277,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1393,7 +1393,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(),  syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(),  syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1628,7 +1628,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x,  new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x,  new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 
@@ -1731,7 +1731,7 @@ public class TestTraverser {
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
         CountDownLatch latch = new CountDownLatch(rootNode.getNodesInDag().size());
-        dagTraversalService.configure("/traverser", rootNode, x, new Phaser(), syncServiceContainer);
+        dagTraversalService.configure("/traverser", null, rootNode, x, new Phaser(), syncServiceContainer);
         syncServiceContainer.add(dagTraversalService);
         TraverserExecutorService traverserExecutorService = syncServiceContainer.getBean(TraverserExecutorService.class);
 

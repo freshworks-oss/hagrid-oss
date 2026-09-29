@@ -160,7 +160,7 @@ public class TestDagNodePerParentTraversalService {
         Bucket rateLimitBucket = Bucket.builder().addLimit(Bandwidth.simple(rateLimit, Duration.ofSeconds(rateLimitDuration))).build();
 
         SharedExecutorService sharedExecutorService = syncServiceContainer.getBean(SharedExecutorService.class);
-        dagNodePerParentTraversalService.configure("/traverser", phaser, syncServiceContainer, nodeToTraverse, parentNode, mongoService, traverseConfigService, immutableMap, new Semaphore(100), rateLimitBucket );
+        dagNodePerParentTraversalService.configure("/traverser", phaser, syncServiceContainer, null, nodeToTraverse, parentNode, mongoService, traverseConfigService, immutableMap, new Semaphore(100), rateLimitBucket );
         sharedExecutorService.submit(namespace.getNamespace(), dagNodePerParentTraversalService).get();
 
         assertThat(list.size(), greaterThan(1));

@@ -49,7 +49,7 @@ public class MockFacadeDagNodeTraversal implements MockFacadeInterface {
 
         dagNodeTraversalService = applicationContext.getBean(DagNodeTraversalService.class);
         DagNodeTraversalService dagNodeTraversalServiceSpy = Mockito.spy(dagNodeTraversalService);
-        doNothing().when(dagNodeTraversalServiceSpy).configure(anyString(), any(), any(), any(), any(), any(), any(), any());
+        doNothing().when(dagNodeTraversalServiceSpy).configure(anyString(), any(), any(), any(), any(), any(), any(), any(), any());
         doNothing().when(dagNodeTraversalServiceSpy).traverse();
         return dagNodeTraversalServiceSpy;
     }
