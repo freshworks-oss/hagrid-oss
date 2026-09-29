@@ -4,18 +4,18 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.freshworks.core.shared.Namespace;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.analytics.AnalyticsFactory;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.traverser.AbstractStep;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.DagTraversalService;
-import com.freshworks.core.traverser.HttpAbstractStep;
-import com.freshworks.core.traverser.StepDataBeanMapping;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.hagrid.shared.NamespaceService;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
+import com.freshworks.hagrid.shared.analytics.AnalyticsService;
+import com.freshworks.hagrid.traverser.AbstractStep;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.DagTraversalService;
+import com.freshworks.hagrid.traverser.HttpAbstractStep;
+import com.freshworks.hagrid.traverser.StepDataBeanMapping;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.traverser.net.http.HttpRequest;
+import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +43,7 @@ public class FbComment extends HttpAbstractStep {
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer){
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
     }
@@ -96,11 +96,6 @@ public class FbComment extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-
-    }
-
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
 
     }
 

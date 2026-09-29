@@ -2,16 +2,16 @@ package com.freshworks.hagrid.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.Namespace;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.analytics.AnalyticsFactory;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.hagrid.shared.NamespaceService;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
+import com.freshworks.hagrid.shared.analytics.AnalyticsService;
+import com.freshworks.hagrid.shared.sync.SyncStatusService;
+import com.freshworks.hagrid.traverser.*;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.traverser.net.http.HttpRequest;
+import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class FbUser extends HttpAbstractStep {
 
     @Override
     public void configure(SyncServiceContainer syncServiceContainer){
-        Namespace namespace = syncServiceContainer.getBean(Namespace.class);
+        NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
 
@@ -80,12 +80,6 @@ public class FbUser extends HttpAbstractStep {
             e.printStackTrace();
             return null;
         }
-    }
-
-    @Override
-    public void filterResponse(StepDataBeanMapping stepDataBeanMapping, JsonNode... parentJsonObject) throws StepFailedException {
-
-
     }
 
     @Override

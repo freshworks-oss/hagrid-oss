@@ -1,8 +1,8 @@
 package com.freshworks.hagrid.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.freshworks.core.processor.AbstractBean;
-import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.hagrid.processor.AbstractBean;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

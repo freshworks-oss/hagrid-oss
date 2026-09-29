@@ -1,20 +1,18 @@
 package com.freshworks;
 
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.consumer.AssetStreamResponse;
-import com.freshworks.core.shared.consumer.AssetStreamResponse.Token;
-import com.freshworks.core.shared.consumer.ConsumerService;
-import com.freshworks.core.shared.sync.SyncService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.core.traverser.ParentStep;
 import com.freshworks.hagrid.assets.FbUser;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.consumer.ConsumerService;
+import com.freshworks.hagrid.shared.infra.InfraDbCursor;
+import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
+import com.freshworks.hagrid.shared.sync.SyncService;
+import com.freshworks.hagrid.shared.sync.SyncStatusService;
 import com.google.common.collect.ImmutableMap;
 
 @Component
@@ -42,8 +40,12 @@ public class Initialization {
 
             final SyncServiceContainer syncServiceContainer;
 
+            ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+            syncService.configureWithStaticSteps(namespace, com.freshworks.hagrid.traverser.ParentStep.class, map, connectorConfiguration);
+
             // Run DAG from parentstep.class .. You can run Hagrid DAG from any step.
-            syncServiceContainer = syncService.startSync(ParentStep.class, namespace,  map);
+            syncServiceContainer = syncService.startSync();
 
 
             SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
@@ -51,28 +53,7 @@ public class Initialization {
 
             // Now consume assets as they are being generated
             // Create a token which say how many and from which index do you want to consume
-            Token token = new Token();
-            token.setCount(100);
-            token.setStart(0);
-
-            // Keep consuming until sync is in progress ( i.e 0 ) or failed ( i.e -1)
-            while(syncStatusService.getSyncStatus() != 1 && syncStatusService.getSyncStatus() != -1){
-
-                AssetStreamResponse<FbUser> fbUserStreamResponse = consumerService.streamAssetByAssetType(FbUser.class, token);
-                List<FbUser> fbAssetList = fbUserStreamResponse.getAbstractAssetList();
-
-                for( FbUser fbAsset : fbAssetList){
-                    System.out.println("fetched asset is " + fbAsset.getUser_id());
-                }
-
-                token = fbUserStreamResponse.getNextToken();
-
-                if(token == null){
-                    // It means that Hagrid has been completed and all data is consumed
-                    System.out.println("I am breaking out of loop");
-                    break;
-                }
-            }
+            InfraDbCursor<FbUser> dbCursor = consumerService.getAssetCursor(FbUser.class);
 
             // Wait main thread until sync is done ( either successfull or failed)
             syncStatusService.waitUntilSyncIsInProgress();
@@ -81,12 +62,12 @@ public class Initialization {
             // Another way to consume all assets after sync is done. 
             // Mindful here, this method returns all assets at once. 
 
+            while(dbCursor.hasNext()){
 
-            // List<FbUser> listofFbUserAsset = consumerService.getAssetByAssetType(FbUser.class);
+                FbUser fbUser = dbCursor.getNext();
 
-            // for( FbUser fbAsset : listofFbUserAsset){
-            //         System.out.println("fetched asset is " + fbAsset);
-            // }
+                System.out.println(fbUser.getUser_id());
+            }
             
 
             // Once sync is done, then must shutdown to release all resouces

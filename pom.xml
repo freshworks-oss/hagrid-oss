@@ -18,13 +18,31 @@
   <build>
   </build>
 
-  <parent>
-    <groupId>com.freshworks</groupId>
-    <artifactId>hagrid-pom</artifactId>
-    <version>4.6.0</version>
-  </parent>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.freshworks</groupId>
+      <artifactId>hagrid</artifactId>
+      <version>4.8.0-2af9f57</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>org.dizitart</groupId>
+      <artifactId>nitrite</artifactId>
+      <version>5.0.0</version>
+      <scope>compile</scope>
+    </dependency>
+
+        <!-- Groovy for actions.dsl parsing -->
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>4.0.22</version>
+      <type>pom</type>
+      <scope>compile</scope>
+    </dependency>
+
   </dependencies>
 
   <repositories>
