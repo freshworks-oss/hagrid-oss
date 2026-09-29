@@ -9,7 +9,7 @@ requests {
         type "HTTP"
         method "GET"
         host  "http://django:3000"
-        path  "/users?how_many=10"
+        path  "/users?how_many=2"
     }
 
     request {
