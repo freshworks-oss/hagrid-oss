@@ -109,9 +109,14 @@ public class ActionSpecBean {
 
         
         ClassPathResource resource = new ClassPathResource(ACTIONS_DSL_RESOURCE);
-        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-            groovyShell.evaluate(reader);
+
+        if(resource.exists()){
+
+            try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+                groovyShell.evaluate(reader);
+            }
         }
+
 
         return actionSpec;
     }

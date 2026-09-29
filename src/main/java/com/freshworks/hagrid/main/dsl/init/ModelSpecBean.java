@@ -106,10 +106,13 @@ public class ModelSpecBean {
 
         
         ClassPathResource resource = new ClassPathResource(MODELS_DSL_RESOURCE);
-        try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-            groovyShell.evaluate(reader);
-        }
 
+        if(resource.exists()){
+            try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+                groovyShell.evaluate(reader);
+            }
+        }
+    
         return modelSpec;
     }
 }
