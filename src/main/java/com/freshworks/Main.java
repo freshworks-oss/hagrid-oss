@@ -18,13 +18,13 @@ import org.springframework.context.ApplicationContext;
     DataSourceTransactionManagerAutoConfiguration.class, 
     HibernateJpaAutoConfiguration.class,
     RedisAutoConfiguration.class})
-    
+
 public class Main
 {
     public static void main( String[] args )
     {
         ApplicationContext applicationContext = SpringApplication.run(Main.class, args);
         Initialization initialization = applicationContext.getBean(Initialization.class);
-        initialization.run();
+        initialization.runStaticStepSync();
     }
 }
