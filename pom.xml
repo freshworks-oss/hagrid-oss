@@ -24,7 +24,7 @@
     <dependency>
       <groupId>com.freshworks</groupId>
       <artifactId>hagrid</artifactId>
-      <version>4.8.0-2af9f57</version>
+      <version>4.8.0-5345910</version>
     </dependency>
     
     <dependency>

@@ -1,5 +1,8 @@
 package com.freshworks.hagrid.assets;
 
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.freshworks.hagrid.processor.AbstractAsset;
@@ -16,14 +19,16 @@ import lombok.Setter;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class FbPost extends AbstractAsset {
+@Component 
+@Scope ("prototype")
+public class FbPostAsset extends AbstractAsset {
 
     String user_id;
     String post_id;
     String post_title;
     String post_text;
 
-    public void setBatchFromBean(com.freshworks.hagrid.beans.FbPost post){
+    public void setBatchFromBean(com.freshworks.hagrid.beans.FbPostBean post){
         
         user_id = post.getUser_id();
         post_id = post.getPost_id();

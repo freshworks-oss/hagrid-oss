@@ -193,7 +193,7 @@ public class FbPost extends HttpAbstractStep {
             }
 
             stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
-            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbPost.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbPostBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

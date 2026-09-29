@@ -2,7 +2,10 @@ package com.freshworks;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 
 
@@ -10,7 +13,12 @@ import org.springframework.context.ApplicationContext;
  * Hello world!
  *
  */
-@SpringBootApplication(scanBasePackages = {"com.freshworks"}, exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.freshworks"}, exclude = {
+    DataSourceAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class, 
+    HibernateJpaAutoConfiguration.class,
+    RedisAutoConfiguration.class})
+    
 public class Main
 {
     public static void main( String[] args )

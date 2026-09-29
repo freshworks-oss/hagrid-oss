@@ -6,12 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Conditional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FbCommunity extends AbstractBean {
+@Component 
+@Scope ("prototype")
+public class FbCommunityBean extends AbstractBean {
 
     String user_id;
     String community_id;

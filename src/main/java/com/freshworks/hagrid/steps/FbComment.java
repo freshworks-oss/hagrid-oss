@@ -35,7 +35,7 @@ public class FbComment extends HttpAbstractStep {
 
     // Below is the custom logic written to fetch data from our hypothetical fb database 
     int numberOfCommentsEachPage = 5;
-    int numberOfCommentPagination = 10;
+    int numberOfCommentPagination = 1;
     long waitBetweenCommentPaginationInMs = 0;
 
     int count = 0;
@@ -194,7 +194,7 @@ public class FbComment extends HttpAbstractStep {
             }
 
             stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
-            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbComment.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommentBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){

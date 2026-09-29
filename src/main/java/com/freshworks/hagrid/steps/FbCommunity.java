@@ -174,7 +174,7 @@ public class FbCommunity extends HttpAbstractStep {
             }
             
             stepDataBeanMapping.setParseSyncedResponseData(arrayNode);
-            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunity.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.beans.FbCommunityBean.class);
             return stepDataBeanMapping;
         }
         catch (Exception e){
