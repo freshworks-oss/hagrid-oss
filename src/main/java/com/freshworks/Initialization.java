@@ -64,14 +64,14 @@ public class Initialization {
 
             // Now consume assets as they are being generated
             // Create a token which say how many and from which index do you want to consume
-            InfraDbCursor<FbCommentAsset> dbCursor = consumerService.getAssetCursor(FbCommentAsset.class);
+            InfraDbCursor dbCursor = consumerService.getAssetCursor(FbCommentAsset.class);
             
             // Another way to consume all assets after sync is done. 
             // Mindful here, this method returns all assets at once. 
 
             while(dbCursor.hasNext()){
 
-                FbCommentAsset fbCommentAsset = dbCursor.getNext();
+                FbCommentAsset fbCommentAsset = dbCursor.getNextAsset();
 
                 System.out.println(fbCommentAsset.getComment_id());
             }
@@ -107,8 +107,9 @@ public class Initialization {
             ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
 
-            consumerService.streamAsset(GenericAsset.class, asset -> {
+            consumerService.streamDslBasedOutputModel("action1_output", asset -> {
 
+                System.out.println("OUTPUT ASSSET IS ");
                 System.out.println(asset);
             });
             
@@ -121,15 +122,14 @@ public class Initialization {
 
             // Now consume assets as they are being generated
             // Create a token which say how many and from which index do you want to consume
-            InfraDbCursor<GenericAsset> dbCursor = consumerService.getAssetCursor(GenericAsset.class);
+            InfraDbCursor dbCursor = consumerService.getAssetCursor(GenericAsset.class);
             
             // Another way to consume all assets after sync is done. 
             // Mindful here, this method returns all assets at once. 
 
             while(dbCursor.hasNext()){
 
-                GenericAsset genericAsset = dbCursor.getNext();
-
+                GenericAsset genericAsset = dbCursor.getNextAsset();
                 System.out.println(genericAsset);
             }
             
