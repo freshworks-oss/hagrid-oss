@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.assets.FbCommentAsset;
 import com.freshworks.hagrid.assets.FbUserAsset;
 import com.freshworks.hagrid.main.assets.GenericAsset;
@@ -122,14 +123,14 @@ public class Initialization {
 
             // Now consume assets as they are being generated
             // Create a token which say how many and from which index do you want to consume
-            InfraDbCursor dbCursor = consumerService.getAssetCursor(GenericAsset.class);
+            InfraDbCursor dbCursor = consumerService.getDslBasedOutputModelCursor("action1_output");
             
             // Another way to consume all assets after sync is done. 
             // Mindful here, this method returns all assets at once. 
 
             while(dbCursor.hasNext()){
 
-                GenericAsset genericAsset = dbCursor.getNextAsset();
+                ObjectNode genericAsset = dbCursor.getNextOutputModel();
                 System.out.println(genericAsset);
             }
             
