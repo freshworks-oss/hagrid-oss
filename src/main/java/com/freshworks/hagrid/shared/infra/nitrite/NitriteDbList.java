@@ -274,8 +274,6 @@ public class NitriteDbList implements InfraDbList {
 
         Document subDocument = Document.createDocument(map);
         documentMap.put("list_index", listIndex);
-
-        System.out.println("sub document is " + subDocument);
         documentMap.put("value", subDocument);
 
         Document document = Document.createDocument(documentMap);   

@@ -1,6 +1,7 @@
 package com.freshworks.hagrid.shared.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
 import com.freshworks.hagrid.processor.AbstractAsset;
@@ -140,7 +141,7 @@ public class ConsumerService {
      * @param abstractAsset
      * @param consumer
      */
-    public void streamDslBasedOutputModel(String outputModelName, Consumer<OutputModel> consumer){
+    public void streamDslBasedOutputModel(String outputModelName, Consumer<ObjectNode> consumer){
 
         ObjectMapper objectMapper = new ObjectMapper();
         this.analyticsService.registerEventCallback("HAGRID_ASSET_PUBLISH_DONE",
@@ -154,7 +155,7 @@ public class ConsumerService {
                     GenericAsset genericAsset = (GenericAsset)asset;
 
                     if(genericAsset.getOutputModel().getName().equalsIgnoreCase(outputModelName)){
-                        consumer.accept(genericAsset.getOutputModel());
+                        consumer.accept(genericAsset.getOutputModel().getData());
                     }
                     
                 }
