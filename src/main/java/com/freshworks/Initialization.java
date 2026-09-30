@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.freshworks.hagrid.assets.FbCommentAsset;
 import com.freshworks.hagrid.assets.FbUserAsset;
+import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.main.dsl.config.action.ActionSpec;
 import com.freshworks.hagrid.main.dsl.config.action.CompositeActionConfig;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -101,19 +102,16 @@ public class Initialization {
             // There are many services like `consumerService`, `traverserConfigService`, `processorService` 
 
             ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-            ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
-            CompositeActionConfig compositeActionConfig =  actionSpec.getActionByName("action1");
-
-            SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(namespace, compositeActionConfig.getRootNode(), map, connectorConfiguration);
+            SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(namespace, "action1", map, connectorConfiguration);
             SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
             ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
 
-            consumerService.streamAsset(FbCommentAsset.class, commentAsset -> {
+            consumerService.streamAsset(GenericAsset.class, asset -> {
 
-                FbCommentAsset fbCommentAsset = (FbCommentAsset)commentAsset;
-                System.out.println(fbCommentAsset.getComment_id());
+                System.out.println(asset);
             });
+            
             // Run DAG from parentstep.class .. You can run Hagrid DAG from any step.
             syncServiceContainer = syncService.startSync();
 
@@ -123,16 +121,16 @@ public class Initialization {
 
             // Now consume assets as they are being generated
             // Create a token which say how many and from which index do you want to consume
-            InfraDbCursor<FbCommentAsset> dbCursor = consumerService.getAssetCursor(FbCommentAsset.class);
+            InfraDbCursor<GenericAsset> dbCursor = consumerService.getAssetCursor(GenericAsset.class);
             
             // Another way to consume all assets after sync is done. 
             // Mindful here, this method returns all assets at once. 
 
             while(dbCursor.hasNext()){
 
-                FbCommentAsset fbCommentAsset = dbCursor.getNext();
+                GenericAsset genericAsset = dbCursor.getNext();
 
-                System.out.println(fbCommentAsset.getComment_id());
+                System.out.println(genericAsset);
             }
             
 

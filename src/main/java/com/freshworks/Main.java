@@ -25,6 +25,6 @@ public class Main
     {
         ApplicationContext applicationContext = SpringApplication.run(Main.class, args);
         Initialization initialization = applicationContext.getBean(Initialization.class);
-        initialization.runStaticStepSync();
+        initialization.runDynamicStepSync();
     }
 }
