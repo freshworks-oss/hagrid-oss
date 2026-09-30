@@ -3,6 +3,7 @@ package com.freshworks.hagrid.shared.infra.nitrite;
 import static org.dizitart.no2.filters.FluentFilter.where;
 
 import java.util.ArrayList;
+import org.dizitart.no2.filters.Filter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,9 +17,23 @@ import org.dizitart.no2.collection.FindOptions;
 import org.dizitart.no2.collection.FindPlan;
 import org.dizitart.no2.collection.NitriteCollection;
 import org.dizitart.no2.common.SortOrder;
+import org.dizitart.no2.filters.AndFilter;
+import org.dizitart.no2.filters.FluentFilter;
 import org.dizitart.no2.filters.NitriteFilter;
 import org.dizitart.no2.index.IndexOptions;
 import org.dizitart.no2.index.IndexType;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelNode;
+import org.springframework.expression.spel.ast.IntLiteral;
+import org.springframework.expression.spel.ast.Literal;
+import org.springframework.expression.spel.ast.OpAnd;
+import org.springframework.expression.spel.ast.OpEQ;
+import org.springframework.expression.spel.ast.OpNE;
+import org.springframework.expression.spel.ast.OpOr;
+import org.springframework.expression.spel.ast.StringLiteral;
+import org.springframework.expression.spel.ast.VariableReference;
+import org.springframework.expression.spel.standard.SpelExpression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,6 +66,8 @@ public class NitriteDbList implements InfraDbList {
     Nitrite nitriteDb;
     NitriteCollection nitriteCollection;
 
+    ExpressionParser spelExpressionParser = new SpelExpressionParser();
+
     AtomicLong listIndex = new AtomicLong(0);
 
 
@@ -71,6 +88,10 @@ public class NitriteDbList implements InfraDbList {
         NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
+
+
+        Filter.and(where("x").eq("b"), Filter.or(where("dbString").eq("b"), where("x").eq("y")));
+        // (x == b) AND (("dbString" == "b") OR (x == y))
     }
 
 
@@ -252,6 +273,8 @@ public class NitriteDbList implements InfraDbList {
 
         Document subDocument = Document.createDocument(map);
         documentMap.put("list_index", listIndex);
+
+        System.out.println("sub document is " + subDocument);
         documentMap.put("value", subDocument);
 
         Document document = Document.createDocument(documentMap);   
@@ -343,7 +366,7 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public <T extends AbstractAsset> NitriteDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception {
+    public <T extends AbstractAsset> NitriteDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
         
         
         if(assetClassType == null ){
@@ -356,16 +379,22 @@ public class NitriteDbList implements InfraDbList {
         FindOptions options = FindOptions.orderBy("value.created_at_ms", SortOrder.Ascending);
 
 
-        if(nitriteFilter != null){
+        if(spelExpression != null){
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
-
             NitriteFilter filter = where("value.clazz").eq(className);
 
-            nitriteFilter.and(filter);
+            Filter nitriteFilter = spelToNitriteFilter(spelExpression.getAST());
+            System.out.println("Filter captured is");
+            System.out.println(nitriteFilter.toString());
 
-            documentCursor = this.nitriteCollection.find(nitriteFilter, options);
+            Filter updatedFilter = filter.and(nitriteFilter);
+
+            System.out.println("After and Filter captured is");
+            System.out.println(updatedFilter.toString());
+
+            documentCursor = this.nitriteCollection.find(updatedFilter, options);
         }
 
         else {
@@ -377,7 +406,58 @@ public class NitriteDbList implements InfraDbList {
             documentCursor = this.nitriteCollection.find(filter, options);
         }
         
-        NitriteDbCursor<T> nitriteCursorResponse = new NitriteDbCursor<T>(documentCursor);
+        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
         return nitriteCursorResponse;
+    }
+
+
+    protected Filter spelToNitriteFilter(SpelNode node){
+
+        if (node == null) return null;
+        
+        // 1. Handle Logical Gates (AND / OR)
+        if (node instanceof OpAnd) {
+
+            return Filter.and(
+
+                spelToNitriteFilter(node.getChild(0)), spelToNitriteFilter(node.getChild(1))
+            );
+
+        }
+
+        if (node instanceof OpOr) {
+            
+            return Filter.or(
+
+                spelToNitriteFilter(node.getChild(0)), spelToNitriteFilter(node.getChild(1))
+            );
+        }
+
+        // 2. Handle Equality Comparisons (==, !=, <, >, etc.)
+        if (node instanceof OpEQ) {
+
+            
+            if(node.getChild(1) instanceof StringLiteral stringNode){
+
+                return where(node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
+            }
+
+            else if (node.getChild(1) instanceof IntLiteral intNode){
+
+                return where(node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
+            }
+
+            else{
+
+                throw new IllegalStateException("Can not determine whether it is string or int. Need to implement it");
+            }
+            
+        }
+        if (node instanceof OpNE) {
+            return where(node.getChild(0).toStringAST().replace("#", "")).notEq( "\"" + node.getChild(1)  + "\"");
+        }
+
+        // Fallback or catch-all if you need to trace unsupported nodes
+        throw new IllegalArgumentException("Unsupported SpEL node type: " + node.getClass().getSimpleName());
     }
 }

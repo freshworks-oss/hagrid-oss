@@ -161,7 +161,7 @@ public class TestConsumerService {
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor<FbComment> dbCursor = consumerService.getAssetCursor(FbComment.class);
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class);
 
         assertThat(dbCursor.docSize(), Matchers.is(3L));
 
@@ -169,7 +169,7 @@ public class TestConsumerService {
 
         while(dbCursor.hasNext()){
 
-                FbComment fbComment = dbCursor.getNext();
+                FbComment fbComment = dbCursor.getNextAsset();
                 fbCommentList.add(fbComment);
         }
 
@@ -336,24 +336,20 @@ public class TestConsumerService {
                 .build();
         doCallRealMethod().when(consumerService).configure(any());
         doCallRealMethod().when(consumerService).getAssetCursor(any());
-        // doCallRealMethod().when(consumerService).getAssetCursor(any(), any());
+        doCallRealMethod().when(consumerService).getAssetCursor(any(), anyString());
 
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
         
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        // InfraDbCursor<FbComment> dbCursor = consumerService.getAssetCursor(FbComment.class, where("value.comment_title").eq("This is comment title"));
-        // assertThat(dbCursor.docSize(), Matchers.is(2L));
-    }
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, "value.comment_title =='This is comment title'");
 
-    /**
-     * This method, can only be tested when Hagrid is running. I will test it in integration test
-     * @throws Exception
-     */
-    @Test
-    public void testConsumerStream() throws Exception{
+        while(dbCursor.hasNext()){
 
-       
+            System.out.println(dbCursor.getNextAsset());
+        }
+
+        assertThat(dbCursor.docSize(), Matchers.is(2L));
     }
 }

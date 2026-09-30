@@ -85,27 +85,27 @@ public class TestPerformance {
         syncStatusService.waitUntilSyncIsInProgress();
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         
-        InfraDbCursor<FbUserComment> infraDbCursor = consumerService.getAssetCursor(FbUserComment.class);
+        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(FbUserComment.class);
         List<FbUserComment> fbUserCommentList = new ArrayList<>();
 
         while(infraDbCursor.hasNext()){
-            fbUserCommentList.add(infraDbCursor.getNext());
+            fbUserCommentList.add(infraDbCursor.getNextAsset());
         }
 
 
-        InfraDbCursor<FbUser> infraDbCursorFbUser = consumerService.getAssetCursor(FbUser.class);
+        InfraDbCursor infraDbCursorFbUser = consumerService.getAssetCursor(FbUser.class);
         List<FbUser> fbUserList = new ArrayList<>();
 
         while(infraDbCursorFbUser.hasNext()){
-            fbUserList.add(infraDbCursorFbUser.getNext());
+            fbUserList.add(infraDbCursorFbUser.getNextAsset());
         }
 
 
-        InfraDbCursor<FbComment> infraDbCursorFbComment = consumerService.getAssetCursor(FbComment.class);
+        InfraDbCursor infraDbCursorFbComment = consumerService.getAssetCursor(FbComment.class);
         List<FbComment> fbCommentList = new ArrayList<>();
 
         while(infraDbCursorFbComment.hasNext()){
-            fbCommentList.add(infraDbCursorFbComment.getNext());
+            fbCommentList.add(infraDbCursorFbComment.getNextAsset());
         }
 
         syncService.shutdown();
@@ -233,11 +233,11 @@ public class TestPerformance {
                     syncStatusService.waitUntilSyncIsInProgress();
                     ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
 
-                    InfraDbCursor<FbUser> infraDbCursor = consumerService.getAssetCursor(FbUser.class);
+                    InfraDbCursor infraDbCursor = consumerService.getAssetCursor(FbUser.class);
                     List<FbUser> fbUserList = new ArrayList();
 
                     while(infraDbCursor.hasNext()){
-                        fbUserList.add(infraDbCursor.getNext());
+                        fbUserList.add(infraDbCursor.getNextAsset());
                     }
                     
                     System.out.println(objectMapper.writeValueAsString(fbUserList));

@@ -3,6 +3,7 @@ package com.freshworks.hagrid.shared.infra;
 import java.util.List;
 
 import org.dizitart.no2.filters.NitriteFilter;
+import org.springframework.expression.spel.standard.SpelExpression;
 
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -32,7 +33,7 @@ public interface InfraDbList {
     // Get list of strings for given ids
     public List<String> get(List<Long> documentIdList) throws Exception;
 
-    public <T extends AbstractAsset> InfraDbCursor<T> filter(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception;
+    public <T extends AbstractAsset> InfraDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception;
 
     public long size() throws Exception;
 

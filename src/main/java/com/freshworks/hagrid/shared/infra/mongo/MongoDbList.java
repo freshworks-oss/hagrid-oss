@@ -20,6 +20,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.dizitart.no2.collection.DocumentCursor;
 import org.dizitart.no2.filters.NitriteFilter;
+import org.springframework.expression.spel.standard.SpelExpression;
 
 import static org.dizitart.no2.filters.FluentFilter.where;
 
@@ -265,7 +266,7 @@ public class MongoDbList implements InfraDbList {
     }
 
     @Override
-    public <T extends AbstractAsset> MongoDbCursor<T> filter(Class<T> assetClassType, NitriteFilter mongoFilter) throws Exception {
+    public <T extends AbstractAsset> MongoDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
         
         
         if(assetClassType == null ){
@@ -277,7 +278,7 @@ public class MongoDbList implements InfraDbList {
         MongoCursor<Document> documentCursor;
         Long docSize = 0L;
 
-        if(mongoFilter != null){
+        if(spelExpression != null){
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
@@ -295,7 +296,7 @@ public class MongoDbList implements InfraDbList {
             docSize = this.list.countDocuments(filter);
         }
         
-        MongoDbCursor<T> nitriteCursorResponse = new MongoDbCursor<T>(documentCursor, docSize);
+        MongoDbCursor nitriteCursorResponse = new MongoDbCursor(documentCursor, docSize);
         return nitriteCursorResponse;
     }
 }

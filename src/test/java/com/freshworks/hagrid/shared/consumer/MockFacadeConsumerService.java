@@ -1,6 +1,7 @@
 package com.freshworks.hagrid.shared.consumer;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
 
@@ -50,6 +51,7 @@ public class MockFacadeConsumerService implements MockFacadeInterface {
         ConsumerService consumerServiceSpy = Mockito.spy(consumerService);
         doNothing().when(consumerServiceSpy).configure(any());
         doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any());
+        doAnswer(getAssetCursor.answer()).when(consumerServiceSpy).getAssetCursor(any(), anyString());
 
         return consumerServiceSpy;
     }

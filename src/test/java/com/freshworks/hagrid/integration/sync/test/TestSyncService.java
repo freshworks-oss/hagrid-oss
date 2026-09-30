@@ -83,34 +83,34 @@ public class TestSyncService {
         syncStatusService.waitUntilSyncIsInProgress();
         assertThat(syncStatusService.getSyncStatus(), Matchers.is(1));
 
-        InfraDbCursor<FbUser> infraDbCursor = consumerService.getAssetCursor(FbUser.class);
+        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(FbUser.class);
         List<FbUser> fbUserList = new ArrayList<>();
         
         while(infraDbCursor.hasNext()){
-            fbUserList.add(infraDbCursor.getNext());
+            fbUserList.add(infraDbCursor.getNextAsset());
         }
         assertThat(fbUserList.size(), Matchers.is(1));
         
 
-        InfraDbCursor<FbUserComment> infraDbCursor1 = consumerService.getAssetCursor(FbUserComment.class);
+        InfraDbCursor infraDbCursor1 = consumerService.getAssetCursor(FbUserComment.class);
 
         List<FbUserComment> fbUserCommentAssetList = new ArrayList();
 
         while(infraDbCursor1.hasNext()){
 
-            fbUserCommentAssetList.add(infraDbCursor1.getNext());
+            fbUserCommentAssetList.add(infraDbCursor1.getNextAsset());
         }
 
         assertThat(fbUserCommentAssetList.size(), Matchers.is(1));
 
 
 
-        InfraDbCursor<FbUserCommentUserJoinAsset> infraDbCursor2 = consumerService.getAssetCursor(FbUserCommentUserJoinAsset.class);
+        InfraDbCursor infraDbCursor2 = consumerService.getAssetCursor(FbUserCommentUserJoinAsset.class);
         List<FbUserCommentUserJoinAsset> fbUserCommentUserAssetList = new ArrayList();
 
 
         while(infraDbCursor2.hasNext()){
-            fbUserCommentUserAssetList.add(infraDbCursor2.getNext());
+            fbUserCommentUserAssetList.add(infraDbCursor2.getNextAsset());
         }
 
         assertThat(fbUserCommentUserAssetList.size(), Matchers.is(1));
@@ -145,11 +145,11 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
 
-        InfraDbCursor<FbUser> infraDbCursor = consumerService.getAssetCursor(FbUser.class);
+        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(FbUser.class);
         List<FbUser> fbUserList = new ArrayList<>();
 
         while(infraDbCursor.hasNext()){
-            fbUserList.add(infraDbCursor.getNext());
+            fbUserList.add(infraDbCursor.getNextAsset());
         }
 
         assertThat(fbUserList.size(), Matchers.is(1));
@@ -319,11 +319,11 @@ public class TestSyncService {
         syncStatusService.waitUntilSyncIsInProgress();
 
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
-        InfraDbCursor<PublishedAsset> infraDbCursor = consumerService.getAssetCursor(PublishedAsset.class);
+        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(PublishedAsset.class);
         List<PublishedAsset> list = new ArrayList();
 
         while(infraDbCursor.hasNext()){
-            list.add(infraDbCursor.getNext());
+            list.add(infraDbCursor.getNextAsset());
         }
         
         for (PublishedAsset asset : list) {
@@ -350,10 +350,10 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor<GenericAsset> infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
+        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
 
         while(infraDbCursor.hasNext()){
-            GenericAsset genericAsset = infraDbCursor.getNext();
+            GenericAsset genericAsset = infraDbCursor.getNextAsset();
             JsonNode node = genericAsset.getOutputModel().getData();
             System.out.println(node);
         }

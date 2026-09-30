@@ -1,6 +1,8 @@
 package com.freshworks.hagrid.shared.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.assets.GenericAsset;
+import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -14,6 +16,9 @@ import com.freshworks.hagrid.shared.sync.SyncStatusService;
 
 import org.dizitart.no2.filters.NitriteFilter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpression;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.stereotype.Component;
 
 
@@ -49,9 +54,14 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    private <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType, NitriteFilter nitriteFilter) throws Exception{
+    public <T extends AbstractAsset> InfraDbCursor getAssetCursor(Class<T> assetClassType, String filterExpression) throws Exception{
 
-        InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, nitriteFilter);
+        System.out.println("It is getting called");
+        ExpressionParser parser = new SpelExpressionParser();
+
+        SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(filterExpression);
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType, spelFilterExpression);
+        System.out.println("It is getting called");
         return infraDbCursor;
     }
     
@@ -61,11 +71,27 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    public <T extends AbstractAsset> InfraDbCursor<T> getAssetCursor(Class<T> assetClassType) throws Exception{
+    public <T extends AbstractAsset> InfraDbCursor getAssetCursor(Class<T> assetClassType) throws Exception{
 
-        InfraDbCursor<T> infraDbCursor = this.infraDbList.filter(assetClassType, null);
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType, null);
         return infraDbCursor;
     }
+
+    /**
+     * Use this method to consume assets when sync is done 
+     * @param filter
+     * @return
+     * @throws Exception
+     */
+    public InfraDbCursor getDslBasedOutputModelCursor(String outputModelName, String filterExpression) throws Exception{
+
+        ExpressionParser parser = new SpelExpressionParser();
+
+        SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(filterExpression);
+        InfraDbCursor infraDbCursor = this.infraDbList.filter(GenericAsset.class, spelFilterExpression);
+        return infraDbCursor;
+    }
+
 
     /**
      * Use this method to consume stream of assets of particular type
@@ -83,6 +109,34 @@ public class ConsumerService {
 
                 if(abstractAsset.getName().equalsIgnoreCase(asset.getClass().getName())){
                     consumer.accept(asset);
+                }
+                
+            }
+        );
+    }
+
+        /**
+     * Use this method to consume stream of assets of particular type
+     * @param abstractAsset
+     * @param consumer
+     */
+    public void streamDslBasedOutputModel(String outputModelName, Consumer<OutputModel> consumer){
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        this.analyticsService.registerEventCallback("HAGRID_ASSET_PUBLISH_DONE",
+
+            params -> {
+                Object object = params.get("asset");
+                AbstractAsset asset = objectMapper.convertValue(object, AbstractAsset.class);
+
+                if(GenericAsset.class.getName().equalsIgnoreCase(asset.getClass().getName())){
+
+                    GenericAsset genericAsset = (GenericAsset)asset;
+
+                    if(genericAsset.getOutputModel().getName().equalsIgnoreCase(outputModelName)){
+                        consumer.accept(genericAsset.getOutputModel());
+                    }
+                    
                 }
                 
             }
