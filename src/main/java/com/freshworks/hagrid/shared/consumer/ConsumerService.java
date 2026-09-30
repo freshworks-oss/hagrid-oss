@@ -91,7 +91,7 @@ public class ConsumerService {
     public InfraDbCursor getDslBasedOutputModelCursor(String outputModelName) throws Exception{
 
         ExpressionParser parser = new SpelExpressionParser();
-        String updatedFilterExpression = "(name == " + outputModelName + ")";
+        String updatedFilterExpression = "(name == '" + outputModelName + "')";
         SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(updatedFilterExpression);
         InfraDbCursor infraDbCursor = this.infraDbList.filterOutputModel(spelFilterExpression);
         return infraDbCursor;
@@ -107,7 +107,7 @@ public class ConsumerService {
 
         ExpressionParser parser = new SpelExpressionParser();
 
-        String updatedFilterExpression = "(name == " + outputModelName + ") &&" +  "(" + filterExpression + ")";
+        String updatedFilterExpression = "(name == '" + outputModelName + "') &&" +  "(" + filterExpression + ")";
         SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(updatedFilterExpression);
         InfraDbCursor infraDbCursor = this.infraDbList.filterOutputModel(spelFilterExpression);
         return infraDbCursor;

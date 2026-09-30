@@ -323,7 +323,7 @@ actions {
                     def users = context._response.body.body.data.users
 
                     for( user in users){
-                        user["how_many"] = 100
+                        user["how_many"] = 1
                     }
 
                     def new_response_body = ["users" : users]

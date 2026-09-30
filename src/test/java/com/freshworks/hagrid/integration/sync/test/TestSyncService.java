@@ -1,6 +1,7 @@
 package com.freshworks.hagrid.integration.sync.test;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.data.integration.fb.assets.FbUser;
 import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserComment;
 import com.freshworks.hagrid.data.integration.fb.assets.complex_asset.FbUserCommentUserJoinAsset;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import javax.management.ObjectName;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -340,7 +343,6 @@ public class TestSyncService {
     public void testSyncWhenRunningDynamicDag() throws Exception{
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);        
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
@@ -350,12 +352,11 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor infraDbCursor = consumerService.getAssetCursor(GenericAsset.class);
+        InfraDbCursor infraDbCursor = consumerService.getDslBasedOutputModelCursor("action1_output");
 
         while(infraDbCursor.hasNext()){
-            GenericAsset genericAsset = infraDbCursor.getNextAsset();
-            JsonNode node = genericAsset.getOutputModel().getData();
-            System.out.println(node);
+            ObjectNode data = infraDbCursor.getNextOutputModel();
+            System.out.println(data);
         }
 
         // assertThat(syncStatusService.getSyncStatus() , Matchers.is(-1));

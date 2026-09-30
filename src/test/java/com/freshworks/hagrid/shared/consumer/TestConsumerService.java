@@ -343,7 +343,7 @@ public class TestConsumerService {
         
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, "comment_title =='This is comment title'");
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, "(comment_title =='This is comment title')");
 
         while(dbCursor.hasNext()){
 

@@ -276,6 +276,7 @@ public class NitriteDbList implements InfraDbList {
         documentMap.put("list_index", listIndex);
         documentMap.put("value", subDocument);
 
+        System.out.println("sub document is " + subDocument);
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         
@@ -484,7 +485,7 @@ public class NitriteDbList implements InfraDbList {
             if(node.getChild(1) instanceof StringLiteral stringNode){
 
                 if(isDslBased){
-                    return where("value.outputModel.data" +  node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
+                    return where("value.outputModel.data." +  node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
                 }
 
                 else{
@@ -497,7 +498,7 @@ public class NitriteDbList implements InfraDbList {
             else if (node.getChild(1) instanceof IntLiteral intNode){
 
                 if(isDslBased){
-                    return where("value.outputModel.data" + node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
+                    return where("value.outputModel.data." + node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
                 }
 
                 else{
@@ -508,7 +509,7 @@ public class NitriteDbList implements InfraDbList {
 
             else{
 
-                throw new IllegalStateException("Can not determine whether it is string or int. Need to implement it");
+                throw new IllegalStateException(node.toStringAST() + " : Can not determine whether it is string or int. Need to implement it");
             }
             
         }

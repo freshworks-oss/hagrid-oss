@@ -3,7 +3,7 @@
         {
             "name": "defaultProfile",
             "vmArgs": [
-                "-Dspring.profiles.active=unit"
+                "-Dspring.profiles.active=integration"
             ]
         }
     ],
