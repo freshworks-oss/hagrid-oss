@@ -124,7 +124,7 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
-        doCallRealMethod().when(publisherList).filter(any(), any());
+        doCallRealMethod().when(publisherList).filterAsset(any(), any());
         publisherList.configure(syncServiceContainer);
 
         InfraService nitriteDbService = mockFacadeNitriteDbService
@@ -299,7 +299,7 @@ public class TestConsumerService {
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).get(anyList());
         doCallRealMethod().when(publisherList).add(anyList());
-        doCallRealMethod().when(publisherList).filter(any(), any());
+        doCallRealMethod().when(publisherList).filterAsset(any(), any());
         publisherList.configure(syncServiceContainer);
 
         NamespaceService namespaceService  = applicationContext.getBean(NamespaceService.class);
@@ -343,7 +343,7 @@ public class TestConsumerService {
         
         // Here consume the assets
         consumerService.configure(syncServiceContainer);
-        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, "value.comment_title =='This is comment title'");
+        InfraDbCursor dbCursor = consumerService.getAssetCursor(FbComment.class, "comment_title =='This is comment title'");
 
         while(dbCursor.hasNext()){
 

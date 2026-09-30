@@ -10,6 +10,7 @@ import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbCursor;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.InsertManyResult;
 
@@ -19,7 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.dizitart.no2.collection.DocumentCursor;
+import org.dizitart.no2.filters.Filter;
 import org.dizitart.no2.filters.NitriteFilter;
+import org.springframework.expression.spel.SpelNode;
+import org.springframework.expression.spel.ast.IntLiteral;
+import org.springframework.expression.spel.ast.OpAnd;
+import org.springframework.expression.spel.ast.OpEQ;
+import org.springframework.expression.spel.ast.OpNE;
+import org.springframework.expression.spel.ast.OpOr;
+import org.springframework.expression.spel.ast.StringLiteral;
 import org.springframework.expression.spel.standard.SpelExpression;
 
 import static org.dizitart.no2.filters.FluentFilter.where;
@@ -266,7 +275,7 @@ public class MongoDbList implements InfraDbList {
     }
 
     @Override
-    public <T extends AbstractAsset> MongoDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
+    public <T extends AbstractAsset> MongoDbCursor filterAsset(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
         
         
         if(assetClassType == null ){
@@ -282,9 +291,18 @@ public class MongoDbList implements InfraDbList {
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
-            Bson  filter = Filters.eq("value.clazz", className);
-            documentCursor =  this.list.find(filter).sort(Sorts.ascending("value.created_at_ms")).iterator();
-            docSize = this.list.countDocuments(filter);
+            Bson  mainFilter = Filters.eq("value.clazz", className);
+            Bson developerFilter = spelToMongoFilter(spelExpression.getAST());
+
+            System.out.println("Custom filter is");
+            System.out.println(developerFilter.toString());
+
+            Bson finalFilter = Filters.and(mainFilter, developerFilter);
+            System.out.println("Final filter is");
+            System.out.println(finalFilter.toString());
+
+            documentCursor =  this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
+            docSize = this.list.countDocuments(finalFilter);
         }
 
         else {
@@ -298,5 +316,68 @@ public class MongoDbList implements InfraDbList {
         
         MongoDbCursor nitriteCursorResponse = new MongoDbCursor(documentCursor, docSize);
         return nitriteCursorResponse;
+    }
+
+    @Override
+    public NitriteDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception {
+        return  null;
+    }
+    protected Bson spelToMongoFilter(SpelNode node){
+
+        if (node == null) return null;
+        
+        // 1. Handle Logical Gates (AND / OR)
+        if (node instanceof OpAnd) {
+
+            return Filters.and(
+
+                spelToMongoFilter(node.getChild(0)), spelToMongoFilter(node.getChild(1))
+            );
+
+        }
+
+        if (node instanceof OpOr) {
+            
+            return Filters.or(
+
+                spelToMongoFilter(node.getChild(0)), spelToMongoFilter(node.getChild(1))
+            );
+        }
+
+        // 2. Handle Equality Comparisons (==, !=, <, >, etc.)
+        if (node instanceof OpEQ) {
+
+            
+            if(node.getChild(1) instanceof StringLiteral stringNode){
+
+                return Filters.eq("value." + node.getChild(0).toStringAST(), stringNode.getLiteralValue().getValue());
+            }
+
+            else if (node.getChild(1) instanceof IntLiteral intNode){
+
+                return Filters.eq("value." + node.getChild(0).toStringAST(), intNode.getLiteralValue().getValue());
+            }
+
+            else{
+
+                throw new IllegalStateException("Can not determine whether it is string or int. Need to implement it");
+            }
+            
+        }
+
+        // Fallback or catch-all if you need to trace unsupported nodes
+        throw new IllegalArgumentException("Unsupported SpEL node type: " + node.getClass().getSimpleName());
+    }
+
+    public void createIndexOnAssetField(String field){
+        
+        this.list.createIndex( Indexes.ascending("value." + field));
+        
+    }
+
+    public void createIndexOnOutputModelField(String field){
+
+        this.list.createIndex( Indexes.ascending("value.outputModel.data." + field));
+        
     }
 }

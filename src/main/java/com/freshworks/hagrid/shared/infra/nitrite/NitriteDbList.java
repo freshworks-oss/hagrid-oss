@@ -37,6 +37,7 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -366,7 +367,7 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public <T extends AbstractAsset> NitriteDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
+    public <T extends AbstractAsset> NitriteDbCursor filterAsset(Class<T> assetClassType, SpelExpression spelExpression) throws Exception {
         
         
         if(assetClassType == null ){
@@ -383,18 +384,19 @@ public class NitriteDbList implements InfraDbList {
 
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
-            NitriteFilter filter = where("value.clazz").eq(className);
+            NitriteFilter mainFilter = where("value.clazz").eq(className);
 
-            Filter nitriteFilter = spelToNitriteFilter(spelExpression.getAST());
-            System.out.println("Filter captured is");
-            System.out.println(nitriteFilter.toString());
+            Filter developerFilter = spelToNitriteFilter(spelExpression.getAST(), false);
+            
+            System.out.println(" developer filter captured is");
+            System.out.println(developerFilter.toString());
 
-            Filter updatedFilter = filter.and(nitriteFilter);
+            Filter finalFilter = mainFilter.and(developerFilter);
 
-            System.out.println("After and Filter captured is");
-            System.out.println(updatedFilter.toString());
+            System.out.println("Final filter is ");
+            System.out.println(finalFilter.toString());
 
-            documentCursor = this.nitriteCollection.find(updatedFilter, options);
+            documentCursor = this.nitriteCollection.find(finalFilter, options);
         }
 
         else {
@@ -410,8 +412,52 @@ public class NitriteDbList implements InfraDbList {
         return nitriteCursorResponse;
     }
 
+    @Override
+    public NitriteDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception {
+        
+        DocumentCursor documentCursor;
+        FindOptions options = FindOptions.orderBy("value.created_at_ms", SortOrder.Ascending);
 
-    protected Filter spelToNitriteFilter(SpelNode node){
+
+        if(spelExpression != null){
+
+            String className = GenericAsset.class.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            NitriteFilter mainFilter = where("value.clazz").eq(className);
+
+            Filter developerFilter = null;
+            
+            // I am creating a branch here, kind a patch. 
+            // If asset is generic asset then filter expression provided by the developer should 
+            // look into "value.outputModel."
+            
+            developerFilter = spelToNitriteFilter(spelExpression.getAST(), true);
+            
+            System.out.println(" developer filter captured is");
+            System.out.println(developerFilter.toString());
+
+            Filter finalFilter = mainFilter.and(developerFilter);
+
+            System.out.println("Final filter is ");
+            System.out.println(finalFilter.toString());
+
+            documentCursor = this.nitriteCollection.find(finalFilter, options);
+        }
+
+        else {
+
+            String className = GenericAsset.class.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            NitriteFilter filter = where("value.clazz").eq(className);
+
+            documentCursor = this.nitriteCollection.find(filter, options);
+        }
+        
+        NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
+        return nitriteCursorResponse;
+    }
+
+    protected Filter spelToNitriteFilter(SpelNode node, boolean isDslBased){
 
         if (node == null) return null;
         
@@ -420,7 +466,7 @@ public class NitriteDbList implements InfraDbList {
 
             return Filter.and(
 
-                spelToNitriteFilter(node.getChild(0)), spelToNitriteFilter(node.getChild(1))
+                spelToNitriteFilter(node.getChild(0), isDslBased), spelToNitriteFilter(node.getChild(1), isDslBased)
             );
 
         }
@@ -429,7 +475,7 @@ public class NitriteDbList implements InfraDbList {
             
             return Filter.or(
 
-                spelToNitriteFilter(node.getChild(0)), spelToNitriteFilter(node.getChild(1))
+                spelToNitriteFilter(node.getChild(0), isDslBased), spelToNitriteFilter(node.getChild(1), isDslBased)
             );
         }
 
@@ -439,12 +485,27 @@ public class NitriteDbList implements InfraDbList {
             
             if(node.getChild(1) instanceof StringLiteral stringNode){
 
-                return where(node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
+                if(isDslBased){
+                    return where("value.outputModel.data" +  node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
+                }
+
+                else{
+                    return where("value." +  node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
+                }
+                
+                
             }
 
             else if (node.getChild(1) instanceof IntLiteral intNode){
 
-                return where(node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
+                if(isDslBased){
+                    return where("value.outputModel.data" + node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
+                }
+
+                else{
+                    return where("value." + node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
+                }
+                
             }
 
             else{
@@ -459,5 +520,21 @@ public class NitriteDbList implements InfraDbList {
 
         // Fallback or catch-all if you need to trace unsupported nodes
         throw new IllegalArgumentException("Unsupported SpEL node type: " + node.getClass().getSimpleName());
+    }
+
+    public void createIndexOnAssetField(String field){
+
+        if(!this.nitriteCollection.hasIndex( "value." + field)){
+            
+            this.nitriteCollection.createIndex( "value." + field);
+        }
+    }
+
+    public void createIndexOnOutputModelField(String field){
+
+        if(!this.nitriteCollection.hasIndex( "value.outputModel.data." + field)){
+            
+            this.nitriteCollection.createIndex( "value.outputModel.data." + field);
+        }
     }
 }

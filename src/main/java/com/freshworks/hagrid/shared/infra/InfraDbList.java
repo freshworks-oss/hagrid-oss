@@ -33,7 +33,13 @@ public interface InfraDbList {
     // Get list of strings for given ids
     public List<String> get(List<Long> documentIdList) throws Exception;
 
-    public <T extends AbstractAsset> InfraDbCursor filter(Class<T> assetClassType, SpelExpression spelExpression) throws Exception;
+    public <T extends AbstractAsset> InfraDbCursor filterAsset(Class<T> assetClassType, SpelExpression spelExpression) throws Exception;
+
+    public InfraDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception;
+
+    public void createIndexOnAssetField(String field);
+
+    public void createIndexOnOutputModelField(String field);
 
     public long size() throws Exception;
 

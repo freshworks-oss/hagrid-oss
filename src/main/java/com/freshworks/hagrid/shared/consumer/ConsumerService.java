@@ -48,6 +48,10 @@ public class ConsumerService {
     }
 
 
+    public void createIndexOnAssetField(String field){
+
+    }   
+
     /**
      * Use this method to consume assets when sync is done 
      * @param filter
@@ -60,7 +64,7 @@ public class ConsumerService {
         ExpressionParser parser = new SpelExpressionParser();
 
         SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(filterExpression);
-        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType, spelFilterExpression);
+        InfraDbCursor infraDbCursor = this.infraDbList.filterAsset(assetClassType, spelFilterExpression);
         System.out.println("It is getting called");
         return infraDbCursor;
     }
@@ -73,7 +77,22 @@ public class ConsumerService {
      */
     public <T extends AbstractAsset> InfraDbCursor getAssetCursor(Class<T> assetClassType) throws Exception{
 
-        InfraDbCursor infraDbCursor = this.infraDbList.filter(assetClassType, null);
+        InfraDbCursor infraDbCursor = this.infraDbList.filterAsset(assetClassType, null);
+        return infraDbCursor;
+    }
+
+        /**
+     * Use this method to consume assets when sync is done 
+     * @param filter
+     * @return
+     * @throws Exception
+     */
+    public InfraDbCursor getDslBasedOutputModelCursor(String outputModelName) throws Exception{
+
+        ExpressionParser parser = new SpelExpressionParser();
+        String updatedFilterExpression = "(name == " + outputModelName + ")";
+        SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(updatedFilterExpression);
+        InfraDbCursor infraDbCursor = this.infraDbList.filterOutputModel(spelFilterExpression);
         return infraDbCursor;
     }
 
@@ -87,8 +106,9 @@ public class ConsumerService {
 
         ExpressionParser parser = new SpelExpressionParser();
 
-        SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(filterExpression);
-        InfraDbCursor infraDbCursor = this.infraDbList.filter(GenericAsset.class, spelFilterExpression);
+        String updatedFilterExpression = "(name == " + outputModelName + ") &&" +  "(" + filterExpression + ")";
+        SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(updatedFilterExpression);
+        InfraDbCursor infraDbCursor = this.infraDbList.filterOutputModel(spelFilterExpression);
         return infraDbCursor;
     }
 
