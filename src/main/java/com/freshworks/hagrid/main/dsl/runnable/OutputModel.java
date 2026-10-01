@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.logging.log4j.util.Strings;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -20,6 +21,7 @@ import lombok.Setter;
 
 @Getter 
 @Setter 
+@JsonIgnoreProperties(value = { "groovyShell", "objectMapper", "modelDataAsMap" , "modelDataAsObjectNode"}, ignoreUnknown = true)
 public class OutputModel {
 
     static ObjectMapper objectMapper = new ObjectMapper();
@@ -120,6 +122,7 @@ public class OutputModel {
         return objectMapper.convertValue(data, Map.class);
     }
 
+    
     public ObjectNode getModelDataAsObjectNode(Map modelData){
 
         return objectMapper.convertValue(modelData, ObjectNode.class);

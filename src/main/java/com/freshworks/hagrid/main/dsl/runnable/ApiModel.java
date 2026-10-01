@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.dsl.config.model.ApiModelConfig;
@@ -15,6 +16,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@JsonIgnoreProperties(value = { "groovyShell", "objectMapper", "modelDataAsMap" , "modelDataAsObjectNode"}, ignoreUnknown = true)
 public class ApiModel {
 
     String name = UUID.randomUUID().toString();

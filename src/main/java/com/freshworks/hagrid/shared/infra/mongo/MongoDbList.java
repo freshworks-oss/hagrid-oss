@@ -1,5 +1,7 @@
 package com.freshworks.hagrid.shared.infra.mongo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.assets.GenericAsset;
 import com.freshworks.hagrid.processor.AbstractAsset;
 import com.freshworks.hagrid.shared.NamespaceService;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
@@ -48,6 +50,7 @@ public class MongoDbList implements InfraDbList {
 
     MongoCollection<Document> list;
 
+    ObjectMapper objectMapper = new ObjectMapper();
     AtomicLong listIndex = new AtomicLong(0);
 
     AnalyticsFactory analyticsFactory;
@@ -218,7 +221,7 @@ public class MongoDbList implements InfraDbList {
 
         while (it.hasNext()){
             Document document = it.next();
-            String s = (String)document.get("value");
+            String s = objectMapper.writeValueAsString(document.get("value"));
             String ss = s.replaceAll("ENCODE_DOT", "\\.");
             returnList.add(ss);
         }
@@ -236,7 +239,7 @@ public class MongoDbList implements InfraDbList {
 
         while (it.hasNext()){
             Document document = it.next();
-            String s = (String)document.get("value");
+            String s = objectMapper.writeValueAsString(document.get("value"));
             String ss = s.replaceAll("ENCODE_DOT", "\\.");
             returnList.add(ss);
         }
@@ -292,7 +295,7 @@ public class MongoDbList implements InfraDbList {
             String className = assetClassType.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
             Bson  mainFilter = Filters.eq("value.clazz", className);
-            Bson developerFilter = spelToMongoFilter(spelExpression.getAST());
+            Bson developerFilter = spelToMongoFilter(spelExpression.getAST(), false);
 
             System.out.println("Custom filter is");
             System.out.println(developerFilter.toString());
@@ -319,10 +322,55 @@ public class MongoDbList implements InfraDbList {
     }
 
     @Override
-    public NitriteDbCursor filterOutputModel(String outputModelName, SpelExpression spelExpression) throws Exception {
-        return  null;
+    public MongoDbCursor filterOutputModel(String outputModelName, SpelExpression spelExpression) throws Exception {
+        
+        
+        MongoCursor<Document> documentCursor;
+        Long docSize = 0L;
+
+        if(spelExpression != null){
+
+            String className = GenericAsset.class.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            Bson  mainFilter = Filters.eq("value.clazz", className);
+            Bson  nameFilter = Filters.eq("value.outputModel.name", outputModelName);
+            
+            Bson developerFilter = null;    
+            developerFilter = spelToMongoFilter(spelExpression.getAST(), true);
+            
+            System.out.println(" developer filter captured is");
+            System.out.println(developerFilter.toString());
+
+            Bson finalFilter = Filters.and(mainFilter, developerFilter, nameFilter);
+
+            System.out.println("Final filter is ");
+            System.out.println(finalFilter.toString());
+
+            documentCursor = this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
+        }
+
+        else {
+
+            String className = GenericAsset.class.getName();
+            className = className.replaceAll("\\.", "ENCODE_DOT");
+            Bson  mainFilter = Filters.eq("value.clazz", className);
+            Bson  nameFilter = Filters.eq("value.outputModel.name", outputModelName);
+
+            Bson finalFilter = Filters.and(mainFilter, nameFilter);
+
+            System.out.println("Final filter is ");
+            System.out.println(finalFilter.toString());
+
+            documentCursor = this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
+            docSize = this.list.countDocuments(finalFilter);
+        }
+        
+        MongoDbCursor mongoCursorResponse = new MongoDbCursor(documentCursor, docSize);
+        return mongoCursorResponse;
     }
-    protected Bson spelToMongoFilter(SpelNode node){
+
+
+    protected Bson spelToMongoFilter(SpelNode node, boolean isDslBased){
 
         if (node == null) return null;
         
@@ -331,7 +379,7 @@ public class MongoDbList implements InfraDbList {
 
             return Filters.and(
 
-                spelToMongoFilter(node.getChild(0)), spelToMongoFilter(node.getChild(1))
+                spelToMongoFilter(node.getChild(0), isDslBased), spelToMongoFilter(node.getChild(1), isDslBased)
             );
 
         }
@@ -340,7 +388,7 @@ public class MongoDbList implements InfraDbList {
             
             return Filters.or(
 
-                spelToMongoFilter(node.getChild(0)), spelToMongoFilter(node.getChild(1))
+                spelToMongoFilter(node.getChild(0), isDslBased), spelToMongoFilter(node.getChild(1), isDslBased)
             );
         }
 

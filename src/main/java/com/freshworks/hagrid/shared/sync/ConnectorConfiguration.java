@@ -69,11 +69,11 @@ public class ConnectorConfiguration {
     public static class MongoDbConfiguration{
 
         String mongoConnectionString;
-        String databaseUserName;
-        String databasePassword;
-        String databaseAuthDb;
-        String databaseHost;
-        int databasePort;
+        String databaseUserName = "admin";
+        String databasePassword = "password12345";
+        String databaseAuthDb = "admin";
+        String databaseHost = "localhost";
+        int databasePort = 27017;
         String additionalParams;
 
 

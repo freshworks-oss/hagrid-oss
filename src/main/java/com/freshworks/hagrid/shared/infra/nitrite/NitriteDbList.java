@@ -81,6 +81,7 @@ public class NitriteDbList implements InfraDbList {
         this.nitriteCollection = nitriteDb.getCollection(this.listName);
         this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.UNIQUE),"list_index");
         this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"value.created_at_ms");
+        this.nitriteCollection.createIndex(IndexOptions.indexOptions(IndexType.NON_UNIQUE),"value.outputModel.name");
     }
 
     @Override
@@ -276,7 +277,9 @@ public class NitriteDbList implements InfraDbList {
         documentMap.put("list_index", listIndex);
         documentMap.put("value", subDocument);
 
+        System.out.println("List is " + this.listName);
         System.out.println("sub document is " + subDocument);
+        
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);
         

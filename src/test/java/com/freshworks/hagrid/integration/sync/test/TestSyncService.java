@@ -14,6 +14,7 @@ import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.consumer.ConsumerService;
 import com.freshworks.hagrid.shared.infra.InfraDbCursor;
 import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
+import com.freshworks.hagrid.shared.sync.ConnectorConfiguration.MongoDbConfiguration;
 import com.freshworks.hagrid.shared.sync.SyncService;
 import com.freshworks.hagrid.shared.sync.SyncStatusService;
 import com.freshworks.hagrid.traverser.DagNode;
@@ -343,6 +344,17 @@ public class TestSyncService {
     public void testSyncWhenRunningDynamicDag() throws Exception{
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration = new MongoDbConfiguration();
+        connectorConfiguration.setInfraDbType("mongo");
+
+        connectorConfiguration.setMongoDbConfiguration(mongoDbConfiguration);
+        mongoDbConfiguration.setDatabaseHost("localhost");
+        mongoDbConfiguration.setDatabaseUserName("admin");
+        mongoDbConfiguration.setDatabasePassword("password12345");
+        mongoDbConfiguration.setDatabaseAuthDb("admin");
+
+
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
@@ -362,6 +374,6 @@ public class TestSyncService {
         // assertThat(syncStatusService.getSyncStatus() , Matchers.is(-1));
         // assertThat(syncStatusService.getTraverser_status() , Matchers.is(-1));
         // assertThat(syncStatusService.getProcessor_status() , Matchers.anyOf(Matchers.is(-1), Matchers.is(1)));
-        syncService.shutdown();
+        // syncService.shutdown();
     }
 }
