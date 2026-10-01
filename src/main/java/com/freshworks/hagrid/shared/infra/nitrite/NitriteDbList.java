@@ -390,6 +390,7 @@ public class NitriteDbList implements InfraDbList {
             System.out.println(" developer filter captured is");
             System.out.println(developerFilter.toString());
 
+            
             Filter finalFilter = mainFilter.and(developerFilter);
 
             System.out.println("Final filter is ");
@@ -412,7 +413,7 @@ public class NitriteDbList implements InfraDbList {
     }
 
     @Override
-    public NitriteDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception {
+    public NitriteDbCursor filterOutputModel(String outputModelName, SpelExpression spelExpression) throws Exception {
         
         DocumentCursor documentCursor;
         FindOptions options = FindOptions.orderBy("value.created_at_ms", SortOrder.Ascending);
@@ -423,19 +424,15 @@ public class NitriteDbList implements InfraDbList {
             String className = GenericAsset.class.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
             NitriteFilter mainFilter = where("value.clazz").eq(className);
+            NitriteFilter nameFilter = where("value.outputModel.name").eq(outputModelName);
 
-            Filter developerFilter = null;
-            
-            // I am creating a branch here, kind a patch. 
-            // If asset is generic asset then filter expression provided by the developer should 
-            // look into "value.outputModel."
-            
+            Filter developerFilter = null;    
             developerFilter = spelToNitriteFilter(spelExpression.getAST(), true);
             
             System.out.println(" developer filter captured is");
             System.out.println(developerFilter.toString());
 
-            Filter finalFilter = mainFilter.and(developerFilter);
+            Filter finalFilter = Filter.and(mainFilter, nameFilter, developerFilter);
 
             System.out.println("Final filter is ");
             System.out.println(finalFilter.toString());
@@ -447,9 +444,15 @@ public class NitriteDbList implements InfraDbList {
 
             String className = GenericAsset.class.getName();
             className = className.replaceAll("\\.", "ENCODE_DOT");
-            NitriteFilter filter = where("value.clazz").eq(className);
+            NitriteFilter mainFilter = where("value.clazz").eq(className);
+            NitriteFilter nameFilter = where("value.outputModel.name").eq(outputModelName);
 
-            documentCursor = this.nitriteCollection.find(filter, options);
+            Filter finalFilter = Filter.and(mainFilter, nameFilter);
+
+            System.out.println("Final filter is ");
+            System.out.println(finalFilter.toString());
+
+            documentCursor = this.nitriteCollection.find(finalFilter, options);
         }
         
         NitriteDbCursor nitriteCursorResponse = new NitriteDbCursor(documentCursor);
@@ -485,6 +488,7 @@ public class NitriteDbList implements InfraDbList {
             if(node.getChild(1) instanceof StringLiteral stringNode){
 
                 if(isDslBased){
+
                     return where("value.outputModel.data." +  node.getChild(0).toStringAST()).eq(stringNode.getLiteralValue().getValue());
                 }
 
@@ -498,6 +502,7 @@ public class NitriteDbList implements InfraDbList {
             else if (node.getChild(1) instanceof IntLiteral intNode){
 
                 if(isDslBased){
+
                     return where("value.outputModel.data." + node.getChild(0).toStringAST()).eq(intNode.getLiteralValue().getValue());
                 }
 

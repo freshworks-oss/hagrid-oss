@@ -35,7 +35,7 @@ public interface InfraDbList {
 
     public <T extends AbstractAsset> InfraDbCursor filterAsset(Class<T> assetClassType, SpelExpression spelExpression) throws Exception;
 
-    public InfraDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception;
+    public InfraDbCursor filterOutputModel(String outputModelName, SpelExpression spelExpression) throws Exception;
 
     public void createIndexOnAssetField(String field);
 

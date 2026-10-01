@@ -319,7 +319,7 @@ public class MongoDbList implements InfraDbList {
     }
 
     @Override
-    public NitriteDbCursor filterOutputModel(SpelExpression spelExpression) throws Exception {
+    public NitriteDbCursor filterOutputModel(String outputModelName, SpelExpression spelExpression) throws Exception {
         return  null;
     }
     protected Bson spelToMongoFilter(SpelNode node){
