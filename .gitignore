@@ -179,3 +179,7 @@ $RECYCLE.BIN/
 
 
 # Add all project specific gitignores below
+graphify-out
+database/
+target/
+test-db/

@@ -311,7 +311,7 @@ public class TestNitriteDbService {
             syncServiceContainer.add(namespaceService, NamespaceService.class);
 
             InfraConfigService infraConfigService = mockFacadeInfraConfigService
-                    .getInfraDbLocation("/Users/aaggarwal/Documents/office/projects/hagrid-releases/hagrid-oss/hagrid-oss/database/")
+                    .getInfraDbLocation("target/test-database/")
                     .getInfraType("file")
                     .build();
 

@@ -1,0 +1,24 @@
+# >>> managed by chanakya — regenerated on each index
+# ignored by git
+graphify-out
+logs
+target
+# never indexed
+.chanakya
+.git
+.next
+.nuxt
+.parcel-cache
+.svelte-kit
+.turbo
+.venv
+__pycache__
+build
+build-artifacts
+coverage
+dist
+node_modules
+out
+playwright-report
+test-results
+# <<< managed by chanakya

@@ -52,6 +52,8 @@ public class TestSyncService {
         ConnectorConfiguration configuration = new ConnectorConfiguration();
 
         configuration.setTraverserThreadCount(100);
+        // in-memory infra, so this test doesn't lock the shared ./database
+        configuration.setInfraDbType("inmemory");
         NodeRateLimitObject stepRateLimitObject = new NodeRateLimitObject();
         stepRateLimitObject.setDurationInSeconds(1);
         stepRateLimitObject.setNumberOfApiCalls(100);
