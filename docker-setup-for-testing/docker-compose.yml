@@ -23,6 +23,16 @@ services:
       - grafana_data:/var/lib/grafana
 
 
+  mongodb:
+    image: mongo:7.0
+    container_name: hagrid-mongodb
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password12345
+
+
   django:
     image: 0xvoila/hagrid-third-party-setup:latest
     container_name: hagrid-thirdparty-dango

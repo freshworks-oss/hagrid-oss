@@ -1,5 +1,6 @@
 package com.freshworks.hagrid.shared.infra.mongo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.infra.InfraDbQueue;
 import com.mongodb.client.MongoCollection;
@@ -32,6 +33,8 @@ public class MongoDbQueue implements InfraDbQueue {
     Timer timer;
 
     MongoCollection<Document> queue;
+
+    ObjectMapper objectMapper = new ObjectMapper();
 
     AtomicLong queueIndex = new AtomicLong(0);
     volatile long popIndex ;
@@ -129,8 +132,7 @@ public class MongoDbQueue implements InfraDbQueue {
             Bson bson = new Document("queue_index", popIndex);
             Document document = this.queue.find(bson).first();
             if(document != null){
-                document = (Document) document.get("value");
-                String s = String.valueOf(document.toJson());
+                String s = objectMapper.writeValueAsString(document.get("value"));
                 this.popIndex = this.popIndex + 1;
                 s = s.replaceAll("ENCODE_DOT", "\\.");
                 return s;
@@ -167,8 +169,7 @@ public class MongoDbQueue implements InfraDbQueue {
             try(MongoCursor<Document> it = this.queue.find(bson).iterator()){
                 while (it.hasNext()){
                     Document document = it.next();
-                    document = (Document) document.get("value");
-                    String s = String.valueOf(document.toJson());
+                    String s = objectMapper.writeValueAsString(document.get("value"));
                     s = s.replaceAll("ENCODE_DOT", "\\.");
                     returnList.add(s);
                     this.popIndex = this.popIndex + 1;

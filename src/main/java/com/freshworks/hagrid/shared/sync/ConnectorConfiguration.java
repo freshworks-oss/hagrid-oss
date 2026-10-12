@@ -69,13 +69,18 @@ public class ConnectorConfiguration {
     public static class MongoDbConfiguration{
 
         String mongoConnectionString;
+        @Value("${spring.connector.infra.mongo.database.user:admin}")
         String databaseUserName = "admin";
+        @Value("${spring.connector.infra.mongo.database.password:password12345}")
         String databasePassword = "password12345";
+        @Value("${spring.connector.infra.mongo.database.authDb:admin}")
         String databaseAuthDb = "admin";
+        @Value("${spring.connector.infra.mongo.database.host:localhost}")
         String databaseHost = "localhost";
+        @Value("${spring.connector.infra.mongo.database.port:27017}")
         int databasePort = 27017;
+        @Value("${spring.connector.infra.mongo.database.additionalParams:}")
         String additionalParams;
-
 
     }
 }
