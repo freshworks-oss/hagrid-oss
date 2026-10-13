@@ -34,4 +34,5 @@ public class FbUser extends AbstractAsset {
     public void transform() {
 //        System.out.println("Creating user asset");
     }
+
 }

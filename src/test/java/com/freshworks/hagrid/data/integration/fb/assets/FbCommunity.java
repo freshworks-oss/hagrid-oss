@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Getter
 @Setter
+@Component("unit_fb_asset_fbCommunity")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("integration")
@@ -34,5 +35,4 @@ public class FbCommunity extends AbstractAsset {
     @Override
     public void transform() {
     }
-
 }

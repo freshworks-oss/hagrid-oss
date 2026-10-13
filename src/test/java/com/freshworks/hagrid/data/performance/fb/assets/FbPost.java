@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Getter
 @Setter
+@Component("unit_fb_asset_fbPost")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @Profile("performance")
