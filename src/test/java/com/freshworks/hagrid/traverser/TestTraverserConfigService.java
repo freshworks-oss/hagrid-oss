@@ -86,6 +86,11 @@ public class TestTraverserConfigService{
                 .children(new LinkedHashMap<>(Map.of(servicePrincipal, new NodeRelationship())))
                 .build();
 
+        // Rate limits from @FreshHierarchy are applied to nodes by DagService when the DAG is built
+        DagService dagService = new DagService();
+        dagService.setNodeRateLimitObject(servicePrincipal);
+        dagService.setNodeRateLimitObject(applicationNode);
+
         HashMap<String, Object> hagridManagedSyncServiceContainer = new HashMap<>();
         hagridManagedSyncServiceContainer.put(DagNode.class.getName(), applicationNode);
 

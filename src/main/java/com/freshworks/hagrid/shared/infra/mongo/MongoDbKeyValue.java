@@ -1,5 +1,6 @@
 package com.freshworks.hagrid.shared.infra.mongo;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.hagrid.shared.SyncServiceContainer;
 import com.freshworks.hagrid.shared.infra.InfraDbKeyValue;
 import com.mongodb.client.MongoCollection;
@@ -23,7 +24,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class MongoDbKeyValue implements InfraDbKeyValue {
 
     MongoCollection<Document> keyValue;
-    
+
+    ObjectMapper objectMapper = new ObjectMapper();
+
     private final ReentrantReadWriteLock.WriteLock keyAddLock = new ReentrantReadWriteLock().writeLock();
 
     protected MongoDbKeyValue(){
@@ -61,13 +64,11 @@ public class MongoDbKeyValue implements InfraDbKeyValue {
 
         key = key.replaceAll("\\.", "ENCODE_DOT");
         Bson filter = Filters.eq("key", key);
-        Iterator<Document> iterator = this.keyValue.find(filter).iterator();
-        while(iterator.hasNext()){
-            String value = (String) iterator.next().get("value");
-            return value.replaceAll("ENCODE_DOT", "\\.");
+        Document found = this.keyValue.find(filter).first();
+        if(found == null){
+            return null;
         }
-
-        return null;
+        return objectMapper.writeValueAsString(found.get("value")).replaceAll("ENCODE_DOT", "\\.");
     }
 
     @Override
@@ -130,22 +131,16 @@ public class MongoDbKeyValue implements InfraDbKeyValue {
 
         key = key.replaceAll("\\.", "ENCODE_DOT");
 
-        ArrayList<String> returnResult = new ArrayList<>();
-        Bson filter = Filters.eq("key", key);
-
-        Iterator<Document> iterator = this.keyValue.find(filter).iterator();
-
-        while(iterator.hasNext()){
-            returnResult = (ArrayList<String>) iterator.next().get("value");
-            break;
+        List<String> result = new ArrayList<>();
+        Document found = this.keyValue.find(Filters.eq("key", key)).first();
+        if(found == null){
+            return result;
         }
 
-        List<String> encodedResult = new ArrayList<>();
-
-        for(int i = 0; i < returnResult.size(); i++){
-            encodedResult.add(returnResult.get(i).replaceAll("ENCODE_DOT", "\\."));
+        for(Document item : found.getList("value", Document.class)){
+            result.add(objectMapper.writeValueAsString(item).replaceAll("ENCODE_DOT", "\\."));
         }
-        return encodedResult;
+        return result;
     }
 
     @Override

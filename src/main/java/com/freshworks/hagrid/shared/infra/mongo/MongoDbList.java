@@ -197,7 +197,7 @@ public class MongoDbList implements InfraDbList {
         Bson bson = new Document("list_index", index);
         Document document = this.list.find(bson).first();
         if(document != null){
-            String s = (String)document.get("value");
+            String s = objectMapper.writeValueAsString(document.get("value"));
             return s.replaceAll("ENCODE_DOT", "\\.");
         }
         else{

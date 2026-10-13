@@ -63,7 +63,19 @@
             <type>pom</type>
             <scope>compile</scope>
         </dependency>
-        
+
+        <!-- Real MongoDB for the Mongo infra tests; versions managed by spring-boot-starter-parent -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mongodb</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
