@@ -1,22 +1,22 @@
-package com.freshworks.core.data.integration.recursive.contextual.steps;
+package com.freshworks.hagrid.data.integration.recursive.contextual.steps;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.data.integration.recursive.contextual.beans.PublishedBean;
-import com.freshworks.core.shared.NamespaceService;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.analytics.AnalyticsFactory;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.traverser.DagTraversalService;
-import com.freshworks.core.traverser.NonHttpAbstractStep;
-import com.freshworks.core.traverser.RequestResponseContainer;
-import com.freshworks.core.traverser.StepDataBeanMapping;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.data.integration.recursive.contextual.beans.PublishedBean;
+import com.freshworks.hagrid.shared.NamespaceService;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
+import com.freshworks.hagrid.shared.analytics.AnalyticsService;
+import com.freshworks.hagrid.shared.infra.InfraService;
+import com.freshworks.hagrid.traverser.DagTraversalService;
+import com.freshworks.hagrid.traverser.NonHttpAbstractStep;
+import com.freshworks.hagrid.traverser.RequestResponseContainer;
+import com.freshworks.hagrid.traverser.StepDataBeanMapping;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
 import com.google.common.collect.ImmutableMap;
 
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,8 @@
-package com.freshworks.core.data.unit.fb.beans;
+package com.freshworks.hagrid.data.performance.fb.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.hagrid.processor.AbstractBean;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Component;
 @Component("unit_fb_bean_fbCommunity")
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Profile("unit")
+@Profile("performance")
+@Component("fb_bean_fbCommunity")
 public class FbCommunity extends AbstractBean {
 
     String community_id;

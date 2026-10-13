@@ -1,11 +1,12 @@
-package com.freshworks.core.data.unit.dag.beans;
+package com.freshworks.hagrid.data.unit.dag.beans;
 
-import com.freshworks.core.processor.AbstractBean;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+
+import com.freshworks.hagrid.processor.AbstractBean;
 
 @Data
 @NoArgsConstructor

@@ -1,8 +1,8 @@
-package com.freshworks.core.data.unit.processor.joins.beans;
+package com.freshworks.hagrid.data.unit.processor.joins.beans;
 
 import org.springframework.context.annotation.Profile;
 
-import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.hagrid.processor.AbstractBean;
 
 import lombok.Getter;
 import lombok.Setter;

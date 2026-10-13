@@ -1,12 +1,12 @@
-package com.freshworks.core.data.performance.fb.assets.non_primitive_assets;
+package com.freshworks.hagrid.data.performance.fb.assets.non_primitive_assets;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.data.performance.fb.assets.FbComment;
-import com.freshworks.core.data.performance.fb.assets.FbUser;
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.processor.Annotations.FreshJoin;
+import com.freshworks.hagrid.data.performance.fb.assets.FbComment;
+import com.freshworks.hagrid.data.performance.fb.assets.FbUser;
+import com.freshworks.hagrid.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.Annotations.FreshJoin;
 
 import lombok.Getter;
 import lombok.Setter;

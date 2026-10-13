@@ -1,8 +1,9 @@
-package com.freshworks.core.data.performance.fb.beans;
+package com.freshworks.hagrid.data.concurrency.fb.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.freshworks.core.processor.AbstractBean;
-import com.freshworks.core.shared.SyncServiceContainer;
+import com.freshworks.hagrid.processor.AbstractBean;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,9 +15,9 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@Profile("performance")
-@Component("fb_bean_fbPost")
-public class FbPost extends AbstractBean {
+@Profile("concurrency")
+@Component 
+public class FbPostBean extends AbstractBean {
 
     String post_id;
     String post_title;

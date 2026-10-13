@@ -1,8 +1,9 @@
-package com.freshworks.core.data.concurrency.fb.assets;
+package com.freshworks.hagrid.data.unit.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,17 +14,17 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor
 @Getter
 @Setter
+@Component("unit_fb_asset_fbPost")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Profile("concurrency")
-@Component 
-public class FbPostAsset extends AbstractAsset {
+@Profile("unit")
+public class FbPost extends AbstractAsset {
 
     String post_id;
     String post_title;
     String post_text;
 
-    public void setBatchFromBean(com.freshworks.core.data.concurrency.fb.beans.FbPostBean post){
+    public void setBatchFromBean(com.freshworks.hagrid.data.unit.fb.beans.FbPost post){
 
         post_id = post.getPost_id();
         post_title = post.getPost_title();

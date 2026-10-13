@@ -1,14 +1,14 @@
-package com.freshworks.core.data.unit.traverser.single.steps;
+package com.freshworks.hagrid.data.unit.traverser.single.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.data.unit.dag.steps.Authentication;
-import com.freshworks.core.data.unit.traverser.single.beans.Application;
-import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.hagrid.data.unit.dag.steps.Authentication;
+import com.freshworks.hagrid.data.unit.traverser.single.beans.Application;
+import com.freshworks.hagrid.traverser.*;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.traverser.net.http.HttpRequest;
+import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import io.micrometer.core.instrument.LongTaskTimer;
