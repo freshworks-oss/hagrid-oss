@@ -96,6 +96,7 @@ public abstract class AbstractBean {
             String s  = null;
             s = objectMapper.writeValueAsString(this);
             JsonNode jsonNode = objectMapper.readTree(s);
+            ((ObjectNode) jsonNode).remove("parentBean");
             return jsonNode.hashCode();
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
