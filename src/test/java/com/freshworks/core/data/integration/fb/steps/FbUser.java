@@ -1,17 +1,17 @@
-package com.freshworks.core.data.integration.fb.steps;
+package com.freshworks.hagrid.data.integration.fb.steps;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.freshworks.core.shared.NamespaceService;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.analytics.AnalyticsFactory;
-import com.freshworks.core.shared.analytics.AnalyticsService;
-import com.freshworks.core.shared.infra.InfraService;
-import com.freshworks.core.traverser.*;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.hagrid.shared.NamespaceService;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.analytics.AnalyticsFactory;
+import com.freshworks.hagrid.shared.analytics.AnalyticsService;
+import com.freshworks.hagrid.shared.infra.InfraService;
+import com.freshworks.hagrid.traverser.*;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.traverser.net.http.HttpRequest;
+import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
@@ -152,7 +152,7 @@ public class FbUser extends HttpAbstractStep {
 
             JsonNode jsonNode = objectMapper.readTree(response);
             stepDataBeanMapping.setParseSyncedResponseData(jsonNode.get("body").get("data").get("users"));
-            stepDataBeanMapping.setBeanClass(com.freshworks.core.data.integration.fb.beans.FbUser.class);
+            stepDataBeanMapping.setBeanClass(com.freshworks.hagrid.data.integration.fb.beans.FbUser.class);
             return stepDataBeanMapping;
 
         }

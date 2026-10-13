@@ -1,8 +1,8 @@
-package com.freshworks.core.data.integration.fb.assets;
+package com.freshworks.hagrid.data.integration.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.AbstractAsset;
 
 import io.netty.util.internal.ThreadLocalRandom;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public class FbUser extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.integration.fb.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.data.integration.fb.beans.FbUser dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();

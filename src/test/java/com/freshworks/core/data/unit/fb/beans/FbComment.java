@@ -1,7 +1,8 @@
-package com.freshworks.core.data.unit.fb.beans;
+package com.freshworks.hagrid.data.unit.fb.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.hagrid.processor.AbstractBean;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,14 +1,14 @@
-package com.freshworks.core.data.unit.dag.steps.loop;
+package com.freshworks.hagrid.data.unit.dag.steps.loop;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.freshworks.core.traverser.AbstractStep;
-import com.freshworks.core.traverser.Annotations.FreshHierarchy;
-import com.freshworks.core.traverser.DagTraversalService;
-import com.freshworks.core.traverser.HttpAbstractStep;
-import com.freshworks.core.traverser.StepDataBeanMapping;
-import com.freshworks.core.traverser.exception.StepFailedException;
-import com.freshworks.core.traverser.net.http.HttpRequest;
-import com.freshworks.core.traverser.net.http.HttpRequestResponse;
+import com.freshworks.hagrid.traverser.AbstractStep;
+import com.freshworks.hagrid.traverser.DagTraversalService;
+import com.freshworks.hagrid.traverser.HttpAbstractStep;
+import com.freshworks.hagrid.traverser.StepDataBeanMapping;
+import com.freshworks.hagrid.traverser.Annotations.FreshHierarchy;
+import com.freshworks.hagrid.traverser.exception.StepFailedException;
+import com.freshworks.hagrid.traverser.net.http.HttpRequest;
+import com.freshworks.hagrid.traverser.net.http.HttpRequestResponse;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;

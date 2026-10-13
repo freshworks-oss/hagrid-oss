@@ -1,11 +1,11 @@
-package com.freshworks.core.data.unit.processor.joins.assets;
+package com.freshworks.hagrid.data.unit.processor.joins.assets;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.data.unit.processor.joins.beans.FbUsageBean;
-import com.freshworks.core.data.unit.processor.joins.beans.FbUserBean;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.data.unit.processor.joins.beans.FbUsageBean;
+import com.freshworks.hagrid.data.unit.processor.joins.beans.FbUserBean;
+import com.freshworks.hagrid.processor.AbstractAsset;
 
 import lombok.Getter;
 import lombok.Setter;

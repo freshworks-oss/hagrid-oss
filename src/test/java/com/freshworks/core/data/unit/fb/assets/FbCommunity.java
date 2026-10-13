@@ -1,8 +1,9 @@
-package com.freshworks.core.data.unit.fb.assets;
+package com.freshworks.hagrid.data.integration.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,14 +17,15 @@ import org.springframework.stereotype.Component;
 @Component("unit_fb_asset_fbCommunity")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Profile("unit")
+@Profile("integration")
+@Component("recursive_contextual_asset_fbCommunity")
 public class FbCommunity extends AbstractAsset {
 
     String community_id;
     String community_title;
     String community_description;
 
-    public void setBatchFromBean(com.freshworks.core.data.unit.fb.beans.FbCommunity community){
+    public void setBatchFromBean(com.freshworks.hagrid.data.integration.fb.beans.FbCommunity community){
 
         community_id = community.getCommunity_id();
         community_title = community.getCommunity_title();

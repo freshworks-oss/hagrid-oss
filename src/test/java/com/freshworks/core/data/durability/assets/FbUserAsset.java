@@ -1,8 +1,9 @@
-package com.freshworks.core.data.durability.assets;
+package com.freshworks.hagrid.data.durability.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class FbUserAsset extends AbstractAsset {
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.durability.beans.FbUserBean dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.data.durability.beans.FbUserBean dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();

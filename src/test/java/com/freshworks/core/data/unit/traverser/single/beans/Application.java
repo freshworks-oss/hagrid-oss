@@ -1,11 +1,11 @@
-package com.freshworks.core.data.unit.traverser.single.beans;
+package com.freshworks.hagrid.data.unit.dag.beans;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.freshworks.core.processor.AbstractBean;
+import com.freshworks.hagrid.processor.AbstractBean;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 @Setter
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Component("unit_dag_bean_Application")
 @Profile("unit")
-@Component
 public class Application extends AbstractBean {
 
     @Override

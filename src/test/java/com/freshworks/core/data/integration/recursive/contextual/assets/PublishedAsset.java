@@ -1,9 +1,10 @@
-package com.freshworks.core.data.integration.recursive.contextual.assets;
+package com.freshworks.hagrid.data.integration.recursive.contextual.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.data.integration.recursive.contextual.beans.PublishedBean;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.data.integration.recursive.contextual.beans.PublishedBean;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

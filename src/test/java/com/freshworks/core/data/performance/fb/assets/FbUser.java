@@ -1,8 +1,9 @@
-package com.freshworks.core.data.performance.fb.assets;
+package com.freshworks.hagrid.data.concurrency.fb.assets;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.freshworks.core.processor.AbstractAsset;
+import com.freshworks.hagrid.processor.AbstractAsset;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,14 +16,14 @@ import org.springframework.stereotype.Component;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@Profile("performance")
-@Component("fb_asset_fbUser")
-public class FbUser extends AbstractAsset {
+@Profile("concurrency")
+@Component 
+public class FbUserAsset extends AbstractAsset {
 
     String userId;
     String userName;
 
-    public void setBatchFromBean(com.freshworks.core.data.performance.fb.beans.FbUser dummy){
+    public void setBatchFromBean(com.freshworks.hagrid.data.concurrency.fb.beans.FbUserBean dummy){
 
         userId = dummy.getUser_id();
         userName = dummy.getUser_name();
@@ -33,4 +34,5 @@ public class FbUser extends AbstractAsset {
     public void transform() {
 //        System.out.println("Creating user asset");
     }
+
 }
