@@ -18,5 +18,7 @@ public class Main
         ApplicationContext applicationContext = SpringApplication.run(Main.class, args);
         Initialization initialization = applicationContext.getBean(Initialization.class);
         initialization.run();
+        // sync is done: close the context so the JVM exits instead of idling on Tomcat
+        System.exit(SpringApplication.exit(applicationContext));
     }
 }
