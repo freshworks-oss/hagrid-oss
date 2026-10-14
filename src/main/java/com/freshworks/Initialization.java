@@ -5,17 +5,17 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import com.freshworks.core.processor.AbstractAsset;
-import com.freshworks.core.shared.SyncServiceContainer;
-import com.freshworks.core.shared.consumer.ConsumerService;
-import com.freshworks.core.shared.infra.InfraDbCursor;
-import com.freshworks.core.shared.infra.nitrite.NitriteDbCursor;
-import com.freshworks.core.shared.sync.ConnectorConfiguration;
-import com.freshworks.core.shared.sync.SyncService;
-import com.freshworks.core.shared.sync.SyncStatusService;
-import com.freshworks.core.traverser.ParentStep;
+import com.freshworks.hagrid.processor.AbstractAsset;
+import com.freshworks.hagrid.shared.SyncServiceContainer;
+import com.freshworks.hagrid.shared.consumer.ConsumerService;
+import com.freshworks.hagrid.shared.sync.ConnectorConfiguration;
+import com.freshworks.hagrid.shared.sync.SyncService;
+import com.freshworks.hagrid.shared.sync.SyncStatusService;
+import com.freshworks.hagrid.traverser.ParentStep;
 import com.freshworks.hagrid.assets.FbCommentAsset;
 import com.freshworks.hagrid.assets.FbUserAsset;
 import com.google.common.collect.ImmutableMap;
@@ -29,6 +29,14 @@ public class Initialization {
         this.applicationContext = applicationContext;
     }
 
+    // 4.9.0 does not wire MongoDbConfiguration itself; creating it as a bean applies its
+    // @Value(spring.connector.infra.mongo.database.*) fields from application.properties
+    @Bean
+    @Scope("prototype")
+    ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration(){
+        return new ConnectorConfiguration.MongoDbConfiguration();
+    }
+
     public void run(){
 
         try{
@@ -37,7 +45,13 @@ public class Initialization {
 
             // Take the main service SyncService ( prototype bean ) every time you want to run Hagrid DAG 
             SyncService syncService = this.applicationContext.getBean(SyncService.class);
-            ImmutableMap<String, String> map = ImmutableMap.<String, String>builder().put("namespace", namespace).build();
+            ImmutableMap<String, String> map = ImmutableMap.<String, String>builder().put("namespace", namespace)
+                // small sync: 1 page of 10 per parent for each step
+                .put("numberOfUsersEachPage", "10").put("numberOfUserPagination", "1").put("waitBetweenUserPaginationInMs", "0")
+                .put("numberOfCommunitiesEachPage", "10").put("numberOfCommunityPagination", "1").put("waitBetweenCommunityPaginationInMs", "0")
+                .put("numberOfPostsEachPage", "10").put("numberOfPostPagination", "1").put("waitBetweenPostPaginationInMs", "0")
+                .put("numberOfCommentsEachPage", "10").put("numberOfCommentPagination", "1").put("waitBetweenCommentPaginationInMs", "0")
+                .build();
 
             // Sync container is like spring container, but it will contain all services which Hagrid using to run this sync
             // You can use syncContainer to fetch or modify the behaviour of the hagrid
@@ -46,8 +60,20 @@ public class Initialization {
             final SyncServiceContainer syncServiceContainer;
 
             // Run DAG from parentstep.class .. You can run Hagrid DAG from any step.
-            ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
-            syncServiceContainer = syncService.configureSync(namespace, ParentStep.class, map , connectorConfiguration);
+            // prototype bean, so infra type and Mongo settings come from application.properties (spring.connector.infra.*)
+            ConnectorConfiguration connectorConfiguration = this.applicationContext.getBean(ConnectorConfiguration.class);
+            ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration = this.applicationContext.getBean(ConnectorConfiguration.MongoDbConfiguration.class);
+
+            // Values above come from application.properties. To override them in code, MongoDbConfiguration exposes:
+            // mongoDbConfiguration.setDatabaseHost("my-mongo-host");
+            // mongoDbConfiguration.setDatabasePort(27018);
+            // mongoDbConfiguration.setDatabaseUserName("my-user");
+            // mongoDbConfiguration.setDatabasePassword("my-password");
+            // mongoDbConfiguration.setDatabaseAuthDb("admin");
+            // mongoDbConfiguration.setAdditionalParams("replicaSet=rs0&tls=true");
+            // mongoDbConfiguration.setMongoConnectionString("mongodb://user:pass@host:27017/?authSource=admin"); // takes precedence over host/port/user/password
+            connectorConfiguration.setMongoDbConfiguration(mongoDbConfiguration);
+            syncServiceContainer = syncService.configureWithStaticSteps(namespace, ParentStep.class, map , connectorConfiguration);
             syncService.startSync();
 
             SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
