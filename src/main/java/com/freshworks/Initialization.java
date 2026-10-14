@@ -62,7 +62,17 @@ public class Initialization {
             // Run DAG from parentstep.class .. You can run Hagrid DAG from any step.
             // prototype bean, so infra type and Mongo settings come from application.properties (spring.connector.infra.*)
             ConnectorConfiguration connectorConfiguration = this.applicationContext.getBean(ConnectorConfiguration.class);
-            connectorConfiguration.setMongoDbConfiguration(this.applicationContext.getBean(ConnectorConfiguration.MongoDbConfiguration.class));
+            ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration = this.applicationContext.getBean(ConnectorConfiguration.MongoDbConfiguration.class);
+
+            // Values above come from application.properties. To override them in code, MongoDbConfiguration exposes:
+            // mongoDbConfiguration.setDatabaseHost("my-mongo-host");
+            // mongoDbConfiguration.setDatabasePort(27018);
+            // mongoDbConfiguration.setDatabaseUserName("my-user");
+            // mongoDbConfiguration.setDatabasePassword("my-password");
+            // mongoDbConfiguration.setDatabaseAuthDb("admin");
+            // mongoDbConfiguration.setAdditionalParams("replicaSet=rs0&tls=true");
+            // mongoDbConfiguration.setMongoConnectionString("mongodb://user:pass@host:27017/?authSource=admin"); // takes precedence over host/port/user/password
+            connectorConfiguration.setMongoDbConfiguration(mongoDbConfiguration);
             syncServiceContainer = syncService.configureWithStaticSteps(namespace, ParentStep.class, map , connectorConfiguration);
             syncService.startSync();
 
