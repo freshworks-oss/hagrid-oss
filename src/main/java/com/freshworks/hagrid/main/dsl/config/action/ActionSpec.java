@@ -43,6 +43,13 @@ public class ActionSpec extends GroovyObjectSupport{
         composite_action(compositeActionClosure);
     }
 
+    // If action is provided then migrate it to composite_action 
+    public void action(Closure closure) throws Exception{
+
+        // Once we have simple action closure, we can convert it to composition action closure
+        composite_action(closure);
+    }
+
     public void composite_action(Closure closure) throws Exception{
         
         CompositeActionConfig compositeActionConfig = new CompositeActionConfig(this.modelSpec, this.requestSpec);

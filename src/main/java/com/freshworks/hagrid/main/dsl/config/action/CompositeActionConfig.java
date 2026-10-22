@@ -48,6 +48,11 @@ public class CompositeActionConfig {
         return null;
     }
 
+    public void step(Closure simpleActionClosure){
+
+        this.simple_action(simpleActionClosure);
+    }
+
     public void simple_action(Closure simpleActionClosure){
 
         ActionConfig newAction = new ActionConfig(this.modelSpec, this.requestSpec);
@@ -102,8 +107,6 @@ public class CompositeActionConfig {
                         throw new IllegalArgumentException("This action is neither a root node, not belong with any parent. Action must either a root node or belong to a parent");
                     }
                 }
-
-                
             }
         }
     
