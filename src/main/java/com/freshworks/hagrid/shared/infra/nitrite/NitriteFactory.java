@@ -13,6 +13,7 @@ import com.freshworks.hagrid.shared.infra.InfraConfigService;
 import com.freshworks.hagrid.shared.synchronizers.GlobalNamespaceService;
 
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 
 @Getter
@@ -32,6 +33,8 @@ public class NitriteFactory {
         this.globalNamespaceService = globalNamespaceService;
         this.meterRegistry = meterRegistry;
         this.analyticsService = analyticsFactory.getAnalyticsService(this.globalNamespaceService.getGlobalNamespace());
+
+        System.out.println("Init nitrite factory once more");
     }
 
     public Nitrite getNitriteClient(String namespace, InfraConfigService infraConfigService) throws Exception {
@@ -99,6 +102,21 @@ public class NitriteFactory {
         }
         else{
             return false;
+        }
+    }
+
+    // Spring executes this exact method when the context reloads/stops
+    @PreDestroy
+    public void cleanUpBeforeDestroy() {
+        System.out.println("⚠️ Spring is shutting down this component. Closing NitriteDB...");
+        if (fileBasedNitriteDb != null && !fileBasedNitriteDb.isClosed()) {
+            fileBasedNitriteDb.close();
+            System.out.println("✅ NitriteDB file based database is closed");
+        }
+
+        if (inmemoryBasedNitriteDb != null && !inmemoryBasedNitriteDb.isClosed()) {
+            inmemoryBasedNitriteDb.close();
+            System.out.println("✅ NitriteDB memory based database is closed");
         }
     }
 

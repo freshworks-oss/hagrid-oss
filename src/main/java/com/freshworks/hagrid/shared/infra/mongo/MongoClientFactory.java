@@ -12,6 +12,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.connection.ConnectionPoolSettings;
 import com.mongodb.event.*;
+
+import jakarta.annotation.PreDestroy;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -173,6 +175,16 @@ public class MongoClientFactory {
         }
         else{
             return false;
+        }
+    }
+
+    // Spring executes this exact method when the context reloads/stops
+    @PreDestroy
+    public void cleanUpBeforeDestroy() {
+        System.out.println("⚠️ Spring is shutting down this component. Closing Mongo client...");
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("✅ Mongo client database is closed");
         }
     }
 }

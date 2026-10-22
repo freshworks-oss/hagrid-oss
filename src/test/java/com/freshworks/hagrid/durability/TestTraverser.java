@@ -112,6 +112,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList<>();
         addEnabledPath.add(TestSetupShutdown.class.getName());
@@ -229,6 +230,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList<>();
         addEnabledPath.add(TestShouldProceedShutdown.class.getName());
@@ -442,6 +444,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList<>();
         addEnabledPath.add(TestStartSyncShutdown.class.getName());
@@ -555,7 +558,8 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
-        
+        syncServiceContainer.add(rootNode, DagNode.class);
+
         List<String> addEnabledPath = new ArrayList<>();
         addEnabledPath.add(TestStartSyncNullCheck.class.getName());
 
@@ -671,6 +675,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<List<String>> enabledPathList = new ArrayList<>();
         enabledPathList.add(addEnabledPath);
@@ -896,6 +901,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestHandleInvalidShutdown.class.getName());
@@ -1017,6 +1023,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestHandleInvalidNullCheck.class.getName());
@@ -1137,7 +1144,8 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
-
+        syncServiceContainer.add(rootNode, DagNode.class);
+        
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestParseSyncShutdown.class.getName());
 
@@ -1257,6 +1265,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestParseSyncNullCheck.class.getName());
@@ -1378,7 +1387,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
-
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestIsSyncCompleteShutdown.class.getName());
@@ -1620,7 +1629,7 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
-
+        syncServiceContainer.add(rootNode, DagNode.class);
 
         List<String> addEnabledPath = new ArrayList();
         addEnabledPath.add(TestGetNextRequestShutdown.class.getName());
@@ -1740,16 +1749,18 @@ public class TestTraverser {
         infraService.configure(syncServiceContainer, infraConfigService);
         syncServiceContainer.add(infraService, InfraService.class);
 
-        DagService dagService = applicationContext.getBean(DagService.class);
-        DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
-
-        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
-        syncServiceContainer.add(syncStatusService);
-
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         AnalyticsService analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
         syncServiceContainer.add(analyticsService);
         syncServiceContainer.add(analyticsFactory);
+
+        DagService dagService = applicationContext.getBean(DagService.class);
+        dagService.configure(syncServiceContainer);
+        DagNode rootNode = dagService.dagStaticStepScanner(namespaceStr, traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
+
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        syncServiceContainer.add(syncStatusService);
 
         ServiceTree serviceTree = applicationContext.getBean(ServiceTree.class);
         serviceTree.configure(syncServiceContainer);
