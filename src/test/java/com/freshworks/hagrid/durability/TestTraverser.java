@@ -125,12 +125,6 @@ public class TestTraverser {
         // Now set this as main root node
         dagService.setRootNode(rootNode);
 
-        List<Class<? extends AbstractStep>> addEnabledPath = new ArrayList<>();
-        addEnabledPath.add(TestSetupShutdown.class);
-        
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
-
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
 
@@ -915,13 +909,6 @@ public class TestTraverser {
         // Now set this as main root node
         dagService.setRootNode(rootNode);
 
-
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestHandleInvalidShutdown.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
-
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
 
@@ -1043,12 +1030,6 @@ public class TestTraverser {
         // Now set this as main root node
         dagService.setRootNode(rootNode);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestHandleInvalidNullCheck.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
-
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
 
@@ -1169,12 +1150,6 @@ public class TestTraverser {
         // Now set this as main root node
         dagService.setRootNode(rootNode);
 
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestParseSyncShutdown.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
-
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
 
@@ -1294,13 +1269,6 @@ public class TestTraverser {
 
         // Now set this as main root node
         dagService.setRootNode(rootNode);
-
-
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestParseSyncNullCheck.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
@@ -1423,14 +1391,6 @@ public class TestTraverser {
 
         // Now set this as main root node
         dagService.setRootNode(rootNode);
-
-
-
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestIsSyncCompleteShutdown.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);
@@ -1673,13 +1633,6 @@ public class TestTraverser {
 
         // Now set this as main root node
         dagService.setRootNode(rootNode);
-
-
-        List<Class<? extends  AbstractStep>> addEnabledPath = new ArrayList();
-        addEnabledPath.add(TestGetNextRequestShutdown.class);
-
-        List<List<Class<? extends AbstractStep>>> enabledPathList = new ArrayList<>();
-        enabledPathList.add(addEnabledPath);
 
         // enable only the path added and disable rest of the path
         dagService.enableDisableDagPath(rootNode, enabledPathList);

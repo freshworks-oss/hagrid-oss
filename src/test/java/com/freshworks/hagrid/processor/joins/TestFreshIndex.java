@@ -17,7 +17,7 @@ import com.freshworks.hagrid.processor.FreshIndexBeanSerializeModifier;
 
 
 @SpringBootTest
-@EnabledIfSystemProperty(named = "spring.profiles.active", matches = ".*\\.unit\\..*")
+@EnabledIfSystemProperty(named = "spring.profiles.active", matches = "unit")
 public class TestFreshIndex {
 
     ObjectMapper freshIndexObjectMapper;

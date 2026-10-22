@@ -128,6 +128,8 @@ public class TestTraverser {
         DagService dagService = applicationContext.getBean(DagService.class);
         dagService.configure(syncServiceContainer);
         DagNode rootNode = dagService.dagStaticStepScanner(namespace.getNamespace(), traverseConfigService, infraService);
+        syncServiceContainer.add(rootNode, DagNode.class);
+
 
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         syncServiceContainer.add(syncStatusService);

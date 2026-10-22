@@ -90,10 +90,6 @@ public class NitriteDbList implements InfraDbList {
         NamespaceService namespace = syncServiceContainer.getBean(NamespaceService.class);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         analyticsService = analyticsFactory.getAnalyticsService(namespace.getNamespace());
-
-
-        Filter.and(where("x").eq("b"), Filter.or(where("dbString").eq("b"), where("x").eq("y")));
-        // (x == b) AND (("dbString" == "b") OR (x == y))
     }
 
 
@@ -276,9 +272,6 @@ public class NitriteDbList implements InfraDbList {
         Document subDocument = Document.createDocument(map);
         documentMap.put("list_index", listIndex);
         documentMap.put("value", subDocument);
-
-        System.out.println("List is " + this.listName);
-        System.out.println("sub document is " + subDocument);
         
         Document document = Document.createDocument(documentMap);   
         nitriteCollection.insert(document);

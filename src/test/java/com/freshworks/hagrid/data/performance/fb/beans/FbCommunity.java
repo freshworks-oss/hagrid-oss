@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 @Getter
 @Setter
-@Component("unit_fb_bean_fbCommunity")
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Profile("performance")
