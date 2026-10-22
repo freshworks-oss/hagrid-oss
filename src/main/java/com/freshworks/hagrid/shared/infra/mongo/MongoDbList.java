@@ -428,4 +428,11 @@ public class MongoDbList implements InfraDbList {
         this.list.createIndex( Indexes.ascending("value.outputModel.data." + field));
         
     }
+
+
+    @Override
+    public void removePublisher() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removePublisher'");
+    }
 }

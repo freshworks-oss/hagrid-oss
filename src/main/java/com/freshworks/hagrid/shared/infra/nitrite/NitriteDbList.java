@@ -544,4 +544,10 @@ public class NitriteDbList implements InfraDbList {
             this.nitriteCollection.createIndex( "value.outputModel.data." + field);
         }
     }
+
+    @Override
+    public void removePublisher() throws Exception {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removePublisher'");
+    }
 }
