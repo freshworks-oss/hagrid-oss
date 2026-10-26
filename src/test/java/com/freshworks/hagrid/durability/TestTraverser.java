@@ -1794,6 +1794,7 @@ public class TestTraverser {
 
         analyticsService.registerEventCallback("HAGRID_DURABILITY_EVENT", (Map<String, Object> z)->{
             String step = (String)z.get("step");
+            System.out.println(step);
             if(step.equals("com.freshworks.hagrid.data.durability.steps.next_request.null_check.TestGetNextRequestNullCheck")){
 
                 String method = (String)z.get("method");

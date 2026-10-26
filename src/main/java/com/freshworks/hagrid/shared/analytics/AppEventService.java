@@ -21,6 +21,11 @@ public class AppEventService {
             return validateHagridBeanPublishDoneEvent(tags);
         }
 
+        if (event.equalsIgnoreCase("HAGRID_DURABILITY_EVENT")){
+
+            return true;
+        }
+
         return false;
         
     }
