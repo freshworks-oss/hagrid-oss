@@ -105,6 +105,9 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
         catch(Exception e){
             node.setRelationshipFailed(parentNode);
             analyticsService.errorLogEvent("HAGRID_DAG_NODE_PER_PARENT", "_message", e.getClass().getName() + ": " + e.getMessage(), "stacktrace" , Throwables.getStackTraceAsString(e), "node", this.node.getName(), "parent" , this.parentNode.getName() , "namespace" ,namespace.getNamespace(), "uuid", uuid, "stacktrace", Throwables.getStackTraceAsString(e));
+
+            // In all cases, DagNodeTraversalPerParent Service will wait until all already spun dag node per item for this parent are returned
+            dagNodePerParentPhaser.arriveAndAwaitAdvance();
             dagNodePerParentPhaser.arriveAndDeregister();
         }
 
@@ -182,9 +185,20 @@ public class DagNodePerParentTraversalService implements Callable<Void> {
             int listOfParentItemsFetched = listOfParentItems.size();
 
 
-            if(listOfParentItemsFetched == 0 ){
+            /**
+             *  Consider a condition when waitUntilHasmore returns true but when we fetch data then it returns 0 items. This should not happen and we should throw an exception in this case.
+             *  This case usually should not happen however it can happen when someone changes the state of database manually. 
+             *  parent data = [1,2,3,4,5] , index = 4, list_size = 5 .. because 4 < 5, waitUntilhasMore will return true 
+             *  however consider some one has deleted [5] then getSyncResult will return 0 then new index = index + fetch item will remain 4 
+             *  then again waitUntilhasMore data wil return true .. this way it will go in infinite loop 
+             *  We can not throw exception just by listOfParentItemsFetched == 0 because DagNode service signals all in many cases 
+             *  like when node has failed, sucessful etc
+             *  Hence if listofParentItemsFetched == 0 and node is in progress then it it an illegal state and we should throw exception
+             */
 
-                throw new IllegalStateException("Though waitUntilHasMore return true on parent node, when fetching parent data then returned results is 0. It should not happen");
+            if(listOfParentItemsFetched == 0 && parentNode.getNodeOverallTraverserStatus() == 0 ){
+
+                throw new IllegalStateException("Though waitUntilHasMore return true on parent node, when fetching parent data then returned results is 0. It is usually the case when someone changed (deleted ) the data directly from database");
             }
 
 
