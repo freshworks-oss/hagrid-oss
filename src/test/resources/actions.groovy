@@ -346,6 +346,53 @@ actions {
         }
     } // composite action close 
 
+    action {
+
+        name "new_format_action"
+        
+        step {
+
+            /**
+            Use case : Very simple action with no pagination and no parameters
+            */
+            name "action1"
+            api_model "action1" // idea from nango 
+            request "action1"
+            response_path "context._response.body.body.data.users"
+            output "action1_output"
+            is_root true
+
+            hooks {
+
+                action_parse_response {
+
+                    def how_many = context._response.body.body.how_many
+                    def users = context._response.body.body.data.users
+
+                    for( user in users){
+                        user["how_many"] = 1
+                    }
+
+                    def new_response_body = ["users" : users]
+                    parse new_response_body, "users", "action1", "action1_output", "OK"
+                }
+            }
+        }
+
+        step {
+
+            /**
+            Use case : Very simple action with no pagination and no parameters
+            */
+            name "action2"
+            api_model "action2" // idea from nango 
+            request "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            response_path "context._response.body.body.data.users"
+            output "action2_output"
+            parent "action1"
+        }
+    } // composite action close 
+
 } // actions close
 
 

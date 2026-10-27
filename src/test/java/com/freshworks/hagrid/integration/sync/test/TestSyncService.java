@@ -345,20 +345,20 @@ public class TestSyncService {
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-        ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration = new MongoDbConfiguration();
-        connectorConfiguration.setInfraDbType("mongo");
+        // ConnectorConfiguration.MongoDbConfiguration mongoDbConfiguration = new MongoDbConfiguration();
+        // connectorConfiguration.setInfraDbType("mongo");
 
-        connectorConfiguration.setMongoDbConfiguration(mongoDbConfiguration);
-        mongoDbConfiguration.setDatabaseHost("localhost");
-        mongoDbConfiguration.setDatabaseUserName("admin");
-        mongoDbConfiguration.setDatabasePassword("password12345");
-        mongoDbConfiguration.setDatabaseAuthDb("admin");
+        // connectorConfiguration.setMongoDbConfiguration(mongoDbConfiguration);
+        // mongoDbConfiguration.setDatabaseHost("localhost");
+        // mongoDbConfiguration.setDatabaseUserName("admin");
+        // mongoDbConfiguration.setDatabasePassword("password12345");
+        // mongoDbConfiguration.setDatabaseAuthDb("admin");
 
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("waitBetweenCommunityPaginationInMs", "0").build();
 
-        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "test_composite_action" , x, connectorConfiguration);
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "new_format_action" , x, connectorConfiguration);
         syncService.startSync();
         SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
