@@ -317,7 +317,7 @@ actions {
 
             hooks {
 
-                action_parse_response {
+                step_parse_response {
 
                     def how_many = context._response.body.body.how_many
                     def users = context._response.body.body.data.users

@@ -25,12 +25,16 @@ public class HooksConfig {
     Closure<Boolean> shouldPassthroughResponse;
     Closure<ParseSyncResponse> parseSyncResponseClosure;
     Closure<Boolean> hasMoreClosure;
-    Closure<Void> actionCloseClosure;
+    Closure<Void> stepCloseClosure;
     
 
 
     // Runs just once before any action has run  
     public void action_setup(Closure setupClosure){
+        this.setupClosure = setupClosure;
+    }
+
+    public void step_setup(Closure setupClosure){
         this.setupClosure = setupClosure;
     }
 
@@ -51,6 +55,11 @@ public class HooksConfig {
         this.parseSyncResponseClosure = parseSyncResponseClosure;
     }
 
+    // Runs just once after action is completed
+    public void step_parse_response(Closure parseSyncResponseClosure){
+        this.parseSyncResponseClosure = parseSyncResponseClosure;
+    }
+
     // Runs to check for more pages 
     public void has_more(Closure hasMoreClosure){
         this.hasMoreClosure = hasMoreClosure;
@@ -58,6 +67,11 @@ public class HooksConfig {
 
     // Runs just once after action is completed
     public void action_close(Closure actionCloseClosure){
-        this.actionCloseClosure = actionCloseClosure;
+        this.stepCloseClosure = actionCloseClosure;
+    }
+
+        // Runs just once after action is completed
+    public void step_close(Closure actionCloseClosure){
+        this.stepCloseClosure = actionCloseClosure;
     }
 }

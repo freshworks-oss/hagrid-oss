@@ -21,7 +21,7 @@ public class Hooks {
     Closure<Boolean> shoudlPassthroughResponseClosure;
     Closure<ParseSyncResponse> parseSyncResponseClosure;
     Closure<Boolean> hasMoreClosure;
-    Closure<Void> actionCloseClosure;
+    Closure<Void> stepCloseClosure;
 
     public boolean call_shouldSkipThisParent(ActionContext context){
         
@@ -67,8 +67,8 @@ public class Hooks {
 
     public void call_actionCloseClosure(ActionContext context){
         
-        actionCloseClosure.setDelegate(context);
-        actionCloseClosure.setResolveStrategy(Closure.DELEGATE_FIRST);
-        actionCloseClosure.call();
+        stepCloseClosure.setDelegate(context);
+        stepCloseClosure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        stepCloseClosure.call();
     }
 }

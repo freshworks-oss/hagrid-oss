@@ -20,7 +20,7 @@ public class HooksResolver {
         hook.setShoudlPassthroughResponseClosure(hooksConfig.getShouldPassthroughResponse());
         hook.setParseSyncResponseClosure(hooksConfig.getParseSyncResponseClosure());
         hook.setHasMoreClosure(hooksConfig.getHasMoreClosure());
-        hook.setActionCloseClosure(hooksConfig.getActionCloseClosure());
+        hook.setStepCloseClosure(hooksConfig.getStepCloseClosure());
         return hook;
     }
     

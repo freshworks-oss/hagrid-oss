@@ -413,7 +413,7 @@ public class ActionService {
         try{
 
             Hooks hook = this.actionResolver.resolveHook(actionConfig.getHooksConfig(),null);
-            Closure actionCloseClosure = hook.getActionCloseClosure();
+            Closure actionCloseClosure = hook.getStepCloseClosure();
 
             if(actionCloseClosure != null){
             
