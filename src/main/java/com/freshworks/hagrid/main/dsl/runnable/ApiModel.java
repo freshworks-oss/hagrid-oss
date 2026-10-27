@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.dsl.config.model.ApiModelConfig;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
 
 import groovy.lang.Closure;
 import lombok.Getter;
@@ -20,6 +21,8 @@ import lombok.Setter;
 public class ApiModel {
 
     String name = UUID.randomUUID().toString();
+    public ACTION_HTTP_CODE httpStatus;
+
     ObjectNode data;
     
     @JsonIgnore 
@@ -51,5 +54,10 @@ public class ApiModel {
     public ObjectNode getModelDataAsObjectNode(Map modelData){
 
         return objectMapper.convertValue(modelData, ObjectNode.class);
+    }
+
+    public void setData(ObjectNode data){
+        data.put("_status", this.httpStatus.toString());
+        this.data = data;
     }
 }

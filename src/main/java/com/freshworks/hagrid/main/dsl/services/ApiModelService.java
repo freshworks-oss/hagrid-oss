@@ -15,6 +15,7 @@ import com.freshworks.hagrid.main.dsl.config.model.ModelSpec;
 import com.freshworks.hagrid.main.dsl.runnable.ApiModel;
 import com.freshworks.hagrid.main.dsl.runnable.context.ActionContext;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
 
 import groovy.lang.Closure;
 
@@ -65,6 +66,9 @@ public class ApiModelService {
         }
 
         ApiModel apiModel = new ApiModel();
+        String statusCode = (String) this.actionContext.getActionSharedMap().get("_response_status_code");
+        apiModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
+        
         apiModel.setName(apiModelConfig.getName());
         apiModel.setFilterClosure(apiModelConfig.getFilterClosure());
         apiModel.setTransformClosure(apiModelConfig.getTransformClosure());

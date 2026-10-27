@@ -335,7 +335,7 @@ public class ActionService {
                     outputModelConfigListName.add(outputModelConfig.getName());
                 }
                 this.actionContext.getActionSharedMap().put("_output_config_model_name", outputModelConfigListName);
-                this.actionContext.getActionSharedMap().put("_response_type", "OK");
+                this.actionContext.getActionSharedMap().put("_response_status_code", "OK");
             }
 
             else{
@@ -352,7 +352,7 @@ public class ActionService {
 
                 this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
                 this.actionContext.getActionSharedMap().put("_output_config_model_name", parseSyncResponseObject.getOutputConfigModelNameList());
-                this.actionContext.getActionSharedMap().put("_response_type", parseSyncResponseObject.getResponseType());
+                this.actionContext.getActionSharedMap().put("_response_status_code", parseSyncResponseObject.getResponseStatusCode().toString());
             }
         
 

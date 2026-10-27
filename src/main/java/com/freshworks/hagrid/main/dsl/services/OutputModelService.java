@@ -59,6 +59,9 @@ public class OutputModelService {
             outputModel.setTransformClosure(outputModelConfig.getTransformClosure());
             outputModel.setOutputFieldMapping(outputModelConfig.getOutputFieldMapping());
 
+            String statusCode = (String)this.actionContext.getActionSharedMap().get("_response_status_code");
+            outputModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
+
             if(outputModel.dependsOn(apiModel)){
 
                 if(Boolean.TRUE.equals(outputModel.primitive())){

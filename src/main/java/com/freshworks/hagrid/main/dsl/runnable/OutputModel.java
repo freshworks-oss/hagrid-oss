@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.dsl.config.model.OutputModelConfig;
 import com.freshworks.hagrid.main.dsl.config.model.OutputModelConfig.ModelBinding;
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
 
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -27,6 +28,9 @@ public class OutputModel {
     static ObjectMapper objectMapper = new ObjectMapper();
     
     String name;
+
+    public ACTION_HTTP_CODE httpStatus;
+
     ObjectNode data = objectMapper.createObjectNode();
 
     @JsonIgnore
@@ -102,6 +106,8 @@ public class OutputModel {
                 this.data.set(outputFieldName, node.get(apiModelBinding.getModelField()));
             }
         }
+
+        this.data.put("_status", this.httpStatus.toString());
     }
     
     public void key(String keyLang){
