@@ -2,6 +2,28 @@ import java.time.LocalDateTime
 
 models {
 
+        // API Model refers to the model which will render the API output
+    api_model {
+
+        // Name of the model 
+        name "compare_and_match_api_model"
+
+        // desired attributes required in this model
+        attr "is_match" : "context._response.model.is_match", "to_value" : "context._response.model.to_value"
+        attr "from_value" : "context._response.model.from_value"
+    }
+
+    // Output model refers to the model which can be filled with other API model to create desired business object
+    output_model {
+
+        // Name of the output model
+        name "compare_and_match_output_model"
+
+        // mapping of output model attributes with api model attribute
+        attr "is_match" : model('compare_and_match_api_model', 'is_match') , "to_value" : model('compare_and_match_api_model' , 'to_value')
+        attr "from_value" : model("compare_and_match_api_model", "from_value")
+    }
+    
     // API Model refers to the model which will render the API output
     api_model {
 

@@ -5,6 +5,14 @@ requests {
 
     request {
 
+        name "compare_and_match_request" 
+        type "NON_HTTP"
+        from_value "{{from_value}}"
+        to_value "{{to_value}}", "{{to_to_value}}"
+    }
+
+    request {
+
         name "action1" 
         type "HTTP"
         method "GET"

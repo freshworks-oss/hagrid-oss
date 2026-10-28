@@ -341,7 +341,7 @@ public class TestSyncService {
     }
 
     @Test 
-    public void testSyncWhenRunningDynamicDag() throws Exception{
+    public void testSyncWhenRunningDynamicDagIOAction() throws Exception{
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
@@ -375,5 +375,30 @@ public class TestSyncService {
         // assertThat(syncStatusService.getTraverser_status() , Matchers.is(-1));
         // assertThat(syncStatusService.getProcessor_status() , Matchers.anyOf(Matchers.is(-1), Matchers.is(1)));
         // syncService.shutdown();
+    }
+
+    @Test 
+    public void testSyncWhenRunningDynamicDagNONIOAction() throws Exception{
+
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+                .put("waitBetweenCommunityPaginationInMs", "0")
+                .put("from_value", "amit")
+                .put("to_value", "amit")
+                .build();
+
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "compare_and_match" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+        
+        InfraDbCursor infraDbCursor = consumerService.getDslBasedOutputModelCursor("compare_and_match_output_model");
+
+        while(infraDbCursor.hasNext()){
+            ObjectNode data = infraDbCursor.getNextOutputModel();
+            System.out.println(data);
+        }
     }
 }

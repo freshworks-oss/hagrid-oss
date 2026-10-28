@@ -1,5 +1,9 @@
 package com.freshworks.hagrid.main.dsl.config.requests;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -7,12 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 
 import groovy.lang.Closure;
+import groovy.lang.GroovyObject;
+import groovy.lang.MetaClass;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class RequestConfig{
+public class RequestConfig {
 
     @JsonIgnore
     ObjectMapper objectMapper = new ObjectMapper();
@@ -26,7 +32,8 @@ public class RequestConfig{
     public enum REQUEST_SUB_TYPE{
 
         REST, 
-        SOAP
+        SOAP,
+        NON_HTTP
     }
 
     String name;
@@ -40,7 +47,7 @@ public class RequestConfig{
     Object query;
     Object headers;
     Object body;
-    Object miscData;
+    Map<String, String> missingProperties = new HashMap<>();
     
     Closure<ActionResponse> executeClosure;
 
@@ -97,13 +104,25 @@ public class RequestConfig{
         this.body = body;
     }
 
-    public void misc_data(Map<String, String> miscData){
-        this.miscData = miscData;
+    public void propertyMissing(String name, Object value) throws Exception{
+        missingProperties.put(name, objectMapper.writeValueAsString(value));
+    }
+
+    public Object propertyMissing(String name) {
+        return missingProperties.get(name);
+    }
+
+    public Object methodMissing(String name, Object args) throws Exception{
+
+        Object[] argsArray = (Object[]) args;
+
+        missingProperties.put(name, objectMapper.writeValueAsString(argsArray[0]));
+
+        return null;
     }
 
     public void execute(Closure<ActionResponse> closure){
 
         this.executeClosure = closure;
     }
-
 }

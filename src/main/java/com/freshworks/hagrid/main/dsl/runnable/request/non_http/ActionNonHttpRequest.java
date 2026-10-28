@@ -1,15 +1,24 @@
 package com.freshworks.hagrid.main.dsl.runnable.request.non_http;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_SUB_TYPE;
 import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter 
+@Setter 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ActionNonHttpRequest implements ActionRequest{
 
-    
+    Map<String, String> properties = new HashMap<>();
+
     @Override
     public ActionResponse executeRequest() {
         
@@ -25,8 +34,8 @@ public class ActionNonHttpRequest implements ActionRequest{
 
     @Override
     public REQUEST_SUB_TYPE getRequesSubType() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRequesSubType'");
+        
+        return REQUEST_SUB_TYPE.NON_HTTP;
     }
     
 }

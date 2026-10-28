@@ -1,5 +1,6 @@
 package com.freshworks.hagrid.main.dsl.services.resolvers.request.nonhttp;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.stereotype.Component;
@@ -12,7 +13,36 @@ public class NonHttpRequestResolver {
         
     public ActionNonHttpRequest resolve(RequestConfig requestConfig, Map<String, Object> context) throws Exception{
 
-        throw new IllegalAccessError("Resolver for non http request is not yet implemented");
+        ActionNonHttpRequest actionNonHttpRequest = new ActionNonHttpRequest();
+        Map<String, String> missingProperties = requestConfig.getMissingProperties();
+
+        Map<String, String> resolvedProperties = new HashMap<>();
+        for(Map.Entry<String, String> entry : missingProperties.entrySet()){
+
+            String unresolvedKey = entry.getKey();
+            String unresolvedValue = entry.getValue();
+            
+            String resolvedKey = resolveStr(unresolvedKey, context);
+            String resolvedValue = resolveStr(unresolvedValue, context);
+            resolvedProperties.put(resolvedKey, resolvedValue);
+        }
+
+        actionNonHttpRequest.setProperties(resolvedProperties);
+
+        return actionNonHttpRequest;
+    }
+
+    public String resolveStr(String str, Map<String, Object> context){
+
+        for(Map.Entry<String, Object> map : context.entrySet()){
+
+            if(str.contains( "{{" + map.getKey() + "}}")){
+
+               str = str.replace("{{" + map.getKey() + "}}", String.valueOf(map.getValue()));
+            }
+        }
+
+        return str;
     }
 
 }

@@ -10,9 +10,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
+import com.freshworks.hagrid.main.dsl.runnable.request.non_http.ActionNonHttpRequest;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -63,7 +65,17 @@ public class ActionContext {
 
     public void setActionRequest(ActionRequest actionRequest){
         this.actionRequest = actionRequest;
-        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+
+        if (this.actionRequest.getRequestType() == REQUEST_TYPE.HTTP){
+            context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+        }
+
+        else{
+
+            ActionNonHttpRequest actionNonHttpRequest = (ActionNonHttpRequest)this.actionRequest;
+            context.put("_request", actionNonHttpRequest.getProperties());
+        }
+        
     }
 
     public void setActionResponse(ActionResponse actionResponse){

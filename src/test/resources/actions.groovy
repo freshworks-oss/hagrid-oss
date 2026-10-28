@@ -1,5 +1,44 @@
+import com.freshworks.hagrid.integration.sync.test.CompareAndMatch
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse
+import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE
+
 actions {
 
+            action {
+
+            step {
+
+                name "compare_and_match"
+                api_model "compare_and_match_api_model"
+                request "compare_and_match_request" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+                response_path "context._response.body"
+                output "compare_and_match_output_model"
+
+                hooks {
+
+                    execute {
+
+                        println("action getting executed")
+                         CompareAndMatch compareAndMatch = new CompareAndMatch()
+                        println(context._request)
+                        println(context._request.properties.from_value)
+                        println(context._request.properties.to_value)
+                     
+                        response = compareAndMatch.compare(context._request.properties.from_value, context._request.properties.to_value)
+                     
+                        println("""response is ${response}""")
+
+                        ActionResponse actionResponse = new ActionResponse()
+                        actionResponse.setBody(response)
+                        actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
+
+                        return actionResponse
+
+                    }
+                }
+            }
+        }
+        
     // simple_action {
 
     //     /**
