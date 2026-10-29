@@ -18,20 +18,12 @@ actions {
 
                     execute {
 
-                        println("action getting executed")
-                         CompareAndMatch compareAndMatch = new CompareAndMatch()
-                        println(context._request)
-                        println(context._request.properties.from_value)
-                        println(context._request.properties.to_value)
-                     
-                        response = compareAndMatch.compare(context._request.properties.from_value, context._request.properties.to_value)
-                     
-                        println("""response is ${response}""")
-
+                        CompareAndMatch compareAndMatch = new CompareAndMatch() 
+                        def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
+                        println("""resonse is ${response}""")
                         ActionResponse actionResponse = new ActionResponse()
                         actionResponse.setBody(response)
                         actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
-
                         return actionResponse
 
                     }

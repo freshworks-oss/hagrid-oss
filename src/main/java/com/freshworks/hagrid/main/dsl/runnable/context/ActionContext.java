@@ -50,6 +50,25 @@ public class ActionContext {
 
         context.put("_input", input);
         context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+
+        // Now request template has map named missingProperties
+        // properties in this map should be unroot and should be present at top level 
+
+        if (actionRequest != null){
+            
+            Map request = (Map)context.get("_request");
+            Map customProperties = (Map)request.get("customProperties");
+
+            for(Object obj : customProperties.entrySet()){
+
+                Map.Entry customProperty = (Map.Entry)obj;
+                request.put(customProperty.getKey(), customProperty.getValue());
+            }
+
+            request.remove("customProperties");
+        }
+
+
         context.put("_response", objectMapper.convertValue(actionResponse, Map.class));
         context.put("_shared", actionSharedMap);
         context.put("_parent_actions", parentApiModelData);
@@ -65,17 +84,7 @@ public class ActionContext {
 
     public void setActionRequest(ActionRequest actionRequest){
         this.actionRequest = actionRequest;
-
-        if (this.actionRequest.getRequestType() == REQUEST_TYPE.HTTP){
-            context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
-        }
-
-        else{
-
-            ActionNonHttpRequest actionNonHttpRequest = (ActionNonHttpRequest)this.actionRequest;
-            context.put("_request", actionNonHttpRequest.getProperties());
-        }
-        
+        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
     }
 
     public void setActionResponse(ActionResponse actionResponse){

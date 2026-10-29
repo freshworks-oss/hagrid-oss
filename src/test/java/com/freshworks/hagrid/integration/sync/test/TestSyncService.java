@@ -383,7 +383,6 @@ public class TestSyncService {
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
-                .put("waitBetweenCommunityPaginationInMs", "0")
                 .put("from_value", "amit")
                 .put("to_value", "amit")
                 .build();

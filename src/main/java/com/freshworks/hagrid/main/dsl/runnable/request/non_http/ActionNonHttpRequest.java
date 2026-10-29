@@ -17,7 +17,11 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActionNonHttpRequest implements ActionRequest{
 
-    Map<String, String> properties = new HashMap<>();
+    String name;
+    REQUEST_TYPE type = REQUEST_TYPE.NON_HTTP;
+    REQUEST_SUB_TYPE subType = REQUEST_SUB_TYPE.NON_HTTP;
+
+    Map<String, String> customProperties = new HashMap<>();
 
     @Override
     public ActionResponse executeRequest() {

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.stereotype.Component;
 
 import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig;
+import com.freshworks.hagrid.main.dsl.config.requests.RequestConfig.REQUEST_TYPE;
 import com.freshworks.hagrid.main.dsl.runnable.request.non_http.ActionNonHttpRequest;
 
 @Component 
@@ -14,10 +15,16 @@ public class NonHttpRequestResolver {
     public ActionNonHttpRequest resolve(RequestConfig requestConfig, Map<String, Object> context) throws Exception{
 
         ActionNonHttpRequest actionNonHttpRequest = new ActionNonHttpRequest();
-        Map<String, String> missingProperties = requestConfig.getMissingProperties();
 
+        actionNonHttpRequest.setName(requestConfig.getName());
+        
+        // resolve type key here
+        String type = requestConfig.getType().toString();
+        actionNonHttpRequest.setType(REQUEST_TYPE.valueOf(resolveStr(type, context)));
+
+        Map<String, String> customProperties = requestConfig.getCustomProperties();
         Map<String, String> resolvedProperties = new HashMap<>();
-        for(Map.Entry<String, String> entry : missingProperties.entrySet()){
+        for(Map.Entry<String, String> entry : customProperties.entrySet()){
 
             String unresolvedKey = entry.getKey();
             String unresolvedValue = entry.getValue();
@@ -27,7 +34,7 @@ public class NonHttpRequestResolver {
             resolvedProperties.put(resolvedKey, resolvedValue);
         }
 
-        actionNonHttpRequest.setProperties(resolvedProperties);
+        actionNonHttpRequest.setCustomProperties(resolvedProperties);
 
         return actionNonHttpRequest;
     }

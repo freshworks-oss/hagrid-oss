@@ -47,7 +47,7 @@ public class RequestConfig {
     Object query;
     Object headers;
     Object body;
-    Map<String, String> missingProperties = new HashMap<>();
+    Map<String, String> customProperties = new HashMap<>();
     
     Closure<ActionResponse> executeClosure;
 
@@ -105,18 +105,18 @@ public class RequestConfig {
     }
 
     public void propertyMissing(String name, Object value) throws Exception{
-        missingProperties.put(name, objectMapper.writeValueAsString(value));
+        customProperties.put(name, objectMapper.writeValueAsString(value));
     }
 
     public Object propertyMissing(String name) {
-        return missingProperties.get(name);
+        return customProperties.get(name);
     }
 
     public Object methodMissing(String name, Object args) throws Exception{
 
         Object[] argsArray = (Object[]) args;
 
-        missingProperties.put(name, objectMapper.writeValueAsString(argsArray[0]));
+        customProperties.put(name, objectMapper.writeValueAsString(argsArray[0]));
 
         return null;
     }
