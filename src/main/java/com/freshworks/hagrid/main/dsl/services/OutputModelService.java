@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.freshworks.hagrid.main.dsl.config.model.ModelSpec;
-import com.freshworks.hagrid.main.dsl.config.model.OutputModelConfig;
 import com.freshworks.hagrid.main.dsl.runnable.ApiModel;
 import com.freshworks.hagrid.main.dsl.runnable.OutputModel;
 import com.freshworks.hagrid.main.dsl.runnable.OutputModel.Join;
@@ -38,66 +35,39 @@ public class OutputModelService {
         this.actionContext = actionContext;
     }
 
-    public List<OutputModel> getOutputModelFromApiModel(JsonNode beanNode){
-
-        List<OutputModel> outputModelList = new ArrayList<>();
+    public OutputModel getOutputModelFromApiModel(JsonNode beanNode){
 
         ApiModel apiModel = parseResponseToModel(beanNode);
-        ObjectNode finalResponse = objectMapper.createObjectNode();
+        OutputModel outputModel = new OutputModel();
+        outputModel.setName(apiModel.getName());    
+        String statusCode = (String)this.actionContext.getActionSharedMap().get("_response_status_code");
+        outputModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
 
-        OutputModelConfig outputModelConfig = null;
-        List<String> outputModelListName = (List<String>)this.actionContext.getActionSharedMap().get("_output_config_model_name");
+        if(Boolean.TRUE.equals(outputModel.primitive())){
+            outputModel.populate(apiModel);
+        }
 
+        else{
 
-        for(String outputModelName : outputModelListName){
+            // it is partial 
+            // It means that it is partial 
+            Join join = outputModel.getJoin();   
 
-            outputModelConfig = this.modelSpec.getOutputModelByName(outputModelName);
+            if(join.getLeftModelKey().equalsIgnoreCase(apiModel.getName())){
 
-            OutputModel outputModel = new OutputModel();
-            outputModel.setName(outputModelConfig.getName());
-            outputModel.setFilterClosure(outputModelConfig.getFilterClosure());
-            outputModel.setTransformClosure(outputModelConfig.getTransformClosure());
-            outputModel.setOutputFieldMapping(outputModelConfig.getOutputFieldMapping());
+                //  Check if right filled exists already ? 
+                // if so then populate it with left model 
+            }
 
-            String statusCode = (String)this.actionContext.getActionSharedMap().get("_response_status_code");
-            outputModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
+            else{
 
-            if(outputModel.dependsOn(apiModel)){
-
-                if(Boolean.TRUE.equals(outputModel.primitive())){
-                    outputModel.populate(apiModel);
-                    outputModelList.add(outputModel);
-                }
-
-                else{
-
-                    // it is partial 
-                    // It means that it is partial 
-                    Join join = outputModel.getJoin();   
-
-                    if(join.getLeftModelKey().equalsIgnoreCase(apiModel.getName())){
-
-                        //  Check if right filled exists already ? 
-                        // if so then populate it with left model 
-                    }
-
-                    else{
-
-                        // it is right model
-                        // check if left filled already exists ? 
-                        // if so then populate it with right filled 
-                    }
+                // it is right model
+                // check if left filled already exists ? 
+                // if so then populate it with right filled 
                 }
             }
 
-        }
-
-        return outputModelList;
-    }
-
-    public String getOutputModelName(){
-
-        return (String)this.actionContext.getActionSharedMap().get("_output_config_model_name");        
+        return outputModel;
     }
 
     

@@ -88,7 +88,7 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    public InfraDbCursor getDslBasedOutputModelCursor(String outputModelName) throws Exception{
+    public InfraDbCursor getCursorByModelName(String outputModelName) throws Exception{
 
         InfraDbCursor infraDbCursor = this.infraDbList.filterOutputModel(outputModelName, null);
         return infraDbCursor;
@@ -100,7 +100,7 @@ public class ConsumerService {
      * @return
      * @throws Exception
      */
-    public InfraDbCursor getDslBasedOutputModelCursor(String outputModelName, String filterExpression) throws Exception{
+    public InfraDbCursor getCursorByModelName(String outputModelName, String filterExpression) throws Exception{
 
         ExpressionParser parser = new SpelExpressionParser();
         SpelExpression spelFilterExpression = (SpelExpression)parser.parseExpression(filterExpression);

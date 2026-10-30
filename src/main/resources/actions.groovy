@@ -341,7 +341,6 @@ actions {
             api_model "action2" // idea from nango 
             request "action2", ["how_many" : "context._parent_actions[0].how_many"]
             response_path "context._response.body.body.data.users"
-            output "action2_output"
             parent "action1"
         }
     } // composite action close 

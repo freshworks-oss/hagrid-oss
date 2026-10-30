@@ -328,14 +328,13 @@ public class ActionService {
                 c.setResolveStrategy(Closure.DELEGATE_ONLY);
                 parsedResponse = objectMapper.convertValue(c.call(), JsonNode.class);
                 apiModelConfig = actionConfig.getApiModelConfig();
-                this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
+                this.actionContext.getActionSharedMap().put("_step_config_model_name", apiModelConfig.getName());
 
                 List<String> outputModelConfigListName = new ArrayList<>();
 
                 for(OutputModelConfig outputModelConfig: actionConfig.getOutputModelConfigList()){
                     outputModelConfigListName.add(outputModelConfig.getName());
                 }
-                this.actionContext.getActionSharedMap().put("_output_config_model_name", outputModelConfigListName);
                 this.actionContext.getActionSharedMap().put("_response_status_code", "OK");
             }
 
@@ -347,12 +346,7 @@ public class ActionService {
                 apiModelConfig = this.modelSpec.getApiModelByName(parseSyncResponseObject.getModelName());
 
                 // Change the response of the context 
-                    
-
-
-
-                this.actionContext.getActionSharedMap().put("_api_config_model_name", apiModelConfig.getName());
-                this.actionContext.getActionSharedMap().put("_output_config_model_name", parseSyncResponseObject.getOutputConfigModelNameList());
+                this.actionContext.getActionSharedMap().put("_step_config_model_name", apiModelConfig.getName());
                 this.actionContext.getActionSharedMap().put("_response_status_code", parseSyncResponseObject.getResponseStatusCode().toString());
             }
         

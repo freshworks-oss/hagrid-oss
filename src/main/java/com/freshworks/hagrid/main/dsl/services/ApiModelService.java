@@ -40,7 +40,7 @@ public class ApiModelService {
     public ApiModel getApiModelForBean(ObjectNode beanData){
 
         ApiModelConfig apiModelConfig = null;
-        String apiModelConfigName = (String)this.actionContext.getActionSharedMap().get("_api_config_model_name");
+        String apiModelConfigName = (String)this.actionContext.getActionSharedMap().get("_step_config_model_name");
         apiModelConfig = this.modelSpec.getApiModelByName(apiModelConfigName);
     
 

@@ -297,12 +297,12 @@ public class MongoDbList implements InfraDbList {
             Bson  mainFilter = Filters.eq("value.clazz", className);
             Bson developerFilter = spelToMongoFilter(spelExpression.getAST(), false);
 
-            System.out.println("Custom filter is");
-            System.out.println(developerFilter.toString());
+            // System.out.println("Custom filter is");
+            // System.out.println(developerFilter.toString());
 
             Bson finalFilter = Filters.and(mainFilter, developerFilter);
-            System.out.println("Final filter is");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is");
+            // System.out.println(finalFilter.toString());
 
             documentCursor =  this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
             docSize = this.list.countDocuments(finalFilter);
@@ -338,13 +338,13 @@ public class MongoDbList implements InfraDbList {
             Bson developerFilter = null;    
             developerFilter = spelToMongoFilter(spelExpression.getAST(), true);
             
-            System.out.println(" developer filter captured is");
-            System.out.println(developerFilter.toString());
+            // System.out.println(" developer filter captured is");
+            // System.out.println(developerFilter.toString());
 
             Bson finalFilter = Filters.and(mainFilter, developerFilter, nameFilter);
 
-            System.out.println("Final filter is ");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is ");
+            // System.out.println(finalFilter.toString());
 
             documentCursor = this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
         }
@@ -358,8 +358,8 @@ public class MongoDbList implements InfraDbList {
 
             Bson finalFilter = Filters.and(mainFilter, nameFilter);
 
-            System.out.println("Final filter is ");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is ");
+            // System.out.println(finalFilter.toString());
 
             documentCursor = this.list.find(finalFilter).sort(Sorts.ascending("value.created_at_ms")).iterator();
             docSize = this.list.countDocuments(finalFilter);

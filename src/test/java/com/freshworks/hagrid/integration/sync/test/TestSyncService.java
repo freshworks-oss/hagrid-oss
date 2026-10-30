@@ -21,12 +21,15 @@ import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
 import com.google.common.collect.ImmutableMap;
 
+import groovy.lang.Closure;
+
 import org.dizitart.no2.filters.NitriteFilter;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import static org.dizitart.no2.filters.FluentFilter.where;
@@ -364,7 +367,7 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor infraDbCursor = consumerService.getDslBasedOutputModelCursor("action1_output");
+        InfraDbCursor infraDbCursor = consumerService.getCursorByModelName("action1_output");
 
         while(infraDbCursor.hasNext()){
             ObjectNode data = infraDbCursor.getNextOutputModel();
@@ -381,6 +384,9 @@ public class TestSyncService {
     public void testSyncWhenRunningDynamicDagNONIOAction() throws Exception{
 
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
+        connectorConfiguration.setInfraDbType("mongo");
+        MongoDbConfiguration mongoAutoConfiguration = new MongoDbConfiguration();
+        connectorConfiguration.setMongoDbConfiguration(mongoAutoConfiguration);
 
         ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
                 .put("from_value", "amit")
@@ -393,11 +399,11 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor infraDbCursor = consumerService.getDslBasedOutputModelCursor("compare_and_match_output_model");
+        ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
+        CompositeActionConfig compositeActionConfig = actionSpec.getActionByName("compare_and_match");
 
-        while(infraDbCursor.hasNext()){
-            ObjectNode data = infraDbCursor.getNextOutputModel();
-            System.out.println(data);
-        }
+        Closure<JsonNode> c = compositeActionConfig.getOutputClosure();
+        Object data = c.call(consumerService);
+        System.out.println(data);
     }
 }

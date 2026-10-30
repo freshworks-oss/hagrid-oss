@@ -156,18 +156,16 @@ public class ProcessorTaskService implements Callable<Void> {
                     ActionContext actionContext = genericBean.getActionContext();
                     this.outputModelService.configure(actionContext);
 
-                    List<OutputModel> outputModelList = this.outputModelService.getOutputModelFromApiModel(beanNode.get("apiModel"));
+                    OutputModel outputModel = this.outputModelService.getOutputModelFromApiModel(beanNode.get("apiModel"));
 
-                    for(OutputModel outputModel : outputModelList){
-                        GenericAsset genericAsset = syncServiceContainer.getBean(GenericAsset.class);
-                        genericAsset.configure(syncServiceContainer);
-                        genericAsset.setOutputModelService(outputModelService, actionContext);
-                        genericAsset.setFromBean(genericBean);
-                        genericAsset.setOutputModel(outputModel);
-                        genericAsset.filter();
-                        genericAsset.transform();
-                        assetsReadyToBePublishedList.add(genericAsset);
-                    }
+                    GenericAsset genericAsset = syncServiceContainer.getBean(GenericAsset.class);
+                    genericAsset.configure(syncServiceContainer);
+                    genericAsset.setOutputModelService(outputModelService, actionContext);
+                    genericAsset.setFromBean(genericBean);
+                    genericAsset.setOutputModel(outputModel);
+                    genericAsset.filter();
+                    genericAsset.transform();
+                    assetsReadyToBePublishedList.add(genericAsset);
                 }
 
                 else{

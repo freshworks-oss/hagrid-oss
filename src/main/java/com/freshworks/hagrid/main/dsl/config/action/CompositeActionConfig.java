@@ -8,6 +8,7 @@ import java.util.List;
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
 import com.freshworks.hagrid.traverser.DagNode.NodeRateLimitObject;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.freshworks.hagrid.main.dsl.config.model.ModelSpec;
 import com.freshworks.hagrid.main.dsl.config.requests.RequestSpec;
 import com.google.common.base.Strings;
@@ -24,6 +25,8 @@ public class CompositeActionConfig {
     List<ActionConfig> actionConfigList = new ArrayList<>();
     ModelSpec modelSpec;
     RequestSpec requestSpec;
+    Closure<JsonNode> outputClosure;
+
     DagNode rootNode = new DagNode(ParentStep.class.getName(), true);
 
     public CompositeActionConfig(ModelSpec modelSpec, RequestSpec requestSpec){
@@ -35,6 +38,10 @@ public class CompositeActionConfig {
         this.compositeActionName = compositeActionName;
     }
 
+    public void output(Closure<JsonNode> closure){
+
+        this.outputClosure = closure;
+    }
 
     public ActionConfig getActionByName(String actionName){
 

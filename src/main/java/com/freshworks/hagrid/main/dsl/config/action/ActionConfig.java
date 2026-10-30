@@ -62,24 +62,13 @@ public class ActionConfig{
         this.name = name;
     }
 
+
     /**
      * Defines model name with which it is associated with 
      * @param modelName
      */
-    public void api_model(String modelName){
+    public void step_model(String modelName){
         this.apiModelConfig = this.modelSpec.getApiModelByName(modelName);
-    }
-
-    /**
-     * Defines model name with which it is associated with 
-     * @param modelName
-     */
-    public void output(String[] outputModelNameArray){
-
-        for(String output: outputModelNameArray){
-            OutputModelConfig outputModelConfig = this.modelSpec.getOutputModelByName(output);
-            this.outputModelConfigList.add(outputModelConfig);
-        }
     }
 
     /**

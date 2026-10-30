@@ -383,14 +383,14 @@ public class NitriteDbList implements InfraDbList {
 
             Filter developerFilter = spelToNitriteFilter(spelExpression.getAST(), false);
             
-            System.out.println(" developer filter captured is");
-            System.out.println(developerFilter.toString());
+            // System.out.println(" developer filter captured is");
+            // System.out.println(developerFilter.toString());
 
             
             Filter finalFilter = mainFilter.and(developerFilter);
 
-            System.out.println("Final filter is ");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is ");
+            // System.out.println(finalFilter.toString());
 
             documentCursor = this.nitriteCollection.find(finalFilter, options);
         }
@@ -425,13 +425,13 @@ public class NitriteDbList implements InfraDbList {
             Filter developerFilter = null;    
             developerFilter = spelToNitriteFilter(spelExpression.getAST(), true);
             
-            System.out.println(" developer filter captured is");
-            System.out.println(developerFilter.toString());
+            // System.out.println(" developer filter captured is");
+            // System.out.println(developerFilter.toString());
 
             Filter finalFilter = Filter.and(mainFilter, nameFilter, developerFilter);
 
-            System.out.println("Final filter is ");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is ");
+            // System.out.println(finalFilter.toString());
 
             documentCursor = this.nitriteCollection.find(finalFilter, options);
         }
@@ -445,8 +445,8 @@ public class NitriteDbList implements InfraDbList {
 
             Filter finalFilter = Filter.and(mainFilter, nameFilter);
 
-            System.out.println("Final filter is ");
-            System.out.println(finalFilter.toString());
+            // System.out.println("Final filter is ");
+            // System.out.println(finalFilter.toString());
 
             documentCursor = this.nitriteCollection.find(finalFilter, options);
         }

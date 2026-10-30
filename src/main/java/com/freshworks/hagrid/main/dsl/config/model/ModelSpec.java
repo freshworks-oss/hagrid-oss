@@ -20,7 +20,7 @@ public class ModelSpec extends GroovyObjectSupport {
     private final List<OutputModelConfig> outputModelList = new ArrayList<>();
     ApplicationContext applicationContext;
 
-    public void api_model(Closure closure) {
+    public void step_model(Closure closure) {
         ApiModelConfig newModel = new ApiModelConfig();
         apiModelList.add(newModel);
 

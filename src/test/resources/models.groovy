@@ -3,29 +3,18 @@ import java.time.LocalDateTime
 models {
 
         // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
-        name "compare_and_match_api_model"
+        name "compare_and_match_model"
 
         // desired attributes required in this model
         attr "is_match" : "context._response.model.is_match", "to_value" : "context._response.model.to_value"
         attr "from_value" : "context._response.model.from_value"
     }
-
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "compare_and_match_output_model"
-
-        // mapping of output model attributes with api model attribute
-        attr "is_match" : model('compare_and_match_api_model', 'is_match') , "to_value" : model('compare_and_match_api_model' , 'to_value')
-        attr "from_value" : model("compare_and_match_api_model", "from_value")
-    }
     
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "get_repo_model"
@@ -34,22 +23,9 @@ models {
         attr "repo_name" : "_response.name", "is_private" : "_response.private"
         attr "owner_name" : "_response.owner.login"
     }
-
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "get_repo_model_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "repo_name" : model('get_repo_model', 'repo_name')
-        attr "is_private" : model('get_repo_model', 'is_private')
-        attr "owner_name" : model('get_repo_model', 'owner_name')
-    }
-
     
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "action1"
@@ -59,19 +35,9 @@ models {
         attr "how_many" : "context._response.model.how_many"
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "action1_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name_formatted" : model('action1', 'user_name') , "user_id_formatted" : model('action1' , 'user_id')
-        attr "how_many_formatted" : model("action1", "how_many")
-    }
 
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "action2"
@@ -80,19 +46,9 @@ models {
         attr "user_id" : "context._response.model.user_id", "user_name" : "context._response.model.user_name"
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "action2_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action2', 'user_name') , "user_id" : model('action2' , 'user_id')
-    }
-
 
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "action3"
@@ -110,18 +66,9 @@ models {
         }
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "action3_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action3', 'user_name') , "user_id" : model('action3' , 'user_id')
-    }
 
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "action4"
@@ -149,19 +96,9 @@ models {
         }
     }
 
-    // Output model refers to the model which can be filled with other API model or output model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "action4_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action4', 'user_name') , "user_id" : model('action4' , 'user_id')
-        attr "process_date" : model('action4', 'process_date')
-    }
 
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "action5"
@@ -190,19 +127,9 @@ models {
         }
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
 
-        // Name of the output model
-        name "action5_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action5', 'user_name') , "user_id" : model('action5' , 'user_id')
-        attr "process_date" : model('action5', 'process_date')
-    }
-
-        // API Model refers to the model which will render the API output
-    api_model {
+    // API Model refers to the model which will render the API output
+    step_model {
 
         // Name of the model 
         name "action6"
@@ -231,22 +158,10 @@ models {
         }
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "action6_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "user_name" : model('action6', 'user_name') , "user_id" : model('action6' , 'user_id')
-        attr "process_date" : model('action6', 'process_date')
-    }
-
 
     // API model for rendering error
-
-            // API Model refers to the model which will render the API output
-    api_model {
+    // API Model refers to the model which will render the API output
+    step_model {
 
         // Name of the model 
         name "error_api_model"
@@ -257,19 +172,9 @@ models {
 
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "error_output_model"
-
-        // mapping of output model attributes with api model attribute
-        attr "error_message" : model('error_api_model', 'error_message')
-    }
-
 
     // API Model refers to the model which will render the API output
-    api_model {
+    step_model {
 
         // Name of the model 
         name "get_repo_model"
@@ -279,20 +184,8 @@ models {
         attr "owner_name" : "_response.owner.login"
     }
 
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "get_repo_model_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "repo_name" : model('get_repo_model', 'repo_name')
-        attr "is_private" : model('get_repo_model', 'is_private')
-        attr "owner_name" : model('get_repo_model', 'owner_name')
-    }
-
-        // API Model refers to the model which will render the API output
-    api_model {
+    // API Model refers to the model which will render the API output
+    step_model {
 
         // Name of the model 
         name "create_github_issue_model"
@@ -300,17 +193,5 @@ models {
         // desired attributes required in this model
         attr "repo_name" : "_response.name", "is_private" : "_response.private"
         attr "owner_name" : "_response.owner.login"
-    }
-
-    // Output model refers to the model which can be filled with other API model to create desired business object
-    output_model {
-
-        // Name of the output model
-        name "create_github_issue_model_output"
-
-        // mapping of output model attributes with api model attribute
-        attr "repo_name" : model('get_repo_model', 'repo_name')
-        attr "is_private" : model('get_repo_model', 'is_private')
-        attr "owner_name" : model('get_repo_model', 'owner_name')
     }
 }

@@ -94,19 +94,9 @@ public class OutputModel {
     
     public void populate(ApiModel model){
 
-        String modelName = model.getName();
-        JsonNode node = model.getData();
-
-        for(Map.Entry<String, ModelBinding> entry : outputFieldMapping.entrySet()){
-
-            String outputFieldName = entry.getKey();
-            ModelBinding apiModelBinding = entry.getValue();
-
-            if(apiModelBinding.getModelName().equalsIgnoreCase(modelName)){
-                this.data.set(outputFieldName, node.get(apiModelBinding.getModelField()));
-            }
-        }
-
+        this.name = model.getName();
+        ObjectNode node = model.getData();
+        this.data = node.deepCopy();
         this.data.put("_status", this.httpStatus.toString());
     }
     
