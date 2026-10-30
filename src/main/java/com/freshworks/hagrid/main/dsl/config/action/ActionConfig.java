@@ -76,7 +76,7 @@ public class ActionConfig{
      * @param modelName
      */
 
-    public void request(String requestName, LinkedHashMap<String, String> mapping){
+    public void operation(String requestName, LinkedHashMap<String, String> mapping){
         
         this.actionRequestConfig = new ActionRequestConfig();
         this.actionRequestConfig.setRequestConfig(requestSpec.getRequestByName(requestName));

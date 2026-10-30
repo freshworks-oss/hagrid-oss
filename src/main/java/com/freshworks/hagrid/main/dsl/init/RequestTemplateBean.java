@@ -80,10 +80,10 @@ public class RequestTemplateBean {
 
         Closure<Void> requestsClosure = new Closure<Void>(null) {
             public void doCall(Closure closure) {
-                requestSpecHandler.requests(closure);
+                requestSpecHandler.operations(closure);
             }
         };
-        binding.setVariable("requests", requestsClosure);
+        binding.setVariable("operations", requestsClosure);
 
         for(File file : fileList){
             groovyShell.evaluate(file);
@@ -104,10 +104,10 @@ public class RequestTemplateBean {
 
         Closure<Void> requestsClosure = new Closure<Void>(null) {
             public void doCall(Closure closure) {
-                requestSpecHandler.requests(closure);
+                requestSpecHandler.operations(closure);
             }
         };
-        binding.setVariable("requests", requestsClosure);
+        binding.setVariable("operations", requestsClosure);
 
         ClassPathResource resource = new ClassPathResource(REQUESTS_DSL_RESOURCE);
 

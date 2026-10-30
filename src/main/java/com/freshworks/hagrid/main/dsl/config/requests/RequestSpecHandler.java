@@ -12,7 +12,7 @@ public class RequestSpecHandler {
         this.requestSpec = requestSpec;
     }
 
-    public void requests(Closure closure) {
+    public void operations(Closure closure) {
         closure.setDelegate(this.requestSpec);
         closure.setResolveStrategy(Closure.DELEGATE_FIRST);
         closure.call();

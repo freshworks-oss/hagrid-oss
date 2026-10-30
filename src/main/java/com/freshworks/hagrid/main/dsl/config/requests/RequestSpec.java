@@ -13,7 +13,7 @@ public class RequestSpec {
     
     List<RequestConfig> requestList = new ArrayList<>();
 
-    public void request(Closure closure){
+    public void operation(Closure closure){
 
         RequestConfig request = new RequestConfig();
         requestList.add(request);

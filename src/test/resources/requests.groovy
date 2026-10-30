@@ -1,17 +1,17 @@
 import groovy.json.JsonSlurper
 
 
-requests {
+operations {
 
-    request {
+    operation {
 
-        name "compare_and_match_request" 
+        name "compare_and_match_operation" 
         type "NON_HTTP"
         from_value "{{from_value}}"
         to_value "{{to_value}}", "{{to_to_value}}"
     }
 
-    request {
+    operation {
 
         name "action1" 
         type "HTTP"
@@ -20,7 +20,7 @@ requests {
         path  "/users?how_many=2"
     }
 
-    request {
+    operation {
 
         name "action2" 
         type "HTTP"
@@ -30,7 +30,7 @@ requests {
         headers "how_many": "{{how_many}}" 
     }
 
-    request {
+    operation {
 
         name "action3" 
         type "HTTP"
@@ -39,7 +39,7 @@ requests {
         path  "/users?how_many={{how_many}}"
     }
 
-    request {
+    operation {
 
         name "action4" 
         type "HTTP"
@@ -48,7 +48,7 @@ requests {
         path  "/users?how_many={{how_many}}"
     }
 
-    request {
+    operation {
 
         name "action5" 
         type "HTTP"
@@ -57,7 +57,7 @@ requests {
         path  "/users?how_many={{how_many}}"
     }
 
-    request {
+    operation {
 
         name "action6" 
         type "HTTP"
@@ -66,9 +66,9 @@ requests {
         path  "/users?how_many={{how_many}}&has_error={{has_error}}"
     }
 
-    request {
+    operation {
 
-        name "get_repo_request" 
+        name "get_repo_operation" 
         method "GET"
         type "HTTP"
         sub_type "REST"
@@ -79,9 +79,9 @@ requests {
         
     }
 
-    request {
+    operation {
 
-        name "create_github_issue_request" 
+        name "create_github_issue_operation" 
         method "GET"
         type "HTTP"
         host "https://api.github.com"

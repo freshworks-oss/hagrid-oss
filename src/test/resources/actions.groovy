@@ -22,14 +22,14 @@ actions {
                         
                     }
 
-                    return final_result["process_at" : "today"]
+                    return final_result
             }
 
             step {
 
                 name "compare_and_match"
                 step_model "compare_and_match_model"
-                request "compare_and_match_request" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+                operation "compare_and_match_request" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
                 response_path "context._response.body"
     
                 hooks {
@@ -357,7 +357,7 @@ actions {
             */
             name "action1"
             step_model "action1" // idea from nango 
-            request "action1"
+            operation "action1"
             response_path "context._response.body.body.data.users"
             is_root true
 
@@ -385,7 +385,7 @@ actions {
             */
             name "action2"
             step_model "action2" // idea from nango 
-            request "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            operation "action2", ["how_many" : "context._parent_actions[0].how_many"]
             response_path "context._response.body.body.data.users"
             parent "action1"
         }
@@ -402,7 +402,7 @@ actions {
             */
             name "action1"
             step_model "action1" // idea from nango 
-            request "action1"
+            operation "action1"
             response_path "context._response.body.body.data.users"
             is_root true
 
@@ -430,7 +430,7 @@ actions {
             */
             name "action2"
             step_model "action2" // idea from nango 
-            request "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            operation "action2", ["how_many" : "context._parent_actions[0].how_many"]
             response_path "context._response.body.body.data.users"
             parent "action1"
         }

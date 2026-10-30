@@ -310,7 +310,7 @@ actions {
             */
             name "action1"
             api_model "action1" // idea from nango 
-            request "action1"
+            operation "action1"
             response_path "context._response.body.body.data.users"
             output "action1_output"
             is_root true
@@ -339,7 +339,7 @@ actions {
             */
             name "action2"
             api_model "action2" // idea from nango 
-            request "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            operation "action2", ["how_many" : "context._parent_actions[0].how_many"]
             response_path "context._response.body.body.data.users"
             parent "action1"
         }
