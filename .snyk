@@ -1,0 +1,94 @@
+# Snyk policy: accepted findings with no fix on Spring Boot 3.5.x.
+# Every entry expires on the review date below; re-evaluate then (Boot 4 migration, new releases).
+version: v1.25.0
+ignore:
+  SNYK-JAVA-IOMICROMETER-19233327:
+    - '*':
+        reason: >-
+          Fix needs Micrometer 1.16.7 or later, which removes io.micrometer.prometheus and breaks the internal Freshworks metrics-util jar. Needs that jar rebuilt first. (io.micrometer:micrometer-core 1.15.12, CRLF Injection)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-IOMICROMETER-19256585:
+    - '*':
+        reason: >-
+          Fix needs Micrometer 1.16.7 or later, which removes io.micrometer.prometheus and breaks the internal Freshworks metrics-util jar. Needs that jar rebuilt first. (io.micrometer:micrometer-core 1.15.12, Missing Release of Memory after Effective Lifetime)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-IOPROJECTREACTOR-19267101:
+    - '*':
+        reason: >-
+          Fix needs Reactor 3.8 (Reactor 2025 train), which targets Spring 7 and is not supported with Spring Framework 6.2 / Boot 3.5. Tracked with the Boot 4 migration. (io.projectreactor:reactor-core 3.7.19, Allocation of Resources Without Limits or Throttling)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-IOPROJECTREACTOR-19267102:
+    - '*':
+        reason: >-
+          Fix needs Reactor 3.8 (Reactor 2025 train), which targets Spring 7 and is not supported with Spring Framework 6.2 / Boot 3.5. Tracked with the Boot 4 migration. (io.projectreactor:reactor-core 3.7.19, Race Condition)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGGLASSFISHJAXB-20883142:
+    - '*':
+        reason: >-
+          No fixed version has been published by the upstream project. Re-check on review date. (org.glassfish.jaxb:jaxb-core 4.0.9, XML External Entity (XXE) Injection)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267072:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-beans 6.2.19, Allocation of Resources Without Limits or Throttling)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267073:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-expression 6.2.19, Allocation of Resources Without Limits or Throttling)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267075:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-expression 6.2.19, Allocation of Resources Without Limits or Throttling)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267077:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-web 6.2.19, Allocation of Resources Without Limits or Throttling)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267078:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-web 6.2.19, Cross-site Scripting (XSS))
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267079:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-web 6.2.19, Sensitive Cookie in HTTPS Session Without "Secure" Attribute)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267098:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-webmvc 6.2.19, Arbitrary Code Injection)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORK-19267438:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Framework 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework:spring-context-support 6.2.19, Directory Traversal)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORKSECURITY-19267391:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Security 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework.security:spring-security-crypto 6.5.11, Generation of Predictable IV with CBC Mode)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
+  SNYK-JAVA-ORGSPRINGFRAMEWORKSECURITY-19267441:
+    - '*':
+        reason: >-
+          Fix is only available in Spring Security 7.x, which requires Spring Boot 4.x. Not fixable on Boot 3.5. Tracked with the Boot 4 migration. (org.springframework.security:spring-security-core 6.5.11, Timing Attack)
+        expires: 2027-01-30T00:00:00.000Z
+        created: 2026-10-30T00:00:00.000Z
