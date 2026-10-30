@@ -229,24 +229,14 @@ public class TestMongoClientFactory {
         }
 
         @Test
-        public void testSrvHostBuildsSrvUri() {
-            // "-srv" in the host -> mongodb+srv:// -> the driver does a DNS SRV lookup of the host.
-            // The driver rejects this 2-part srv host before any DNS lookup, which proves the srv branch ran.
-            RuntimeException e = assertThrows(RuntimeException.class,
-                    () -> create(legacyConfig("alice", "secret", "authdb", UNRESOLVABLE_SRV_HOST, 27017, null)));
+        public void testSrvHostBuildsSrvUriAndIgnoresThePort() throws IOException {
+            // "-srv" in the host -> mongodb+srv:// -> the cluster is configured by SRV host name, not by a host list.
+            // Drivers before 5.2 threw on this 2-part host at client creation; newer ones create the client and
+            // resolve DNS in the background, so assert on the cluster settings the srv branch produced.
+            MongoClient client = create(legacyConfig("alice", "secret", "authdb", UNRESOLVABLE_SRV_HOST, 12345, null));
 
-            assertThat(e.getMessage().toLowerCase(), containsString("srv host name"));
-            assertThat(factory.doesClientExists(), is(false));
-        }
-
-        @Test
-        public void testSrvHostIgnoresThePort() {
-            // same srv failure whatever port is configured: the port never reaches the srv URI
-            // (mongodb+srv does not allow a port, so including it would be a different error)
-            RuntimeException e = assertThrows(RuntimeException.class,
-                    () -> create(legacyConfig("alice", "secret", "authdb", UNRESOLVABLE_SRV_HOST, 12345, null)));
-
-            assertThat(e.getMessage(), not(containsString("port")));
+            assertThat(settingsOf(client).getClusterSettings().getSrvHost(), is(UNRESOLVABLE_SRV_HOST));
+            assertThat(factory.doesClientExists(), is(true));
         }
 
         @Test
