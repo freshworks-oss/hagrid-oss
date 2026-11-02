@@ -335,7 +335,6 @@ public class ActionService {
                 for(OutputModelConfig outputModelConfig: actionConfig.getOutputModelConfigList()){
                     outputModelConfigListName.add(outputModelConfig.getName());
                 }
-                this.actionContext.getActionSharedMap().put("_response_status_code", "OK");
             }
 
             else{
@@ -347,7 +346,6 @@ public class ActionService {
 
                 // Change the response of the context 
                 this.actionContext.getActionSharedMap().put("_step_config_model_name", apiModelConfig.getName());
-                this.actionContext.getActionSharedMap().put("_response_status_code", parseSyncResponseObject.getResponseStatusCode().toString());
             }
         
 

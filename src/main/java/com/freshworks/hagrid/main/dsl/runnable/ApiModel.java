@@ -21,7 +21,6 @@ import lombok.Setter;
 public class ApiModel {
 
     String name = UUID.randomUUID().toString();
-    public ACTION_HTTP_CODE httpStatus;
 
     ObjectNode data;
     
@@ -57,7 +56,6 @@ public class ApiModel {
     }
 
     public void setData(ObjectNode data){
-        data.put("_status", this.httpStatus.toString());
-        this.data = data;
+        this.data = data.deepCopy();
     }
 }

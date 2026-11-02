@@ -40,8 +40,6 @@ public class OutputModelService {
         ApiModel apiModel = parseResponseToModel(beanNode);
         OutputModel outputModel = new OutputModel();
         outputModel.setName(apiModel.getName());    
-        String statusCode = (String)this.actionContext.getActionSharedMap().get("_response_status_code");
-        outputModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
 
         if(Boolean.TRUE.equals(outputModel.primitive())){
             outputModel.populate(apiModel);

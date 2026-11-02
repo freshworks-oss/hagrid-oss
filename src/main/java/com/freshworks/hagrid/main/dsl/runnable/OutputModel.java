@@ -26,11 +26,7 @@ import lombok.Setter;
 public class OutputModel {
 
     static ObjectMapper objectMapper = new ObjectMapper();
-    
     String name;
-
-    public ACTION_HTTP_CODE httpStatus;
-
     ObjectNode data = objectMapper.createObjectNode();
 
     @JsonIgnore
@@ -97,7 +93,6 @@ public class OutputModel {
         this.name = model.getName();
         ObjectNode node = model.getData();
         this.data = node.deepCopy();
-        this.data.put("_status", this.httpStatus.toString());
     }
     
     public void key(String keyLang){

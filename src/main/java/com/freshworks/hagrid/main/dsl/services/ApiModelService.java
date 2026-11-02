@@ -66,8 +66,6 @@ public class ApiModelService {
         }
 
         ApiModel apiModel = new ApiModel();
-        String statusCode = (String) this.actionContext.getActionSharedMap().get("_response_status_code");
-        apiModel.setHttpStatus(ACTION_HTTP_CODE.valueOf(statusCode));
         
         apiModel.setName(apiModelConfig.getName());
         apiModel.setFilterClosure(apiModelConfig.getFilterClosure());

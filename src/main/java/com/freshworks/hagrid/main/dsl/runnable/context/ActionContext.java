@@ -114,13 +114,12 @@ public class ActionContext {
         this.parentApiModelData = objectMapper.convertValue(context.get("_parent_actions"), new TypeReference<List<Map<String, Object>>>(){});
     }
 
-    public ParseSyncResponse parse(Map parsedResponse, String responsePath, String modelName, String response_status_code){
+    public ParseSyncResponse parse(Map parsedResponse, String responsePath, String modelName){
 
         ParseSyncResponse parseSyncResponse =  new ParseSyncResponse();
         parseSyncResponse.setParsedResponse(parsedResponse);
         parseSyncResponse.setResponsePath(responsePath);
         parseSyncResponse.setModelName(modelName);
-        parseSyncResponse.setResponseStatusCode(ACTION_HTTP_CODE.valueOf(response_status_code));
         return parseSyncResponse;
     }
     
@@ -132,13 +131,11 @@ public class ActionContext {
         String responsePath;
         String modelName;
         List<String> outputConfigModelNameList = new ArrayList<>();
-        ACTION_HTTP_CODE responseStatusCode;
 
-        public void parse(Map parsedResponse, String responsePath, String modelName, ACTION_HTTP_CODE responseStatusCode){
+        public void parse(Map parsedResponse, String responsePath, String modelName){
             this.parsedResponse = parsedResponse;
             this.responsePath = responsePath;
             this.modelName = modelName;
-            this.responseStatusCode = responseStatusCode;
         }
 
         public JsonNode getDiggedResponseBody() throws Exception{
