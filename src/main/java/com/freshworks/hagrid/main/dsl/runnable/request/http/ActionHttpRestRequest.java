@@ -1,5 +1,6 @@
 package com.freshworks.hagrid.main.dsl.runnable.request.http;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.util.Strings;
@@ -37,8 +38,8 @@ public class ActionHttpRestRequest extends ActionHttpRequest{
     Map<String, String> query;
     Map<String, String> headers;
     JsonNode body;
-    
     Closure<ActionResponse> executeClosure;
+    Map<String, String> customProperties = new HashMap<>();
 
     static ObjectMapper objectMapper = new ObjectMapper();
     

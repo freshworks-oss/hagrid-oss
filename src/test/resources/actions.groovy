@@ -418,7 +418,7 @@ actions {
                     }
 
                     def new_response_body = ["users" : users]
-                    parse new_response_body, "users", "action1", "action1_output", "OK"
+                    parse new_response_body, "users", "action1", "OK"
                 }
             }
         }

@@ -367,7 +367,7 @@ public class TestSyncService {
         ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
         syncStatusService.waitUntilSyncIsInProgress();
         
-        InfraDbCursor infraDbCursor = consumerService.getCursorByModelName("action1_output");
+        InfraDbCursor infraDbCursor = consumerService.getCursorByModelName("action1");
 
         while(infraDbCursor.hasNext()){
             ObjectNode data = infraDbCursor.getNextOutputModel();

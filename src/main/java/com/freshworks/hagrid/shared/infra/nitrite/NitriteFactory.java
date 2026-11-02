@@ -33,8 +33,6 @@ public class NitriteFactory {
         this.globalNamespaceService = globalNamespaceService;
         this.meterRegistry = meterRegistry;
         this.analyticsService = analyticsFactory.getAnalyticsService(this.globalNamespaceService.getGlobalNamespace());
-
-        System.out.println("Init nitrite factory once more");
     }
 
     public Nitrite getNitriteClient(String namespace, InfraConfigService infraConfigService) throws Exception {

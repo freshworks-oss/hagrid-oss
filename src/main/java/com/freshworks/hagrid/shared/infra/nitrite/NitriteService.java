@@ -54,7 +54,6 @@ public class NitriteService implements InfraService {
         this.nitriteDb = nitriteFactory.getNitriteClient(this.namespace,infraConfigService);
         AnalyticsFactory analyticsFactory = syncServiceContainer.getBean(AnalyticsFactory.class);
         this.analyticsService = analyticsFactory.getAnalyticsService(namespace);
-        System.out.println("config type is " + infraConfigService.getInfraDbType());
     }
 
     @Override
