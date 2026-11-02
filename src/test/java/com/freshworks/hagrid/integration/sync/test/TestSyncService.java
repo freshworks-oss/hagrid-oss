@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -402,9 +403,12 @@ public class TestSyncService {
         ActionSpec actionSpec = applicationContext.getBean(ActionSpec.class);
         CompositeActionConfig compositeActionConfig = actionSpec.getActionByName("compare_and_match");
 
-        Closure<JsonNode> c = compositeActionConfig.getOutputClosure();
-        Object data = c.call(consumerService);
-        System.out.println("Output of compare_and_match action is : ");
-        System.out.println(data);
+        Closure<Map> c = compositeActionConfig.getOutputClosure();
+        Map data = c.call(consumerService);
+        System.out.println("Data is ");
+        System.out.println(data.get("data"));
+
+        System.out.println("Status is ");
+        System.out.println(data.get("status"));
     }
 }

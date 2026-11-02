@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import java.util.Map;
 
 import com.freshworks.hagrid.traverser.DagNode;
 import com.freshworks.hagrid.traverser.ParentStep;
@@ -25,7 +26,7 @@ public class CompositeActionConfig {
     List<ActionConfig> actionConfigList = new ArrayList<>();
     ModelSpec modelSpec;
     RequestSpec requestSpec;
-    Closure<JsonNode> outputClosure;
+    Closure<Map> outputClosure;
 
     DagNode rootNode = new DagNode(ParentStep.class.getName(), true);
 
@@ -38,7 +39,7 @@ public class CompositeActionConfig {
         this.compositeActionName = compositeActionName;
     }
 
-    public void output(Closure<JsonNode> closure){
+    public void output(Closure<Map> closure){
 
         this.outputClosure = closure;
     }

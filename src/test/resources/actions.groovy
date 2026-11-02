@@ -11,17 +11,20 @@ actions {
                 consumer -> 
 
                     def final_result = [:]
+                    def data = [:]
 
 
                     def cursor = consumer.getCursorByModelName("compare_and_match_model")
                     while(cursor.hasNext()){
-                        final_result = cursor.getNextOutputModel();
+                        data = cursor.getNextOutputModel();
 
                         // Breaking as I would have just one record 
                         break;
                         
                     }
 
+                    final_result["data"] = data
+                    final_result["status"] = "BAD"
                     return final_result
             }
 
