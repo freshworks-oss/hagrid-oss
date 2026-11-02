@@ -94,7 +94,7 @@ public class ActionConfig{
     }
 
 
-    public void request(String requestName){
+    public void operation(String requestName){
 
         ActionRequestConfig actionRequest = new ActionRequestConfig();
         this.actionRequestConfig = actionRequest;

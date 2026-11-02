@@ -404,6 +404,7 @@ public class TestSyncService {
 
         Closure<JsonNode> c = compositeActionConfig.getOutputClosure();
         Object data = c.call(consumerService);
+        System.out.println("Output of compare_and_match action is : ");
         System.out.println(data);
     }
 }

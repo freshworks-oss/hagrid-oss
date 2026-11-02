@@ -29,7 +29,7 @@ actions {
 
                 name "compare_and_match"
                 step_model "compare_and_match_model"
-                operation "compare_and_match_request" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+                operation "compare_and_match_operation" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
                 response_path "context._response.body"
     
                 hooks {

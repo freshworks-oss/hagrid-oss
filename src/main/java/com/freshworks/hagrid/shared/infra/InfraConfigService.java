@@ -21,8 +21,6 @@ public class InfraConfigService {
     public void configure(SyncServiceContainer syncServiceContainer) throws IOException {
         this.syncServiceContainer = syncServiceContainer;
         this.connectorConfiguration = syncServiceContainer.getBean(ConnectorConfiguration.class);
-
-        System.out.println("db type is " + this.connectorConfiguration.getInfraDbType());
     }
 
     public String getInfraDbLocation() throws IOException {
