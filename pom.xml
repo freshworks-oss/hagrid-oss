@@ -12,7 +12,7 @@
 
     <groupId>com.freshworks</groupId>
     <artifactId>Hagrid</artifactId>
-    <version>4.10.0-acea00a</version>
+    <version>4.10.0-5cc2c19</version>
     <name>Hagrid</name>
     <description>Generic connector developement framework</description>
     <url>https://github.com/freshworks-oss/hagrid-oss</url>
