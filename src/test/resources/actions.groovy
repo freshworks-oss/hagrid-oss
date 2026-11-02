@@ -16,7 +16,7 @@ actions {
 
                     def cursor = consumer.getCursorByModelName("compare_and_match_model")
                     while(cursor.hasNext()){
-                        data = cursor.getNextOutputModel();
+                        data = cursor.getNext();
 
                         // Breaking as I would have just one record 
                         break;

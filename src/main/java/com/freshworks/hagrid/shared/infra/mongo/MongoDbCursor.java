@@ -44,7 +44,7 @@ public class MongoDbCursor implements InfraDbCursor{
 
     
     @Override
-    public ObjectNode getNextOutputModel() throws Exception{
+    public ObjectNode getNext() throws Exception{
         
         Document document = documentCursor.next();
         Object o  = document.get("value");

@@ -131,7 +131,7 @@ public class TestMongoDbCursor {
         assertThat(cursor.hasNext(), is(false));
         assertThat(cursor.docSize(), is(0L));
         assertThrows(NoSuchElementException.class, cursor::getNextAsset);
-        assertThrows(NoSuchElementException.class, cursor::getNextOutputModel);
+        assertThrows(NoSuchElementException.class, cursor::getNext);
     }
 
     @Test
@@ -178,7 +178,7 @@ public class TestMongoDbCursor {
         cursor.getNextAsset();
 
         assertThrows(NoSuchElementException.class, cursor::getNextAsset);
-        assertThrows(NoSuchElementException.class, cursor::getNextOutputModel);
+        assertThrows(NoSuchElementException.class, cursor::getNext);
     }
 
     // ---------------------------------------------------------------- getNextAsset
@@ -249,7 +249,7 @@ public class TestMongoDbCursor {
         MongoDbCursor cursor = list.filterOutputModel("om", null);
 
         assertThat(cursor.docSize(), is(1L));
-        ObjectNode data = cursor.getNextOutputModel();
+        ObjectNode data = cursor.getNext();
         assertThat(data.get("email").asText(), is("a.b@c.com"));
         assertThat(data.get("n").asInt(), is(7));
         assertThat(cursor.hasNext(), is(false));
@@ -264,8 +264,8 @@ public class TestMongoDbCursor {
         MongoDbCursor cursor = list.filterOutputModel("om", null);
 
         assertThat(cursor.docSize(), is(2L));
-        assertThat(cursor.getNextOutputModel().get("k").asText(), is("first"));
-        assertThat(cursor.getNextOutputModel().get("k").asText(), is("second"));
+        assertThat(cursor.getNext().get("k").asText(), is("first"));
+        assertThat(cursor.getNext().get("k").asText(), is("second"));
         assertThat(cursor.hasNext(), is(false));
     }
 
@@ -330,7 +330,7 @@ public class TestMongoDbCursor {
 
         MongoDbCursor cursor = new MongoDbCursor(list.getList().find().iterator(), 1L);
 
-        assertThrows(NullPointerException.class, cursor::getNextOutputModel);
+        assertThrows(NullPointerException.class, cursor::getNext);
     }
 
     @Test

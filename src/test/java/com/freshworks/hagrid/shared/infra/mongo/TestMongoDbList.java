@@ -723,7 +723,7 @@ public class TestMongoDbList {
         list.add(generic(10, "a", "om1", "{\"city\":\"blr\",\"age\":5}"));
         MongoDbCursor cursor = list.filterOutputModel("om1", null);
         assertThat(cursor.hasNext(), is(true));
-        ObjectNode data = cursor.getNextOutputModel();
+        ObjectNode data = cursor.getNext();
         assertThat(data.get("city").asText(), is("blr"));
         assertThat(data.get("age").asInt(), is(5));
     }
@@ -731,7 +731,7 @@ public class TestMongoDbList {
     @Test
     public void testFilterOutputModelDotsInDataAreDecoded() throws Exception {
         list.add(generic(10, "a", "om1", "{\"email\":\"a.b@c.com\"}"));
-        ObjectNode data = list.filterOutputModel("om1", null).getNextOutputModel();
+        ObjectNode data = list.filterOutputModel("om1", null).getNext();
         assertThat(data.get("email").asText(), is("a.b@c.com"));
     }
 

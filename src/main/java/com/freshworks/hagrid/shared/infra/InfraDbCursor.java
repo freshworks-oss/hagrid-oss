@@ -11,5 +11,5 @@ public interface InfraDbCursor{
     public long docSize();
 
     public <T extends AbstractAsset> T  getNextAsset() throws Exception;
-    public ObjectNode  getNextOutputModel() throws Exception;
+    public ObjectNode  getNext() throws Exception;
 }

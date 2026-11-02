@@ -371,7 +371,7 @@ public class TestSyncService {
         InfraDbCursor infraDbCursor = consumerService.getCursorByModelName("action1");
 
         while(infraDbCursor.hasNext()){
-            ObjectNode data = infraDbCursor.getNextOutputModel();
+            ObjectNode data = infraDbCursor.getNext();
             System.out.println(data);
         }
 
