@@ -45,7 +45,7 @@ public class NonHttpRequestResolver {
 
             if(str.contains( "{{" + map.getKey() + "}}")){
 
-               str = str.replace("{{" + map.getKey() + "}}", String.valueOf(map.getValue()));
+               str = str.replace("{{" + map.getKey() + "}}", map.getValue().toString());
             }
         }
 
