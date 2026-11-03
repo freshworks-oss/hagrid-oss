@@ -16,6 +16,7 @@ import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE;
 import com.freshworks.hagrid.main.dsl.runnable.request.non_http.ActionNonHttpRequest;
 
+import joptsimple.internal.Strings;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -141,6 +142,11 @@ public class ActionContext {
         public JsonNode getDiggedResponseBody() throws Exception{
             
             JsonNode bodyNode = objectMapper.convertValue(parsedResponse, JsonNode.class);
+            
+
+            if (Strings.isNullOrEmpty(this.responsePath)) {
+                return bodyNode;
+            }
             
             String[] split = this.responsePath.split("\\.");
 
