@@ -105,7 +105,7 @@ public class RequestConfig {
     }
 
     public void propertyMissing(String name, Object value) throws Exception{
-        customProperties.put(name, objectMapper.writeValueAsString(value));
+        customProperties.put(name, value.toString());
     }
 
     public Object propertyMissing(String name) {
@@ -116,7 +116,7 @@ public class RequestConfig {
 
         Object[] argsArray = (Object[]) args;
 
-        customProperties.put(name, objectMapper.writeValueAsString(argsArray[0]));
+        customProperties.put(name, argsArray[0].toString());
 
         return null;
     }
