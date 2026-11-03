@@ -96,7 +96,7 @@ public class RequestTemplateBean {
 
     public RequestSpec parseResourceDsl(RequestSpec requestSpec) throws Exception{
 
-        String REQUESTS_DSL_RESOURCE = "requests.groovy";
+        String REQUESTS_DSL_RESOURCE = "operations.groovy";
         RequestSpecHandler requestSpecHandler =  new RequestSpecHandler(requestSpec);
         
         Binding binding = new Binding();
