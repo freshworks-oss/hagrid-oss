@@ -107,7 +107,7 @@ public class ActionConfig{
      * @param modelName
      */
 
-    public void paginate_request(String requestName, LinkedHashMap<String, String> mapping){
+    public void paginate_operation(String requestName, LinkedHashMap<String, String> mapping){
         
         this.paginateRequestConfig = new ActionRequestConfig();
         this.paginateRequestConfig.setRequestConfig(requestSpec.getRequestByName(requestName));
@@ -124,7 +124,7 @@ public class ActionConfig{
         this.paginateRequestConfig.setMapping(newMapping);
     }
 
-    public void paginate_request(String requestName){
+    public void paginate_operation(String requestName){
 
         ActionRequestConfig actionRequest = new ActionRequestConfig();
         this.paginateRequestConfig = actionRequest;
