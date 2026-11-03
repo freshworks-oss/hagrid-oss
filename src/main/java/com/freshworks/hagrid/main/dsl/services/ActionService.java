@@ -406,16 +406,16 @@ public class ActionService {
         try{
 
             Hooks hook = this.actionResolver.resolveHook(actionConfig.getHooksConfig(),null);
-            Closure actionCloseClosure = hook.getStepCloseClosure();
+            Closure stepCloseClosure = hook.getStepCloseClosure();
 
-            if(actionCloseClosure != null){
+            if(stepCloseClosure != null){
             
                 ActionRequest r = objectMapper.convertValue(requestResponseContainer.getRequest(), ActionRequest.class);
                 ActionResponse res = objectMapper.convertValue(requestResponseContainer.getResponse(), ActionResponse.class); 
 
                 this.actionContext.setActionRequest(r);
                 this.actionContext.setActionResponse(res);
-                hook.call_actionCloseClosure(this.actionContext);
+                hook.call_stepCloseClosure(this.actionContext);
             }
         }
 

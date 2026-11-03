@@ -65,7 +65,7 @@ public class Hooks {
         return hasMoreClosure.call();
     }
 
-    public void call_actionCloseClosure(ActionContext context){
+    public void call_stepCloseClosure(ActionContext context){
         
         stepCloseClosure.setDelegate(context);
         stepCloseClosure.setResolveStrategy(Closure.DELEGATE_FIRST);
