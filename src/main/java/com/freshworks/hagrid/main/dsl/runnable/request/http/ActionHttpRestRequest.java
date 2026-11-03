@@ -2,6 +2,7 @@ package com.freshworks.hagrid.main.dsl.runnable.request.http;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpEntity;
@@ -87,8 +88,18 @@ public class ActionHttpRestRequest extends ActionHttpRequest{
             entity = new HttpEntity<>(headers);
         }
          
+        this.host = this.host.charAt(this.host.length() - 1) == '/' ? this.host : this.host + "/";
+        this.path = this.path.charAt(0) == '/' ? this.path.substring(1) : this.path;
 
-        String url = this.host + this.path;
+        String queryUrl = "";
+
+        if (this.query != null && !this.query.isEmpty()) {
+            queryUrl += "?" + this.query.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining("&"));
+        }
+
+        String url = this.host + this.path + queryUrl;
         ResponseEntity<JsonNode> responseEntity = restTemplate.exchange(url, httpMethod, entity, JsonNode.class);
 
         ActionResponse actionResponse = new ActionResponse();
