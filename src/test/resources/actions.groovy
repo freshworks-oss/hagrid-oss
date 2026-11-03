@@ -388,7 +388,7 @@ actions {
             */
             name "action2"
             step_model "action2" // idea from nango 
-            operation "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            operation "action2", ["how_many" : "context._parent_steps[0].how_many"]
             response_path "context._response.body.body.data.users"
             parent "action1"
         }
@@ -433,7 +433,7 @@ actions {
             */
             name "action2"
             step_model "action2" // idea from nango 
-            operation "action2", ["how_many" : "context._parent_actions[0].how_many"]
+            operation "action2", ["how_many" : "context._parent_steps[0].how_many"]
             response_path "context._response.body.body.data.users"
             parent "action1"
         }

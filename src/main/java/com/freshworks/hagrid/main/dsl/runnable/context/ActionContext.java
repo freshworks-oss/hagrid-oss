@@ -71,7 +71,7 @@ public class ActionContext {
 
         context.put("_response", objectMapper.convertValue(actionResponse, Map.class));
         context.put("_shared", actionSharedMap);
-        context.put("_parent_actions", parentApiModelData);
+        context.put("_parent_steps", parentApiModelData);
 
         return context;
     }
@@ -101,7 +101,7 @@ public class ActionContext {
 
     public void setParentApiModelData(List parentData){
         this.parentApiModelData = parentData;
-        context.put("_parent_actions", parentData);
+        context.put("_parent_steps", parentData);
     }
 
 
@@ -111,7 +111,7 @@ public class ActionContext {
         this.actionRequest = objectMapper.convertValue(context.get("_request"), ActionRequest.class);
         this.actionResponse = objectMapper.convertValue(context.get("_response"), ActionResponse.class);
         this.actionSharedMap = (Map)context.get("_shared");
-        this.parentApiModelData = objectMapper.convertValue(context.get("_parent_actions"), new TypeReference<List<Map<String, Object>>>(){});
+        this.parentApiModelData = objectMapper.convertValue(context.get("_parent_steps"), new TypeReference<List<Map<String, Object>>>(){});
     }
 
     public ParseSyncResponse parse(Map parsedResponse, String responsePath, String modelName){
