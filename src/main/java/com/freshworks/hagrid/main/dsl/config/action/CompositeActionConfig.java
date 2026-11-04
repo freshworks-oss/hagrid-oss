@@ -66,7 +66,7 @@ public class CompositeActionConfig {
         ActionConfig newAction = new ActionConfig(this.modelSpec, this.requestSpec);
         actionConfigList.add(newAction);
         simpleActionClosure.setDelegate(newAction);
-        simpleActionClosure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        simpleActionClosure.setResolveStrategy(Closure.DELEGATE_ONLY);
         simpleActionClosure.call();
     }
 
