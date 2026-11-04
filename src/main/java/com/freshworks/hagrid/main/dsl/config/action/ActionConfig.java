@@ -76,14 +76,14 @@ public class ActionConfig{
      * @param modelName
      */
 
-    public void operation(String requestName, LinkedHashMap<String, String> mapping){
+    public void operation(String requestName, LinkedHashMap<String, Object> mapping){
         
         this.actionRequestConfig = new ActionRequestConfig();
         this.actionRequestConfig.setRequestConfig(requestSpec.getRequestByName(requestName));
 
         LinkedHashMap<String, Closure> newMapping = new LinkedHashMap<>();
 
-        for(Map.Entry<String, String> map : mapping.entrySet()){
+        for(Map.Entry<String, Object> map : mapping.entrySet()){
 
             String s = "{-> " + map.getValue() + " }";
             Closure c = (Closure)groovyShell.evaluate(s);
@@ -107,14 +107,14 @@ public class ActionConfig{
      * @param modelName
      */
 
-    public void paginate_operation(String requestName, LinkedHashMap<String, String> mapping){
+    public void paginate_operation(String requestName, LinkedHashMap<String, Object> mapping){
         
         this.paginateRequestConfig = new ActionRequestConfig();
         this.paginateRequestConfig.setRequestConfig(requestSpec.getRequestByName(requestName));
 
         LinkedHashMap<String, Closure> newMapping = new LinkedHashMap<>();
 
-        for(Map.Entry<String, String> map : mapping.entrySet()){
+        for(Map.Entry<String, Object> map : mapping.entrySet()){
 
             String s = "{-> " + map.getValue() + " }";
             Closure c = (Closure)groovyShell.evaluate(s);
