@@ -154,7 +154,7 @@ public class ActionConfig{
     public void hooks(Closure closure){
 
         closure.setDelegate(this.hooksConfig);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 

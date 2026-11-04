@@ -55,7 +55,7 @@ public class ActionSpec extends GroovyObjectSupport{
         CompositeActionConfig compositeActionConfig = new CompositeActionConfig(this.modelSpec, this.requestSpec);
 
         closure.setDelegate(compositeActionConfig);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
 
 

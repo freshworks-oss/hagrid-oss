@@ -12,7 +12,7 @@ public class ModelSpecHandler {
 
     public void models(Closure closure) {
         closure.setDelegate(this.modelSpec);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 }

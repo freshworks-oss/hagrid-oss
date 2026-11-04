@@ -14,7 +14,7 @@ public class RequestSpecHandler {
 
     public void operations(Closure closure) {
         closure.setDelegate(this.requestSpec);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 

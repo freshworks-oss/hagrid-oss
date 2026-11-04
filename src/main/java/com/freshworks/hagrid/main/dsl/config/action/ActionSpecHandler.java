@@ -14,7 +14,7 @@ public class ActionSpecHandler {
 
     public void actions(Closure closure) {
         closure.setDelegate(this.actionSpec);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 }

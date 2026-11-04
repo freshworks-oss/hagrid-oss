@@ -40,7 +40,7 @@ public class ModelSpec extends GroovyObjectSupport {
         outputModelList.add(newModel);
 
         closure.setDelegate(newModel);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 

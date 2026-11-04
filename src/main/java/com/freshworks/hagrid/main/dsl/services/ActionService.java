@@ -275,7 +275,7 @@ public class ActionService {
         for(Map.Entry<String, Closure> c : actionRequestMapping.entrySet()){
 
             c.getValue().setDelegate(actionContext);
-            c.getValue().setResolveStrategy(Closure.DELEGATE_ONLY);
+            c.getValue().setResolveStrategy(Closure.DELEGATE_FIRST);
             Object resolvedParam = c.getValue().call();
 
             resolvedContext.put(c.getKey(), resolvedParam);
@@ -325,7 +325,7 @@ public class ActionService {
                 // First resolve response Path here 
                 Closure c = this.actionConfig.getResponsePathClosure();
                 c.setDelegate(actionContext);
-                c.setResolveStrategy(Closure.DELEGATE_ONLY);
+                c.setResolveStrategy(Closure.DELEGATE_FIRST);
                 parsedResponse = objectMapper.convertValue(c.call(), JsonNode.class);
                 apiModelConfig = actionConfig.getApiModelConfig();
                 this.actionContext.getActionSharedMap().put("_step_config_model_name", apiModelConfig.getName());

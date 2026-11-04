@@ -19,7 +19,7 @@ public class RequestSpec {
         requestList.add(request);
 
         closure.setDelegate(request);
-        closure.setResolveStrategy(Closure.DELEGATE_FIRST);
+        closure.setResolveStrategy(Closure.DELEGATE_ONLY);
         closure.call();
     }
 
