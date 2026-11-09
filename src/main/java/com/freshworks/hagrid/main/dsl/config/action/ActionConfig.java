@@ -84,7 +84,6 @@ public class ActionConfig{
         LinkedHashMap<String, Closure> newMapping = new LinkedHashMap<>();
 
         for(Map.Entry<String, Object> map : mapping.entrySet()){
-
             String s = "{-> " + map.getValue() + " }";
             Closure c = (Closure)groovyShell.evaluate(s);
             newMapping.put(map.getKey(), c);

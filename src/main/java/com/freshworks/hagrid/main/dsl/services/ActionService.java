@@ -170,7 +170,7 @@ public class ActionService {
 
             c.getValue().setDelegate(this.actionContext);
             c.getValue().setResolveStrategy(Closure.DELEGATE_FIRST);
-            String resolvedParam = String.valueOf(c.getValue().call());
+            Object resolvedParam = c.getValue().call();
 
             resolvedContext.put(c.getKey(), resolvedParam);
         }

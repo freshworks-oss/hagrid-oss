@@ -47,17 +47,17 @@ public class ActionContext {
     Map context = new HashMap<>();
 
 
-    public Map getContext() throws Exception{
+    public FluentExpando getContext() throws Exception{
 
         context.put("_input", input);
-        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+        context.put("_operation", objectMapper.convertValue(actionRequest, Map.class));
 
         // Now request template has map named missingProperties
         // properties in this map should be unroot and should be present at top level 
 
         if (actionRequest != null){
             
-            Map request = (Map)context.get("_request");
+            Map request = (Map)context.get("_operation");
             Map customProperties = (Map)request.get("customProperties");
 
             for(Object obj : customProperties.entrySet()){
@@ -74,7 +74,7 @@ public class ActionContext {
         context.put("_shared", actionSharedMap);
         context.put("_parent_steps", parentApiModelData);
 
-        return context;
+        return new FluentExpando(context);
     }
 
     public void setInput(Map input){
@@ -85,7 +85,7 @@ public class ActionContext {
 
     public void setActionRequest(ActionRequest actionRequest){
         this.actionRequest = actionRequest;
-        context.put("_request", objectMapper.convertValue(actionRequest, Map.class));
+        context.put("_operation", objectMapper.convertValue(actionRequest, Map.class));
     }
 
     public void setActionResponse(ActionResponse actionResponse){
@@ -109,7 +109,7 @@ public class ActionContext {
     public void setContext(Map context){
 
         this.input = (Map)context.get("_input");
-        this.actionRequest = objectMapper.convertValue(context.get("_request"), ActionRequest.class);
+        this.actionRequest = objectMapper.convertValue(context.get("_operation"), ActionRequest.class);
         this.actionResponse = objectMapper.convertValue(context.get("_response"), ActionResponse.class);
         this.actionSharedMap = (Map)context.get("_shared");
         this.parentApiModelData = objectMapper.convertValue(context.get("_parent_steps"), new TypeReference<List<Map<String, Object>>>(){});
