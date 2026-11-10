@@ -18,6 +18,8 @@ import lombok.Setter;
 public class ActionResponse {
 
     public ACTION_HTTP_CODE httpStatus;
+    // Real HTTP status code of the call (e.g. 401), when the response came from an HTTP request
+    Integer statusCode;
     Object body;
     Map headers;
     Map model;
