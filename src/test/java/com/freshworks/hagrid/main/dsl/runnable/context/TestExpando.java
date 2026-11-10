@@ -153,9 +153,7 @@ public class TestExpando {
             System.out.println("Serialized JSON: " + json);
 
         }
-
-
-
+        
         catch(Exception e){
             e.printStackTrace();
         }
