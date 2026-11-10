@@ -4,11 +4,14 @@ package com.freshworks.hagrid.main.dsl.runnable.context;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 public class TestExpando {
@@ -16,6 +19,42 @@ public class TestExpando {
     @Test 
     public void TestFluentExpando() throws Exception{
         
+        ObjectMapper objectMapper = new ObjectMapper();
+        String response = "{\n" + //
+                        "  \"res_body\": {\n" + //
+                        "    \"employees\": [\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Amit Aggarwal\",\n" + //
+                        "        \"email\": \"amit.aggarwal@freshworks.com\",\n" + //
+                        "        \"address\": \"Bangalore\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Poornima\",\n" + //
+                        "        \"email\": \"piyer@freshworks.com\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Dinesh\",\n" + //
+                        "        \"email\": \"dinesh.m@freshworks.com\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"test Employee\",\n" + //
+                        "        \"email\": \"####\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      }\n" + //
+                        "    ],\n" + //
+                        "    \"meta\": {\n" + //
+                        "      \"process_on\": \"today\",\n" + //
+                        "      \"creator\": \"amit\"\n" + //
+                        "    }\n" + //
+                        "  }\n" + //
+                        "}";
+
         Map<String, Object> sourceMap = new HashMap<>();
         sourceMap.put("key1", "value1");
         sourceMap.put("key2", "value2");
@@ -45,4 +84,53 @@ public class TestExpando {
 
         assertThat(map.get("name"), Matchers.is("amit"));
     }
+
+    @Test
+    public void testComplexJson() throws Exception{
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String response = "{\n" + //
+                        "  \"res_body\": {\n" + //
+                        "    \"employees\": [\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Amit Aggarwal\",\n" + //
+                        "        \"email\": \"amit.aggarwal@freshworks.com\",\n" + //
+                        "        \"address\": \"Bangalore\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Poornima\",\n" + //
+                        "        \"email\": \"piyer@freshworks.com\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"Dinesh\",\n" + //
+                        "        \"email\": \"dinesh.m@freshworks.com\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      },\n" + //
+                        "      {\n" + //
+                        "        \"name\": \"test Employee\",\n" + //
+                        "        \"email\": \"####\",\n" + //
+                        "        \"address\": \"Chennai\",\n" + //
+                        "        \"company\": \"freshworks\"\n" + //
+                        "      }\n" + //
+                        "    ],\n" + //
+                        "    \"meta\": {\n" + //
+                        "      \"process_on\": \"today\",\n" + //
+                        "      \"creator\": \"amit\"\n" + //
+                        "    }\n" + //
+                        "  }\n" + //
+                        "}";
+
+
+        FluentExpando fluentExpando = new FluentExpando(objectMapper.readValue(response, Map.class));
+        
+        FluentExpando resBody = (FluentExpando) fluentExpando.getProperty("res_body");
+        List employees = (List) resBody.getProperty("employees");
+        FluentExpando employee1 = (FluentExpando) employees.get(0);
+        
+
+    }   
 }   

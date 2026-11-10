@@ -1,5 +1,7 @@
 package com.freshworks.hagrid.main.dsl.runnable.context;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,18 +18,54 @@ public class FluentExpando extends Expando {
         super();
     }
 
-    public FluentExpando(Map<String, Object> sourceMap) {
 
-        for(Map.Entry<String, Object> entry : sourceMap.entrySet()){
-            if (entry.getValue() instanceof Map) {
-                this.setProperty(entry.getKey(), new FluentExpando((Map<String, Object>) entry.getValue()));
-            } else {
-                FluentExpando leafFluentExpando = new FluentExpando();
-                leafFluentExpando.leafNode = entry.getValue();
-                this.setProperty(entry.getKey(), leafFluentExpando);
+    public FluentExpando(Object value) {
+
+        super();
+        
+        if (value instanceof Map){
+            
+            for(Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()){
+
+                if (entry.getValue() instanceof Map) {
+                    // Recursively create a new FluentExpando for the nested map
+                    this.setProperty(entry.getKey(), new FluentExpando(entry.getValue()));
+                } 
+                
+                else if (entry.getValue() instanceof Iterable) {
+                    
+                    List<FluentExpando> list = new ArrayList<>();
+                    for (Object item : (List<Object>) entry.getValue()) {
+                        if (item instanceof Map) {
+                            list.add(new FluentExpando(item));
+                        } else {
+                        list.add(new FluentExpando(item));
+                    }
+                }
+
+                    // Add the list of FluentExpando objects to the current FluentExpando instance
+                    this.setProperty(entry.getKey(), list);
+                }
+
+                else {
+
+                    // If the value is neither a Map nor an Iterable, create a new FluentExpando for the leaf node
+                    this.setProperty(entry.getKey(), new FluentExpando(entry.getValue()));
+                }
             }
         }
+
+        else{
+
+            // If the value is neither a Map nor an Iterable, create a new FluentExpando for the leaf node
+            this.leafNode = value;
+            this.setProperty("leaf", this.leafNode);
+        }
+
+        
     }
+
+
 
      // Capture arbitrary nested missing properties to avoid NullPointerExceptions
     @Override
@@ -64,9 +102,12 @@ public class FluentExpando extends Expando {
     public Integer getAsInt() { 
         
         if (this.leafNode == null) {
+            // It means that as int called on a non-leaf node, so return null
             return null;
         }
         else{
+
+            // If the leaf node is not null, attempt to convert it to an Integer
             return Integer.valueOf(this.leafNode.toString());
         }   
     }
@@ -74,9 +115,12 @@ public class FluentExpando extends Expando {
     public Map getAsMap() throws Exception{ 
 
         if (this.leafNode == null) {
+            // It means that as map called on a non-leaf node, so return the properties of this expando
             return this.getProperties();
         }
         else{
+
+            // It means that as map called on a leaf node, so return the leaf node as map
             return objectMapper.readValue(this.leafNode.toString(), Map.class);
         }   
     }
