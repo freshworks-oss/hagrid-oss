@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import lombok.val;
+
 public class FluentExpandoSerializer extends StdSerializer<FluentExpando> {
 
     public FluentExpandoSerializer() {
@@ -20,10 +22,10 @@ public class FluentExpandoSerializer extends StdSerializer<FluentExpando> {
     @Override
     public void serialize(FluentExpando value, JsonGenerator gen, SerializerProvider provider) throws IOException {
         // Start the JSON object: {
-        gen.writeStartObject();
-
+    
         if (Boolean.FALSE.equals(value.isLeafNode())){
             
+            gen.writeStartObject();        
             // Assuming your FluentExpando has a method like getProperties() returning a Map<String, Object>
             for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getProperties()).entrySet()) {
                 gen.writeFieldName(entry.getKey());
@@ -48,13 +50,12 @@ public class FluentExpandoSerializer extends StdSerializer<FluentExpando> {
                 }             
             }
 
+            // End the JSON object: }
+            gen.writeEndObject();
         }
 
         else{
-            System.out.println("here I am ");
+            gen.writeObject(value.actualValue);
         }
-
-        // End the JSON object: }
-        gen.writeEndObject();
     }
 }

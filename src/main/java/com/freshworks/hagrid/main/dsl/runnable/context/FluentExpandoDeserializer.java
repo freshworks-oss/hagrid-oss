@@ -1,6 +1,7 @@
 package com.freshworks.hagrid.main.dsl.runnable.context;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +44,34 @@ public class FluentExpandoDeserializer extends StdDeserializer<FluentExpando> {
             else if (value instanceof Iterable){
 
                 // Populate your FluentExpando instance (adjust to your fluent method name, e.g., set() or put())
-                expando.setProperty(fieldName, objectMapper.convertValue(value, new TypeReference<List<FluentExpando>>() {}));
+                // Here check if value is a List of Maps or a List of primitive types
+
+                boolean isArrayOfPrimitives = false;
+
+                for (Object item : (List<?>) value) {
+                    if (item instanceof Map) {
+                        isArrayOfPrimitives = false;
+                        break;
+                    } else {
+                        isArrayOfPrimitives = true;
+                        break;
+                    }
+                }
+
+                if (Boolean.FALSE.equals(isArrayOfPrimitives)){
+                    expando.setProperty(fieldName, objectMapper.convertValue(value, new TypeReference<List<FluentExpando>>() {}));
+                }
+                else{
+
+                    List<FluentExpando> primtiveList = new ArrayList<>();
+                    for (Object item : (List<?>) value) {
+                        // If it's a primitive type, wrap it in a FluentExpando
+                        FluentExpando primitiveValue = new FluentExpando(item);
+                        primtiveList.add(primitiveValue);
+                    }
+                    expando.setProperty(fieldName, primtiveList);
+                }
+                
             }
 
             else{
