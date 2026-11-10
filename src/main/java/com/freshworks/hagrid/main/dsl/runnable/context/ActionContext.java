@@ -74,7 +74,7 @@ public class ActionContext {
         context.put("_shared", actionSharedMap);
         context.put("_parent_steps", parentApiModelData);
 
-        return new FluentExpando(context);
+        return objectMapper.convertValue(context, FluentExpando.class);
     }
 
     public void setInput(Map input){
