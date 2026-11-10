@@ -11,6 +11,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -75,12 +76,12 @@ public class TestExpando {
         FluentExpando nestedFluentExpandoKey1 = (FluentExpando) nestedFluentExpando.getProperty("nestedKey1");
         FluentExpando nestedFluentExpandoKey2 = (FluentExpando) nestedFluentExpando.getProperty("nestedKey2");
         
-        assertThat(fluentExpandoKey1.getAsString(), Matchers.is("value1"));
-        assertThat(fluentExpandoKey2.getAsString(), Matchers.is("value2"));
-        assertThat(fluentExpandoKey3.getAsInt(), Matchers.is(5));
-        assertThat(nestedFluentExpandoKey1.getAsString(), Matchers.is("nestedValue1"));
+        assertThat(fluentExpandoKey1.asString(), Matchers.is("value1"));
+        assertThat(fluentExpandoKey2.asString(), Matchers.is("value2"));
+        assertThat(fluentExpandoKey3.asInt(), Matchers.is(5));
+        assertThat(nestedFluentExpandoKey1.asString(), Matchers.is("nestedValue1"));
         
-        Map map = nestedFluentExpandoKey2.getAsMap();
+        Map map = nestedFluentExpandoKey2.asMap();
 
         assertThat(map.get("name"), Matchers.is("amit"));
     }
@@ -125,11 +126,41 @@ public class TestExpando {
                         "}";
 
 
-        FluentExpando fluentExpando = new FluentExpando(objectMapper.readValue(response, Map.class));
+        // FluentExpando fluentExpando = new FluentExpando(objectMapper.readValue(response, Map.class));
         
-        FluentExpando resBody = (FluentExpando) fluentExpando.getProperty("res_body");
-        List employees = (List) resBody.getProperty("employees");
-        FluentExpando employee1 = (FluentExpando) employees.get(0);
+        try{
+            // String json = objectMapper.writeValueAsString(response);
+            // System.out.println("Serialized JSON: " + json);
+
+            // JsonNode node = objectMapper.readValue(response, JsonNode.class); // Validate JSON structure
+            
+            // assertThat(node.has("res_body"), Matchers.is(true));
+            // assertThat(node.get("res_body").has("employees"), Matchers.is(true));
+            // assertThat(node.get("res_body").get("employees").isArray(), Matchers.is(true));
+            // assertThat(node.get("res_body").get("employees").size(), Matchers.is(4));
+            // assertThat(node.get("res_body").get("employees").get(0).has("name"), Matchers.is(true));
+            // assertThat(node.get("res_body").has("meta"), Matchers.is(true));
+
+            FluentExpando fluentExpando = objectMapper.readValue(response, FluentExpando.class); // Validate JSON structure
+            
+            FluentExpando resBody = (FluentExpando) fluentExpando.getProperty("res_body");
+            List list  = (List) resBody.getProperty("employees");
+            FluentExpando employee = (FluentExpando) list.get(0);
+            FluentExpando name = (FluentExpando) employee.getProperty("name");
+            System.out.println(name.asString());
+
+            String json = objectMapper.writeValueAsString(fluentExpando);
+            System.out.println("Serialized JSON: " + json);
+
+        }
+
+
+
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        
+        
         
 
     }   

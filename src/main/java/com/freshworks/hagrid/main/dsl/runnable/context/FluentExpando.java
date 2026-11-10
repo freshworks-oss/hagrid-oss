@@ -5,13 +5,22 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import groovy.lang.MissingPropertyException;
 import groovy.util.Expando;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter 
+@Setter 
+@JsonSerialize (using = FluentExpandoSerializer.class)
+@JsonDeserialize (using = FluentExpandoDeserializer.class)
 public class FluentExpando extends Expando {
 
-    Object leafNode = null;
+    Object actualValue = null; 
+    boolean isLeafNode = false;
     ObjectMapper objectMapper = new ObjectMapper();
 
     public FluentExpando() {
@@ -23,46 +32,18 @@ public class FluentExpando extends Expando {
 
         super();
         
-        if (value instanceof Map){
+        // If the value is neither a Map nor an Iterable, create a new FluentExpando for the leaf node
             
-            for(Map.Entry<String, Object> entry : ((Map<String, Object>) value).entrySet()){
-
-                if (entry.getValue() instanceof Map) {
-                    // Recursively create a new FluentExpando for the nested map
-                    this.setProperty(entry.getKey(), new FluentExpando(entry.getValue()));
-                } 
-                
-                else if (entry.getValue() instanceof Iterable) {
-                    
-                    List<FluentExpando> list = new ArrayList<>();
-                    for (Object item : (List<Object>) entry.getValue()) {
-                        if (item instanceof Map) {
-                            list.add(new FluentExpando(item));
-                        } else {
-                        list.add(new FluentExpando(item));
-                    }
-                }
-
-                    // Add the list of FluentExpando objects to the current FluentExpando instance
-                    this.setProperty(entry.getKey(), list);
-                }
-
-                else {
-
-                    // If the value is neither a Map nor an Iterable, create a new FluentExpando for the leaf node
-                    this.setProperty(entry.getKey(), new FluentExpando(entry.getValue()));
-                }
-            }
+        if( value instanceof String){
+            this.isLeafNode = true;
+            this.actualValue = value.toString();
+            this.setProperty("leaf", value.toString());
         }
-
-        else{
-
-            // If the value is neither a Map nor an Iterable, create a new FluentExpando for the leaf node
-            this.leafNode = value;
-            this.setProperty("leaf", this.leafNode);
+        if (value instanceof Integer){
+            this.isLeafNode = true;
+            this.actualValue = Integer.valueOf(value.toString());
+            this.setProperty("leaf", Integer.valueOf(value.toString()));
         }
-
-        
     }
 
 
@@ -72,11 +53,6 @@ public class FluentExpando extends Expando {
     public Object getProperty(String property) {
         try {
             Object result = super.getProperty(property);
-            // If the user attempts to dig deeper into a raw Map, auto-wrap it on the fly
-            if (result instanceof Map && !(result instanceof FluentExpando)) {
-                return new FluentExpando((Map<String, Object>) result);
-            }
-
             if(result == null){
                 return new FluentExpando();
             }
@@ -89,39 +65,39 @@ public class FluentExpando extends Expando {
     }
 
     // 2. Type-conversion property logic
-    public String getAsString() { 
+    public String asString() { 
         // If this context represents an empty fallback node, return a blank string
-        if (this.leafNode == null) {
+        if (this.isLeafNode == false) {
             return this.toString();
         }
         else{
-            return this.leafNode.toString();
+            return this.actualValue.toString();
         }   
     }
 
-    public Integer getAsInt() { 
+    public Integer asInt() { 
         
-        if (this.leafNode == null) {
+        if (this.isLeafNode == false) {
             // It means that as int called on a non-leaf node, so return null
             return null;
         }
         else{
 
             // If the leaf node is not null, attempt to convert it to an Integer
-            return Integer.valueOf(this.leafNode.toString());
+            return Integer.valueOf(this.actualValue.toString());
         }   
     }
     
-    public Map getAsMap() throws Exception{ 
+    public Map asMap() throws Exception{ 
 
-        if (this.leafNode == null) {
+        if (this.isLeafNode == false) {
             // It means that as map called on a non-leaf node, so return the properties of this expando
             return this.getProperties();
         }
         else{
 
             // It means that as map called on a leaf node, so return the leaf node as map
-            return objectMapper.readValue(this.leafNode.toString(), Map.class);
+            return objectMapper.readValue(this.actualValue.toString(), Map.class);
         }   
     }
     
