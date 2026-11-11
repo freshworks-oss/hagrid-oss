@@ -437,8 +437,11 @@ public class TestExpando {
             e.printStackTrace();
         }
         
-        
-        
+    }
 
-    }   
+    @Test 
+    public void testComplexDeserialisation(){
+
+        
+    }
 }   

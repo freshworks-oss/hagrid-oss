@@ -1,448 +1,406 @@
-import com.freshworks.hagrid.integration.sync.test.CompareAndMatch
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse
+import com.freshworks.hagrid.integration.sync.test.CompareAndMatch
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse.ACTION_HTTP_CODE
-import com.freshworks.hagrid.shared.infra.InfraDbCursor
+import groovy.json.JsonSlurper
+
 
 actions {
 
-        action {
+    // Case 1 Demonstration of simple get api call and return whole data as it is 
 
-            output {
-                consumer -> 
-
-                    def final_result = [:]
-                    def data = [:]
-
-
-                    def cursor = consumer.getCursorByModelName("compare_and_match_model")
-                    while(cursor.hasNext()){
-                        data = cursor.getNext();
-
-                        // Breaking as I would have just one record 
-                        break;
-                        
-                    }
-
-                    final_result["data"] = data
-                    final_result["status"] = "BAD"
-                    return final_result
-            }
-
-            step {
-
-                name "compare_and_match"
-                step_model "compare_and_match_model"
-                operation "compare_and_match_operation" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
-                response_path "context._response.body"
-    
-                hooks {
-
-                    execute {
-
-                        CompareAndMatch compareAndMatch = new CompareAndMatch() 
-                        def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
-                        ActionResponse actionResponse = new ActionResponse()
-                        actionResponse.setBody(response)
-                        actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
-                        return actionResponse
-                    }
-                }
-            }
-        }
-        
-    // simple_action {
-
-    //     /**
-    //       Use case : Very simple action with no pagination and no parameters
-    //     */
-    //     name "getUser"
-    //     step_model "action1" // idea from nango 
-    //     request "action1"
-    //     response_path "context._response.body.body.data.users"
-    //     output "action1_output"
-    // }
-
-    //  simple_action {
-
-    //     /**
-    //       Use case : Github action with request template params replacement 
-    //     */
-    //     name "create_github_issue"
-    //     step_model "create_github_issue_model" 
-    //     request "create_github_issue_request", ["my_token": "_input.github_token", "owner" : "_input.github_owner", "repo" : "_input.github_repo" ,"issue_title" : "_input.github_issue_title", "issue_body" : "_input.github_issue_body"]
-    //     response_path "context._response"
-    //     output "create_github_issue_model_output"
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Github action with request template params replacement
-    //     */
-    //     name "get_github_repo"
-    //     step_model "get_repo_model" 
-    //     request "get_repo_request", ["per_page" : "_input.how_many.count", "my_token": "_input.github_token"]
-    //     response_path "context._response"
-    //     output "get_repo_model_output"
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Simple action with input as parameter
-    //     */
-    //     name "action2"
-    //     step_model "action2" // idea from nango 
-    //     request "action2", ["how_many" : "context._input.how_many.count"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action2_output"
-    // }
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Simple action with input as parameter and filter data .. if user_name starts with captial A-Z 
-    //        or 0-9 then consider it other wise drop it 
-    //     */
-    //     name "action3"
-    //     step_model "action3" // idea from nango 
-    //     request "action3", ["how_many" : "context._input.how_many.count"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action3_output"
-    // }
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Simple action with input as parameter, transform data and filter data .. 
-    //         in transform data, add a processing date column along with it.
-    //     */
-    //     name "action4"
-    //     step_model "action4" // idea from nango 
-    //     request "action4", ["how_many" : "context._input.how_many.count"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action4_output"
-    // }
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Use case 4 + case of pagination where pagination is coming from response itself
-    //     */
-    //     name "action5"
-    //     step_model "action5" // idea from nango 
-    //     request "action5", ["how_many" : "context._input.how_many.count"]
-    //     paginate_request "action5", ["how_many" : "context._response.body.how_many"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action5_output"
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Use case 5 + case when developer want to do some set up methods like calling api, logging etc
-    //     */
-    //     name "action6"
-    //     step_model "action6" // idea from nango 
-    //     request "action6", ["how_many" : "context._input.how_many.count"]
-    //     paginate_request "action6", ["how_many" : "context._response.body.how_many"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action6_output"
-    //     hooks {
-
-    //         // When - Called once after `should_skip_this_parent` return false, 
-    //         // Usecase - Perform any kind of setup like logging, input validation, input transformation, api call to fetch extra information
-    //         // Return - Nothing 
-    //         // default - void
-    //         // Optional - Yes
-    //         action_setup {
-    //             println "action set up is called"
-    //         }
-    //     }
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Use case 6 + custom method decide whether hagrid should go through next page or not
-    //     */
-    //     name "action7"
-    //     step_model "action7" // idea from nango 
-    //     request "action7", ["how_many" : "context._input.how_many.count"]
-    //     paginate_request "action7", ["how_many" : "context._response.body.how_many"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action7_output"
-    //     hooks {
-
-    //         // When - Called after action_parse_response is called.
-    //         // Usecase - Decide whether more pages exists for this action or not 
-    //         // Return - true, if more pages are present. if true then paginate_request will be used further to make the call
-    //         // Return - false, if no more pages are present
-    //         // default - false
-    //         // Optional - Yes
-    //         has_more {
-
-    //             println "has more is called"
-    //             return hasMoreMethod()
-    //         }
-    //     }
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Use case 7 + case of error where developer want to dynamically change the API model and output model based on the response returned by the target server
-    //     */
-    //     name "action8"
-    //     step_model "action8" // idea from nango 
-    //     request "action8", ["how_many" : "context._input.how_many.count"]
-    //     paginate_request "action8", ["how_many" : "context._response.body.how_many"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action8_output"
-    //     hooks {
-
-    //         // When - Called after should_passthrough_response is true
-    //         // Usecase - Based on the response, decide in which step_model and output_model, it should be rendered. 
-    //         // Usecase - By default, Hagrid will render response in step_model mentioned with action. However in some cases (like in error response cases), you may want to render it in different model 
-    //         // Return - Return 3 items, response_path, step_model, output_model
-    //         // default - By default, Hagrid will try to render it into step_model and output_model mentioned in the action definitation
-    //         // Optional - Yes
-    //         action_parse_response {
-
-    //             println "parse response is called " + context._response.body
-    //             parse "body.data.users", "error_step_model", "error_output_model", "BAD"
-    //         }
-    //     }
-    // }
-
-
-    // simple_action {
-
-    //     /**
-    //       Use case : Use case 8 + all hooks available to the developer to customise any part of the connector life cycle
-    //     */
-    //     name "action9"
-    //     step_model "action9" // idea from nango 
-    //     request "action9", ["how_many" : "context._input.how_many.count", "has_error" : "context._input.has_errors"]
-    //     paginate_request "action9", ["how_many" : "context._response.body.how_many"]
-    //     response_path "context._response.body.body.data.users"
-    //     output "action9_output"
-    //     hooks {
-
-    //         // When - First method to be called when action is started
-    //         // Usecase - Useful in case of hierarichal actions. For simple actions, always false
-    //         // Return - Nothing 
-    //         // default - true 
-    //         // Optional - Yes
-    //         should_skip_this_parent {
-    //             println "should skip this parent is called"
-    //             return false
-    //         }
-
-
-    //         // When - Called once after `should_skip_this_parent` return false, 
-    //         // Usecase - Perform any kind of setup like logging etc 
-    //         // Return - Nothing 
-    //         // default - void
-    //         // Optional - Yes
-    //         action_setup {
-    //             println "action set up is called"
-    //         }
-
-    //         // When - Called when Hagrid fetches the response from third party 
-    //         // Usecase - Decide whether you want to consume this response or perform re-try, abort or holdAndRetry kind of actions
-    //         // Return - true, when you want this response to be captured and you want to get this response irrespective of whether it is error response or success response
-    //         // return false, when you want to perform actions like `re-Try`, `abort`, `wait` etc 
-    //         // default - true if response code is 2XX and false if it is NOT 2XX 
-    //         // Optional - Yes
-    //         should_passthrough_response {
-
-    //             println "is valid response is called"
-    //             return true 
-    //         }
-
-    //         // When - Called after should_passthrough_response is true
-    //         // Usecase - Based on the response, decide in which step_model and output_model, it should be rendered. 
-    //         // Usecase - By default, Hagrid will render response in step_model mentioned with action. However in some cases (like in error response cases), you may want to render it in different model 
-    //         // Return - Return 3 items, response_path, step_model, output_model
-    //         // default - By default, Hagrid will try to render it into step_model and output_model mentioned in the action definitation
-    //         // Optional - Yes
-    //         action_parse_response {
-
-    //             println "parse response is called " + context._response.body
-    //             parse "body.data.users", "error_step_model", "error_output_model", "BAD"
-    //         }
-
-    //         // When - Called after action_parse_response is called.
-    //         // Usecase - Decide whether more pages exists for this action or not 
-    //         // Return - true, if more pages are present. if true then paginate_request will be used further to make the call
-    //         // Return - false, if no more pages are present
-    //         // default - false
-    //         // Optional - Yes
-    //         has_more {
-
-    //             println "has more is called"
-    //             return false
-    //         }
-
-    //         // When - Called in the last 
-    //         // Usecase - Perform tear down tasks.. 
-    //         // Return - void
-    //         // default - void
-    //         // Optional - Yes
-    //         action_close {
-                    
-    //             println "action close is called"
-    //         }
-    //     }
-    // }
-
-
-    // composite_action {
-
-    //     name "sync_azure_ad_app_user_usages"
-
-    //     simple_action {
-
-    //         /**
-    //         Use case : Fetch all applications from azureAD
-    //         */
-    //         name "get_azure_application"
-    //         step_model "azure_application" // idea from nango 
-    //         request "get_azure_application_request"
-    //         response_path "context._response.body.body.data.apps"
-    //         output "azure_application_output"
-    //         is_root true
-
-    //     }
-
-    //     simple_action {
-
-    //         /**
-    //         Use case : Fetch all users for a given application
-    //         */
-    //         name "get_azure_app_users"
-    //         step_model "azure_application_users" // idea from nango 
-    //         request "get_azure_app_users_request"
-    //         response_path "context._response.body.body.data.users"
-    //         output "azure_app_users_output"
-    //         parent "getAzureApplications"
-    //     }
-
-    //     simple_action {
-
-    //         /**
-    //         Use case : Fetch all usages for a given application
-    //         */
-    //         name "get_azure_app_usages"
-    //         step_model "azure_" // idea from nango 
-    //         request "get_azure_app_usages_request"
-    //         response_path "context._response.body.body.data.usages"
-    //         output "azure_app_usages_output"
-    //         parent "getAzureApplications"
-    //     }
-    // }
-
-
-    composite_action {
-
-        name "test_composite_action"
-        
-        simple_action {
-
-            /**
-            Use case : Very simple action with no pagination and no parameters
-            */
-            name "action1"
-            step_model "action1" // idea from nango 
-            operation "action1"
-            response_path "context._response.body.body.data.users"
-            is_root true
-
-            hooks {
-
-                step_parse_response {
-
-                    def how_many = context._response.body.body.how_many
-                    def users = context._response.body.body.data.users
-
-                    for( user in users){
-                        user["how_many"] = 1
-                    }
-
-                    def new_response_body = ["users" : users]
-                    parse new_response_body, "users", "action1"
-                }
-            }
-        }
-
-        simple_action {
-
-            /**
-            Use case : Very simple action with no pagination and no parameters
-            */
-            name "action2"
-            step_model "action2" // idea from nango 
-            operation "action2", ["how_many" : "context._parent_steps[0].how_many"]
-            response_path "context._response.body.body.data.users"
-            parent "action1"
-        }
-    } // composite action close 
+    def script = this
 
     action {
-
-        name "new_format_action"
-        
+        name "usecase_1"
         step {
+            name "github_employee"
+            step_model "github_employee"
+            operation "github_employee"
+            response_path "context._response.body.asMap()"
+        }
 
-            /**
-            Use case : Very simple action with no pagination and no parameters
-            */
-            name "action1"
-            step_model "action1" // idea from nango 
-            operation "action1"
-            response_path "context._response.body.body.data.users"
+        output {
+
+            consumer ->
+
+               def cursor = consumer.getCursorByModelName("github_employee");
+
+               def result = [:]
+               def data = []
+               def status = "OK"
+
+               while(cursor.hasNext()){
+                   data = cursor.getNext()
+               }
+
+               result["data"] = data
+               result["status"] = status
+               return result
+        }
+    }
+
+    // Case 2 Demonstration of simple get api call and return whole data as it is but removing the `meta` key from target response
+    action {
+        name "usecase_2"
+        step {
+            name "github_employee_no_meta"
+            step_model "github_employee_no_meta"
+            operation "github_employee"
+            response_path "context._response.body"
+        }
+
+        output {
+
+            consumer ->
+                return script.consume(consumer, "github_employee_no_meta", false)
+        }
+    }
+
+    // Case 3 Demonstration of simple get api call and return whole data as it is but removing a particular element from the array in the target response
+    action {
+        name "usecase_3"
+        step {
+            name "github_employee_remove_element"
+            step_model "github_employee_remove_element"
+            operation "github_employee"
+            response_path "context._response.body"
+        }
+
+        output {
+
+                consumer ->
+                    return script.consume(consumer, "github_employee_remove_element", false)
+    
+            }
+    }
+
+    // Case 4 Demonstration of introducing variables in the operation
+    action {
+        name "usecase_4"
+        step {
+            name "github_employee_operation_variables"
+            step_model "github_employee"
+            operation "github_employee_operation_variables", ["host" : "'https://api.jsonbin.io'"]
+            response_path "context._response.body"
+        }
+
+        output {
+
+                consumer ->
+                    return script.consume(consumer, "github_employee", false)
+    
+            }
+    }
+
+    // Case 5 Demonstration of operation has variable from input
+    action {
+        name "usecase_5"
+        step {
+            name "github_employee_operation_variables_from_input"
+            step_model "github_employee"
+            operation "github_employee_operation_variables", ["host" : "context._input.host"]
+            response_path "context._response.body"
+        }
+
+        output {
+
+                consumer ->
+                    return script.consume(consumer, "github_employee", false)
+    
+            }
+    }
+
+    // Case 6 Demonstration of non http operation and introduction of hooks
+    action {
+        name "usecase_6"
+        step {
+            name "compare_and_match"
+            step_model "compare_and_match"
+            operation "compare_and_match" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+            response_path "context._response.body"
+
+            hooks {
+
+                execute {
+
+                    CompareAndMatch compareAndMatch = new CompareAndMatch()
+                    def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
+                    ActionResponse actionResponse = new ActionResponse()
+                    actionResponse.setBody(response)
+                    actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
+
+                    return actionResponse
+
+                }
+            }
+        }
+
+        output {
+
+                consumer ->
+                    return script.consume(consumer, "compare_and_match", false)
+    
+            }
+    }
+
+    // Case 7 Demonstration of hooks and error handling
+    action {
+        name "usecase_7"
+        step {
+            name "compare_and_match"
+            step_model "compare_and_match"
+            operation "compare_and_match" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+            response_path "context._response.body"
+
+            hooks {
+                
+                step_setup {
+
+                    println("Perform any init tasks here")
+
+                    // Perform any kind of init tasks here 
+                    // Like fetching meta data like fields / configs from database which is not coming in input 
+                    // Sanitse the input , perform logging etc 
+                }
+
+                execute {
+
+                    CompareAndMatch compareAndMatch = new CompareAndMatch()
+                    def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
+                    ActionResponse actionResponse = new ActionResponse()
+                    actionResponse.setBody(response)
+                    actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
+                    return actionResponse
+                }
+
+                step_parse_response {
+
+                    // Method which helps you to handle multiple use cases 
+                    // 1. Modify the response coming from third party target server
+                    // 2. Assign the step_model dynamically based on the response
+                        // 1. If response contains error , then change the step_model to error_handling
+                        // 2. If response contains success , then change the step_model to success_handling
+
+                    if (context._response.body.any_error == "true") {
+                        println("Response contains error")
+                        parse context._response.body , "", "compare_and_match_error" 
+                    }
+
+                    else{
+                        parse context._response.body , "", "compare_and_match"
+                    }
+                }
+
+                step_close{
+
+                    println("Perform any close tasks here")
+
+                    // Perform any kind of close tasks here 
+                    // Like closing the database connection , logging etc 
+                    // Saving the state like checkpoints etc 
+                }
+            }
+        }
+
+
+        output {
+
+                consumer ->
+                    return script.consume(consumer, "compare_and_match_error", false)
+    
+            }
+    }
+
+
+
+    action {
+        name "usecase_8"
+        step {
+            name "pagination_action"
+            step_model "open_product_api"
+            operation "open_product_api"
+            paginate_operation "paginated_open_product_api", ["limit" : 10, "skip" : 3]
+            response_path "context._response.body.products"
+
+            hooks {
+
+                // Hook helps in pagination operation to determine if there are more pages to fetch
+                has_more {
+
+                    println("Calling has more hooks")
+                    def returned = script.two_page_simulation()
+                    println("returned is here : ${returned}")
+                    return returned
+                }
+            }
+        }
+        
+        output {
+
+            consumer ->
+                return script.consume(consumer, "open_product_api", true)
+        }
+    }
+
+
+    action {
+        name "usecase_9"
+        step {
+            name "encrich_company_information"
+            step_model "encrich_company_information"
+            operation "encrich_company_information", ["basic_info" : "'{\"name\" : \"amit aggarwal\"}'"]
+            response_path "context._response.body"
             is_root true
 
             hooks {
 
-                step_parse_response {
+                execute {
 
-                    def how_many = context._response.body.body.how_many
-                    def users = context._response.body.body.data.users
-
-                    for( user in users){
-                        user["how_many"] = 1
-                    }
-
-                    def new_response_body = ["users" : users]
-                    parse new_response_body, "users", "action1"
+                    def slurper = new JsonSlurper()
+                    def map = slurper.parseText(context._request.basic_info)
+                    map["company_name"] = "Freshworks"
+                    println("map is here : ${map}")
+                    ActionResponse actionResponse = new ActionResponse()
+                    actionResponse.setBody(map)
+                    actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
+                    return actionResponse
                 }
             }
         }
 
         step {
+            name "encrich_personal_information"
+            step_model "encrich_personal_information"
+            operation "encrich_personal_information", ["encriched_info" : "context._parent_steps[0].encriched_data"]
+            response_path "context._response.body"
+            parent "encrich_company_information"
 
-            /**
-            Use case : Very simple action with no pagination and no parameters
-            */
-            name "action2"
-            step_model "action2" // idea from nango 
-            operation "action2", ["how_many" : "context._parent_steps[0].how_many"]
-            response_path "context._response.body.body.data.users"
-            parent "action1"
+            hooks {
+
+                execute {
+
+                    println("enriched info is here : ${context._request.encriched_info}")
+                    def slurper = new JsonSlurper()
+                    // def map = slurper.parseText(context._request.encriched_info)
+                    Map map = context._request.encriched_info
+                    println("map is here : ${map}")
+                    map["personal_info"] = "Bangalore"
+
+                    ActionResponse actionResponse = new ActionResponse()
+                    actionResponse.setBody(map)
+                    actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
+                    return actionResponse
+                }
+            }
         }
-    } // composite action close 
+
+        output {
+
+            consumer ->
+                return script.consume(consumer, "encrich_personal_information", false)
+        }
+    }
+
+
+
+//     action {
+
+//         name "my_composite_action"
+//         step {
+
+//             /**
+//             Use case : Very simple action with no pagination and no parameters
+//             */
+//             name "users"
+//             step_model "step1" // idea from nango 
+//             operation "step1"
+//             response_path "context._response.body.body.data.users"
+//             is_root true
+
+//             hooks {
+
+//                 step_parse_response {
+
+//                     def how_many = context._response.body.body.how_many
+//                     def users = context._response.body.body.data.users
+
+//                     for( user in users){
+//                         user["how_many"] = 3
+//                     }
+
+//                     def new_response_body = ["users" : users]
+//                     parse new_response_body, "users", "step1"
+//                 }
+//             }
+//         }
+
+
+//         step {
+
+//             /**
+//             Use case : Very simple action with no pagination and no parameters
+//             */
+//             name "accounts"
+//             step_model "step2" // idea from nango 
+//             operation "step2"
+//             response_path "context._response.body.body.data.users"
+//             parent "step1"
+//         }
+
+//         output {
+
+//             consumer ->
+
+//                 def cursor = consumer.getCursorByModelName("step1", false)
+//                 def result = [:]
+//                 def data = [:]
+//                 def status = "OK"
+
+//                 while(cursor.hasNext()){
+
+//                     data = cursor.getNext()
+//                     break;
+//                 }
+
+//                 println("data is here : ")
+//                 println("${data}")
+//                 result["data"] = data
+//                 result["status"] = status
+//                 return result
+//         }
+
+//     } // composite action close 
 
 } // actions close
 
 
 
+def consume(consumer, modelName, all = false){
+
+    def cursor = consumer.getCursorByModelName(modelName);
+
+    def result = [:]
+    def data = []
+    def status = "OK"
+
+    while(cursor.hasNext()){
+        def partial = cursor.getNext()
+
+        if(all){
+            println("partial is here : ${partial}")
+            data.add(partial)
+        }
+        else{
+            data = partial
+            break;
+        }
+
+    }
+
+    result["data"] = data
+    result["status"] = status
+    return result
+}
 
 
 
@@ -452,21 +410,15 @@ def two_page_simulation(){
     return pagination_simulation.pop()
 }
 
-count = 0
-def two_times_pagination(){
+// count = 0
+// def two_times_pagination(){
 
-    if(count >= 2){
+//     if(count >= 2){
 
-        return false;
-    }
+//         return false;
+//     }
 
-    count = count + 1
-    return true
-}
-
-
-
-
-
-
+//     count = count + 1
+//     return true
+// }
 

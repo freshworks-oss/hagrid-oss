@@ -43,9 +43,8 @@ public class ActionContext {
 
     // This holds the parent data 
     List<Map<String, Object>> parentApiModelData = new ArrayList<>();
-
-    Map context = new HashMap<>();
-
+ 
+    private Map context = new HashMap<>();
 
     public FluentExpando getContext() throws Exception{
 

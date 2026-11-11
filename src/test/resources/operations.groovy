@@ -2,18 +2,73 @@ import groovy.json.JsonSlurper
 
 
 operations {
-
+    
     operation {
 
-        name "compare_and_match_operation" 
-        type "NON_HTTP"
-        from_value "{{from_value}}"
-        to_value "{{to_value}}", "{{to_to_value}}"
+        name "github_employee" 
+        type "HTTP"
+        method "GET"
+        host  "https://api.jsonbin.io"
+        headers "X-Master-Key": '$2a$10$LrPVM0vD/9GZJerxV2.u5uCblZ6ZnYJOVPojOs6UL562cc2GMcov6', "X-Bin-Meta": "false"
+        path  "/v3/b/6ae86c41ac6210605a658274"
     }
 
     operation {
 
-        name "action1" 
+        name "github_employee_operation_variables" 
+        type "HTTP"
+        method "GET"
+        host  "{{host}}"
+        headers "X-Master-Key": '$2a$10$LrPVM0vD/9GZJerxV2.u5uCblZ6ZnYJOVPojOs6UL562cc2GMcov6', "X-Bin-Meta": "false"
+        path  "/v3/b/6ae86c41ac6210605a658274"
+    }
+
+    operation {
+
+        name "compare_and_match" 
+        type "NON_HTTP"
+        from_value "{{from_value}}"
+        to_value "{{to_value}}"
+    }
+
+
+    operation {
+
+        name "open_product_api" 
+        type "HTTP"
+        method "GET"
+        host  "https://dummyjson.com/"
+        path  "products"
+        query "limit": "3", "select": "id,title"
+    }
+
+    operation {
+
+        name "paginated_open_product_api" 
+        type "HTTP"
+        method "GET"
+        host  "https://dummyjson.com/"
+        path  "products"
+        query "limit": "{{limit}}", "skip": "{{skip}}", "select": "id,title"
+    }
+
+
+    operation {
+        name "encrich_company_information" 
+        type "NON_HTTP"
+        basic_info "{{basic_info}}"
+    }
+
+    operation {
+        name "encrich_personal_information" 
+        type "NON_HTTP"
+        encriched_info "{{encriched_info}}"
+    }
+
+
+    operation {
+
+        name "step1" 
         type "HTTP"
         method "GET"
         host  "http://django:3000"
@@ -22,73 +77,11 @@ operations {
 
     operation {
 
-        name "action2" 
+        name "step2" 
         type "HTTP"
         method "GET"
         host  "http://django:3000"
         path  "/users?how_many={{how_many}}"
         headers "how_many": "{{how_many}}" 
-    }
-
-    operation {
-
-        name "action3" 
-        type "HTTP"
-        method "GET"
-        host  "http://django:3000"
-        path  "/users?how_many={{how_many}}"
-    }
-
-    operation {
-
-        name "action4" 
-        type "HTTP"
-        method "GET"
-        host  "http://django:3000"
-        path  "/users?how_many={{how_many}}"
-    }
-
-    operation {
-
-        name "action5" 
-        type "HTTP"
-        method "GET"
-        host  "http://django:3000"
-        path  "/users?how_many={{how_many}}"
-    }
-
-    operation {
-
-        name "action6" 
-        type "HTTP"
-        method "GET"
-        host  "http://django:3000"
-        path  "/users?how_many={{how_many}}&has_error={{has_error}}"
-    }
-
-    operation {
-
-        name "get_repo_operation" 
-        method "GET"
-        type "HTTP"
-        sub_type "REST"
-        host "https://api.github.com"
-        path "/user/repos?per_page={{per_page}}"
-        headers "Authorization" : "Bearer {{my_token}}"
-        content_type "application/json"
-        
-    }
-
-    operation {
-
-        name "create_github_issue_operation" 
-        method "GET"
-        type "HTTP"
-        host "https://api.github.com"
-        path "/repos/{{owner}}/{{repo}}/issues"
-        headers "Authorization" : "Bearer {{my_token}}"
-        content_type "application/json"
-        body "{{issue_body}}"
-        
     }
 }

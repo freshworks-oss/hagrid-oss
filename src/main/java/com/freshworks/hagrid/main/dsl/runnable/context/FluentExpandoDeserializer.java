@@ -29,6 +29,7 @@ public class FluentExpandoDeserializer extends StdDeserializer<FluentExpando> {
 
         // Loop through JSON tokens until we hit the end of the object
         while (p.nextToken() != JsonToken.END_OBJECT) {
+            
             String fieldName = p.currentName();
             p.nextToken(); // Move to the field value
 
@@ -59,14 +60,17 @@ public class FluentExpandoDeserializer extends StdDeserializer<FluentExpando> {
                 }
 
                 if (Boolean.FALSE.equals(isArrayOfPrimitives)){
+                    // It means that it is array of json
                     expando.setProperty(fieldName, objectMapper.convertValue(value, new TypeReference<List<FluentExpando>>() {}));
                 }
                 else{
 
                     List<FluentExpando> primtiveList = new ArrayList<>();
                     for (Object item : (List<?>) value) {
+
                         // If it's a primitive type, wrap it in a FluentExpando
                         FluentExpando primitiveValue = new FluentExpando(item);
+                        primitiveValue.isLeafNode = true;
                         primtiveList.add(primitiveValue);
                     }
                     expando.setProperty(fieldName, primtiveList);
@@ -75,10 +79,11 @@ public class FluentExpandoDeserializer extends StdDeserializer<FluentExpando> {
             }
 
             else{
-                // Populate your FluentExpando instance (adjust to your fluent method name, e.g., set() or put())
-                FluentExpando primitiveValue = new FluentExpando(value);
-                expando.setProperty(fieldName, primitiveValue);
-            }
+                 // It means that it is primitive values like String, Integer or null
+                    FluentExpando primitiveValue = new FluentExpando(value);
+                    primitiveValue.isLeafNode = true;
+                    expando.setProperty(fieldName, primitiveValue);
+                }
             
         }
         return expando;

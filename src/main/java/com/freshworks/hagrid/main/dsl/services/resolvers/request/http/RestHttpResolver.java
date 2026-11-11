@@ -20,6 +20,9 @@ public class RestHttpResolver{
         
         ActionHttpRestRequest httpRequest = new ActionHttpRestRequest();
 
+        String name = requestConfig.getName();
+        httpRequest.setName(name);
+
         // resolve host key here
         String host = requestConfig.getHost();
         httpRequest.setHost(resolveStr(host, context));

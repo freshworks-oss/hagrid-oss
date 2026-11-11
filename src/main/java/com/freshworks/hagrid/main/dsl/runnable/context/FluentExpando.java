@@ -44,6 +44,12 @@ public class FluentExpando extends Expando {
             this.actualValue = Integer.valueOf(value.toString());
             this.setProperty("leaf", Integer.valueOf(value.toString()));
         }
+
+        if ( value == null){
+            this.isLeafNode = true;
+            this.actualValue = null;
+            this.setProperty("leaf", null);
+        }
     }
 
 
