@@ -98,7 +98,7 @@ actions {
         step {
             name "github_employee_operation_variables_from_input"
             step_model "github_employee"
-            operation "github_employee_operation_variables", ["host" : "context._input.host"]
+            operation "github_employee_operation_variables", ["host" : "context._input.host.asString()"]
             response_path "context._response.body"
         }
 

@@ -125,25 +125,33 @@ public class TestConnectorUsecase {
     //     assertThat(response.get("api_data").get("res_body").get("meta").has("process_on"), is(true));
     // }
 
-    // // Case 5 Demonstration of operation has variable from input
-    // @Test
-    // public void testConnectorUsecase_5() throws Exception {
-    //     Map<String, Object> input = new HashMap<>();
-    //     input.put("host", "https://api.jsonbin.io");
+    // Case 5 Demonstration of operation has variable from input
+    @Test
+    public void testConnectorUsecase_5() throws Exception {
+        Map<String, String> input = new HashMap<>();
+        input.put("host", "https://api.jsonbin.io");
 
-    //     UIPWorkerOutput output = uipConnector.execute("usecase_5", input);
-    //     JsonNode response = objectMapper.readTree(output.getResponse().toString());
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-    //     assertThat(response.has("api_data"), is(true));
-    //     assertThat(response.get("api_data").has("res_body"), is(true));
-    //     assertThat(response.get("api_data").get("res_body").has("employees"), is(true));
-    //     assertThat(response.get("api_data").get("res_body").get("employees").size(), is(4));
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+                .put("host", "https://api.jsonbin.io").build();
 
-    //     // It contains the meta data also. 
-    //     assertThat(response.has("api_data"), is(true));
-    //     assertThat(response.get("api_data").get("res_body").has("meta"), is(true));
-    //     assertThat(response.get("api_data").get("res_body").get("meta").has("process_on"), is(true));
-    // }
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "usecase_5" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+
+        // assertThat(response.has("api_data"), is(true));
+        // assertThat(response.get("api_data").has("res_body"), is(true));
+        // assertThat(response.get("api_data").get("res_body").has("employees"), is(true));
+        // assertThat(response.get("api_data").get("res_body").get("employees").size(), is(4));
+
+        // // It contains the meta data also. 
+        // assertThat(response.has("api_data"), is(true));
+        // assertThat(response.get("api_data").get("res_body").has("meta"), is(true));
+        // assertThat(response.get("api_data").get("res_body").get("meta").has("process_on"), is(true));
+    }
 
     // // Case 6 Demonstration of non http operation
     // @Test
