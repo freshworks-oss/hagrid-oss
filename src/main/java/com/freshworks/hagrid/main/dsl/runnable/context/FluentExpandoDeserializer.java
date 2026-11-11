@@ -75,7 +75,6 @@ public class FluentExpandoDeserializer extends StdDeserializer<FluentExpando> {
                     }
                     expando.setProperty(fieldName, primtiveList);
                 }
-                
             }
 
             else{

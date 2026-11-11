@@ -116,7 +116,7 @@ actions {
         step {
             name "compare_and_match"
             step_model "compare_and_match"
-            operation "compare_and_match" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+            operation "compare_and_match" , ["from_value" : "context._input.from_value.asString()", "to_value" : "context._input.to_value.asString()"]
             response_path "context._response.body"
 
             hooks {
@@ -124,7 +124,7 @@ actions {
                 execute {
 
                     CompareAndMatch compareAndMatch = new CompareAndMatch()
-                    def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
+                    def response = compareAndMatch.compare(context._operation.from_value.asString(), context._operation.to_value.asString())
                     ActionResponse actionResponse = new ActionResponse()
                     actionResponse.setBody(response)
                     actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
@@ -149,7 +149,7 @@ actions {
         step {
             name "compare_and_match"
             step_model "compare_and_match"
-            operation "compare_and_match" , ["from_value" : "context._input.from_value", "to_value" : "context._input.to_value"]
+            operation "compare_and_match" , ["from_value" : "context._input.from_value.asString()", "to_value" : "context._input.to_value.asString()"]
             response_path "context._response.body"
 
             hooks {
@@ -166,7 +166,7 @@ actions {
                 execute {
 
                     CompareAndMatch compareAndMatch = new CompareAndMatch()
-                    def response = compareAndMatch.compare(context._request.from_value, context._request.to_value)
+                    def response = compareAndMatch.compare(context._operation.from_value.asString(), context._operation.to_value.asString())
                     ActionResponse actionResponse = new ActionResponse()
                     actionResponse.setBody(response)
                     actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK)
@@ -183,11 +183,11 @@ actions {
 
                     if (context._response.body.any_error == "true") {
                         println("Response contains error")
-                        parse context._response.body , "", "compare_and_match_error" 
+                        parse context._response.body.asMap() , "", "compare_and_match_error" 
                     }
 
                     else{
-                        parse context._response.body , "", "compare_and_match"
+                        parse context._response.body.asMap() , "", "compare_and_match"
                     }
                 }
 
@@ -249,15 +249,14 @@ actions {
             name "encrich_company_information"
             step_model "encrich_company_information"
             operation "encrich_company_information", ["basic_info" : "'{\"name\" : \"amit aggarwal\"}'"]
-            response_path "context._response.body"
+            response_path "context._response.body.asMap()"
             is_root true
 
             hooks {
 
                 execute {
 
-                    def slurper = new JsonSlurper()
-                    def map = slurper.parseText(context._request.basic_info)
+                    def map = context._operation.basic_info.asMap()
                     map["company_name"] = "Freshworks"
                     println("map is here : ${map}")
                     ActionResponse actionResponse = new ActionResponse()
@@ -271,18 +270,16 @@ actions {
         step {
             name "encrich_personal_information"
             step_model "encrich_personal_information"
-            operation "encrich_personal_information", ["encriched_info" : "context._parent_steps[0].encriched_data"]
-            response_path "context._response.body"
+            operation "encrich_personal_information", ["encriched_info" : "context._parent_steps[0].encriched_data.asMap()"]
+            response_path "context._response.body.asMap()"
             parent "encrich_company_information"
 
             hooks {
 
                 execute {
-
-                    println("enriched info is here : ${context._request.encriched_info}")
-                    def slurper = new JsonSlurper()
-                    // def map = slurper.parseText(context._request.encriched_info)
-                    Map map = context._request.encriched_info
+                    println("enriched info is here :");
+                    println("${context._operation.encriched_info.asMap()}")
+                    def map = context._operation.encriched_info.asMap()
                     println("map is here : ${map}")
                     map["personal_info"] = "Bangalore"
 

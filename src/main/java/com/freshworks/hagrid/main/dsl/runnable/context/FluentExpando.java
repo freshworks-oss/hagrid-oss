@@ -95,16 +95,15 @@ public class FluentExpando extends Expando {
     }
     
     public Map asMap() throws Exception{ 
-
-        if (this.isLeafNode == false) {
-            // It means that as map called on a non-leaf node, so return the properties of this expando
-            return this.getProperties();
+        
+        if (this.isLeafNode){
+            // It means that developer want to convert leaf string to json 
+            return objectMapper.readValue(this.getActualValue().toString(), Map.class);
         }
         else{
-
-            // It means that as map called on a leaf node, so return the leaf node as map
-            return objectMapper.readValue(this.actualValue.toString(), Map.class);
-        }   
+            return objectMapper.convertValue(this, Map.class);
+        }
+        
     }
     
 }

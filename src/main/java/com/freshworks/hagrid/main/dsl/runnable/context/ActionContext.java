@@ -50,7 +50,6 @@ public class ActionContext {
 
         context.put("_input", input);
         context.put("_operation", objectMapper.convertValue(actionRequest, Map.class));
-
         // Now request template has map named missingProperties
         // properties in this map should be unroot and should be present at top level 
 
@@ -67,7 +66,6 @@ public class ActionContext {
 
             request.remove("customProperties");
         }
-
 
         context.put("_response", objectMapper.convertValue(actionResponse, Map.class));
         context.put("_shared", actionSharedMap);

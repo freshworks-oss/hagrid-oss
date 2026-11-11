@@ -21,7 +21,7 @@ public class ActionNonHttpRequest implements ActionRequest{
     REQUEST_TYPE type = REQUEST_TYPE.NON_HTTP;
     REQUEST_SUB_TYPE subType = REQUEST_SUB_TYPE.NON_HTTP;
 
-    Map<String, String> customProperties = new HashMap<>();
+    Map<String, Object> customProperties = new HashMap<>();
 
     @Override
     public ActionResponse executeRequest() {

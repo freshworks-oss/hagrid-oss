@@ -153,37 +153,42 @@ public class TestConnectorUsecase {
         // assertThat(response.get("api_data").get("res_body").get("meta").has("process_on"), is(true));
     }
 
-    // // Case 6 Demonstration of non http operation
-    // @Test
-    // public void testConnectorUsecase_6() throws Exception {
-    //     Map<String, Object> input = new HashMap<>();
-    //     input.put("from_value", "Amit");
-    //     input.put("to_value", "Amit");
+    // Case 6 Demonstration of non http operation
+    @Test
+    public void testConnectorUsecase_6() throws Exception {
 
-    //     UIPWorkerOutput output = uipConnector.execute("usecase_6", input);
-    //     JsonNode response = objectMapper.readTree(output.getResponse().toString());
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-    //     assertThat(response.get("is_match").asBoolean(), is(true));
-    //     assertThat(response.get("to_value").asText(), is("Amit"));
-    //     assertThat(response.get("from_value").asText(), is("Amit"));
-    // }
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+        .put("from_value", "Amit")
+        .put("to_value", "Amit")
+        .build();
 
-    // // Case 7 Demonstration of hooks and error handling
-    // @Test
-    // public void testConnectorUsecase_7() throws Exception {
-    //     Map<String, Object> input = new HashMap<>();
-    //     input.put("from_value", "Amit");
-    //     input.put("to_value", "Aggarwal");
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "usecase_6" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+    }
 
-    //     UIPWorkerOutput output = uipConnector.execute("usecase_7", input);
-    //     JsonNode response = objectMapper.readTree(output.getResponse().toString());
+    // Case 7 Demonstration of hooks and error handling
+    @Test
+    public void testConnectorUsecase_7() throws Exception {
+        
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-    //     assertThat(response.get("is_match").asBoolean(), is(false));
-    //     assertThat(response.get("to_value").asText(), is("Aggarwal"));
-    //     assertThat(response.get("from_value").asText(), is("Amit"));
-    //     assertThat(response.get("any_error").asText(), is("true"));
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+        .put("from_value", "Amit")
+        .put("to_value", "Tima")
+        .build();
 
-    // }
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "usecase_7" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+
+    }
 
     // // Case 8 Demonstration of pagination requests
     // @Test
@@ -195,12 +200,21 @@ public class TestConnectorUsecase {
         
     // }
 
-    // // // Case 9 Demonstration of graph based step
-    // // @Test
-    // // public void testConnectorUsecase_9() throws Exception {
-    // //     UIPWorkerOutput output = uipConnector.execute("usecase_9", Collections.emptyMap());
-    // //     JsonNode response = objectMapper.readTree(output.getResponse().toString());
+    // Case 9 Demonstration of graph based step
+    @Test
+    public void testConnectorUsecase_9() throws Exception {
+        
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration();
 
-    // //     assertThat(response.get("encriched_data").get("company_name").asText(), is("Freshworks"));
-    // // }
+        ImmutableMap<String, String> x = ImmutableMap.<String, String>builder()
+        .put("from_value", "Amit")
+        .put("to_value", "Tima")
+        .build();
+
+        SyncServiceContainer syncServiceContainer = syncService.configureWithDslDag(UUID.randomUUID().toString(), "usecase_9" , x, connectorConfiguration);
+        syncService.startSync();
+        SyncStatusService syncStatusService = syncServiceContainer.getBean(SyncStatusService.class);
+        ConsumerService consumerService = syncServiceContainer.getBean(ConsumerService.class);
+        syncStatusService.waitUntilSyncIsInProgress();
+    }
 }
