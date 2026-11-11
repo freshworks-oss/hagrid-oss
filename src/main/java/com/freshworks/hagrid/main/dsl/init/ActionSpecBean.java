@@ -113,7 +113,7 @@ public class ActionSpecBean {
         if(resource.exists()){
 
             try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                groovyShell.evaluate(reader);
+                groovyShell.evaluate(reader, ACTIONS_DSL_RESOURCE);
             }
         }
 
