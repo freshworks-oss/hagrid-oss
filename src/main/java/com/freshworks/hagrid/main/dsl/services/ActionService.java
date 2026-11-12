@@ -189,15 +189,7 @@ public class ActionService {
     }
 
 
-    // Optional: registered by tooling (e.g. DSL coverage); absent means nothing is reported
-    @Autowired(required = false)
-    StepListener stepListener;
-
     public RequestResponseContainer execute(RequestResponseContainer requestResponseContainer, JsonNode... parentActionData) throws Exception {
-
-        if(stepListener != null){
-            stepListener.stepRun(this.actionConfig);
-        }
 
         Hooks hook = this.actionResolver.resolveHook(this.actionConfig.getHooksConfig(), null);
         Closure executeClosure = hook.getExecuteClosure();
