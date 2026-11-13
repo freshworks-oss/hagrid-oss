@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.freshworks.hagrid.MockFacadeInterface;
 import com.freshworks.hagrid.ReturnableMockTypeList;
 import com.freshworks.hagrid.shared.infra.nitrite.NitriteDbCursor;
-import com.google.inject.internal.util.Lists;
+import com.google.common.collect.Lists;
 
 @Component
 public class MockFacadeNitriteDbCursor implements MockFacadeInterface {

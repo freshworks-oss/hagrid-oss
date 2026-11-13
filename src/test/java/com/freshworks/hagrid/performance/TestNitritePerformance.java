@@ -14,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import static org.dizitart.no2.filters.FluentFilter.where;
 
-import org.checkerframework.checker.units.qual.s;
 import org.dizitart.no2.Nitrite;
 import org.dizitart.no2.collection.Document;
 import org.dizitart.no2.collection.DocumentCursor;
