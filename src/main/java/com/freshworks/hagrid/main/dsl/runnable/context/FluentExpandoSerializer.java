@@ -30,7 +30,7 @@ public class FluentExpandoSerializer extends StdSerializer<FluentExpando> {
                 // Assuming your FluentExpando has a method like getProperties() returning a Map<String, Object>
                 for (Map.Entry<String, Object> entry : ((Map<String, Object>) value.getProperties()).entrySet()) {
 
-                    System.out.println("Writing field name " + entry.getKey());
+                    // System.out.println("Writing field name " + entry.getKey());
                     gen.writeFieldName(entry.getKey());
             
                     // let Jackson handle nested types dynamically
