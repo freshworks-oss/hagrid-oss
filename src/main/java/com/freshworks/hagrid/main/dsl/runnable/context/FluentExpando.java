@@ -105,5 +105,17 @@ public class FluentExpando extends Expando {
         }
         
     }
+
+    public List asList() throws Exception{ 
+        
+        if (this.isLeafNode){
+            // It means that developer want to convert leaf string to json 
+            return objectMapper.readValue(this.getActualValue().toString(), List.class);
+        }
+        else{
+            return objectMapper.convertValue(this, List.class);
+        }
+        
+    }
     
 }
