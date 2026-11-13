@@ -9,6 +9,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -100,21 +101,39 @@ public class ActionHttpRestRequest extends ActionHttpRequest{
         }
 
         String url = this.host + this.path + queryUrl;
-        ResponseEntity<JsonNode> responseEntity = restTemplate.exchange(url, httpMethod, entity, JsonNode.class);
-
         ActionResponse actionResponse = new ActionResponse();
 
-        if(responseEntity.getStatusCode().is2xxSuccessful()){
-            actionResponse.setHttpStatus(ACTION_HTTP_CODE.OK);
-        }
-        else{
-            actionResponse.setHttpStatus(ACTION_HTTP_CODE.BAD);
-        }
+        try{
+            ResponseEntity<JsonNode> responseEntity = restTemplate.exchange(url, httpMethod, entity, JsonNode.class);
 
-        actionResponse.setBody(responseEntity.getBody());
-        actionResponse.setHeaders(responseEntity.getHeaders());
+            actionResponse.setHttpStatus(responseEntity.getStatusCode().is2xxSuccessful() ? ACTION_HTTP_CODE.OK : ACTION_HTTP_CODE.BAD);
+            actionResponse.setStatusCode(responseEntity.getStatusCode().value());
+            actionResponse.setBody(responseEntity.getBody());
+            actionResponse.setHeaders(responseEntity.getHeaders());
+        }
+        catch(HttpStatusCodeException e){
+
+            // RestTemplate throws for 4xx/5xx. Hand them over as a normal invalid response so the DSL can handle them.
+            actionResponse.setHttpStatus(ACTION_HTTP_CODE.BAD);
+            actionResponse.setStatusCode(e.getStatusCode().value());
+            actionResponse.setBody(errorBody(e.getResponseBodyAsString()));
+            actionResponse.setHeaders(e.getResponseHeaders());
+        }
 
         return actionResponse;
         
+    }
+
+    private static JsonNode errorBody(String text){
+
+        if(Strings.isBlank(text)){
+            return objectMapper.nullNode();
+        }
+        try{
+            return objectMapper.readTree(text);
+        }
+        catch(Exception e){
+            return objectMapper.getNodeFactory().textNode(text);
+        }
     }
 }

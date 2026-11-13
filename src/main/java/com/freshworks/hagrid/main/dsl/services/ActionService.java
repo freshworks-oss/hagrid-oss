@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -44,6 +46,8 @@ import lombok.Setter;
 @Component
 @Scope("prototype")
 public class ActionService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActionService.class);
     
     // Variables that should be made available in DSL while execution 
     Map<String, Object> actionInput;
@@ -185,35 +189,27 @@ public class ActionService {
     }
 
 
-    public RequestResponseContainer execute(RequestResponseContainer requestResponseContainer, JsonNode... parentActionData) {
-        try{
+    public RequestResponseContainer execute(RequestResponseContainer requestResponseContainer, JsonNode... parentActionData) throws Exception {
 
-            Hooks hook = this.actionResolver.resolveHook(this.actionConfig.getHooksConfig(), null);
-            Closure executeClosure = hook.getExecuteClosure();
+        Hooks hook = this.actionResolver.resolveHook(this.actionConfig.getHooksConfig(), null);
+        Closure executeClosure = hook.getExecuteClosure();
 
-            if(executeClosure == null){
-                
-                ActionRequest request = (ActionRequest)requestResponseContainer.getRequest();
-                this.actionContext.setActionRequest(request);
-                ActionResponse actionResponse = this.requestService.execute(request);
-                requestResponseContainer.setResponse(actionResponse);
-                return requestResponseContainer;
-
-            }
-
-            ActionRequest r = objectMapper.convertValue(requestResponseContainer.getRequest(), ActionRequest.class);
-            this.actionContext.setActionRequest(r);
+        if(executeClosure == null){
             
-            ActionResponse actionResponse = hook.call_executeClosure(actionContext);
+            ActionRequest request = (ActionRequest)requestResponseContainer.getRequest();
+            this.actionContext.setActionRequest(request);
+            ActionResponse actionResponse = this.requestService.execute(request, this.actionInput);
             requestResponseContainer.setResponse(actionResponse);
             return requestResponseContainer;
+
         }
 
-        catch(Exception e){
-
-            e.printStackTrace();
-            return null;
-        }
+        ActionRequest r = objectMapper.convertValue(requestResponseContainer.getRequest(), ActionRequest.class);
+        this.actionContext.setActionRequest(r);
+        
+        ActionResponse actionResponse = hook.call_executeClosure(actionContext);
+        requestResponseContainer.setResponse(actionResponse);
+        return requestResponseContainer;
     }
 
     public boolean isValidResponse(RequestResponseContainer requestResponseContainer, JsonNode... parentActionData){
@@ -224,6 +220,10 @@ public class ActionService {
             Closure shouldPassThroughResponse = hook.getShoudlPassthroughResponseClosure();
 
             ActionResponse response = (ActionResponse)requestResponseContainer.getResponse();
+
+            if(response == null){
+                return false;
+            }
         
             if(shouldPassThroughResponse == null){
             
@@ -254,6 +254,12 @@ public class ActionService {
 
     public DagTraversalService.TraverseAction handleInValidResponseNonHttp(RequestResponseContainer currentRequest, JsonNode... parentActionData){
 
+        // Say why the step is failing: the traverser ends it as failed when no action is returned
+        if(currentRequest != null && currentRequest.getResponse() instanceof ActionResponse response){
+            String body = String.valueOf(response.getBody());
+            LOGGER.error("Action step failed with an invalid response: status={} body={}", response.getStatusCode(),
+                    body.length() > 500 ? body.substring(0, 500) + "..." : body);
+        }
         return null;
     }
 
