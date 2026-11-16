@@ -1,7 +1,5 @@
 package com.freshworks.hagrid.main.dsl.services;
 
-import java.util.Map;
-
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
 
@@ -11,5 +9,5 @@ import com.freshworks.hagrid.main.dsl.runnable.request.ActionResponse;
  */
 public interface RequestExecutor {
 
-    ActionResponse execute(ActionRequest request, Map<String, Object> actionInput) throws Exception;
+    ActionResponse execute(ActionRequest request) throws Exception;
 }

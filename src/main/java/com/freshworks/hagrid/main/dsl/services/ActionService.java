@@ -198,7 +198,7 @@ public class ActionService {
             
             ActionRequest request = (ActionRequest)requestResponseContainer.getRequest();
             this.actionContext.setActionRequest(request);
-            ActionResponse actionResponse = this.requestService.execute(request, this.actionInput);
+            ActionResponse actionResponse = this.requestService.execute(request);
             requestResponseContainer.setResponse(actionResponse);
             return requestResponseContainer;
 

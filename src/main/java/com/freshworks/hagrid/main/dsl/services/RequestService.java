@@ -1,7 +1,5 @@
 package com.freshworks.hagrid.main.dsl.services;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,15 +14,11 @@ public class RequestService {
     @Autowired(required = false)
     RequestExecutor requestExecutor;
 
+    // The only place a request is executed: callers never call request.executeRequest() themselves
     public ActionResponse execute(ActionRequest request) throws Exception{
 
-        return execute(request, null);
-    }
-
-    public ActionResponse execute(ActionRequest request, Map<String, Object> actionInput) throws Exception{
-
         if(requestExecutor != null){
-            return requestExecutor.execute(request, actionInput);
+            return requestExecutor.execute(request);
         }
         return request.executeRequest();
     }

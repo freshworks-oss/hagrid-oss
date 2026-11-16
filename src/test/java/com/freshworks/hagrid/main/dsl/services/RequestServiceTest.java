@@ -5,8 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Map;
-
 import org.junit.jupiter.api.Test;
 
 import com.freshworks.hagrid.main.dsl.runnable.request.ActionRequest;
@@ -20,21 +18,20 @@ class RequestServiceTest {
         ActionResponse response = new ActionResponse();
         when(request.executeRequest()).thenReturn(response);
 
-        assertSame(response, new RequestService().execute(request, Map.of()));
+        assertSame(response, new RequestService().execute(request));
     }
 
     @Test
-    void withExecutorDelegatesAndPassesInput() throws Exception {
+    void withExecutorDelegates() throws Exception {
         ActionRequest request = mock(ActionRequest.class);
         RequestExecutor executor = mock(RequestExecutor.class);
         ActionResponse response = new ActionResponse();
-        Map<String, Object> input = Map.of("k", "v");
-        when(executor.execute(request, input)).thenReturn(response);
+        when(executor.execute(request)).thenReturn(response);
 
         RequestService service = new RequestService();
         service.requestExecutor = executor;
 
-        assertSame(response, service.execute(request, input));
-        verify(executor).execute(request, input);
+        assertSame(response, service.execute(request));
+        verify(executor).execute(request);
     }
 }
