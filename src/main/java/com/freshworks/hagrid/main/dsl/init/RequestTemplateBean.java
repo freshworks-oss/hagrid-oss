@@ -113,7 +113,7 @@ public class RequestTemplateBean {
 
         if(resource.exists()){
             try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                groovyShell.evaluate(reader);
+                groovyShell.evaluate(reader, REQUESTS_DSL_RESOURCE);
             }
         }
 

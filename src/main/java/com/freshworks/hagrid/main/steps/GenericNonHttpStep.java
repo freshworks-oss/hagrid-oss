@@ -92,7 +92,7 @@ public class GenericNonHttpStep extends NonHttpAbstractStep{
         }        
     }
 
-    public RequestResponseContainer executeNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject){
+    public RequestResponseContainer executeNonHttp(RequestResponseContainer currentRequestResponse, JsonNode... parentJsonObject) throws Exception{
 
         RequestResponseContainer requestResponseContainer = this.actionService.execute(currentRequestResponse, parentJsonObject);
         lastContainer = requestResponseContainer;
